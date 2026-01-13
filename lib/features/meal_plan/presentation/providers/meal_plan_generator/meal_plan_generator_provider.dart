@@ -1,4 +1,6 @@
 import 'package:meal_plan_app/features/auth/presentation/provider/provider.dart';
+import 'package:meal_plan_app/config/errors/app_errors.dart';
+import 'package:meal_plan_app/features/meal_plan/domain/domain.dart';
 import 'package:meal_plan_app/features/meal_plan/presentation/providers/provider.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 
@@ -11,7 +13,7 @@ enum MealPlanGeneratorStatus { initial, loading, success, error }
 class MealPlanGeneratorState {
   final MealPlanGeneratorStatus status;
   final String? errorMessage;
-  final Map<String, dynamic>? generatedPlan; // Aquí guardaremos el plan de la IA
+  final MealPlanResponse? generatedPlan;
 
   MealPlanGeneratorState({
     this.status = MealPlanGeneratorStatus.initial,
@@ -22,12 +24,16 @@ class MealPlanGeneratorState {
   MealPlanGeneratorState copyWith({
     MealPlanGeneratorStatus? status,
     String? errorMessage,
-    Map<String, dynamic>? generatedPlan,
+    MealPlanResponse? generatedPlan,
+    bool clearGeneratedPlan = false,
+    bool clearError = false,
   }) {
     return MealPlanGeneratorState(
       status: status ?? this.status,
-      errorMessage: errorMessage ?? this.errorMessage,
-      generatedPlan: generatedPlan ?? this.generatedPlan,
+      errorMessage: clearError ? null : errorMessage ?? this.errorMessage,
+      generatedPlan: clearGeneratedPlan
+          ? null
+          : generatedPlan ?? this.generatedPlan,
     );
   }
 }
@@ -41,56 +47,51 @@ class MealPlanGenerator extends _$MealPlanGenerator {
   }
 
   Future<void> generatePlan({
-    required String comments,
-    int durationDays = 7, // Valor por defecto
+    required String description,
+    required int numberOfDays,
+    required int quantityOfPeople,
+    required List<String> mealTypes,
   }) async {
-    state = state.copyWith(status: MealPlanGeneratorStatus.loading);
+    state = state.copyWith(
+      status: MealPlanGeneratorStatus.loading,
+      clearError: true,
+    );
 
     try {
       final authState = ref.read(authProvider);
       if (authState is! AuthenticatedAuthState) {
         throw Exception('User not authenticated');
       }
-      final userId = authState.user.id;
 
-      // Obtenemos las preferencias del usuario
-      final mealPlanRepo = ref.read(mealPlanRepositoryProvider);
-      final preferences = await mealPlanRepo.getUserPreferences(userId);
-      
-      // TODO: Necesitamos un Mapper para UserPreferences -> Map<String, dynamic>
-      // Por ahora, lo simulamos. Deberías crear este mapper.
-      final preferencesMap = {
-        "dietary_restrictions": preferences.dietaryRestrictions,
-        "allergies": preferences.allergies,
-        "preferred_cuisines": preferences.preferredCuisines,
-        "health_goals": preferences.healthGoals,
-        "cooking_skill_level": preferences.cookingSkillLevel,
-        "time_availability": preferences.timeAvailability,
-        "disliked_foods": preferences.dislikedFoods,
-        "liked_foods": preferences.likedFoods,
-        "household_size": preferences.householdSize,
-      };
-
-      final planRequirements = {
-        "duration_days": durationDays,
-        "start_date": DateTime.now().toIso8601String().split('T')[0],
-      };
-
-      final generatedPlan = await mealPlanRepo.generateMealPlan(
-        userPreferences: preferencesMap,
-        planRequirements: planRequirements,
-        userComments: comments,
+      final request = NewMealPlanRequest(
+        userId: authState.user.id,
+        numberOfDays: numberOfDays,
+        quantityOfPeople: quantityOfPeople,
+        description: description.isEmpty ? null : description,
+        mealTypes: mealTypes.isEmpty ? null : mealTypes,
       );
+
+      final mealPlanRepo = ref.read(mealPlanRepositoryProvider);
+      final generatedPlan = await mealPlanRepo.generateMealPlan(request);
 
       state = state.copyWith(
         status: MealPlanGeneratorStatus.success,
         generatedPlan: generatedPlan,
+        clearError: true,
       );
     } catch (e) {
+      // Keep provider error message concise for UI
       state = state.copyWith(
         status: MealPlanGeneratorStatus.error,
-        errorMessage: e.toString(),
+        errorMessage: e is AppError
+            ? e.message
+            : 'No se pudo generar el plan. Intenta de nuevo.',
+        clearGeneratedPlan: true,
       );
     }
+  }
+
+  void reset() {
+    state = MealPlanGeneratorState();
   }
 }
