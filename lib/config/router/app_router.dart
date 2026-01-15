@@ -101,15 +101,6 @@ class HomeScreen extends StatelessWidget {
   );
 }
 
-class MealPlanScreen extends StatelessWidget {
-  const MealPlanScreen({super.key});
-  @override
-  Widget build(BuildContext context) => Scaffold(
-    appBar: AppBar(title: const Text('Meal Plan')),
-    body: Center(child: Text('Meal Plan Screen')),
-  );
-}
-
 class RecipesScreen extends StatelessWidget {
   const RecipesScreen({super.key});
   @override
@@ -211,9 +202,7 @@ final appRouterProvider = Provider<GoRouter>((ref) {
           ),
           GoRoute(
             path: '/meal-plan',
-            builder: (context, state) => const MealPlanScreen(),
-            // --- LA CORRECCIÓN CLAVE ESTÁ AQUÍ ---
-            // La ruta de detalle ahora está anidada dentro de la ruta principal.
+            builder: (context, state) => const MealPlanDayScreen(),
             routes: [
               GoRoute(
                 path: ':id', // El path es solo el parámetro

@@ -5,6 +5,7 @@ import 'package:meal_plan_app/features/auth/domain/domain.dart';
 import 'package:meal_plan_app/features/auth/infrastructure/infrastructure.dart';
 import 'package:meal_plan_app/features/meal_plan/domain/domain.dart';
 import 'package:meal_plan_app/features/meal_plan/infrastructure/mappers/meal_plan_mapper.dart';
+import 'package:meal_plan_app/features/meal_plan/infrastructure/mappers/meal_plan_entries_mapper.dart';
 
 class SupabaseMealPlanDatasource extends MealPlanDatasource {
   final SupabaseClient _supabaseClient;
@@ -32,7 +33,7 @@ class SupabaseMealPlanDatasource extends MealPlanDatasource {
       if (_mealPlanApiBaseUrl.startsWith('No configure')) {
         throw const ConfigAppError.missing('MEAL_PLAN_API_BASE_URL');
       }
-  
+
       final response = await _http.post(
         '/api/meal-plan/generate',
         data: request.toJson(),
@@ -96,6 +97,55 @@ class SupabaseMealPlanDatasource extends MealPlanDatasource {
       return UserPreferencesMapper.fromMap(response);
     } catch (e) {
       throw DataAppError.fetchFailed('user preferences');
+    }
+  }
+
+  @override
+  Future<List<DayMealEntry>> getDayMealEntries(String userId) async {
+    try {
+      if (_mealPlanApiBaseUrl.startsWith('No configure')) {
+        throw const ConfigAppError.missing('MEAL_PLAN_API_BASE_URL');
+      }
+
+      final response = await _http.get(
+        '/api/meal-plan/entries/day',
+        queryParameters: {'userId': userId},
+        options: Options(headers: {'Content-Type': 'application/json'}),
+      );
+
+      final status = response.statusCode ?? 200;
+      if (status < 200 || status >= 300) {
+        _throwByStatus(status);
+      }
+
+      final data = response.data;
+      if (data == null) {
+        throw const DataAppError.emptyResponse('meal plan entries');
+      }
+
+      final entries = MealPlanEntriesMapper.fromResponse(data);
+      return entries;
+    } on DioException catch (e) {
+      if (e.type == DioExceptionType.connectionTimeout ||
+          e.type == DioExceptionType.sendTimeout ||
+          e.type == DioExceptionType.receiveTimeout) {
+        throw const NetworkAppError.timeout();
+      }
+
+      if (e.type == DioExceptionType.badResponse) {
+        final status = e.response?.statusCode ?? -1;
+        _throwByStatus(status);
+      }
+
+      if (e.type == DioExceptionType.connectionError) {
+        throw const NetworkAppError.unreachableHost();
+      }
+
+      throw const NetworkAppError.serverError();
+    } on AppError {
+      rethrow;
+    } catch (_) {
+      throw const NetworkAppError.serverError();
     }
   }
 

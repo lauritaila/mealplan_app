@@ -15,4 +15,9 @@ class MealPlanRepositoryImpl extends MealPlanRepository {
   Future<UserPreferences> getUserPreferences(String userId) {
     return datasource.getUserPreferences(userId);
   }
+
+  @override
+  Future<List<DayMealEntry>> getDayMealEntries(String userId) {
+    return datasource.getDayMealEntries(userId);
+  }
 }
