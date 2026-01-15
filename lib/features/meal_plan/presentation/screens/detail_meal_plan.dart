@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:go_router/go_router.dart';
 import 'package:meal_plan_app/features/meal_plan/domain/domain.dart';
 
 class DetailMealPlanScreen extends ConsumerWidget {
@@ -66,7 +67,7 @@ class DetailMealPlanScreen extends ConsumerWidget {
               minimum: const EdgeInsets.all(16),
               child: ElevatedButton(
                 onPressed: () {
-                  Navigator.of(context).pop();
+                  context.go('/home');
                 },
                 style: ElevatedButton.styleFrom(
                   padding: const EdgeInsets.symmetric(vertical: 16),

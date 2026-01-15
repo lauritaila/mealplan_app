@@ -26,7 +26,9 @@ class SupabaseDatasourceImpl implements AuthDatasource {
 
       final User? supabaseAuthUser = res.user;
       if (supabaseAuthUser == null) {
-        throw const AuthAppError.unexpected(message: 'Login failed: Could not get user from Supabase.');
+        throw const AuthAppError.unexpected(
+          message: 'Login failed: Could not get user from Supabase.',
+        );
       }
       return _loadUserProfile(supabaseAuthUser.id, supabaseAuthUser.email);
     } on AuthException catch (e) {
@@ -44,30 +46,32 @@ class SupabaseDatasourceImpl implements AuthDatasource {
     }
   }
 
-@override
-Future<void> signUp(String email, String password, String name) async {
-  try {
-    await _supabaseClient.auth.signUp(
-      email: email,
-      password: password,
-      data: {'full_name': name},
-    );
-  } on AuthException catch (e) {
-    if (e.message.contains('User already registered')) {
-      throw const AuthAppError.emailAlreadyInUse();
+  @override
+  Future<void> signUp(String email, String password, String name) async {
+    try {
+      await _supabaseClient.auth.signUp(
+        email: email,
+        password: password,
+        data: {'full_name': name},
+      );
+    } on AuthException catch (e) {
+      if (e.message.contains('User already registered')) {
+        throw const AuthAppError.emailAlreadyInUse();
+      }
+      throw const AuthAppError.unexpected();
+    } catch (e) {
+      throw const NetworkAppError.noConnection();
     }
-    throw const AuthAppError.unexpected();
-  } catch (e) {
-    throw const NetworkAppError.noConnection();
   }
-}
 
   @override
   Future<void> logOut() async {
     try {
       await _supabaseClient.auth.signOut();
     } catch (e) {
-      throw const AuthAppError.unexpected(message: 'An unexpected error occurred during logout.');
+      throw const AuthAppError.unexpected(
+        message: 'An unexpected error occurred during logout.',
+      );
     }
   }
 
@@ -93,7 +97,9 @@ Future<void> signUp(String email, String password, String name) async {
 
       final User? supabaseAuthUser = res.user;
       if (supabaseAuthUser == null) {
-        throw const AuthAppError.unexpected(message: 'OTP verification failed: Could not get user from Supabase.');
+        throw const AuthAppError.unexpected(
+          message: 'OTP verification failed: Could not get user from Supabase.',
+        );
       }
       return _loadUserProfile(supabaseAuthUser.id, supabaseAuthUser.email);
     } on AuthException catch (e) {
@@ -107,7 +113,10 @@ Future<void> signUp(String email, String password, String name) async {
   }
 
   @override
-  Future<void> saveUserPreference(UserPreferences userPreference, String userId) async {
+  Future<void> saveUserPreference(
+    UserPreferences userPreference,
+    String userId,
+  ) async {
     try {
       final preferencesMap = UserPreferencesMapper.toMap(userPreference);
       preferencesMap.remove('id');
@@ -116,7 +125,10 @@ Future<void> signUp(String email, String password, String name) async {
       preferencesMap['user_id'] = userId;
 
       await _supabaseClient.from('user_preferences').upsert(preferencesMap);
-      await _supabaseClient.from('user_profiles').update({'onboarding_complete': true}).eq('id', userId);
+      await _supabaseClient
+          .from('user_profiles')
+          .update({'onboarding_complete': true})
+          .eq('id', userId);
     } on PostgrestException {
       throw const DataAppError.updateFailed('user preferences');
     } catch (e) {
@@ -126,15 +138,49 @@ Future<void> signUp(String email, String password, String name) async {
 
   Future<UserProfile> _loadUserProfile(String userId, String? email) async {
     if (email == null) {
-      throw const AuthAppError.unexpected(message: 'User email is null. Cannot load profile.');
+      throw const AuthAppError.unexpected(
+        message: 'User email is null. Cannot load profile.',
+      );
     }
     try {
-      final response = await _supabaseClient.from('user_profiles').select().eq('id', userId).single();
-      return UserMapper.fromJson({...response, 'email': email});
+      final currentUser = _supabaseClient.auth.currentUser;
+
+      final response = await _supabaseClient
+          .from('user_profiles')
+          .select()
+          .eq('id', userId)
+          .maybeSingle();
+
+      Map<String, dynamic> profileRow = response ?? {};
+
+      // If the profile doesn't exist yet (e.g., first Google sign-in), create a minimal one.
+      if (response == null) {
+        final inferredName =
+            (currentUser?.userMetadata?['full_name'] as String?) ??
+            (currentUser?.userMetadata?['name'] as String?);
+        final avatarUrl = currentUser?.userMetadata?['avatar_url'] as String?;
+
+        final insertPayload = {
+          'id': userId,
+          'name': inferredName,
+          'profile_data': avatarUrl != null ? {'avatar_url': avatarUrl} : null,
+          // onboarding_complete defaults to false in DB
+        };
+
+        profileRow = await _supabaseClient
+            .from('user_profiles')
+            .insert(insertPayload)
+            .select()
+            .single();
+      }
+
+      return UserMapper.fromJson({...profileRow, 'email': email});
     } on PostgrestException {
       throw const DataAppError.fetchFailed('user profile');
     } catch (e) {
-      throw const AuthAppError.unexpected(message: 'An unexpected error occurred while loading profile.');
+      throw const AuthAppError.unexpected(
+        message: 'An unexpected error occurred while loading profile.',
+      );
     }
   }
 
@@ -160,19 +206,17 @@ Future<void> signUp(String email, String password, String name) async {
     return _loadUserProfile(supabaseUser.id, supabaseUser.email);
   }
 
- @override
+  @override
   Future<void> signInWithGoogle() async {
     try {
       final webClientId = Enviroment.webClientId;
       final googleSignIn = GoogleSignIn.instance;
-      await googleSignIn.initialize(
-        serverClientId: webClientId,
-      );
+      await googleSignIn.initialize(serverClientId: webClientId);
 
       final googleUser = await googleSignIn.authenticate();
 
-      final googleAuth =  googleUser.authentication;
-    
+      final googleAuth = googleUser.authentication;
+
       final idToken = googleAuth.idToken;
       if (idToken == null) {
         throw const AuthAppError.unexpected(message: 'No ID Token found.');
@@ -181,7 +225,6 @@ Future<void> signUp(String email, String password, String name) async {
         provider: OAuthProvider.google,
         idToken: idToken,
       );
-
     } on AuthException catch (e) {
       throw AuthAppError(e.message, code: e.statusCode);
     } catch (e) {
@@ -189,4 +232,3 @@ Future<void> signUp(String email, String password, String name) async {
     }
   }
 }
-

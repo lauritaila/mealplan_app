@@ -18,35 +18,43 @@ class Auth extends _$Auth {
     _authRepository = ref.watch(authRepositoryProvider);
 
     _authSubscription?.cancel();
-    _authSubscription = sb.Supabase.instance.client.auth.onAuthStateChange.listen((data) {
-      if (data.event == sb.AuthChangeEvent.signedOut) {
-        state = const UnauthenticatedAuthState();
-      }
-    });
+    _authSubscription = sb.Supabase.instance.client.auth.onAuthStateChange
+        .listen((data) {
+          if (data.event == sb.AuthChangeEvent.signedOut) {
+            state = const UnauthenticatedAuthState();
+          } else if (data.event == sb.AuthChangeEvent.signedIn ||
+              data.event == sb.AuthChangeEvent.tokenRefreshed) {
+            refreshUserStatus(); // reload profile on restored/updated session
+          }
+        });
 
     ref.onDispose(() {
       _authSubscription?.cancel();
     });
 
-    return const InitialAuthState();
+    // Try to restore any persisted session as soon as the provider builds.
+    Future.microtask(refreshUserStatus);
+
+    return const LoadingAuthState(message: 'Restaurando sesión...');
   }
-  
+
   // --- AÑADIMOS EL MÉTODO PARA GOOGLE SIGN-IN ---
   Future<void> signInWithGoogle() async {
     state = const LoadingAuthState();
     try {
       // 1. Llama al repositorio para realizar el inicio de sesión con Google.
       await _authRepository.signInWithGoogle();
-      
+
       // 2. ¡LA CORRECCIÓN CLAVE! Después de un inicio de sesión exitoso,
       //    refrescamos el estado del usuario. Esto actualizará el estado a
       //    AuthenticatedAuthState y activará la redirección de GoRouter.
       await refreshUserStatus();
-
     } on AppError catch (e) {
       state = ErrorAuthState(e.message);
     } catch (e) {
-      state = const ErrorAuthState('An unexpected error occurred during Google Sign-In.');
+      state = const ErrorAuthState(
+        'An unexpected error occurred during Google Sign-In.',
+      );
     }
   }
   // --- FIN DEL MÉTODO AÑADIDO ---
@@ -77,7 +85,9 @@ class Auth extends _$Auth {
     } on AppError catch (e) {
       state = ErrorAuthState(e.message);
     } catch (e) {
-      state = const ErrorAuthState('An unexpected error occurred during sign up.');
+      state = const ErrorAuthState(
+        'An unexpected error occurred during sign up.',
+      );
     }
   }
 
@@ -119,7 +129,7 @@ class Auth extends _$Auth {
       state = ErrorAuthState(e.message);
     }
   }
-  
+
   void cancelOtpFlow() {
     state = const UnauthenticatedAuthState();
   }

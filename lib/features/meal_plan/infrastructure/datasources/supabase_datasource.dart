@@ -22,6 +22,7 @@ class SupabaseMealPlanDatasource extends MealPlanDatasource {
            Dio(
              BaseOptions(
                baseUrl: mealPlanApiBaseUrl ?? Enviroment.mealPlanApiBaseUrl,
+               validateStatus: (_) => true, // handle status codes manually
              ),
            );
 
@@ -31,24 +32,34 @@ class SupabaseMealPlanDatasource extends MealPlanDatasource {
       if (_mealPlanApiBaseUrl.startsWith('No configure')) {
         throw const ConfigAppError.missing('MEAL_PLAN_API_BASE_URL');
       }
-
+  
       final response = await _http.post(
         '/api/meal-plan/generate',
         data: request.toJson(),
         options: Options(headers: {'Content-Type': 'application/json'}),
       );
 
-      if (response.statusCode != 200 || response.data == null) {
-        _throwByStatus(response.statusCode ?? -1);
+      final status = response.statusCode ?? 200;
+      if (status < 200 || status >= 300) {
+        _throwByStatus(status);
       }
 
-      if (response.data is! Map<String, dynamic>) {
+      final data = response.data;
+      if (data == null) {
+        _throwByStatus(status);
+      }
+
+      if (data is! Map<String, dynamic>) {
         throw const DataAppError.serializationFailed('meal plan');
       }
 
-      return MealPlanResponseMapper.fromMap(
-        Map<String, dynamic>.from(response.data as Map),
-      );
+      try {
+        return MealPlanResponseMapper.fromMap(Map<String, dynamic>.from(data));
+      } on FormatException catch (_) {
+        throw const DataAppError.serializationFailed('meal plan');
+      } on TypeError catch (_) {
+        throw const DataAppError.serializationFailed('meal plan');
+      }
     } on DioException catch (e) {
       if (e.type == DioExceptionType.connectionTimeout ||
           e.type == DioExceptionType.sendTimeout ||
@@ -66,6 +77,9 @@ class SupabaseMealPlanDatasource extends MealPlanDatasource {
       }
 
       throw const NetworkAppError.serverError();
+    } on AppError {
+      // Preserve the specific domain/network error instead of overriding it.
+      rethrow;
     } catch (_) {
       throw const NetworkAppError.serverError();
     }

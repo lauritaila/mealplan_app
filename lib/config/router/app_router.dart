@@ -8,6 +8,7 @@ import 'package:meal_plan_app/features/shared/shared.dart';
 
 import '../../features/meal_plan/meal_plan.dart';
 import 'package:meal_plan_app/features/meal_plan/domain/domain.dart';
+import 'package:meal_plan_app/features/meal_plan/presentation/screens/loading_meal_plan_screen.dart';
 
 class MainLayout extends ConsumerWidget {
   final Widget child;
@@ -175,6 +176,20 @@ final appRouterProvider = Provider<GoRouter>((ref) {
       GoRoute(
         path: '/meal-plan/new',
         builder: (context, state) => const NewMealPlanScreen(),
+      ),
+      GoRoute(
+        path: '/meal-plan/loading',
+        builder: (context, state) {
+          final extra = state.extra as Map<String, dynamic>? ?? {};
+          return LoadingMealPlanScreen(
+            description: (extra['description'] as String?) ?? '',
+            numberOfDays: (extra['numberOfDays'] as int?) ?? 3,
+            quantityOfPeople: (extra['quantityOfPeople'] as int?) ?? 1,
+            mealTypes: List<String>.from(
+              extra['mealTypes'] as List? ?? const [],
+            ),
+          );
+        },
       ),
       GoRoute(
         path: '/meal-plan/approve',

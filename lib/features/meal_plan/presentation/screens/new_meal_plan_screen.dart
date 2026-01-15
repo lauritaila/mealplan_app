@@ -37,27 +37,7 @@ class _NewMealPlanScreenState extends ConsumerState<NewMealPlanScreen> {
 
   @override
   Widget build(BuildContext context) {
-    ref.listen(mealPlanGeneratorProvider, (previous, next) {
-      if (next.status == MealPlanGeneratorStatus.success) {
-        if (next.generatedPlan != null) {
-          ScaffoldMessenger.of(context)
-            ..hideCurrentSnackBar()
-            ..showSnackBar(
-              const SnackBar(content: Text('Plan generado con exito')),
-            );
-          context.push('/meal-plan/approve', extra: next.generatedPlan);
-        }
-      } else if (next.status == MealPlanGeneratorStatus.error) {
-        ScaffoldMessenger.of(context)
-          ..hideCurrentSnackBar()
-          ..showSnackBar(
-            SnackBar(content: Text(next.errorMessage ?? 'An error occurred')),
-          );
-      }
-    });
-
-    final state = ref.watch(mealPlanGeneratorProvider);
-    final isLoading = state.status == MealPlanGeneratorStatus.loading;
+    const isLoading = false;
 
     return Scaffold(
       appBar: AppBar(
@@ -155,6 +135,13 @@ class _NewMealPlanScreenState extends ConsumerState<NewMealPlanScreen> {
                       ),
                       const SizedBox(height: 10),
                       _MealTypeTile(
+                        title: 'Snack',
+                        subtitle: 'Algo ligero',
+                        selected: _selectedMealTypes.contains('snack'),
+                        onTap: () => _toggleMealType('snack'),
+                      ),
+                      const SizedBox(height: 10),
+                      _MealTypeTile(
                         title: 'Cena',
                         subtitle: 'Ligera y nutritiva',
                         selected: _selectedMealTypes.contains('dinner'),
@@ -201,7 +188,6 @@ class _NewMealPlanScreenState extends ConsumerState<NewMealPlanScreen> {
               ],
             ),
           ),
-          if (isLoading) const _BlockingLoader(),
         ],
       ),
     );
@@ -218,14 +204,15 @@ class _NewMealPlanScreenState extends ConsumerState<NewMealPlanScreen> {
   }
 
   void _onGenerate() {
-    ref
-        .read(mealPlanGeneratorProvider.notifier)
-        .generatePlan(
-          description: _descriptionController.text.trim(),
-          numberOfDays: _selectedDays,
-          quantityOfPeople: _peopleCount,
-          mealTypes: _selectedMealTypes.toList(),
-        );
+    context.push(
+      '/meal-plan/loading',
+      extra: {
+        'description': _descriptionController.text.trim(),
+        'numberOfDays': _selectedDays,
+        'quantityOfPeople': _peopleCount,
+        'mealTypes': _selectedMealTypes.toList(),
+      },
+    );
   }
 }
 
