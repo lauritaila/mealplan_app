@@ -4,5 +4,5 @@ import 'package:meal_plan_app/features/meal_plan/domain/entities/entities.dart';
 abstract class MealPlanDatasource {
   Future<UserPreferences> getUserPreferences(String userId);
   Future<MealPlanResponse> generateMealPlan(NewMealPlanRequest request);
-  Future<List<DayMealEntry>> getDayMealEntries(String userId);
+  Future<List<DayMealEntry>> getDayMealEntries(String userId, {String? date});
 }

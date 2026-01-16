@@ -101,7 +101,10 @@ class SupabaseMealPlanDatasource extends MealPlanDatasource {
   }
 
   @override
-  Future<List<DayMealEntry>> getDayMealEntries(String userId) async {
+  Future<List<DayMealEntry>> getDayMealEntries(
+    String userId, {
+    String? date,
+  }) async {
     try {
       if (_mealPlanApiBaseUrl.startsWith('No configure')) {
         throw const ConfigAppError.missing('MEAL_PLAN_API_BASE_URL');
@@ -109,7 +112,7 @@ class SupabaseMealPlanDatasource extends MealPlanDatasource {
 
       final response = await _http.get(
         '/api/meal-plan/entries/day',
-        queryParameters: {'userId': userId},
+        queryParameters: {'userId': userId, if (date != null) 'date': date},
         options: Options(headers: {'Content-Type': 'application/json'}),
       );
 

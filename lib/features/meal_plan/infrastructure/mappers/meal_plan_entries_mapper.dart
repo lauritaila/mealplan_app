@@ -22,6 +22,7 @@ class MealPlanEntriesMapper {
     final recipeMap = Map<String, dynamic>.from(entry['recipe'] ?? {});
     final ingredients = _mapIngredients(recipeMap);
     return DayMealEntry(
+      mealType: _toMealType(entry['meal_type'] ?? entry['mealType']),
       name: (recipeMap['name'] ?? entry['name'] ?? '') as String,
       description:
           (recipeMap['description'] ?? entry['description'] ?? '') as String,
@@ -50,6 +51,12 @@ class MealPlanEntriesMapper {
             entry['proteinGrams'],
       ),
     );
+  }
+
+  static String? _toMealType(dynamic value) {
+    if (value == null) return null;
+    final text = value.toString().trim();
+    return text.isEmpty ? null : text;
   }
 
   static List<DayMealIngredient> _mapIngredients(

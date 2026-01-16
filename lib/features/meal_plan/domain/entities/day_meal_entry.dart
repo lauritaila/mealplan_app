@@ -1,4 +1,5 @@
 class DayMealEntry {
+  final String? mealType;
   final String name;
   final String description;
   final String instructions;
@@ -10,6 +11,7 @@ class DayMealEntry {
   final double? proteinGrams;
 
   const DayMealEntry({
+    this.mealType,
     required this.name,
     required this.description,
     required this.instructions,
