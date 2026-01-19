@@ -16,51 +16,33 @@ class DetailMealPlanScreen extends ConsumerWidget {
       appBar: AppBar(title: const Text('Aprobar plan')),
       body: generatedPlan == null
           ? const Center(child: Text('No plan data received.'))
-          : Stack(
-              children: [
-                ListView(
-                  padding: const EdgeInsets.all(16),
-                  children: [
-                    Text(
-                      plan!.planName,
-                      style: const TextStyle(
-                        fontSize: 22,
-                        fontWeight: FontWeight.w700,
+          : SafeArea(
+            child: Stack(
+                children: [
+                  ListView(
+                    padding: const EdgeInsets.all(16),
+                    children: [
+                      Text(
+                        plan!.planName,
+                        style: const TextStyle(
+                          fontSize: 22,
+                          fontWeight: FontWeight.w700,
+                        ),
                       ),
-                    ),
-                    const SizedBox(height: 6),
-                    Text(
-                      '${_formatDate(plan.startDate)} - ${_formatDate(plan.endDate)}',
-                      style: TextStyle(color: Colors.grey.shade700),
-                    ),
-                    const SizedBox(height: 12),
-                    Wrap(
-                      spacing: 8,
-                      runSpacing: 8,
-                      children: [
-                        _Chip(
-                          label:
-                              'Recetas: ${generatedPlan!.meta.recipesProvided}',
-                        ),
-                        _Chip(
-                          label:
-                              'Suscripcion: ${generatedPlan!.meta.subscriptionPlan}',
-                        ),
-                        _Chip(
-                          label:
-                              'Preferencias cargadas: ${generatedPlan!.meta.preferencesFound ? 'si' : 'no'}',
-                        ),
-                      ],
-                    ),
-                    const SizedBox(height: 16),
-                    ...plan.dailyMeals
-                        .map((day) => _DayCard(day: day))
-                        .toList(),
-                    const SizedBox(height: 40),
-                  ],
-                ),
-              ],
-            ),
+                      const SizedBox(height: 6),
+                      Text(
+                        '${_formatDate(plan.startDate)} - ${_formatDate(plan.endDate)}',
+                        style: TextStyle(color: Colors.grey.shade700),
+                      ),
+                      const SizedBox(height: 16),
+                      ...plan.dailyMeals
+                          .map((day) => _DayCard(day: day)),
+                      const SizedBox(height: 40),
+                    ],
+                  ),
+                ],
+              ),
+          ),
       bottomNavigationBar: generatedPlan == null
           ? null
           : SafeArea(
@@ -98,7 +80,7 @@ class _DayCard extends StatelessWidget {
         border: Border.all(color: Colors.grey.shade200),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withOpacity(0.03),
+            color: Colors.black.withValues(alpha: 0.03),
             offset: const Offset(0, 6),
             blurRadius: 12,
           ),
@@ -121,7 +103,7 @@ class _DayCard extends StatelessWidget {
             ],
           ),
           const SizedBox(height: 10),
-          ...day.meals.map((meal) => _MealTile(meal: meal)).toList(),
+          ...day.meals.map((meal) => _MealTile(meal: meal)),
         ],
       ),
     );
