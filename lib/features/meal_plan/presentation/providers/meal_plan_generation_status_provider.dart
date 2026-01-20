@@ -11,12 +11,8 @@ final mealPlanGenerationStatusProvider =
       }
 
       final repository = ref.read(mealPlanRepositoryProvider);
-      print(
-        'Fetching meal plan generation status for user: ${authState.user.id}',
-      );
       final result = await repository.getMealPlanGenerationStatus(
         authState.user.id,
       );
-      print('Status fetched: $result');
       return result;
     });

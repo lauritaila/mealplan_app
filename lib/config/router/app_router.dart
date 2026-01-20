@@ -119,7 +119,7 @@ class NutritionScreen extends StatelessWidget {
 class GoRouterNotifier extends ChangeNotifier {
   final Ref _ref;
   GoRouterNotifier(this._ref) {
-    _ref.listen<AuthState>(authProvider, (_, __) => notifyListeners());
+    _ref.listen<AuthState>(authProvider, (_, _) => notifyListeners());
   }
 }
 

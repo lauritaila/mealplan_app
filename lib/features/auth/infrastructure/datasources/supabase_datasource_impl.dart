@@ -326,8 +326,9 @@ class SupabaseDatasourceImpl implements AuthDatasource {
     if (statusCode == 401) throw const PermissionAppError.unauthorized();
     if (statusCode == 403) throw const PermissionAppError.forbidden();
     if (statusCode == 404) throw const DataAppError.notFound('user profile');
-    if (statusCode == 409)
+    if (statusCode == 409) {
       throw const DataAppError.updateFailed('user profile');
+    }
     if (statusCode == 429) throw const NetworkAppError.tooManyRequests();
     if (statusCode >= 500 && statusCode < 600) {
       throw const NetworkAppError.serverError();

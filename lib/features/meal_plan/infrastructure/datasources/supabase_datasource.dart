@@ -171,9 +171,6 @@ class SupabaseMealPlanDatasource extends MealPlanDatasource {
       }
 
       final session = _supabaseClient.auth.currentSession;
-      print(
-        'Session token: ${session?.accessToken != null ? 'present' : 'null'}',
-      );
       final response = await _dio.get(
         '/api/meal-plan/can-generate',
         queryParameters: {'userId': userId},
@@ -185,8 +182,6 @@ class SupabaseMealPlanDatasource extends MealPlanDatasource {
           },
         ),
       );
-      print('Response status: ${response.statusCode}, data: ${response.data}');
-
       final status = response.statusCode ?? 200;
       if (status < 200 || status >= 300) {
         _throwByStatus(status);
