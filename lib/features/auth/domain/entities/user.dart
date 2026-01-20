@@ -1,5 +1,29 @@
+import 'package:equatable/equatable.dart';
 
-import 'package:equatable/equatable.dart'; 
+class Permissions extends Equatable {
+  final Map<String, List<String>> description;
+  final PermissionDetails permissions;
+
+  const Permissions({required this.description, required this.permissions});
+
+  @override
+  List<Object?> get props => [description, permissions];
+}
+
+class PermissionDetails extends Equatable {
+  final List<int> mealPlanDays;
+  final int? mealPlanGenerate;
+  final List<String> mealPlanTypeFood;
+
+  const PermissionDetails({
+    required this.mealPlanDays,
+    required this.mealPlanGenerate,
+    required this.mealPlanTypeFood,
+  });
+
+  @override
+  List<Object?> get props => [mealPlanDays, mealPlanGenerate, mealPlanTypeFood];
+}
 
 class UserProfile extends Equatable {
   final String id;
@@ -7,6 +31,8 @@ class UserProfile extends Equatable {
   final String? name;
   final Map<String, dynamic>? profileData;
   final bool onboardingComplete;
+  final Permissions? permissions;
+  final String? planName;
 
   const UserProfile({
     required this.onboardingComplete,
@@ -14,6 +40,8 @@ class UserProfile extends Equatable {
     required this.email,
     this.name,
     this.profileData,
+    this.permissions,
+    this.planName,
   });
 
   UserProfile copyWith({
@@ -22,6 +50,8 @@ class UserProfile extends Equatable {
     String? name,
     Map<String, dynamic>? profileData,
     bool? onboardingComplete,
+    Permissions? permissions,
+    String? planName,
   }) {
     return UserProfile(
       id: id ?? this.id,
@@ -29,9 +59,19 @@ class UserProfile extends Equatable {
       name: name ?? this.name,
       profileData: profileData ?? this.profileData,
       onboardingComplete: onboardingComplete ?? this.onboardingComplete,
+      permissions: permissions ?? this.permissions,
+      planName: planName ?? this.planName,
     );
   }
 
   @override
-  List<Object?> get props => [id, email, name, profileData];
+  List<Object?> get props => [
+    id,
+    email,
+    name,
+    profileData,
+    onboardingComplete,
+    permissions,
+    planName,
+  ];
 }

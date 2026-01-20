@@ -42,12 +42,7 @@ class Auth extends _$Auth {
   Future<void> signInWithGoogle() async {
     state = const LoadingAuthState();
     try {
-      // 1. Llama al repositorio para realizar el inicio de sesión con Google.
       await _authRepository.signInWithGoogle();
-
-      // 2. ¡LA CORRECCIÓN CLAVE! Después de un inicio de sesión exitoso,
-      //    refrescamos el estado del usuario. Esto actualizará el estado a
-      //    AuthenticatedAuthState y activará la redirección de GoRouter.
       await refreshUserStatus();
     } on AppError catch (e) {
       state = ErrorAuthState(e.message);

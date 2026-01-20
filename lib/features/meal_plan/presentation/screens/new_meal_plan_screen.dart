@@ -12,7 +12,6 @@ class NewMealPlanScreen extends ConsumerStatefulWidget {
 
 class _NewMealPlanScreenState extends ConsumerState<NewMealPlanScreen> {
   final _descriptionController = TextEditingController();
-  final List<int> _durationOptions = [3, 5, 7, 14];
   final Set<String> _selectedMealTypes = {'breakfast', 'lunch', 'dinner'};
   int _selectedDays = 5;
   int _peopleCount = 2;
@@ -24,12 +23,24 @@ class _NewMealPlanScreenState extends ConsumerState<NewMealPlanScreen> {
   }
 
   void _resetForm() {
+    final availableDurations = ref.read(availableDurationsProvider);
+    final availableMealTypes = ref.read(availableMealTypesProvider);
+    final showMealTypeSelection = ref.read(shouldShowMealTypeSelectionProvider);
+
     setState(() {
-      _selectedDays = 5;
+      _selectedDays = availableDurations.contains(5)
+          ? 5
+          : availableDurations.first;
       _peopleCount = 2;
-      _selectedMealTypes
-        ..clear()
-        ..addAll({'breakfast', 'lunch', 'dinner'});
+      if (showMealTypeSelection) {
+        _selectedMealTypes
+          ..clear()
+          ..addAll(availableMealTypes);
+      } else {
+        _selectedMealTypes
+          ..clear()
+          ..add(availableMealTypes.first);
+      }
       _descriptionController.clear();
     });
     ref.read(mealPlanGeneratorProvider.notifier).reset();
@@ -40,14 +51,36 @@ class _NewMealPlanScreenState extends ConsumerState<NewMealPlanScreen> {
     final state = ref.watch(mealPlanGeneratorProvider);
     final isLoading = state.status == MealPlanGeneratorStatus.loading;
 
+    final availableDurations = ref.watch(availableDurationsProvider);
+    final availableMealTypes = ref.watch(availableMealTypesProvider);
+    final showMealTypeSelection = ref.watch(
+      shouldShowMealTypeSelectionProvider,
+    );
+
+    // Ensure selected values are valid
+    if (!availableDurations.contains(_selectedDays)) {
+      _selectedDays = availableDurations.first;
+    }
+    if (showMealTypeSelection) {
+      _selectedMealTypes.retainWhere(
+        (type) => availableMealTypes.contains(type),
+      );
+      if (_selectedMealTypes.isEmpty) {
+        _selectedMealTypes.addAll(availableMealTypes);
+      }
+    } else {
+      _selectedMealTypes.clear();
+      _selectedMealTypes.add(availableMealTypes.first);
+    }
+
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Nuevo Plan'),
+        title: const Text('New Plan'),
         actions: [
           TextButton(
             onPressed: _resetForm,
             child: Text(
-              'Limpiar',
+              'Clear',
               style: TextStyle(color: Theme.of(context).colorScheme.primary),
             ),
           ),
@@ -63,24 +96,24 @@ class _NewMealPlanScreenState extends ConsumerState<NewMealPlanScreen> {
                 children: [
                   const SizedBox(height: 4),
                   const Text(
-                    'Configura tu plan',
+                    'Configure your plan',
                     style: TextStyle(fontSize: 22, fontWeight: FontWeight.w700),
                   ),
                   const SizedBox(height: 4),
                   Text(
-                    'Define duracion, personas y comidas base.',
+                    'Define duration, people and base meals.',
                     style: Theme.of(context).textTheme.bodySmall,
                   ),
                   const SizedBox(height: 20),
                   _Section(
-                    title: 'Duracion',
+                    title: 'Duration',
                     child: Wrap(
                       spacing: 12,
                       runSpacing: 12,
-                      children: _durationOptions
+                      children: availableDurations
                           .map(
                             (days) => _PillOption(
-                              label: '$days dias',
+                              label: '$days days',
                               selected: _selectedDays == days,
                               onTap: () => setState(() => _selectedDays = days),
                             ),
@@ -89,7 +122,7 @@ class _NewMealPlanScreenState extends ConsumerState<NewMealPlanScreen> {
                     ),
                   ),
                   _Section(
-                    title: 'Comensales',
+                    title: 'Diners',
                     child: Row(
                       children: [
                         _IconCircleButton(
@@ -103,7 +136,7 @@ class _NewMealPlanScreenState extends ConsumerState<NewMealPlanScreen> {
                         Expanded(
                           child: Center(
                             child: Text(
-                              '$_peopleCount personas',
+                              '$_peopleCount people',
                               style: const TextStyle(
                                 fontSize: 18,
                                 fontWeight: FontWeight.w600,
@@ -118,48 +151,61 @@ class _NewMealPlanScreenState extends ConsumerState<NewMealPlanScreen> {
                       ],
                     ),
                   ),
-                  _Section(
-                    title: 'Tipos de comida',
-                    child: Column(
-                      children: [
-                        _MealTypeTile(
-                          title: 'Desayuno',
-                          subtitle: 'Energia para el dia',
-                          selected: _selectedMealTypes.contains('breakfast'),
-                          onTap: () => _toggleMealType('breakfast'),
-                        ),
-                        const SizedBox(height: 10),
-                        _MealTypeTile(
-                          title: 'Almuerzo',
-                          subtitle: 'Comida principal',
-                          selected: _selectedMealTypes.contains('lunch'),
-                          onTap: () => _toggleMealType('lunch'),
-                        ),
-                        const SizedBox(height: 10),
-                        _MealTypeTile(
-                          title: 'Snack',
-                          subtitle: 'Algo ligero',
-                          selected: _selectedMealTypes.contains('snack'),
-                          onTap: () => _toggleMealType('snack'),
-                        ),
-                        const SizedBox(height: 10),
-                        _MealTypeTile(
-                          title: 'Cena',
-                          subtitle: 'Ligera y nutritiva',
-                          selected: _selectedMealTypes.contains('dinner'),
-                          onTap: () => _toggleMealType('dinner'),
-                        ),
-                      ],
+                  if (showMealTypeSelection)
+                    _Section(
+                      title: 'Meal types',
+                      child: Column(
+                        children: [
+                          if (availableMealTypes.contains('breakfast'))
+                            _MealTypeTile(
+                              title: 'Breakfast',
+                              subtitle: 'Energy for the day',
+                              selected: _selectedMealTypes.contains(
+                                'breakfast',
+                              ),
+                              onTap: () => _toggleMealType('breakfast'),
+                            ),
+                          if (availableMealTypes.contains('breakfast') &&
+                              availableMealTypes.contains('lunch'))
+                            const SizedBox(height: 10),
+                          if (availableMealTypes.contains('lunch'))
+                            _MealTypeTile(
+                              title: 'Lunch',
+                              subtitle: 'Main meal',
+                              selected: _selectedMealTypes.contains('lunch'),
+                              onTap: () => _toggleMealType('lunch'),
+                            ),
+                          if (availableMealTypes.contains('lunch') &&
+                              availableMealTypes.contains('snack'))
+                            const SizedBox(height: 10),
+                          if (availableMealTypes.contains('snack'))
+                            _MealTypeTile(
+                              title: 'Snack',
+                              subtitle: 'Something light',
+                              selected: _selectedMealTypes.contains('snack'),
+                              onTap: () => _toggleMealType('snack'),
+                            ),
+                          if (availableMealTypes.contains('snack') &&
+                              availableMealTypes.contains('dinner'))
+                            const SizedBox(height: 10),
+                          if (availableMealTypes.contains('dinner'))
+                            _MealTypeTile(
+                              title: 'Dinner',
+                              subtitle: 'Light and nutritious',
+                              selected: _selectedMealTypes.contains('dinner'),
+                              onTap: () => _toggleMealType('dinner'),
+                            ),
+                        ],
+                      ),
                     ),
-                  ),
                   _Section(
-                    title: 'Notas (opcional)',
+                    title: 'Notes (optional)',
                     child: TextField(
                       controller: _descriptionController,
                       maxLines: 4,
                       decoration: const InputDecoration(
                         border: OutlineInputBorder(),
-                        hintText: 'Ej: Sin lactosa, mas proteinas...',
+                        hintText: 'E.g.: Lactose-free, more proteins...',
                       ),
                     ),
                   ),
@@ -183,7 +229,7 @@ class _NewMealPlanScreenState extends ConsumerState<NewMealPlanScreen> {
                                 strokeWidth: 2,
                               ),
                             )
-                          : const Text('Continuar'),
+                          : const Text('Continue'),
                     ),
                   ),
                   const SizedBox(height: 12),
@@ -197,6 +243,8 @@ class _NewMealPlanScreenState extends ConsumerState<NewMealPlanScreen> {
   }
 
   void _toggleMealType(String type) {
+    final availableMealTypes = ref.read(availableMealTypesProvider);
+    if (!availableMealTypes.contains(type)) return;
     setState(() {
       if (_selectedMealTypes.contains(type)) {
         _selectedMealTypes.remove(type);

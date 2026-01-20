@@ -1,3 +1,4 @@
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:meal_plan_app/features/auth/presentation/provider/provider.dart';
 import 'package:meal_plan_app/config/errors/app_errors.dart';
 import 'package:meal_plan_app/features/meal_plan/domain/domain.dart';
@@ -38,6 +39,34 @@ class MealPlanGeneratorState {
   }
 }
 
+@riverpod
+List<int> availableDurations(Ref ref) {
+  final authState = ref.watch(authProvider);
+  if (authState is AuthenticatedAuthState &&
+      authState.user.permissions != null) {
+    final days = authState.user.permissions!.permissions.mealPlanDays;
+    return days.isNotEmpty ? days : [3, 5, 7, 14];
+  }
+  return [3, 5, 7, 14];
+}
+
+@riverpod
+List<String> availableMealTypes(Ref ref) {
+  final authState = ref.watch(authProvider);
+  if (authState is AuthenticatedAuthState &&
+      authState.user.permissions != null) {
+    final types = authState.user.permissions!.permissions.mealPlanTypeFood;
+    return types.isNotEmpty ? types : ['breakfast', 'lunch', 'dinner', 'snack'];
+  }
+  return ['breakfast', 'lunch', 'dinner', 'snack'];
+}
+
+@riverpod
+bool shouldShowMealTypeSelection(Ref ref) {
+  final types = ref.watch(availableMealTypesProvider);
+  return types.length > 1;
+}
+
 // El provider
 @riverpod
 class MealPlanGenerator extends _$MealPlanGenerator {
@@ -63,6 +92,18 @@ class MealPlanGenerator extends _$MealPlanGenerator {
         throw Exception('User not authenticated');
       }
 
+      final user = authState.user;
+      if (user.permissions != null) {
+        final allowedDays = user.permissions!.permissions.mealPlanDays;
+        if (!allowedDays.contains(numberOfDays)) {
+          throw Exception('Number of days not allowed');
+        }
+        final allowedTypes = user.permissions!.permissions.mealPlanTypeFood;
+        if (!mealTypes.every((type) => allowedTypes.contains(type))) {
+          throw Exception('Meal types not allowed');
+        }
+      }
+
       final request = NewMealPlanRequest(
         userId: authState.user.id,
         numberOfDays: numberOfDays,
@@ -85,7 +126,7 @@ class MealPlanGenerator extends _$MealPlanGenerator {
         status: MealPlanGeneratorStatus.error,
         errorMessage: e is AppError
             ? e.message
-            : 'No se pudo generar el plan. Intenta de nuevo.',
+            : 'Could not generate the plan. Try again.',
         clearGeneratedPlan: true,
       );
     }

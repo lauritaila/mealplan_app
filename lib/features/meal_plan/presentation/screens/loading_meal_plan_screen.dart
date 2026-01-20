@@ -71,6 +71,12 @@ class _LoadingMealPlanScreenState extends ConsumerState<LoadingMealPlanScreen> {
     });
   }
 
+  bool _isQuotaError(String? message) {
+    if (message == null) return false;
+    final normalized = message.toLowerCase();
+    return normalized.contains('limit of') && normalized.contains('plans');
+  }
+
   @override
   Widget build(BuildContext context) {
     ref.listen<MealPlanGeneratorState>(mealPlanGeneratorProvider, (prev, next) {
@@ -79,11 +85,28 @@ class _LoadingMealPlanScreenState extends ConsumerState<LoadingMealPlanScreen> {
           next.generatedPlan != null) {
         context.go('/meal-plan/approve', extra: next.generatedPlan);
       } else if (next.status == MealPlanGeneratorStatus.error) {
+        final message = next.errorMessage;
+        if (_isQuotaError(message)) {
+          ref.read(mealPlanGeneratorProvider.notifier).reset();
+          context.go(
+            '/premium',
+            extra: {
+              'title': 'Plan limit reached',
+              'message':
+                  message ?? 'You have run out of plan generations this week.',
+            },
+          );
+          return;
+        }
+
+        context.pop();
         ScaffoldMessenger.of(context)
           ..hideCurrentSnackBar()
           ..showSnackBar(
             SnackBar(
-              content: Text(next.errorMessage ?? 'No se pudo generar el plan.'),
+              content: Text(
+                message ?? 'Could not generate the plan. Please try again.',
+              ),
             ),
           );
       }

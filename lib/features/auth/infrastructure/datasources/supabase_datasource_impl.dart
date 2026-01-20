@@ -1,3 +1,4 @@
+import 'package:dio/dio.dart';
 import 'package:meal_plan_app/config/config.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 
@@ -7,8 +8,25 @@ import '../infrastructure.dart';
 
 class SupabaseDatasourceImpl implements AuthDatasource {
   final SupabaseClient _supabaseClient;
+  final Dio _dio;
+  final String _userApiBaseUrl;
 
-  SupabaseDatasourceImpl(this._supabaseClient);
+  SupabaseDatasourceImpl(
+    this._supabaseClient, {
+    Dio? httpClient,
+    String? userApiBaseUrl,
+  }) : _userApiBaseUrl = userApiBaseUrl ?? Enviroment.apiBaseUrl,
+       _dio =
+           httpClient ??
+           Dio(
+             BaseOptions(
+               baseUrl: userApiBaseUrl ?? Enviroment.apiBaseUrl,
+               validateStatus: (_) => true,
+               connectTimeout: const Duration(seconds: 10),
+               receiveTimeout: const Duration(seconds: 10),
+               sendTimeout: const Duration(seconds: 10),
+             ),
+           );
 
   @override
   Future<bool> isAuthenticated() async {
@@ -200,10 +218,81 @@ class SupabaseDatasourceImpl implements AuthDatasource {
   @override
   Future<UserProfile> getAuthenticatedUserProfile() async {
     final supabaseUser = _supabaseClient.auth.currentUser;
+    final session = _supabaseClient.auth.currentSession;
     if (supabaseUser == null || supabaseUser.email == null) {
       throw const PermissionAppError.unauthorized();
     }
-    return _loadUserProfile(supabaseUser.id, supabaseUser.email);
+    if (session == null || session.accessToken.isEmpty) {
+      throw const PermissionAppError.unauthorized();
+    }
+
+    try {
+      if (_userApiBaseUrl.startsWith('No configure')) {
+        throw const ConfigAppError.missing('API_BASE_URL');
+      }
+
+      final response = await _dio.get(
+        '/api/user/profile/${supabaseUser.id}',
+        options: Options(
+          headers: {
+            'Content-Type': 'application/json',
+            'Authorization': 'Bearer ${session.accessToken}',
+          },
+        ),
+      );
+
+      final status = response.statusCode ?? 200;
+      if (status < 200 || status >= 300) {
+        _throwByStatus(status);
+      }
+
+      final data = response.data;
+      if (data == null) {
+        throw const DataAppError.emptyResponse('user profile');
+      }
+
+      if (data is! Map<String, dynamic>) {
+        throw const DataAppError.serializationFailed('user profile');
+      }
+
+      final profileData = data['profile'];
+      if (profileData == null || profileData is! Map<String, dynamic>) {
+        throw const DataAppError.serializationFailed('user profile');
+      }
+
+      final adjustedProfileData = {
+        'id': profileData['id'],
+        'name': profileData['name'],
+        'profile_data': profileData['profileData'],
+        'onboarding_complete': profileData['onboardingComplete'],
+        'plan_name': profileData['planName'],
+        'email': supabaseUser.email!,
+        'permissions': data['permissions'],
+      };
+
+      return UserMapper.fromJson(adjustedProfileData);
+    } on DioException catch (e) {
+      if (e.type == DioExceptionType.connectionTimeout ||
+          e.type == DioExceptionType.sendTimeout ||
+          e.type == DioExceptionType.receiveTimeout) {
+        throw const NetworkAppError.timeout();
+      }
+
+      if (e.type == DioExceptionType.badResponse) {
+        final status = e.response?.statusCode ?? -1;
+        _throwByStatus(status);
+      }
+
+      if (e.type == DioExceptionType.connectionError) {
+        throw const NetworkAppError.unreachableHost();
+      }
+
+      throw const NetworkAppError.serverError();
+    } on AppError {
+      rethrow;
+    } catch (_) {
+      throw const NetworkAppError.serverError();
+    }
   }
 
   @override
@@ -230,5 +319,19 @@ class SupabaseDatasourceImpl implements AuthDatasource {
     } catch (e) {
       throw AuthAppError.unexpected(message: e.toString());
     }
+  }
+
+  Never _throwByStatus(int statusCode) {
+    if (statusCode == 400) throw const NetworkAppError.badRequest();
+    if (statusCode == 401) throw const PermissionAppError.unauthorized();
+    if (statusCode == 403) throw const PermissionAppError.forbidden();
+    if (statusCode == 404) throw const DataAppError.notFound('user profile');
+    if (statusCode == 409)
+      throw const DataAppError.updateFailed('user profile');
+    if (statusCode == 429) throw const NetworkAppError.tooManyRequests();
+    if (statusCode >= 500 && statusCode < 600) {
+      throw const NetworkAppError.serverError();
+    }
+    throw const NetworkAppError.badResponse();
   }
 }

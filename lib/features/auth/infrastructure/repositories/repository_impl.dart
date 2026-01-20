@@ -33,7 +33,8 @@ class AuthRepositoryImpl implements AuthRepository {
     final isAuthenticated = await datasource.isAuthenticated();
     if (isAuthenticated) {
       try {
-        return await datasource.getAuthenticatedUserProfile();
+        var resp = await datasource.getAuthenticatedUserProfile();
+        return resp;
       } catch (e) {
         await datasource.logOut(); 
         throw AuthAppError('Failed to check auth status: ${e.toString()}');

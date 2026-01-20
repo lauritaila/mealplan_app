@@ -3,6 +3,7 @@ import 'package:go_router/go_router.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import 'package:meal_plan_app/features/auth/auth.dart';
+import 'package:meal_plan_app/features/home/home.dart';
 import 'package:meal_plan_app/features/auth/presentation/provider/provider.dart';
 import 'package:meal_plan_app/features/shared/shared.dart';
 
@@ -87,20 +88,6 @@ class MainLayout extends ConsumerWidget {
 }
 
 // --- Placeholders para las pantallas ---
-class HomeScreen extends StatelessWidget {
-  const HomeScreen({super.key});
-  @override
-  Widget build(BuildContext context) => Scaffold(
-    appBar: AppBar(title: const Text('Home')),
-    body: Center(
-      child: ElevatedButton(
-        onPressed: () => context.push('/meal-plan/new'),
-        child: const Text('Generate New Plan'),
-      ),
-    ),
-  );
-}
-
 class RecipesScreen extends StatelessWidget {
   const RecipesScreen({super.key});
   @override
@@ -187,6 +174,17 @@ final appRouterProvider = Provider<GoRouter>((ref) {
         builder: (context, state) {
           final generatedPlan = state.extra as MealPlanResponse?;
           return DetailMealPlanScreen(generatedPlan: generatedPlan);
+        },
+      ),
+      GoRoute(
+        path: '/premium',
+        builder: (context, state) {
+          final extra = state.extra as Map<String, dynamic>? ?? {};
+          final title = (extra['title'] as String?) ?? 'Premium';
+          final message =
+              (extra['message'] as String?) ??
+              'You have run out of plan generations this week.';
+          return PremiunScreen(title: title, message: message);
         },
       ),
 

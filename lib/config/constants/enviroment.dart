@@ -8,7 +8,7 @@ class Enviroment {
       dotenv.env['SUPABASE_ANON_KEY'] ?? 'No configure the SUPABASE_ANON_KEY';
   static String webClientId =
       dotenv.env['WEB_CLIENT_ID'] ?? 'No configure the WEB_CLIENT_ID';
-  static String mealPlanApiBaseUrl =
-      dotenv.env['MEAL_PLAN_API_BASE_URL'] ??
-      'No configure the MEAL_PLAN_API_BASE_URL';
+  static String apiBaseUrl =
+      dotenv.env['API_BASE_URL'] ??
+      'No configure the API_BASE_URL';
 }

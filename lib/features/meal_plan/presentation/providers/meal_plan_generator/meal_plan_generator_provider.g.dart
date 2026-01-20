@@ -6,7 +6,61 @@ part of 'meal_plan_generator_provider.dart';
 // RiverpodGenerator
 // **************************************************************************
 
-String _$mealPlanGeneratorHash() => r'83138335b12ddd4f96ef65edac84717d276e31ab';
+String _$availableDurationsHash() =>
+    r'a303885f794f7b6740e2b613582a6b05960399db';
+
+/// See also [availableDurations].
+@ProviderFor(availableDurations)
+final availableDurationsProvider = AutoDisposeProvider<List<int>>.internal(
+  availableDurations,
+  name: r'availableDurationsProvider',
+  debugGetCreateSourceHash: const bool.fromEnvironment('dart.vm.product')
+      ? null
+      : _$availableDurationsHash,
+  dependencies: null,
+  allTransitiveDependencies: null,
+);
+
+@Deprecated('Will be removed in 3.0. Use Ref instead')
+// ignore: unused_element
+typedef AvailableDurationsRef = AutoDisposeProviderRef<List<int>>;
+String _$availableMealTypesHash() =>
+    r'f507189ecdfad198a7a2a4267339e3b3c1296fcc';
+
+/// See also [availableMealTypes].
+@ProviderFor(availableMealTypes)
+final availableMealTypesProvider = AutoDisposeProvider<List<String>>.internal(
+  availableMealTypes,
+  name: r'availableMealTypesProvider',
+  debugGetCreateSourceHash: const bool.fromEnvironment('dart.vm.product')
+      ? null
+      : _$availableMealTypesHash,
+  dependencies: null,
+  allTransitiveDependencies: null,
+);
+
+@Deprecated('Will be removed in 3.0. Use Ref instead')
+// ignore: unused_element
+typedef AvailableMealTypesRef = AutoDisposeProviderRef<List<String>>;
+String _$shouldShowMealTypeSelectionHash() =>
+    r'f065e0fc73c6726b65026ab83b06f3a19a192900';
+
+/// See also [shouldShowMealTypeSelection].
+@ProviderFor(shouldShowMealTypeSelection)
+final shouldShowMealTypeSelectionProvider = AutoDisposeProvider<bool>.internal(
+  shouldShowMealTypeSelection,
+  name: r'shouldShowMealTypeSelectionProvider',
+  debugGetCreateSourceHash: const bool.fromEnvironment('dart.vm.product')
+      ? null
+      : _$shouldShowMealTypeSelectionHash,
+  dependencies: null,
+  allTransitiveDependencies: null,
+);
+
+@Deprecated('Will be removed in 3.0. Use Ref instead')
+// ignore: unused_element
+typedef ShouldShowMealTypeSelectionRef = AutoDisposeProviderRef<bool>;
+String _$mealPlanGeneratorHash() => r'98afdb50940cce2d00ff8f12d8da1941100d0200';
 
 /// See also [MealPlanGenerator].
 @ProviderFor(MealPlanGenerator)

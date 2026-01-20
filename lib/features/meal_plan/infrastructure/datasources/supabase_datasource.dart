@@ -9,21 +9,23 @@ import 'package:meal_plan_app/features/meal_plan/infrastructure/mappers/meal_pla
 
 class SupabaseMealPlanDatasource extends MealPlanDatasource {
   final SupabaseClient _supabaseClient;
-  final Dio _http;
+  final Dio _dio;
   final String _mealPlanApiBaseUrl;
 
   SupabaseMealPlanDatasource(
     this._supabaseClient, {
     Dio? httpClient,
     String? mealPlanApiBaseUrl,
-  }) : _mealPlanApiBaseUrl =
-           mealPlanApiBaseUrl ?? Enviroment.mealPlanApiBaseUrl,
-       _http =
+  }) : _mealPlanApiBaseUrl = mealPlanApiBaseUrl ?? Enviroment.apiBaseUrl,
+       _dio =
            httpClient ??
            Dio(
              BaseOptions(
-               baseUrl: mealPlanApiBaseUrl ?? Enviroment.mealPlanApiBaseUrl,
+               baseUrl: mealPlanApiBaseUrl ?? Enviroment.apiBaseUrl,
                validateStatus: (_) => true, // handle status codes manually
+               connectTimeout: const Duration(seconds: 10),
+               receiveTimeout: const Duration(seconds: 10),
+               sendTimeout: const Duration(seconds: 10),
              ),
            );
 
@@ -31,10 +33,10 @@ class SupabaseMealPlanDatasource extends MealPlanDatasource {
   Future<MealPlanResponse> generateMealPlan(NewMealPlanRequest request) async {
     try {
       if (_mealPlanApiBaseUrl.startsWith('No configure')) {
-        throw const ConfigAppError.missing('MEAL_PLAN_API_BASE_URL');
+        throw const ConfigAppError.missing('API_BASE_URL');
       }
 
-      final response = await _http.post(
+      final response = await _dio.post(
         '/api/meal-plan/generate',
         data: request.toJson(),
         options: Options(headers: {'Content-Type': 'application/json'}),
@@ -42,6 +44,13 @@ class SupabaseMealPlanDatasource extends MealPlanDatasource {
 
       final status = response.statusCode ?? 200;
       if (status < 200 || status >= 300) {
+        if (status == 403) {
+          final message = _extractErrorMessage(response.data);
+          throw PermissionAppError(
+            message ?? 'You do not have permission to perform this action.',
+            code: 'PERMISSION_FORBIDDEN',
+          );
+        }
         _throwByStatus(status);
       }
 
@@ -107,10 +116,10 @@ class SupabaseMealPlanDatasource extends MealPlanDatasource {
   }) async {
     try {
       if (_mealPlanApiBaseUrl.startsWith('No configure')) {
-        throw const ConfigAppError.missing('MEAL_PLAN_API_BASE_URL');
+        throw const ConfigAppError.missing('API_BASE_URL');
       }
 
-      final response = await _http.get(
+      final response = await _dio.get(
         '/api/meal-plan/entries/day',
         queryParameters: {'userId': userId, if (date != null) 'date': date},
         options: Options(headers: {'Content-Type': 'application/json'}),
@@ -152,6 +161,77 @@ class SupabaseMealPlanDatasource extends MealPlanDatasource {
     }
   }
 
+  @override
+  Future<MealPlanGenerationStatus> getMealPlanGenerationStatus(
+    String userId,
+  ) async {
+    try {
+      if (_mealPlanApiBaseUrl.startsWith('No configure')) {
+        throw const ConfigAppError.missing('API_BASE_URL');
+      }
+
+      final session = _supabaseClient.auth.currentSession;
+      print(
+        'Session token: ${session?.accessToken != null ? 'present' : 'null'}',
+      );
+      final response = await _dio.get(
+        '/api/meal-plan/can-generate',
+        queryParameters: {'userId': userId},
+        options: Options(
+          headers: {
+            'Content-Type': 'application/json',
+            if (session?.accessToken != null)
+              'Authorization': 'Bearer ${session!.accessToken}',
+          },
+        ),
+      );
+      print('Response status: ${response.statusCode}, data: ${response.data}');
+
+      final status = response.statusCode ?? 200;
+      if (status < 200 || status >= 300) {
+        _throwByStatus(status);
+      }
+
+      final data = response.data;
+      if (data == null) {
+        throw const DataAppError.emptyResponse('meal plan generation status');
+      }
+
+      if (data is! Map<String, dynamic>) {
+        throw const DataAppError.serializationFailed(
+          'meal plan generation status',
+        );
+      }
+
+      return MealPlanGenerationStatus(
+        canGenerate: data['canGenerate'] as bool? ?? false,
+        reason: data['reason'] as String?,
+        remaining: data['remaining'] as int? ?? 0,
+      );
+    } on DioException catch (e) {
+      if (e.type == DioExceptionType.connectionTimeout ||
+          e.type == DioExceptionType.sendTimeout ||
+          e.type == DioExceptionType.receiveTimeout) {
+        throw const NetworkAppError.timeout();
+      }
+
+      if (e.type == DioExceptionType.badResponse) {
+        final status = e.response?.statusCode ?? -1;
+        _throwByStatus(status);
+      }
+
+      if (e.type == DioExceptionType.connectionError) {
+        throw const NetworkAppError.unreachableHost();
+      }
+
+      throw const NetworkAppError.serverError();
+    } on AppError {
+      rethrow;
+    } catch (_) {
+      throw const NetworkAppError.serverError();
+    }
+  }
+
   Never _throwByStatus(int statusCode) {
     if (statusCode == 400) throw const NetworkAppError.badRequest();
     if (statusCode == 401) throw const PermissionAppError.unauthorized();
@@ -163,5 +243,15 @@ class SupabaseMealPlanDatasource extends MealPlanDatasource {
       throw const NetworkAppError.serverError();
     }
     throw const NetworkAppError.badResponse();
+  }
+
+  String? _extractErrorMessage(dynamic data) {
+    if (data is Map<String, dynamic>) {
+      final message = data['message'];
+      if (message is String && message.trim().isNotEmpty) {
+        return message;
+      }
+    }
+    return null;
   }
 }
