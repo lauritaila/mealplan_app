@@ -2,11 +2,7 @@ import 'package:dio/dio.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:meal_plan_app/config/config.dart';
 
-/// Centralized factory for creating configured Dio instances.
 class DioFactory {
-  /// Creates a configured Dio with timeouts, JSON header and an
-  /// interceptor that injects the `SUPABASE_ACCESS_TOKEN` from
-  /// `flutter_secure_storage` into the `Authorization` header.
   static Dio create({
     String? baseUrl,
     FlutterSecureStorage? secureStorage,
