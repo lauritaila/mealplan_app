@@ -44,3 +44,9 @@ app.*.map.json
 /android/app/profile
 /android/app/release
 .env
+
+# Generated files (codegen)
+# Riverpod / build_runner generated parts
+**/*.g.dart
+**/*.riverpod.g.part
+**/*.riverpod.g.dart

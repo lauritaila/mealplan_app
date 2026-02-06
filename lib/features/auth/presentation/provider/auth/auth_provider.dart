@@ -4,6 +4,7 @@ import 'package:riverpod_annotation/riverpod_annotation.dart';
 import 'package:supabase_flutter/supabase_flutter.dart' as sb;
 
 import 'package:meal_plan_app/config/config.dart';
+import 'package:meal_plan_app/core/supabase/auth_state_changes_provider.dart';
 import 'package:meal_plan_app/features/auth/domain/domain.dart';
 
 part 'auth_provider.g.dart';
@@ -11,21 +12,26 @@ part 'auth_provider.g.dart';
 @riverpod
 class Auth extends _$Auth {
   late final AuthRepository _authRepository;
-  StreamSubscription<sb.AuthState>? _authSubscription;
+    // StreamSubscription<dynamic>? _authSubscription;
 
   @override
   AuthState build() {
     _authRepository = ref.watch(authRepositoryProvider);
 
-    _authSubscription?.cancel();
-    _authSubscription = sb.Supabase.instance.client.auth.onAuthStateChange.listen((data) {
-      if (data.event == sb.AuthChangeEvent.signedOut) {
-        state = const UnauthenticatedAuthState();
-      }
-    });
+    // Listen to auth state change stream provided by the authStateChanges provider.
+      // Use ref.listen so Riverpod handles subscription lifecycle in tests and production.
+      ref.listen<AsyncValue<dynamic>>(authStateChangesProvider, (previous, next) {
+        final value = next.asData?.value;
+        if (value != null) {
+          final event = value.event;
+          if (event == sb.AuthChangeEvent.signedOut) {
+            state = const UnauthenticatedAuthState();
+          }
+        }
+      });
 
     ref.onDispose(() {
-      _authSubscription?.cancel();
+        // _authSubscription?.cancel();
     });
 
     return const InitialAuthState();
