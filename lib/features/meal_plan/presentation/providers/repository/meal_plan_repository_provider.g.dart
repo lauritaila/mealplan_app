@@ -7,7 +7,7 @@ part of 'meal_plan_repository_provider.dart';
 // **************************************************************************
 
 String _$mealPlanRepositoryHash() =>
-    r'9e3ac25b165a0e488837f4da4e17a699b0ad9ae1';
+    r'd82e1206be676e5611021e260a701d58e9458a82';
 
 /// See also [mealPlanRepository].
 @ProviderFor(mealPlanRepository)
