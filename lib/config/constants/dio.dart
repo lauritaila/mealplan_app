@@ -14,37 +14,45 @@ class DioFactory {
   }) {
     final storage = secureStorage ?? const FlutterSecureStorage();
 
-    final dio = Dio(BaseOptions(
-      baseUrl: baseUrl ?? Enviroment.apiBaseUrl,
-      headers: {'Content-Type': 'application/json'},
-    ));
+    final dio = Dio(
+      BaseOptions(
+        baseUrl: baseUrl ?? Enviroment.apiBaseUrl,
+        headers: {'Content-Type': 'application/json'},
+      ),
+    );
 
-    dio.interceptors.add(InterceptorsWrapper(onRequest: (options, handler) async {
-      try {
-        final token = await storage.read(key: 'SUPABASE_ACCESS_TOKEN');
-        // If caller explicitly opted out of auth check, continue.
-        final skipAuth = options.extra['skipAuth'] == true;
-        if (!skipAuth) {
-          if (token != null && token.isNotEmpty) {
-            options.headers['Authorization'] = 'Bearer $token';
-          } else {
-            // No token available and auth is required: return 401 immediately.
-            final resp = Response(
-              requestOptions: options,
-              statusCode: 401,
-              data: {'message': 'Unauthorized: missing token'},
-            );
-            return handler.resolve(resp);
+    dio.interceptors.add(
+      InterceptorsWrapper(
+        onRequest: (options, handler) async {
+          try {
+            final token = await storage.read(key: 'SUPABASE_ACCESS_TOKEN');
+            // If caller explicitly opted out of auth check, continue.
+            final skipAuth = options.extra['skipAuth'] == true;
+            if (!skipAuth) {
+              if (token != null && token.isNotEmpty) {
+                options.headers['Authorization'] = 'Bearer $token';
+              } else {
+                // No token available and auth is required: return 401 immediately.
+                final resp = Response(
+                  requestOptions: options,
+                  statusCode: 401,
+                  data: {'message': 'Unauthorized: missing token'},
+                );
+                return handler.resolve(resp);
+              }
+            }
+          } catch (_) {
+            // ignore storage errors and continue without token
           }
-        }
-      } catch (_) {
-        // ignore storage errors and continue without token
-      }
-      handler.next(options);
-    }));
+          handler.next(options);
+        },
+      ),
+    );
 
     if (enableLogging) {
-      dio.interceptors.add(LogInterceptor(requestBody: true, responseBody: true));
+      dio.interceptors.add(
+        LogInterceptor(requestBody: true, responseBody: true),
+      );
     }
 
     return dio;
