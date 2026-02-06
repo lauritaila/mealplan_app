@@ -44,9 +44,9 @@ class _SignUpForm extends ConsumerWidget {
       }
     });
 
-    return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 50),
-      child: Center(
+    return SingleChildScrollView(
+      child: Padding(
+        padding: const EdgeInsets.symmetric(horizontal: 50, vertical: 80),
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
@@ -59,20 +59,20 @@ class _SignUpForm extends ConsumerWidget {
               ),
             ),
                         const SizedBox(height: 30),
-ElevatedButton.icon(
-  icon: Icon(Icons.usb_rounded), 
-  label: const Text('Sign in with Google'),
-  onPressed: () {
-    ref.read(authProvider.notifier).signInWithGoogle();
-  },
-  style: ElevatedButton.styleFrom(
-    foregroundColor: Colors.black, backgroundColor: Colors.white,
-    shape: RoundedRectangleBorder(
-      borderRadius: BorderRadius.circular(8.0),
-      side: const BorderSide(color: Colors.grey),
-    ),
-  ),
-),
+              ElevatedButton.icon(
+                icon: Icon(Icons.usb_rounded), 
+                label: const Text('Sign in with Google'),
+                onPressed: () {
+              ref.read(authProvider.notifier).signInWithGoogle();
+                },
+                style: ElevatedButton.styleFrom(
+              foregroundColor: Colors.black, backgroundColor: Colors.white,
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(8.0),
+                side: const BorderSide(color: Colors.grey),
+              ),
+                ),
+              ),
             const SizedBox(height: 16),
             CustomTextFormField(
               label: 'Name',

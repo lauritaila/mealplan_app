@@ -1,37 +1,38 @@
 import 'package:flutter/material.dart';
 
-
 class CustomTextFormField extends StatelessWidget {
-
   final String? label;
   final String? hint;
   final String? errorMessage;
   final bool obscureText;
   final TextInputType? keyboardType;
+  final TextInputAction? textInputAction;
+  final List<String>? autofillHints;
   final Function(String)? onChanged;
   final String? Function(String?)? validator;
   final Function(String)? onFieldSubmitted;
 
   const CustomTextFormField({
-    super.key, 
-    this.label, 
-    this.hint, 
-    this.errorMessage, 
+    super.key,
+    this.label,
+    this.hint,
+    this.errorMessage,
     this.obscureText = false,
     this.keyboardType = TextInputType.text,
-    this.onChanged, 
-    this.validator, 
-    this.onFieldSubmitted, 
+    this.textInputAction,
+    this.autofillHints,
+    this.onChanged,
+    this.validator,
+    this.onFieldSubmitted,
   });
 
   @override
   Widget build(BuildContext context) {
-
     final colors = Theme.of(context).colorScheme;
 
     final border = OutlineInputBorder(
       borderSide: BorderSide(color: Colors.transparent, width: 2),
-      borderRadius: BorderRadius.circular(10)
+      borderRadius: BorderRadius.circular(10),
     );
 
     const borderRadius = Radius.circular(10);
@@ -41,7 +42,14 @@ class CustomTextFormField extends StatelessWidget {
       children: [
         Padding(
           padding: const EdgeInsets.only(left: 10),
-          child: Text(label ?? '', style: TextStyle( fontSize: 14, color: colors.primary, fontWeight: FontWeight.bold ),),
+          child: Text(
+            label ?? '',
+            style: TextStyle(
+              fontSize: 14,
+              color: colors.primary,
+              fontWeight: FontWeight.bold,
+            ),
+          ),
         ),
         SizedBox(height: 10),
         Container(
@@ -56,7 +64,9 @@ class CustomTextFormField extends StatelessWidget {
             onFieldSubmitted: onFieldSubmitted,
             obscureText: obscureText,
             keyboardType: keyboardType,
-            style: TextStyle( fontSize: 14, color: colors.primary ),
+            textInputAction: textInputAction,
+            autofillHints: autofillHints,
+            style: TextStyle(fontSize: 14, color: colors.primary),
             decoration: InputDecoration(
               // floatingLabelStyle: TextStyle(color: colors.primary, fontWeight: FontWeight.bold, fontSize: 14),
               enabledBorder: border,
@@ -74,10 +84,13 @@ class CustomTextFormField extends StatelessWidget {
             ),
           ),
         ),
-        const SizedBox(
-          height: 10
-        ),
-        errorMessage != null ? Text(errorMessage!, style: TextStyle(color: Colors.red[900], fontSize: 12),) : const SizedBox.shrink(),
+        const SizedBox(height: 10),
+        errorMessage != null
+            ? Text(
+                errorMessage!,
+                style: TextStyle(color: Colors.red[900], fontSize: 12),
+              )
+            : const SizedBox.shrink(),
       ],
     );
   }

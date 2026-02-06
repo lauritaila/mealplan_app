@@ -18,41 +18,39 @@ class Auth extends _$Auth {
   AuthState build() {
     _authRepository = ref.watch(authRepositoryProvider);
 
-    // Listen to auth state change stream provided by the authStateChanges provider.
-      // Use ref.listen so Riverpod handles subscription lifecycle in tests and production.
-      ref.listen<AsyncValue<dynamic>>(authStateChangesProvider, (previous, next) {
-        final value = next.asData?.value;
-        if (value != null) {
-          final event = value.event;
-          if (event == sb.AuthChangeEvent.signedOut) {
+    _authSubscription?.cancel();
+    _authSubscription = sb.Supabase.instance.client.auth.onAuthStateChange
+        .listen((data) {
+          if (data.event == sb.AuthChangeEvent.signedOut) {
             state = const UnauthenticatedAuthState();
+          } else if (data.event == sb.AuthChangeEvent.signedIn ||
+              data.event == sb.AuthChangeEvent.tokenRefreshed) {
+            refreshUserStatus(); // reload profile on restored/updated session
           }
-        }
-      });
+        });
 
     ref.onDispose(() {
         // _authSubscription?.cancel();
     });
 
-    return const InitialAuthState();
+    // Try to restore any persisted session as soon as the provider builds.
+    Future.microtask(refreshUserStatus);
+
+    return const LoadingAuthState(message: 'Restaurando sesión...');
   }
-  
+
   // --- AÑADIMOS EL MÉTODO PARA GOOGLE SIGN-IN ---
   Future<void> signInWithGoogle() async {
     state = const LoadingAuthState();
     try {
-      // 1. Llama al repositorio para realizar el inicio de sesión con Google.
       await _authRepository.signInWithGoogle();
-      
-      // 2. ¡LA CORRECCIÓN CLAVE! Después de un inicio de sesión exitoso,
-      //    refrescamos el estado del usuario. Esto actualizará el estado a
-      //    AuthenticatedAuthState y activará la redirección de GoRouter.
       await refreshUserStatus();
-
     } on AppError catch (e) {
       state = ErrorAuthState(e.message);
     } catch (e) {
-      state = const ErrorAuthState('An unexpected error occurred during Google Sign-In.');
+      state = const ErrorAuthState(
+        'An unexpected error occurred during Google Sign-In.',
+      );
     }
   }
   // --- FIN DEL MÉTODO AÑADIDO ---
@@ -78,12 +76,15 @@ class Auth extends _$Auth {
     state = const LoadingAuthState();
     try {
       await _authRepository.signUp(email, password, name);
+      await _authRepository.logOut();
       await _authRepository.signInWithOtp(email);
       state = AwaitingOtpInputState(email);
     } on AppError catch (e) {
       state = ErrorAuthState(e.message);
     } catch (e) {
-      state = const ErrorAuthState('An unexpected error occurred during sign up.');
+      state = const ErrorAuthState(
+        'An unexpected error occurred during sign up.',
+      );
     }
   }
 
@@ -125,7 +126,16 @@ class Auth extends _$Auth {
       state = ErrorAuthState(e.message);
     }
   }
-  
+
+  void markOnboardingComplete() {
+    final current = state;
+    if (current is AuthenticatedAuthState) {
+      state = AuthenticatedAuthState(
+        current.user.copyWith(onboardingComplete: true),
+      );
+    }
+  }
+
   void cancelOtpFlow() {
     state = const UnauthenticatedAuthState();
   }
@@ -135,6 +145,14 @@ class Auth extends _$Auth {
       final user = await _authRepository.getAuthenticatedUserProfile();
       state = AuthenticatedAuthState(user);
     } catch (_) {
+      final session = sb.Supabase.instance.client.auth.currentSession;
+      final currentUser = sb.Supabase.instance.client.auth.currentUser;
+      if (state is AuthenticatedAuthState) {
+        return;
+      }
+      if (session != null && currentUser != null) {
+        return;
+      }
       state = const UnauthenticatedAuthState();
     }
   }
