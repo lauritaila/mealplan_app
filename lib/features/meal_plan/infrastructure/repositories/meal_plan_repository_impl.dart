@@ -1,4 +1,3 @@
-import 'package:meal_plan_app/features/auth/domain/domain.dart';
 import 'package:meal_plan_app/features/meal_plan/domain/domain.dart';
 
 class MealPlanRepositoryImpl extends MealPlanRepository {
@@ -11,10 +10,6 @@ class MealPlanRepositoryImpl extends MealPlanRepository {
     return datasource.generateMealPlan(request);
   }
 
-  @override
-  Future<UserPreferences> getUserPreferences(String userId) {
-    return datasource.getUserPreferences(userId);
-  }
 
   @override
   Future<List<DayMealEntry>> getDayMealEntries(String userId, {String? date}) {

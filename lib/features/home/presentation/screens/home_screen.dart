@@ -35,6 +35,13 @@ class HomeScreen extends ConsumerWidget {
                 child: const Text('Generate New Plan'),
               ),
             ),
+            SizedBox(
+              width: double.infinity,
+              child: ElevatedButton(
+                onPressed: () => ref.read(authProvider.notifier).logOut(),
+                child: const Text('Logout'),
+              ),
+            ),
           ],
         ),
       ),

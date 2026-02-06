@@ -105,7 +105,6 @@ class MealPlanGenerator extends _$MealPlanGenerator {
       }
 
       final request = NewMealPlanRequest(
-        userId: authState.user.id,
         numberOfDays: numberOfDays,
         quantityOfPeople: quantityOfPeople,
         description: description.isEmpty ? null : description,

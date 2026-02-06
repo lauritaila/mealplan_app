@@ -1,32 +1,23 @@
 import 'package:dio/dio.dart';
 import 'package:meal_plan_app/config/config.dart';
-import 'package:supabase_flutter/supabase_flutter.dart';
-import 'package:meal_plan_app/features/auth/domain/domain.dart';
-import 'package:meal_plan_app/features/auth/infrastructure/infrastructure.dart';
 import 'package:meal_plan_app/features/meal_plan/domain/domain.dart';
 import 'package:meal_plan_app/features/meal_plan/infrastructure/mappers/meal_plan_mapper.dart';
 import 'package:meal_plan_app/features/meal_plan/infrastructure/mappers/meal_plan_entries_mapper.dart';
+import 'package:meal_plan_app/config/constants/dio.dart';
 
 class SupabaseMealPlanDatasource extends MealPlanDatasource {
-  final SupabaseClient _supabaseClient;
+
   final Dio _dio;
   final String _mealPlanApiBaseUrl;
 
-  SupabaseMealPlanDatasource(
-    this._supabaseClient, {
+  SupabaseMealPlanDatasource({
     Dio? httpClient,
     String? mealPlanApiBaseUrl,
   }) : _mealPlanApiBaseUrl = mealPlanApiBaseUrl ?? Enviroment.apiBaseUrl,
        _dio =
            httpClient ??
-           Dio(
-             BaseOptions(
-               baseUrl: mealPlanApiBaseUrl ?? Enviroment.apiBaseUrl,
-               validateStatus: (_) => true, // handle status codes manually
-               connectTimeout: const Duration(seconds: 10),
-               receiveTimeout: const Duration(seconds: 10),
-               sendTimeout: const Duration(seconds: 10),
-             ),
+           DioFactory.create(
+             baseUrl: mealPlanApiBaseUrl ?? Enviroment.apiBaseUrl,
            );
 
   @override
@@ -96,20 +87,6 @@ class SupabaseMealPlanDatasource extends MealPlanDatasource {
   }
 
   @override
-  Future<UserPreferences> getUserPreferences(String userId) async {
-    try {
-      final response = await _supabaseClient
-          .from('user_preferences')
-          .select()
-          .eq('user_id', userId)
-          .single();
-      return UserPreferencesMapper.fromMap(response);
-    } catch (e) {
-      throw DataAppError.fetchFailed('user preferences');
-    }
-  }
-
-  @override
   Future<List<DayMealEntry>> getDayMealEntries(
     String userId, {
     String? date,
@@ -121,7 +98,7 @@ class SupabaseMealPlanDatasource extends MealPlanDatasource {
 
       final response = await _dio.get(
         '/api/meal-plan/entries/day',
-        queryParameters: {'userId': userId, if (date != null) 'date': date},
+        queryParameters: {if (date != null) 'date': date},
         options: Options(headers: {'Content-Type': 'application/json'}),
       );
 
@@ -170,17 +147,9 @@ class SupabaseMealPlanDatasource extends MealPlanDatasource {
         throw const ConfigAppError.missing('API_BASE_URL');
       }
 
-      final session = _supabaseClient.auth.currentSession;
       final response = await _dio.get(
         '/api/meal-plan/can-generate',
-        queryParameters: {'userId': userId},
-        options: Options(
-          headers: {
-            'Content-Type': 'application/json',
-            if (session?.accessToken != null)
-              'Authorization': 'Bearer ${session!.accessToken}',
-          },
-        ),
+        options: Options(headers: {'Content-Type': 'application/json'}),
       );
       final status = response.statusCode ?? 200;
       if (status < 200 || status >= 300) {

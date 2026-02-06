@@ -1,8 +1,10 @@
 import 'package:dio/dio.dart';
 import 'package:meal_plan_app/config/config.dart';
 import 'package:google_sign_in/google_sign_in.dart';
-
 import 'package:supabase_flutter/supabase_flutter.dart';
+import 'package:flutter_secure_storage/flutter_secure_storage.dart';
+import 'package:meal_plan_app/config/constants/dio.dart';
+
 import '../../domain/domain.dart';
 import '../infrastructure.dart';
 
@@ -10,27 +12,25 @@ class SupabaseDatasourceImpl implements AuthDatasource {
   final SupabaseClient _supabaseClient;
   final Dio _dio;
   final String _userApiBaseUrl;
+  final FlutterSecureStorage _secureStorage;
 
   SupabaseDatasourceImpl(
     this._supabaseClient, {
     Dio? httpClient,
     String? userApiBaseUrl,
+    FlutterSecureStorage? secureStorage,
   }) : _userApiBaseUrl = userApiBaseUrl ?? Enviroment.apiBaseUrl,
+       _secureStorage = secureStorage ?? const FlutterSecureStorage(),
        _dio =
            httpClient ??
-           Dio(
-             BaseOptions(
-               baseUrl: userApiBaseUrl ?? Enviroment.apiBaseUrl,
-               validateStatus: (_) => true,
-               connectTimeout: const Duration(seconds: 10),
-               receiveTimeout: const Duration(seconds: 10),
-               sendTimeout: const Duration(seconds: 10),
-             ),
+           DioFactory.create(
+             baseUrl: userApiBaseUrl ?? Enviroment.apiBaseUrl,
+             secureStorage: secureStorage,
            );
 
   @override
   Future<bool> isAuthenticated() async {
-    final session = _supabaseClient.auth.currentSession;
+    final session = await _ensureSession();
     return session != null && session.accessToken.isNotEmpty;
   }
 
@@ -48,6 +48,9 @@ class SupabaseDatasourceImpl implements AuthDatasource {
           message: 'Login failed: Could not get user from Supabase.',
         );
       }
+
+      await _persistSession(res.session ?? _supabaseClient.auth.currentSession);
+
       return _loadUserProfile(supabaseAuthUser.id, supabaseAuthUser.email);
     } on AuthException catch (e) {
       if (e.message.contains('Invalid login credentials')) {
@@ -59,8 +62,10 @@ class SupabaseDatasourceImpl implements AuthDatasource {
       throw const AuthAppError.unexpected();
     } on PostgrestException {
       throw const DataAppError.fetchFailed('user profile');
+    } on AppError {
+      rethrow;
     } catch (e) {
-      throw const NetworkAppError.noConnection();
+      throw NetworkAppError('Unexpected error: ${e.toString()}');
     }
   }
 
@@ -86,6 +91,8 @@ class SupabaseDatasourceImpl implements AuthDatasource {
   Future<void> logOut() async {
     try {
       await _supabaseClient.auth.signOut();
+      await _secureStorage.delete(key: 'SUPABASE_ACCESS_TOKEN');
+      await _secureStorage.delete(key: 'SUPABASE_REFRESH_TOKEN');
     } catch (e) {
       throw const AuthAppError.unexpected(
         message: 'An unexpected error occurred during logout.',
@@ -119,6 +126,9 @@ class SupabaseDatasourceImpl implements AuthDatasource {
           message: 'OTP verification failed: Could not get user from Supabase.',
         );
       }
+
+      await _persistSession(res.session ?? _supabaseClient.auth.currentSession);
+
       return _loadUserProfile(supabaseAuthUser.id, supabaseAuthUser.email);
     } on AuthException catch (e) {
       if (e.message.contains('Invalid OTP') || e.message.contains('expired')) {
@@ -136,21 +146,49 @@ class SupabaseDatasourceImpl implements AuthDatasource {
     String userId,
   ) async {
     try {
+      String? authUserId = _supabaseClient.auth.currentUser?.id;
+      if (authUserId == null) {
+        final refreshToken = await _secureStorage.read(
+          key: 'SUPABASE_REFRESH_TOKEN',
+        );
+        if (refreshToken != null && refreshToken.isNotEmpty) {
+          await _supabaseClient.auth.setSession(refreshToken);
+          authUserId = _supabaseClient.auth.currentUser?.id;
+        }
+      }
+      if (authUserId == null) {
+        throw const PermissionAppError.unauthorized();
+      }
       final preferencesMap = UserPreferencesMapper.toMap(userPreference);
       preferencesMap.remove('id');
       preferencesMap.remove('created_at');
       preferencesMap.remove('updated_at');
-      preferencesMap['user_id'] = userId;
+      preferencesMap['user_id'] = authUserId;
 
-      await _supabaseClient.from('user_preferences').upsert(preferencesMap);
+      await _supabaseClient
+          .from('user_preferences')
+          .upsert(preferencesMap, onConflict: 'user_id');
       await _supabaseClient
           .from('user_profiles')
           .update({'onboarding_complete': true})
-          .eq('id', userId);
-    } on PostgrestException {
-      throw const DataAppError.updateFailed('user preferences');
+          .eq('id', authUserId);
+    } on PostgrestException catch (e) {
+      final details = [
+        if (e.message.isNotEmpty) e.message,
+        if (e.details != null && e.details.toString().isNotEmpty)
+          e.details.toString(),
+        if (e.hint != null && e.hint.toString().isNotEmpty) e.hint.toString(),
+      ].join(' | ');
+      throw DataAppError(
+        details.isNotEmpty
+            ? 'Failed to update user preferences: $details'
+            : 'Failed to update user preferences.',
+        code: e.code ?? 'DATA_UPDATE_FAILED',
+      );
+    } on AppError {
+      rethrow;
     } catch (e) {
-      throw const NetworkAppError.noConnection();
+      throw NetworkAppError('Unexpected error: ${e.toString()}');
     }
   }
 
@@ -217,8 +255,8 @@ class SupabaseDatasourceImpl implements AuthDatasource {
 
   @override
   Future<UserProfile> getAuthenticatedUserProfile() async {
+    final session = await _ensureSession();
     final supabaseUser = _supabaseClient.auth.currentUser;
-    final session = _supabaseClient.auth.currentSession;
     if (supabaseUser == null || supabaseUser.email == null) {
       throw const PermissionAppError.unauthorized();
     }
@@ -232,7 +270,7 @@ class SupabaseDatasourceImpl implements AuthDatasource {
       }
 
       final response = await _dio.get(
-        '/api/user/profile/${supabaseUser.id}',
+        '/api/user/profile',
         options: Options(
           headers: {
             'Content-Type': 'application/json',
@@ -310,10 +348,12 @@ class SupabaseDatasourceImpl implements AuthDatasource {
       if (idToken == null) {
         throw const AuthAppError.unexpected(message: 'No ID Token found.');
       }
-      await _supabaseClient.auth.signInWithIdToken(
+      final res = await _supabaseClient.auth.signInWithIdToken(
         provider: OAuthProvider.google,
         idToken: idToken,
       );
+
+      await _persistSession(res.session ?? _supabaseClient.auth.currentSession);
     } on AuthException catch (e) {
       throw AuthAppError(e.message, code: e.statusCode);
     } catch (e) {
@@ -334,5 +374,47 @@ class SupabaseDatasourceImpl implements AuthDatasource {
       throw const NetworkAppError.serverError();
     }
     throw const NetworkAppError.badResponse();
+  }
+
+  Future<void> _persistSession(Session? session) async {
+    final accessToken = session?.accessToken;
+    final refreshToken = session?.refreshToken;
+    if (accessToken != null && accessToken.isNotEmpty) {
+      await _secureStorage.write(
+        key: 'SUPABASE_ACCESS_TOKEN',
+        value: accessToken,
+      );
+    }
+    if (refreshToken != null && refreshToken.isNotEmpty) {
+      await _secureStorage.write(
+        key: 'SUPABASE_REFRESH_TOKEN',
+        value: refreshToken,
+      );
+    }
+  }
+
+  Future<Session?> _ensureSession() async {
+    var session = _supabaseClient.auth.currentSession;
+    if (session != null && session.accessToken.isNotEmpty) {
+      return session;
+    }
+
+    final refreshToken = await _secureStorage.read(
+      key: 'SUPABASE_REFRESH_TOKEN',
+    );
+    if (refreshToken != null && refreshToken.isNotEmpty) {
+      try {
+        await _supabaseClient.auth.setSession(refreshToken);
+      } catch (_) {
+        return null;
+      }
+    }
+
+    session = _supabaseClient.auth.currentSession;
+    if (session != null && session.accessToken.isNotEmpty) {
+      await _persistSession(session);
+    }
+
+    return session;
   }
 }

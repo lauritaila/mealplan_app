@@ -75,6 +75,7 @@ class Auth extends _$Auth {
     state = const LoadingAuthState();
     try {
       await _authRepository.signUp(email, password, name);
+      await _authRepository.logOut();
       await _authRepository.signInWithOtp(email);
       state = AwaitingOtpInputState(email);
     } on AppError catch (e) {
@@ -125,6 +126,15 @@ class Auth extends _$Auth {
     }
   }
 
+  void markOnboardingComplete() {
+    final current = state;
+    if (current is AuthenticatedAuthState) {
+      state = AuthenticatedAuthState(
+        current.user.copyWith(onboardingComplete: true),
+      );
+    }
+  }
+
   void cancelOtpFlow() {
     state = const UnauthenticatedAuthState();
   }
@@ -134,6 +144,14 @@ class Auth extends _$Auth {
       final user = await _authRepository.getAuthenticatedUserProfile();
       state = AuthenticatedAuthState(user);
     } catch (_) {
+      final session = sb.Supabase.instance.client.auth.currentSession;
+      final currentUser = sb.Supabase.instance.client.auth.currentUser;
+      if (state is AuthenticatedAuthState) {
+        return;
+      }
+      if (session != null && currentUser != null) {
+        return;
+      }
       state = const UnauthenticatedAuthState();
     }
   }

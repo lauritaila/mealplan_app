@@ -8,7 +8,6 @@ part 'preferences_wizard_provider.g.dart';
 
 @riverpod
 class PreferencesWizard extends _$PreferencesWizard {
-  
   @override
   PreferencesWizardState build() {
     return PreferencesWizardState();
@@ -23,7 +22,7 @@ class PreferencesWizard extends _$PreferencesWizard {
       state = state.copyWith(step: state.step - 1);
     }
   }
-  
+
   void updateDietaryRestrictions(List<String> restrictions) {
     state = state.copyWith(dietaryRestrictions: restrictions);
   }
@@ -68,20 +67,24 @@ class PreferencesWizard extends _$PreferencesWizard {
       if (authState is! AuthenticatedAuthState) {
         throw Exception('User is not authenticated. Cannot save preferences.');
       }
-      
+
       final userId = authState.user.id;
       final authRepository = ref.read(authRepositoryProvider);
 
       final userPreferences = state.toUserPreferences(userId);
 
       await authRepository.saveUserPreference(userPreferences, userId);
-      
+
       state = state.copyWith(formStatus: FormStatus.success);
 
-      await ref.read(authProvider.notifier).refreshUserStatus();
+      ref.read(authProvider.notifier).markOnboardingComplete();
 
+      await ref.read(authProvider.notifier).refreshUserStatus();
     } catch (e) {
-      state = state.copyWith(formStatus: FormStatus.error, errorMessage: e.toString());
+      state = state.copyWith(
+        formStatus: FormStatus.error,
+        errorMessage: e.toString(),
+      );
     }
   }
 }
