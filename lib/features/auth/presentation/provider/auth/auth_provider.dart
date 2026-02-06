@@ -4,6 +4,7 @@ import 'package:riverpod_annotation/riverpod_annotation.dart';
 import 'package:supabase_flutter/supabase_flutter.dart' as sb;
 
 import 'package:meal_plan_app/config/config.dart';
+import 'package:meal_plan_app/core/supabase/auth_state_changes_provider.dart';
 import 'package:meal_plan_app/features/auth/domain/domain.dart';
 
 part 'auth_provider.g.dart';
@@ -11,7 +12,7 @@ part 'auth_provider.g.dart';
 @riverpod
 class Auth extends _$Auth {
   late final AuthRepository _authRepository;
-  StreamSubscription<sb.AuthState>? _authSubscription;
+    // StreamSubscription<dynamic>? _authSubscription;
 
   @override
   AuthState build() {
@@ -29,7 +30,7 @@ class Auth extends _$Auth {
         });
 
     ref.onDispose(() {
-      _authSubscription?.cancel();
+        // _authSubscription?.cancel();
     });
 
     // Try to restore any persisted session as soon as the provider builds.
