@@ -18,7 +18,6 @@ class PreferencesWizardState {
   final String? errorCode;
   final String? errorMessage;
 
-
   PreferencesWizardState({
     this.step = 0,
     this.dietaryRestrictions = const [],

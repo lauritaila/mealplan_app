@@ -8,8 +8,14 @@ class GoalsStep extends ConsumerWidget {
   const GoalsStep({super.key});
 
   final List<String> _goalOptions = const [
-    'Weight Loss', 'Weight Gain', 'Muscle Building', 'Heart Health', 
-    'Diabetes Management', 'High Protein', 'Low Sodium', 'Anti-Inflammatory'
+    'Weight Loss',
+    'Weight Gain',
+    'Muscle Building',
+    'Heart Health',
+    'Diabetes Management',
+    'High Protein',
+    'Low Sodium',
+    'Anti-Inflammatory',
   ];
 
   String _goalLabel(AppLocalizations l10n, String goal) {
@@ -69,7 +75,9 @@ class GoalsStep extends ConsumerWidget {
                   } else {
                     currentSelection.remove(goal);
                   }
-                  ref.read(preferencesWizardProvider.notifier).updateHealthGoals(currentSelection);
+                  ref
+                      .read(preferencesWizardProvider.notifier)
+                      .updateHealthGoals(currentSelection);
                 },
               );
             }).toList(),

@@ -9,8 +9,19 @@ class DietaryStep extends ConsumerWidget {
   const DietaryStep({super.key});
 
   final List<String> _dietOptions = const [
-    'Vegetarian', 'Vegan', 'Pescatarian', 'Keto', 'Paleo', 'Mediterranean',
-    'Low Carb', 'Low Fat', 'Gluten Free', 'Dairy Free', 'Nut Free', 'Halal', 'Kosher'
+    'Vegetarian',
+    'Vegan',
+    'Pescatarian',
+    'Keto',
+    'Paleo',
+    'Mediterranean',
+    'Low Carb',
+    'Low Fat',
+    'Gluten Free',
+    'Dairy Free',
+    'Nut Free',
+    'Halal',
+    'Kosher',
   ];
 
   String _dietLabel(AppLocalizations l10n, String diet) {
@@ -48,7 +59,9 @@ class DietaryStep extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final selectedDiets = ref.watch(preferencesWizardProvider).dietaryRestrictions;
+    final selectedDiets = ref
+        .watch(preferencesWizardProvider)
+        .dietaryRestrictions;
     final textTheme = Theme.of(context).textTheme;
     final l10n = AppLocalizations.of(context);
 
@@ -80,7 +93,9 @@ class DietaryStep extends ConsumerWidget {
                   } else {
                     currentSelection.remove(diet);
                   }
-                  ref.read(preferencesWizardProvider.notifier).updateDietaryRestrictions(currentSelection);
+                  ref
+                      .read(preferencesWizardProvider.notifier)
+                      .updateDietaryRestrictions(currentSelection);
                 },
               );
             }).toList(),

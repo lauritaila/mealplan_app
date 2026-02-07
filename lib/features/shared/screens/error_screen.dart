@@ -11,9 +11,7 @@ class ErrorScreen extends StatelessWidget {
     return Scaffold(
       appBar: AppBar(title: Text(l10n.errorTitle)),
       body: Center(
-        child: Text(
-          l10n.errorOccurred(error?.toString() ?? l10n.genericError),
-        ),
+        child: Text(l10n.errorOccurred(error?.toString() ?? l10n.genericError)),
       ),
     );
   }

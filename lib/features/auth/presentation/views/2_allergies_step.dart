@@ -10,7 +10,14 @@ class AllergiesStep extends ConsumerWidget {
   const AllergiesStep({super.key});
 
   final List<String> _allergyOptions = const [
-    'Nuts', 'Dairy', 'Eggs', 'Soy', 'Wheat', 'Fish', 'Shellfish', 'Sesame'
+    'Nuts',
+    'Dairy',
+    'Eggs',
+    'Soy',
+    'Wheat',
+    'Fish',
+    'Shellfish',
+    'Sesame',
   ];
 
   String _allergyLabel(AppLocalizations l10n, String allergy) {
@@ -70,7 +77,9 @@ class AllergiesStep extends ConsumerWidget {
                   } else {
                     currentSelection.remove(allergy);
                   }
-                  ref.read(preferencesWizardProvider.notifier).updateAllergies(currentSelection);
+                  ref
+                      .read(preferencesWizardProvider.notifier)
+                      .updateAllergies(currentSelection);
                 },
               );
             }).toList(),

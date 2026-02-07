@@ -43,10 +43,7 @@ class _SignUpForm extends ConsumerWidget {
         );
       }
       if (previous is LoadingAuthState && next is AwaitingOtpInputState) {
-        showSnackbar(
-          context,
-          l10n.verificationCodeSentEmail,
-        );
+        showSnackbar(context, l10n.verificationCodeSentEmail);
       }
     });
 
@@ -85,7 +82,7 @@ class _SignUpForm extends ConsumerWidget {
               label: l10n.name,
               onChanged: signupFormNotifier.onNameChanged,
               errorMessage: signupFormState.isFormPosted
-              ? signupFormState.name.getErrorMessage(l10n)
+                  ? signupFormState.name.getErrorMessage(l10n)
                   : null,
             ),
             const SizedBox(height: 15),
@@ -94,7 +91,7 @@ class _SignUpForm extends ConsumerWidget {
               keyboardType: TextInputType.emailAddress,
               onChanged: signupFormNotifier.onEmailChanged,
               errorMessage: signupFormState.isFormPosted
-              ? signupFormState.email.getErrorMessage(l10n)
+                  ? signupFormState.email.getErrorMessage(l10n)
                   : null,
             ),
             const SizedBox(height: 30),

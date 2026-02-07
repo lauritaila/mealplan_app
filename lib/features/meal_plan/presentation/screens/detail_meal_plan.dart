@@ -19,7 +19,7 @@ class DetailMealPlanScreen extends ConsumerWidget {
       body: generatedPlan == null
           ? Center(child: Text(l10n.noPlanDataReceived))
           : SafeArea(
-            child: Stack(
+              child: Stack(
                 children: [
                   ListView(
                     padding: const EdgeInsets.all(16),
@@ -37,14 +37,13 @@ class DetailMealPlanScreen extends ConsumerWidget {
                         style: TextStyle(color: Colors.grey.shade700),
                       ),
                       const SizedBox(height: 16),
-                      ...plan.dailyMeals
-                          .map((day) => _DayCard(day: day)),
+                      ...plan.dailyMeals.map((day) => _DayCard(day: day)),
                       const SizedBox(height: 40),
                     ],
                   ),
                 ],
               ),
-          ),
+            ),
       bottomNavigationBar: generatedPlan == null
           ? null
           : SafeArea(
@@ -178,8 +177,9 @@ class _MealTile extends StatelessWidget {
                 ),
               if (recipe.proteinGrams != null)
                 _Chip(
-                  label:
-                      l10n.proteinLabel(recipe.proteinGrams!.toStringAsFixed(1)),
+                  label: l10n.proteinLabel(
+                    recipe.proteinGrams!.toStringAsFixed(1),
+                  ),
                 ),
               if (recipe.carbsGrams != null)
                 _Chip(

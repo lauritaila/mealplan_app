@@ -9,7 +9,8 @@ class FoodPreferencesStep extends ConsumerStatefulWidget {
   const FoodPreferencesStep({super.key});
 
   @override
-  ConsumerState<FoodPreferencesStep> createState() => _FoodPreferencesStepState();
+  ConsumerState<FoodPreferencesStep> createState() =>
+      _FoodPreferencesStepState();
 }
 
 class _FoodPreferencesStepState extends ConsumerState<FoodPreferencesStep> {
@@ -20,7 +21,9 @@ class _FoodPreferencesStepState extends ConsumerState<FoodPreferencesStep> {
   void initState() {
     super.initState();
     final state = ref.read(preferencesWizardProvider);
-    _dislikedController = TextEditingController(text: state.dislikedFoods.join(', '));
+    _dislikedController = TextEditingController(
+      text: state.dislikedFoods.join(', '),
+    );
     _likedController = TextEditingController(text: state.likedFoods.join(', '));
   }
 
@@ -30,19 +33,27 @@ class _FoodPreferencesStepState extends ConsumerState<FoodPreferencesStep> {
     _likedController.dispose();
     super.dispose();
   }
-  
+
   void _updateFoods() {
-      final disliked = _dislikedController.text.split(',').map((e) => e.trim()).where((e) => e.isNotEmpty).toList();
-      final liked = _likedController.text.split(',').map((e) => e.trim()).where((e) => e.isNotEmpty).toList();
-      ref.read(preferencesWizardProvider.notifier).updateDislikedFoods(disliked);
-      ref.read(preferencesWizardProvider.notifier).updateLikedFoods(liked);
+    final disliked = _dislikedController.text
+        .split(',')
+        .map((e) => e.trim())
+        .where((e) => e.isNotEmpty)
+        .toList();
+    final liked = _likedController.text
+        .split(',')
+        .map((e) => e.trim())
+        .where((e) => e.isNotEmpty)
+        .toList();
+    ref.read(preferencesWizardProvider.notifier).updateDislikedFoods(disliked);
+    ref.read(preferencesWizardProvider.notifier).updateLikedFoods(liked);
   }
 
   @override
   Widget build(BuildContext context) {
     final textTheme = Theme.of(context).textTheme;
     final l10n = AppLocalizations.of(context);
-    
+
     return SingleChildScrollView(
       padding: const EdgeInsets.symmetric(horizontal: 24.0),
       child: Column(
@@ -55,7 +66,7 @@ class _FoodPreferencesStepState extends ConsumerState<FoodPreferencesStep> {
             textAlign: TextAlign.center,
           ),
           const SizedBox(height: 24),
-          
+
           Text(l10n.dislikedFoodsTitle, style: textTheme.titleMedium),
           const SizedBox(height: 8),
           TextFormField(
@@ -67,9 +78,9 @@ class _FoodPreferencesStepState extends ConsumerState<FoodPreferencesStep> {
             maxLines: 4,
             onEditingComplete: _updateFoods,
           ),
-          
+
           const SizedBox(height: 24),
-          
+
           Text(l10n.likedFoodsTitle, style: textTheme.titleMedium),
           const SizedBox(height: 8),
           TextFormField(

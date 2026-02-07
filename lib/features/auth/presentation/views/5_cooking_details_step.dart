@@ -8,7 +8,11 @@ import 'package:meal_plan_app/l10n/app_localizations.dart';
 class CookingDetailsStep extends ConsumerWidget {
   const CookingDetailsStep({super.key});
 
-  final List<String> _skillLevels = const ['Beginner', 'Intermediate', 'Advanced'];
+  final List<String> _skillLevels = const [
+    'Beginner',
+    'Intermediate',
+    'Advanced',
+  ];
   final List<String> _timeOptions = const ['15 min', '30 min', '1+ hour'];
 
   String _skillLabel(AppLocalizations l10n, String level) {
@@ -97,12 +101,16 @@ class CookingDetailsStep extends ConsumerWidget {
             children: [
               IconButton(
                 icon: const Icon(Icons.remove_circle_outline),
-                onPressed: state.householdSize > 1 ? () => notifier.updateHouseholdSize(state.householdSize - 1) : null,
+                onPressed: state.householdSize > 1
+                    ? () =>
+                          notifier.updateHouseholdSize(state.householdSize - 1)
+                    : null,
               ),
               Text(state.householdSize.toString(), style: textTheme.titleLarge),
               IconButton(
                 icon: const Icon(Icons.add_circle_outline),
-                onPressed: () => notifier.updateHouseholdSize(state.householdSize + 1),
+                onPressed: () =>
+                    notifier.updateHouseholdSize(state.householdSize + 1),
               ),
             ],
           ),

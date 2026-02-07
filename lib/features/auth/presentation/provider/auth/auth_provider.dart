@@ -29,7 +29,7 @@ class Auth extends _$Auth {
         });
 
     ref.onDispose(() {
-        // _authSubscription?.cancel();
+      // _authSubscription?.cancel();
     });
 
     // Try to restore any persisted session as soon as the provider builds.

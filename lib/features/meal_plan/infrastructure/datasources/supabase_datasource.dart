@@ -6,19 +6,16 @@ import 'package:meal_plan_app/features/meal_plan/infrastructure/mappers/meal_pla
 import 'package:meal_plan_app/config/constants/dio.dart';
 
 class SupabaseMealPlanDatasource extends MealPlanDatasource {
-
   final Dio _dio;
   final String _mealPlanApiBaseUrl;
 
-  SupabaseMealPlanDatasource({
-    Dio? httpClient,
-    String? mealPlanApiBaseUrl,
-  }) : _mealPlanApiBaseUrl = mealPlanApiBaseUrl ?? Enviroment.apiBaseUrl,
-       _dio =
-           httpClient ??
-           DioFactory.create(
-             baseUrl: mealPlanApiBaseUrl ?? Enviroment.apiBaseUrl,
-           );
+  SupabaseMealPlanDatasource({Dio? httpClient, String? mealPlanApiBaseUrl})
+    : _mealPlanApiBaseUrl = mealPlanApiBaseUrl ?? Enviroment.apiBaseUrl,
+      _dio =
+          httpClient ??
+          DioFactory.create(
+            baseUrl: mealPlanApiBaseUrl ?? Enviroment.apiBaseUrl,
+          );
 
   @override
   Future<MealPlanResponse> generateMealPlan(NewMealPlanRequest request) async {
@@ -204,5 +201,4 @@ class SupabaseMealPlanDatasource extends MealPlanDatasource {
     }
     throw const NetworkAppError.badResponse();
   }
-
 }

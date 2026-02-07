@@ -41,10 +41,7 @@ class _LoginForm extends ConsumerWidget {
         );
       }
       if (previous is LoadingAuthState && next is AwaitingOtpInputState) {
-        showSnackbar(
-          context,
-          l10n.verificationCodeSentEmail,
-        );
+        showSnackbar(context, l10n.verificationCodeSentEmail);
       }
     });
 

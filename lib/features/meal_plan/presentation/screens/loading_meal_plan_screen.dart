@@ -123,11 +123,7 @@ class _LoadingMealPlanScreenState extends ConsumerState<LoadingMealPlanScreen> {
           ..showSnackBar(
             SnackBar(
               content: Text(
-                localizeErrorCode(
-                  l10n,
-                  next.errorCode,
-                  fallback: message,
-                ),
+                localizeErrorCode(l10n, next.errorCode, fallback: message),
               ),
             ),
           );

@@ -146,20 +146,11 @@ class MealPlanAppError extends AppError {
   const MealPlanAppError(super.message, {super.code});
 
   const MealPlanAppError.notAuthenticated()
-    : super(
-        'User not authenticated.',
-        code: 'MEAL_PLAN_NOT_AUTHENTICATED',
-      );
+    : super('User not authenticated.', code: 'MEAL_PLAN_NOT_AUTHENTICATED');
   const MealPlanAppError.daysNotAllowed()
-    : super(
-        'Number of days not allowed.',
-        code: 'MEAL_PLAN_DAYS_NOT_ALLOWED',
-      );
+    : super('Number of days not allowed.', code: 'MEAL_PLAN_DAYS_NOT_ALLOWED');
   const MealPlanAppError.typesNotAllowed()
-    : super(
-        'Meal types not allowed.',
-        code: 'MEAL_PLAN_TYPES_NOT_ALLOWED',
-      );
+    : super('Meal types not allowed.', code: 'MEAL_PLAN_TYPES_NOT_ALLOWED');
   const MealPlanAppError.generateFailed()
     : super(
         'Could not generate the plan. Please try again.',

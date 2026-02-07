@@ -16,7 +16,8 @@ class PreferenceWizardScreen extends ConsumerStatefulWidget {
   PreferenceWizardScreenState createState() => PreferenceWizardScreenState();
 }
 
-class PreferenceWizardScreenState extends ConsumerState<PreferenceWizardScreen> {
+class PreferenceWizardScreenState
+    extends ConsumerState<PreferenceWizardScreen> {
   late PageController _pageController;
 
   final List<Widget> _viewRoutes = const [
@@ -41,7 +42,10 @@ class PreferenceWizardScreenState extends ConsumerState<PreferenceWizardScreen> 
 
   @override
   Widget build(BuildContext context) {
-    ref.listen(preferencesWizardProvider.select((state) => state.step), (previous, next) {
+    ref.listen(preferencesWizardProvider.select((state) => state.step), (
+      previous,
+      next,
+    ) {
       if (_pageController.hasClients) {
         _pageController.animateToPage(
           next,
@@ -58,7 +62,10 @@ class PreferenceWizardScreenState extends ConsumerState<PreferenceWizardScreen> 
         child: Column(
           children: [
             Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 24.0),
+              padding: const EdgeInsets.symmetric(
+                horizontal: 16.0,
+                vertical: 24.0,
+              ),
               child: StepsWizard(
                 currentStep: currentStep + 1,
                 totalSteps: _viewRoutes.length,
@@ -89,12 +96,18 @@ class _NavigationControls extends ConsumerWidget {
   final int pageIndex;
   final int totalSteps;
 
-  const _NavigationControls({required this.pageIndex, required this.totalSteps});
+  const _NavigationControls({
+    required this.pageIndex,
+    required this.totalSteps,
+  });
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final l10n = AppLocalizations.of(context);
-    ref.listen(preferencesWizardProvider.select((s) => s.formStatus), (previous, next) {
+    ref.listen(preferencesWizardProvider.select((s) => s.formStatus), (
+      previous,
+      next,
+    ) {
       if (next == FormStatus.error) {
         final errorState = ref.read(preferencesWizardProvider);
         ScaffoldMessenger.of(context).showSnackBar(
@@ -110,9 +123,9 @@ class _NavigationControls extends ConsumerWidget {
         );
       }
       if (next == FormStatus.success) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text(l10n.preferencesSaved)),
-        );
+        ScaffoldMessenger.of(
+          context,
+        ).showSnackBar(SnackBar(content: Text(l10n.preferencesSaved)));
       }
     });
 
@@ -127,22 +140,30 @@ class _NavigationControls extends ConsumerWidget {
         children: [
           if (pageIndex > 0)
             TextButton(
-              onPressed: isSubmitting ? null : () {
-                ref.read(preferencesWizardProvider.notifier).previousStep();
-              },
+              onPressed: isSubmitting
+                  ? null
+                  : () {
+                      ref
+                          .read(preferencesWizardProvider.notifier)
+                          .previousStep();
+                    },
               child: Text(l10n.wizardPrevious),
             )
           else
             const SizedBox(),
-          
+
           ElevatedButton(
-            onPressed: isSubmitting ? null : () {
-              if (isLastStep) {
-                ref.read(preferencesWizardProvider.notifier).submitPreferences();
-              } else {
-                ref.read(preferencesWizardProvider.notifier).nextStep();
-              }
-            },
+            onPressed: isSubmitting
+                ? null
+                : () {
+                    if (isLastStep) {
+                      ref
+                          .read(preferencesWizardProvider.notifier)
+                          .submitPreferences();
+                    } else {
+                      ref.read(preferencesWizardProvider.notifier).nextStep();
+                    }
+                  },
             style: ElevatedButton.styleFrom(
               padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
               shape: RoundedRectangleBorder(
