@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
+import 'package:meal_plan_app/l10n/app_localizations.dart';
 
 class PremiunScreen extends StatelessWidget {
 	final String title;
@@ -13,9 +14,10 @@ class PremiunScreen extends StatelessWidget {
 
 	@override
 	Widget build(BuildContext context) {
+		final l10n = AppLocalizations.of(context);
 		return Scaffold(
 			appBar: AppBar(
-				title: Text(title),
+				title: Text(title.isEmpty ? l10n.goPremiumTitle : title),
 				leading: IconButton(
 					icon: const Icon(Icons.arrow_back),
 					onPressed: () => context.go('/home'),
@@ -34,13 +36,13 @@ class PremiunScreen extends StatelessWidget {
 							),
 							const SizedBox(height: 20),
 							Text(
-								message,
+								message.isEmpty ? l10n.freePlanLimitedGenerations : message,
 								textAlign: TextAlign.center,
 								style: Theme.of(context).textTheme.titleMedium,
 							),
 							const SizedBox(height: 12),
 							Text(
-								'Go premium to keep generating meal plans.',
+								l10n.goPremiumKeepGenerating,
 								textAlign: TextAlign.center,
 								style: Theme.of(context).textTheme.bodyMedium,
 							),
@@ -49,7 +51,7 @@ class PremiunScreen extends StatelessWidget {
 								width: double.infinity,
 								child: ElevatedButton(
 									onPressed: () => context.go('/home'),
-									child: const Text('Go to Home'),
+									child: Text(l10n.goToHome),
 								),
 							),
 						],

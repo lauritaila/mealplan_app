@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:meal_plan_app/features/meal_plan/domain/domain.dart';
+import 'package:meal_plan_app/l10n/app_localizations.dart';
 
 class DetailMealPlanScreen extends ConsumerWidget {
   final MealPlanResponse? generatedPlan;
@@ -11,11 +12,12 @@ class DetailMealPlanScreen extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final plan = generatedPlan?.plan;
+    final l10n = AppLocalizations.of(context);
 
     return Scaffold(
-      appBar: AppBar(title: const Text('Aprobar plan')),
+      appBar: AppBar(title: Text(l10n.approvePlanTitle)),
       body: generatedPlan == null
-          ? const Center(child: Text('No plan data received.'))
+          ? Center(child: Text(l10n.noPlanDataReceived))
           : SafeArea(
             child: Stack(
                 children: [
@@ -57,7 +59,7 @@ class DetailMealPlanScreen extends ConsumerWidget {
                     borderRadius: BorderRadius.circular(14),
                   ),
                 ),
-                child: const Text('Listo'),
+                child: Text(l10n.done),
               ),
             ),
     );
@@ -71,6 +73,7 @@ class _DayCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context);
     return Container(
       margin: const EdgeInsets.only(bottom: 12),
       padding: const EdgeInsets.all(14),
@@ -97,7 +100,7 @@ class _DayCard extends StatelessWidget {
                 style: const TextStyle(fontWeight: FontWeight.w700),
               ),
               Text(
-                '${day.meals.length} comidas',
+                l10n.mealsCount(day.meals.length),
                 style: TextStyle(color: Colors.grey.shade700),
               ),
             ],
@@ -118,6 +121,8 @@ class _MealTile extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final recipe = meal.recipe;
+    final l10n = AppLocalizations.of(context);
+    final mealTypeLabel = _mealTypeLabel(l10n, meal.mealType);
     return Container(
       margin: const EdgeInsets.only(bottom: 12),
       padding: const EdgeInsets.all(12),
@@ -132,12 +137,12 @@ class _MealTile extends StatelessWidget {
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
               Text(
-                meal.mealType.toUpperCase(),
+                mealTypeLabel.toUpperCase(),
                 style: const TextStyle(fontWeight: FontWeight.w700),
               ),
               if (recipe.calories != null)
                 Text(
-                  '${recipe.calories!.toStringAsFixed(0)} kcal',
+                  l10n.caloriesKcal(recipe.calories!.toStringAsFixed(0)),
                   style: TextStyle(color: Colors.grey.shade700),
                 ),
             ],
@@ -158,30 +163,38 @@ class _MealTile extends StatelessWidget {
             runSpacing: 4,
             children: [
               if (recipe.servings != null)
-                _Chip(label: 'Raciones: ${recipe.servings}'),
+                _Chip(label: l10n.servingsLabel(recipe.servings.toString())),
               if (recipe.prepTimeMinutes != null)
-                _Chip(label: 'Prep: ${recipe.prepTimeMinutes} min'),
+                _Chip(
+                  label: l10n.prepMinutesLabel(
+                    recipe.prepTimeMinutes.toString(),
+                  ),
+                ),
               if (recipe.cookTimeMinutes != null)
-                _Chip(label: 'Coccion: ${recipe.cookTimeMinutes} min'),
+                _Chip(
+                  label: l10n.cookMinutesLabel(
+                    recipe.cookTimeMinutes.toString(),
+                  ),
+                ),
               if (recipe.proteinGrams != null)
                 _Chip(
                   label:
-                      'Proteina: ${recipe.proteinGrams!.toStringAsFixed(1)} g',
+                      l10n.proteinLabel(recipe.proteinGrams!.toStringAsFixed(1)),
                 ),
               if (recipe.carbsGrams != null)
                 _Chip(
-                  label: 'Carbs: ${recipe.carbsGrams!.toStringAsFixed(1)} g',
+                  label: l10n.carbsLabel(recipe.carbsGrams!.toStringAsFixed(1)),
                 ),
               if (recipe.fatsGrams != null)
                 _Chip(
-                  label: 'Grasas: ${recipe.fatsGrams!.toStringAsFixed(1)} g',
+                  label: l10n.fatsLabel(recipe.fatsGrams!.toStringAsFixed(1)),
                 ),
             ],
           ),
           const SizedBox(height: 10),
-          const Text(
-            'Ingredientes',
-            style: TextStyle(fontWeight: FontWeight.w700),
+          Text(
+            l10n.ingredientsTitle,
+            style: const TextStyle(fontWeight: FontWeight.w700),
           ),
           const SizedBox(height: 6),
           ...recipe.ingredients.map(
@@ -211,6 +224,25 @@ class _Chip extends StatelessWidget {
       ),
       child: Text(label, style: const TextStyle(fontWeight: FontWeight.w600)),
     );
+  }
+}
+
+String _mealTypeLabel(AppLocalizations l10n, String mealType) {
+  switch (mealType.toLowerCase()) {
+    case 'breakfast':
+    case 'desayuno':
+      return l10n.mealTypeBreakfast;
+    case 'lunch':
+    case 'almuerzo':
+      return l10n.mealTypeLunch;
+    case 'dinner':
+    case 'cena':
+      return l10n.mealTypeDinner;
+    case 'snack':
+    case 'merienda':
+      return l10n.mealTypeSnack;
+    default:
+      return mealType;
   }
 }
 

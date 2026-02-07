@@ -35,7 +35,7 @@ class Auth extends _$Auth {
     // Try to restore any persisted session as soon as the provider builds.
     Future.microtask(refreshUserStatus);
 
-    return const LoadingAuthState(message: 'Restaurando sesión...');
+    return const LoadingAuthState();
   }
 
   // --- AÑADIMOS EL MÉTODO PARA GOOGLE SIGN-IN ---
@@ -45,11 +45,9 @@ class Auth extends _$Auth {
       await _authRepository.signInWithGoogle();
       await refreshUserStatus();
     } on AppError catch (e) {
-      state = ErrorAuthState(e.message);
+      state = ErrorAuthState(message: e.message, code: e.code);
     } catch (e) {
-      state = const ErrorAuthState(
-        'An unexpected error occurred during Google Sign-In.',
-      );
+      state = const ErrorAuthState(code: 'AUTH_GOOGLE_SIGN_IN_FAILED');
     }
   }
   // --- FIN DEL MÉTODO AÑADIDO ---
@@ -65,9 +63,9 @@ class Auth extends _$Auth {
       final user = await _authRepository.logIn(email, password);
       state = AuthenticatedAuthState(user);
     } on AppError catch (e) {
-      state = ErrorAuthState(e.message);
+      state = ErrorAuthState(message: e.message, code: e.code);
     } catch (e) {
-      state = const ErrorAuthState('An unexpected error occurred.');
+      state = const ErrorAuthState(code: 'AUTH_UNEXPECTED');
     }
   }
 
@@ -79,11 +77,9 @@ class Auth extends _$Auth {
       await _authRepository.signInWithOtp(email);
       state = AwaitingOtpInputState(email);
     } on AppError catch (e) {
-      state = ErrorAuthState(e.message);
+      state = ErrorAuthState(message: e.message, code: e.code);
     } catch (e) {
-      state = const ErrorAuthState(
-        'An unexpected error occurred during sign up.',
-      );
+      state = const ErrorAuthState(code: 'AUTH_UNEXPECTED');
     }
   }
 
@@ -97,9 +93,9 @@ class Auth extends _$Auth {
       await _authRepository.signInWithOtp(email);
       state = AwaitingOtpInputState(email);
     } on AppError catch (e) {
-      state = ErrorAuthState(e.message);
+      state = ErrorAuthState(message: e.message, code: e.code);
     } catch (e) {
-      state = const ErrorAuthState('Failed to send OTP. Please try again.');
+      state = const ErrorAuthState(code: 'AUTH_SEND_OTP_FAILED');
     }
   }
 
@@ -109,10 +105,10 @@ class Auth extends _$Auth {
       final userProfile = await _authRepository.verifyOtp(email, token);
       state = AuthenticatedAuthState(userProfile);
     } on AppError catch (e) {
-      state = ErrorAuthState(e.message);
+      state = ErrorAuthState(message: e.message, code: e.code);
       state = AwaitingOtpInputState(email);
     } catch (e) {
-      state = const ErrorAuthState('An unexpected error occurred.');
+      state = const ErrorAuthState(code: 'AUTH_UNEXPECTED');
       state = AwaitingOtpInputState(email);
     }
   }
@@ -122,7 +118,7 @@ class Auth extends _$Auth {
       await _authRepository.logOut();
       state = const UnauthenticatedAuthState();
     } on AppError catch (e) {
-      state = ErrorAuthState(e.message);
+      state = ErrorAuthState(message: e.message, code: e.code);
     }
   }
 

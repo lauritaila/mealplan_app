@@ -15,6 +15,7 @@ class PreferencesWizardState {
   final int householdSize;
 
   final FormStatus formStatus;
+  final String? errorCode;
   final String? errorMessage;
 
 
@@ -30,6 +31,7 @@ class PreferencesWizardState {
     this.likedFoods = const [],
     this.householdSize = 1,
     this.formStatus = FormStatus.initial,
+    this.errorCode,
     this.errorMessage,
   });
 
@@ -45,6 +47,7 @@ class PreferencesWizardState {
     List<String>? likedFoods,
     int? householdSize,
     FormStatus? formStatus,
+    String? errorCode,
     String? errorMessage,
   }) {
     return PreferencesWizardState(
@@ -59,6 +62,7 @@ class PreferencesWizardState {
       likedFoods: likedFoods ?? this.likedFoods,
       householdSize: householdSize ?? this.householdSize,
       formStatus: formStatus ?? this.formStatus,
+      errorCode: errorCode ?? this.errorCode,
       errorMessage: errorMessage ?? this.errorMessage,
     );
   }

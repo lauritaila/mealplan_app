@@ -1,5 +1,6 @@
 // preferences_wizard_provider.dart
 
+import 'package:meal_plan_app/config/errors/app_errors.dart';
 import 'package:meal_plan_app/features/auth/presentation/provider/provider.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 import 'preferences_wizard_state.dart';
@@ -65,7 +66,7 @@ class PreferencesWizard extends _$PreferencesWizard {
     try {
       final authState = ref.read(authProvider);
       if (authState is! AuthenticatedAuthState) {
-        throw Exception('User is not authenticated. Cannot save preferences.');
+        throw const PermissionAppError.unauthorized();
       }
 
       final userId = authState.user.id;
@@ -81,9 +82,18 @@ class PreferencesWizard extends _$PreferencesWizard {
 
       await ref.read(authProvider.notifier).refreshUserStatus();
     } catch (e) {
+      String? errorCode;
+      String? errorMessage;
+      if (e is AppError) {
+        errorCode = e.code;
+        errorMessage = e.message;
+      } else {
+        errorMessage = e.toString();
+      }
       state = state.copyWith(
         formStatus: FormStatus.error,
-        errorMessage: e.toString(),
+        errorCode: errorCode,
+        errorMessage: errorMessage,
       );
     }
   }

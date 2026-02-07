@@ -3,6 +3,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:meal_plan_app/features/auth/presentation/provider/provider.dart';
+import 'package:meal_plan_app/l10n/app_localizations.dart';
 
 class FoodPreferencesStep extends ConsumerStatefulWidget {
   const FoodPreferencesStep({super.key});
@@ -40,6 +41,7 @@ class _FoodPreferencesStepState extends ConsumerState<FoodPreferencesStep> {
   @override
   Widget build(BuildContext context) {
     final textTheme = Theme.of(context).textTheme;
+    final l10n = AppLocalizations.of(context);
     
     return SingleChildScrollView(
       padding: const EdgeInsets.symmetric(horizontal: 24.0),
@@ -47,16 +49,20 @@ class _FoodPreferencesStepState extends ConsumerState<FoodPreferencesStep> {
         children: [
           const Icon(Icons.fastfood_outlined, size: 48, color: Colors.grey),
           const SizedBox(height: 16),
-          Text('Food Preferences', style: textTheme.headlineSmall, textAlign: TextAlign.center),
+          Text(
+            l10n.foodPreferencesTitle,
+            style: textTheme.headlineSmall,
+            textAlign: TextAlign.center,
+          ),
           const SizedBox(height: 24),
           
-          Text('Disliked Foods', style: textTheme.titleMedium),
+          Text(l10n.dislikedFoodsTitle, style: textTheme.titleMedium),
           const SizedBox(height: 8),
           TextFormField(
             controller: _dislikedController,
-            decoration: const InputDecoration(
-              hintText: 'List foods you dislike or want to avoid...',
-              border: OutlineInputBorder(),
+            decoration: InputDecoration(
+              hintText: l10n.dislikedFoodsHint,
+              border: const OutlineInputBorder(),
             ),
             maxLines: 4,
             onEditingComplete: _updateFoods,
@@ -64,13 +70,13 @@ class _FoodPreferencesStepState extends ConsumerState<FoodPreferencesStep> {
           
           const SizedBox(height: 24),
           
-          Text('Liked Foods', style: textTheme.titleMedium),
+          Text(l10n.likedFoodsTitle, style: textTheme.titleMedium),
           const SizedBox(height: 8),
           TextFormField(
             controller: _likedController,
-            decoration: const InputDecoration(
-              hintText: 'List your favorite foods and ingredients...',
-              border: OutlineInputBorder(),
+            decoration: InputDecoration(
+              hintText: l10n.likedFoodsHint,
+              border: const OutlineInputBorder(),
             ),
             maxLines: 4,
             onEditingComplete: _updateFoods,

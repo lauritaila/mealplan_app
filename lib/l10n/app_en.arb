@@ -1,4 +1,262 @@
 {
+  "@@locale": "en",
   "appTitle": "Meal Plan App",
-  "genericError": "Something went wrong. Please try again."
+  "genericError": "Something went wrong. Please try again.",
+  "errorFieldRequired": "This field is required.",
+  "errorEmailInvalid": "Enter a valid email address.",
+  "errorPasswordMinLength": "Minimum 6 characters.",
+  "errorPasswordFormat": "Must include an uppercase letter, lowercase letter, and a number.",
+  "errorAuthInvalidCredentials": "Invalid credentials. Please check your email and password.",
+  "errorAuthEmailNotVerified": "Your email has not been verified. Please check your inbox.",
+  "errorAuthUserNotFound": "User not found.",
+  "errorAuthEmailInUse": "This email is already registered.",
+  "errorAuthPasswordResetFailed": "Could not reset password. Please try again later.",
+  "errorAuthResendVerificationFailed": "Could not resend verification email.",
+  "errorAuthInvalidOtp": "The code you entered is invalid or has expired.",
+  "errorAuthUnexpected": "An unexpected authentication error occurred.",
+  "errorAuthGoogleSignInFailed": "An unexpected error occurred during Google Sign-In.",
+  "errorAuthSendOtpFailed": "Failed to send OTP. Please try again.",
+  "errorNetworkTimeout": "The request timed out. Please check your internet connection.",
+  "errorNetworkNoConnection": "No internet connection. Please connect and try again.",
+  "errorNetworkServer": "Server error. Please try again later.",
+  "errorNetworkBadResponse": "Unexpected response from the server.",
+  "errorNetworkUnreachableHost": "Cannot reach the server. Check the host, port, or VPN.",
+  "errorNetworkSsl": "Secure connection failed (SSL/TLS).",
+  "errorNetworkRateLimit": "Too many requests. Please wait and try again.",
+  "errorNetworkBadRequest": "Request rejected by server.",
+  "errorDataNotFound": "Requested data was not found.",
+  "errorDataInvalid": "Invalid data.",
+  "errorDataCreationFailed": "Failed to create data.",
+  "errorDataUpdateFailed": "Failed to update data.",
+  "errorDataFetchFailed": "Failed to fetch data.",
+  "errorDataSerializationFailed": "Failed to parse data.",
+  "errorDataEmptyResponse": "The response was empty.",
+  "errorPermissionUnauthorized": "Unauthorized. Please sign in again.",
+  "errorPermissionForbidden": "You do not have permission to perform this action.",
+  "errorConfigMissing": "Configuration is missing.",
+  "errorConfigInvalid": "Configuration is invalid.",
+  "errorMealPlanNotAuthenticated": "Please sign in to continue.",
+  "errorMealPlanDaysNotAllowed": "The selected number of days is not allowed.",
+  "errorMealPlanTypesNotAllowed": "Some selected meal types are not allowed.",
+  "errorMealPlanGenerateFailed": "Could not generate the plan. Please try again.",
+  "errorMealPlanQuotaReached": "You have run out of plan generations this week.",
+  "approvePlanTitle": "Approve plan",
+  "noPlanDataReceived": "No plan data received.",
+  "done": "Done",
+  "mealsCount": "{count} meals",
+  "@mealsCount": {
+    "placeholders": {
+      "count": {}
+    }
+  },
+  "caloriesKcal": "{calories} kcal",
+  "@caloriesKcal": {
+    "placeholders": {
+      "calories": {}
+    }
+  },
+  "servingsLabel": "Servings: {count}",
+  "@servingsLabel": {
+    "placeholders": {
+      "count": {}
+    }
+  },
+  "prepMinutesLabel": "Prep: {minutes} min",
+  "@prepMinutesLabel": {
+    "placeholders": {
+      "minutes": {}
+    }
+  },
+  "cookMinutesLabel": "Cook: {minutes} min",
+  "@cookMinutesLabel": {
+    "placeholders": {
+      "minutes": {}
+    }
+  },
+  "proteinLabel": "Protein: {grams} g",
+  "@proteinLabel": {
+    "placeholders": {
+      "grams": {}
+    }
+  },
+  "carbsLabel": "Carbs: {grams} g",
+  "@carbsLabel": {
+    "placeholders": {
+      "grams": {}
+    }
+  },
+  "fatsLabel": "Fats: {grams} g",
+  "@fatsLabel": {
+    "placeholders": {
+      "grams": {}
+    }
+  },
+  "preparingPlanTitle": "Preparing your plan",
+  "loadingMessageCookbook": "Checking grandma's cookbook...",
+  "loadingMessageRecipes": "Dusting off the old recipes...",
+  "loadingMessageAunts": "Asking the aunts for their secrets...",
+  "loadingMessageFridge": "Peeking into the fridge...",
+  "loadingMessageKnives": "Sharpening imaginary knives...",
+  "loadingMessageTablespoons": "Measuring tablespoons by eye...",
+  "cookingCombosMessage": "Cooking up tasty, healthy combos for you...",
+  "cancelAndGoBack": "Cancel and go back",
+  "planLimitReachedTitle": "Plan limit reached",
+  "planLimitReachedMessage": "You have run out of plan generations this week.",
+  "newPlanTitle": "New Plan",
+  "clear": "Clear",
+  "configurePlanTitle": "Configure your plan",
+  "configurePlanSubtitle": "Define duration, people and base meals.",
+  "durationTitle": "Duration",
+  "daysLabel": "{days} days",
+  "@daysLabel": {
+    "placeholders": {
+      "days": {}
+    }
+  },
+  "dinersTitle": "Diners",
+  "peopleCount": "{count} people",
+  "@peopleCount": {
+    "placeholders": {
+      "count": {}
+    }
+  },
+  "mealTypesTitle": "Meal types",
+  "mealTypeBreakfast": "Breakfast",
+  "mealTypeLunch": "Lunch",
+  "mealTypeSnack": "Snack",
+  "mealTypeDinner": "Dinner",
+  "mealTypeBreakfastSubtitle": "Energy for the day",
+  "mealTypeLunchSubtitle": "Main meal",
+  "mealTypeSnackSubtitle": "Something light",
+  "mealTypeDinnerSubtitle": "Light and nutritious",
+  "notesOptionalTitle": "Notes (optional)",
+  "notesHint": "E.g.: Lactose-free, more proteins...",
+  "continueLabel": "Continue",
+  "mealsOfDayTitle": "Meals of the day",
+  "metricCalories": "Cal",
+  "metricServings": "Servings",
+  "metricFat": "Fat",
+  "metricCarbs": "Carbs",
+  "metricProtein": "Protein",
+  "metricKcal": "Kcal",
+  "descriptionTitle": "Description",
+  "instructionsTitle": "Instructions",
+  "ingredientsTitle": "Ingredients",
+  "noInstructions": "No instructions.",
+  "noIngredients": "No ingredients.",
+  "retry": "Retry",
+  "noMealsLoggedToday": "No meals logged for today.",
+  "weekdayMonShort": "Mon",
+  "weekdayTueShort": "Tue",
+  "weekdayWedShort": "Wed",
+  "weekdayThuShort": "Thu",
+  "weekdayFriShort": "Fri",
+  "weekdaySatShort": "Sat",
+  "weekdaySunShort": "Sun",
+  "homeTitle": "Home",
+  "generateNewPlan": "Generate New Plan",
+  "logout": "Logout",
+  "unableToLoadPlanStatus": "Unable to load plan status: {error}",
+  "@unableToLoadPlanStatus": {
+    "placeholders": {
+      "error": {}
+    }
+  },
+  "plansLeftThisWeek": "{remaining} of {total} plans left this week",
+  "@plansLeftThisWeek": {
+    "placeholders": {
+      "remaining": {},
+      "total": {}
+    }
+  },
+  "goPremiumUnlockMorePlans": "Go premium to unlock more meal plans.",
+  "goPremiumTitle": "Go Premium",
+  "freePlanLimitedGenerations": "Your free plan has limited meal plan generations.",
+  "goPremiumKeepGenerating": "Go premium to keep generating meal plans.",
+  "goToHome": "Go to Home",
+  "errorTitle": "Error",
+  "errorOccurred": "An error occurred: {error}",
+  "@errorOccurred": {
+    "placeholders": {
+      "error": {}
+    }
+  },
+  "login": "Login",
+  "register": "Register",
+  "signUp": "Sign Up",
+  "email": "Email",
+  "name": "Name",
+  "sendOtp": "Send OTP",
+  "sendVerificationCodeOtp": "Send Verification Code OTP",
+  "signInWithGoogle": "Sign in with Google",
+  "dontHaveAccount": "Don't have an account?",
+  "doYouHaveAccount": "Do you have an account?",
+  "verificationCodeSentEmail": "A verification code has been sent to your email.",
+  "otpEnterTitle": "Enter Verification Code",
+  "otpEnterSubtitle": "Enter the 6-digit code sent to:",
+  "otpVerificationCodeLabel": "Verification Code",
+  "otpResend": "Didn't receive a code? Send again",
+  "otpVerifySignIn": "Verify & Sign In",
+  "otpSentSnack": "Verification code sent!",
+  "preferencesSaved": "Preferences saved successfully",
+  "unknownError": "An unknown error occurred",
+  "wizardPrevious": "Previous",
+  "wizardNext": "Next",
+  "wizardFinish": "Finish",
+  "stepOf": "Step {current} of {total}",
+  "@stepOf": {
+    "placeholders": {
+      "current": {},
+      "total": {}
+    }
+  },
+  "dietaryTitle": "Dietary Preferences & Restrictions",
+  "allergiesTitle": "Allergies",
+  "allergiesOtherTitle": "Other allergies",
+  "allergiesOtherHint": "Please specify any other allergies...",
+  "foodPreferencesTitle": "Food Preferences",
+  "dislikedFoodsTitle": "Disliked Foods",
+  "dislikedFoodsHint": "List foods you dislike or want to avoid...",
+  "likedFoodsTitle": "Liked Foods",
+  "likedFoodsHint": "List your favorite foods and ingredients...",
+  "goalsTitle": "Dietary Choices & Goals",
+  "cookingDetailsTitle": "Cooking Details",
+  "cookingSkillTitle": "Cooking Skill",
+  "timeAvailabilityTitle": "Time Availability",
+  "householdSizeTitle": "Household Size",
+  "dietVegetarian": "Vegetarian",
+  "dietVegan": "Vegan",
+  "dietPescatarian": "Pescatarian",
+  "dietKeto": "Keto",
+  "dietPaleo": "Paleo",
+  "dietMediterranean": "Mediterranean",
+  "dietLowCarb": "Low Carb",
+  "dietLowFat": "Low Fat",
+  "dietGlutenFree": "Gluten Free",
+  "dietDairyFree": "Dairy Free",
+  "dietNutFree": "Nut Free",
+  "dietHalal": "Halal",
+  "dietKosher": "Kosher",
+  "allergyNuts": "Nuts",
+  "allergyDairy": "Dairy",
+  "allergyEggs": "Eggs",
+  "allergySoy": "Soy",
+  "allergyWheat": "Wheat",
+  "allergyFish": "Fish",
+  "allergyShellfish": "Shellfish",
+  "allergySesame": "Sesame",
+  "goalWeightLoss": "Weight Loss",
+  "goalWeightGain": "Weight Gain",
+  "goalMuscleBuilding": "Muscle Building",
+  "goalHeartHealth": "Heart Health",
+  "goalDiabetesManagement": "Diabetes Management",
+  "goalHighProtein": "High Protein",
+  "goalLowSodium": "Low Sodium",
+  "goalAntiInflammatory": "Anti-Inflammatory",
+  "skillBeginner": "Beginner",
+  "skillIntermediate": "Intermediate",
+  "skillAdvanced": "Advanced",
+  "time15Min": "15 min",
+  "time30Min": "30 min",
+  "time1HourPlus": "1+ hour"
 }

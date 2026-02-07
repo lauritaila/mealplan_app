@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:meal_plan_app/features/auth/presentation/provider/provider.dart';
 import 'package:meal_plan_app/features/shared/shared.dart';
+import 'package:meal_plan_app/l10n/app_localizations.dart';
+import 'package:meal_plan_app/features/shared/utils/app_error_localizations.dart';
 
 class OtpVerificationScreen extends ConsumerStatefulWidget {
   const OtpVerificationScreen({super.key});
@@ -36,18 +38,25 @@ class _OtpVerificationScreenState extends ConsumerState<OtpVerificationScreen> {
       ScaffoldMessenger.of(context)
         ..hideCurrentSnackBar()
         ..showSnackBar(
-          const SnackBar(content: Text('Verification code sent!')),
+          SnackBar(content: Text(AppLocalizations.of(context).otpSentSnack)),
         );
     }
   }
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context);
     ref.listen(authProvider, (previous, next) {
       if (next is ErrorAuthState) {
         ScaffoldMessenger.of(context)
           ..hideCurrentSnackBar()
-          ..showSnackBar(SnackBar(content: Text(next.message)));
+          ..showSnackBar(
+            SnackBar(
+              content: Text(
+                localizeErrorCode(l10n, next.code, fallback: next.message),
+              ),
+            ),
+          );
         _otpController.clear();
       }
     });
@@ -78,13 +87,13 @@ class _OtpVerificationScreenState extends ConsumerState<OtpVerificationScreen> {
             Icon(Icons.password_rounded, size: 80, color: colors.primary),
             const SizedBox(height: 24),
             Text(
-              'Enter Verification Code',
+              l10n.otpEnterTitle,
               style: Theme.of(context).textTheme.headlineSmall,
               textAlign: TextAlign.center,
             ),
             const SizedBox(height: 12),
             Text(
-              'Enter the 6-digit code sent to:',
+              l10n.otpEnterSubtitle,
               style: const TextStyle(fontSize: 16),
               textAlign: TextAlign.center,
             ),
@@ -99,11 +108,11 @@ class _OtpVerificationScreenState extends ConsumerState<OtpVerificationScreen> {
             const SizedBox(height: 24),
             TextFormField(
               controller: _otpController,
-              decoration: const InputDecoration(
-                labelText: 'Verification Code',
+              decoration: InputDecoration(
+                labelText: l10n.otpVerificationCodeLabel,
                 hintText: '______',
                 counterText: "",
-                border: OutlineInputBorder(),
+                border: const OutlineInputBorder(),
               ),
               keyboardType: TextInputType.number,
               textAlign: TextAlign.center,
@@ -114,11 +123,11 @@ class _OtpVerificationScreenState extends ConsumerState<OtpVerificationScreen> {
             const SizedBox(height: 12),
             TextButton(
               onPressed: isLoading ? null : _onResend,
-              child: const Text("Didn't receive a code? Send again"),
+              child: Text(l10n.otpResend),
             ),
             const SizedBox(height: 12),
             CustomFilledButton(
-              text: 'Verify & Sign In',
+              text: l10n.otpVerifySignIn,
               buttonColor: colors.primary,
               onPressed: isLoading ? null : _onSubmit,
             ),

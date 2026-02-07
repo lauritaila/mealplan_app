@@ -1,4 +1,5 @@
 import 'package:formz/formz.dart';
+import 'package:meal_plan_app/l10n/app_localizations.dart';
 
 // Define input validation errors
 enum EmailError { empty, format }
@@ -18,11 +19,11 @@ class Email extends FormzInput<String, EmailError> {
 
 
 
-  String? get errorMessage {
-    if ( isValid || isPure ) return null;
+  String? getErrorMessage(AppLocalizations l10n) {
+    if (isValid || isPure) return null;
 
-    if ( displayError == EmailError.empty ) return 'El campo es requerido';
-    if ( displayError == EmailError.format ) return 'No tiene formato de correo electrónico';
+    if (displayError == EmailError.empty) return l10n.errorFieldRequired;
+    if (displayError == EmailError.format) return l10n.errorEmailInvalid;
 
     return null;
   }

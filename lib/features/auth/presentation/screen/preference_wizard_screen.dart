@@ -2,6 +2,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:meal_plan_app/features/auth/presentation/provider/preferences_wizard/preferences_wizard_state.dart';
+import 'package:meal_plan_app/l10n/app_localizations.dart';
+import 'package:meal_plan_app/features/shared/utils/app_error_localizations.dart';
 
 import '../provider/provider.dart';
 import '../views/views.dart';
@@ -91,16 +93,25 @@ class _NavigationControls extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    final l10n = AppLocalizations.of(context);
     ref.listen(preferencesWizardProvider.select((s) => s.formStatus), (previous, next) {
       if (next == FormStatus.error) {
-        final errorMessage = ref.read(preferencesWizardProvider).errorMessage;
+        final errorState = ref.read(preferencesWizardProvider);
         ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text(errorMessage ?? 'An unknown error occurred')),
+          SnackBar(
+            content: Text(
+              localizeErrorCode(
+                l10n,
+                errorState.errorCode,
+                fallback: errorState.errorMessage ?? l10n.unknownError,
+              ),
+            ),
+          ),
         );
       }
       if (next == FormStatus.success) {
         ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text('Preferences saved successfully')),
+          SnackBar(content: Text(l10n.preferencesSaved)),
         );
       }
     });
@@ -119,7 +130,7 @@ class _NavigationControls extends ConsumerWidget {
               onPressed: isSubmitting ? null : () {
                 ref.read(preferencesWizardProvider.notifier).previousStep();
               },
-              child: const Text('Previous'),
+              child: Text(l10n.wizardPrevious),
             )
           else
             const SizedBox(),
@@ -142,9 +153,12 @@ class _NavigationControls extends ConsumerWidget {
                 ? const SizedBox(
                     width: 24,
                     height: 24,
-                    child: CircularProgressIndicator(strokeWidth: 2, color: Colors.white),
+                    child: CircularProgressIndicator(
+                      strokeWidth: 2,
+                      color: Colors.white,
+                    ),
                   )
-                : Text(isLastStep ? 'Finish' : 'Next'),
+                : Text(isLastStep ? l10n.wizardFinish : l10n.wizardNext),
           ),
         ],
       ),

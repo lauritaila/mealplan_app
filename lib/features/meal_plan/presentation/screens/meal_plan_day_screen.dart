@@ -3,6 +3,8 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:meal_plan_app/config/errors/app_errors.dart';
 import 'package:meal_plan_app/features/meal_plan/domain/domain.dart';
 import 'package:meal_plan_app/features/meal_plan/presentation/providers/provider.dart';
+import 'package:meal_plan_app/features/shared/utils/app_error_localizations.dart';
+import 'package:meal_plan_app/l10n/app_localizations.dart';
 
 class MealPlanDayScreen extends ConsumerWidget {
   const MealPlanDayScreen({super.key});
@@ -11,10 +13,11 @@ class MealPlanDayScreen extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final selectedDate = ref.watch(selectedMealPlanDayProvider);
     final entriesAsync = ref.watch(mealPlanDayEntriesProvider(selectedDate));
+    final l10n = AppLocalizations.of(context);
 
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Meals of the day'),
+        title: Text(l10n.mealsOfDayTitle),
         actions: [
           IconButton(
             icon: const Icon(Icons.refresh),
@@ -26,9 +29,11 @@ class MealPlanDayScreen extends ConsumerWidget {
       body: entriesAsync.when(
         loading: () => const Center(child: CircularProgressIndicator()),
         error: (error, _) => _ErrorState(
-          message: error is AppError
-              ? error.message
-              : 'Could not load the day. Please try again.',
+          message: localizeErrorCode(
+            l10n,
+            error is AppError ? error.code : null,
+            fallback: error is AppError ? error.message : null,
+          ),
           onRetry: () =>
               ref.invalidate(mealPlanDayEntriesProvider(selectedDate)),
         ),
@@ -132,6 +137,7 @@ class _MealEntryCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context);
     return Card(
       elevation: 0.5,
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(14)),
@@ -150,7 +156,7 @@ class _MealEntryCard extends StatelessWidget {
               Padding(
                 padding: const EdgeInsets.only(top: 4),
                 child: Text(
-                  _formatMealType(entry.mealType),
+                  _formatMealType(l10n, entry.mealType),
                   style: Theme.of(context).textTheme.labelSmall?.copyWith(
                     color: Theme.of(context).colorScheme.primary,
                   ),
@@ -168,13 +174,16 @@ class _MealEntryCard extends StatelessWidget {
               spacing: 8,
               runSpacing: 8,
               children: [
-                _MetricChip(label: 'Cal', value: _formatDouble(entry.calories)),
                 _MetricChip(
-                  label: 'Servings',
+                  label: l10n.metricCalories,
+                  value: _formatDouble(entry.calories),
+                ),
+                _MetricChip(
+                  label: l10n.metricServings,
                   value: _formatInt(entry.servings),
                 ),
                 _MetricChip(
-                  label: 'Fat',
+                  label: l10n.metricFat,
                   value: _formatDouble(
                     entry.fatsGrams,
                     decimals: 1,
@@ -182,7 +191,7 @@ class _MealEntryCard extends StatelessWidget {
                   ),
                 ),
                 _MetricChip(
-                  label: 'Carbs',
+                  label: l10n.metricCarbs,
                   value: _formatDouble(
                     entry.carbsGrams,
                     decimals: 1,
@@ -198,7 +207,7 @@ class _MealEntryCard extends StatelessWidget {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Text(
-                'Description',
+                l10n.descriptionTitle,
                 style: Theme.of(context).textTheme.titleSmall,
               ),
               const SizedBox(height: 6),
@@ -208,25 +217,25 @@ class _MealEntryCard extends StatelessWidget {
               ),
               const SizedBox(height: 12),
               Text(
-                'Instructions',
+                l10n.instructionsTitle,
                 style: Theme.of(context).textTheme.titleSmall,
               ),
               const SizedBox(height: 6),
               Text(
                 entry.instructions.isEmpty
-                    ? 'No instructions.'
+                    ? l10n.noInstructions
                     : entry.instructions,
                 style: Theme.of(context).textTheme.bodyMedium,
               ),
               const SizedBox(height: 12),
               Text(
-                'Ingredients',
+                l10n.ingredientsTitle,
                 style: Theme.of(context).textTheme.titleSmall,
               ),
               const SizedBox(height: 6),
               if (entry.ingredients.isEmpty)
                 Text(
-                  'No ingredients.',
+                  l10n.noIngredients,
                   style: Theme.of(context).textTheme.bodyMedium,
                 )
               else
@@ -300,6 +309,7 @@ class _TotalsSummaryCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final colorScheme = Theme.of(context).colorScheme;
+    final l10n = AppLocalizations.of(context);
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
       decoration: BoxDecoration(
@@ -310,25 +320,25 @@ class _TotalsSummaryCard extends StatelessWidget {
         children: [
           Expanded(
             child: _TotalMetric(
-              label: 'Proteína',
+              label: l10n.metricProtein,
               value: _formatDouble(summary.protein, suffix: 'g'),
             ),
           ),
           Expanded(
             child: _TotalMetric(
-              label: 'Fat',
+              label: l10n.metricFat,
               value: _formatDouble(summary.fats, suffix: 'g'),
             ),
           ),
           Expanded(
             child: _TotalMetric(
-              label: 'Carbs',
+              label: l10n.metricCarbs,
               value: _formatDouble(summary.carbs, suffix: 'g'),
             ),
           ),
           Expanded(
             child: _TotalMetric(
-              label: 'Kcal',
+              label: l10n.metricKcal,
               value: _formatDouble(summary.calories),
             ),
           ),
@@ -420,6 +430,7 @@ class _DayChip extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final colorScheme = Theme.of(context).colorScheme;
+    final l10n = AppLocalizations.of(context);
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 4),
       child: InkWell(
@@ -435,7 +446,7 @@ class _DayChip extends StatelessWidget {
             mainAxisSize: MainAxisSize.min,
             children: [
               Text(
-                _weekdayLabel(date),
+                _weekdayLabel(l10n, date),
                 style: Theme.of(context).textTheme.labelSmall?.copyWith(
                   color: isSelected
                       ? colorScheme.onPrimary
@@ -490,6 +501,7 @@ class _ErrorState extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context);
     return Center(
       child: Padding(
         padding: const EdgeInsets.all(24),
@@ -505,7 +517,7 @@ class _ErrorState extends StatelessWidget {
             ElevatedButton.icon(
               onPressed: onRetry,
               icon: const Icon(Icons.refresh),
-              label: const Text('Retry'),
+              label: Text(l10n.retry),
             ),
           ],
         ),
@@ -519,11 +531,12 @@ class _EmptyState extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context);
     return Center(
       child: Padding(
         padding: const EdgeInsets.all(24),
         child: Text(
-          'No meals logged for today.',
+          l10n.noMealsLoggedToday,
           textAlign: TextAlign.center,
           style: Theme.of(context).textTheme.bodyMedium,
         ),
@@ -557,9 +570,35 @@ bool _isSameDate(DateTime a, DateTime b) {
   return a.year == b.year && a.month == b.month && a.day == b.day;
 }
 
-String _weekdayLabel(DateTime date) {
-  const labels = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'];
-  return labels[date.weekday - 1];
+String _weekdayLabel(AppLocalizations l10n, DateTime date) {
+  const labels = [
+    'weekdayMonShort',
+    'weekdayTueShort',
+    'weekdayWedShort',
+    'weekdayThuShort',
+    'weekdayFriShort',
+    'weekdaySatShort',
+    'weekdaySunShort',
+  ];
+  final key = labels[date.weekday - 1];
+  switch (key) {
+    case 'weekdayMonShort':
+      return l10n.weekdayMonShort;
+    case 'weekdayTueShort':
+      return l10n.weekdayTueShort;
+    case 'weekdayWedShort':
+      return l10n.weekdayWedShort;
+    case 'weekdayThuShort':
+      return l10n.weekdayThuShort;
+    case 'weekdayFriShort':
+      return l10n.weekdayFriShort;
+    case 'weekdaySatShort':
+      return l10n.weekdaySatShort;
+    case 'weekdaySunShort':
+      return l10n.weekdaySunShort;
+    default:
+      return '';
+  }
 }
 
 double? _sumNullable(Iterable<double?> values) {
@@ -594,17 +633,17 @@ IconData _mealTypeIcon(String? mealType) {
   }
 }
 
-String _formatMealType(String? mealType) {
+String _formatMealType(AppLocalizations l10n, String? mealType) {
   if (mealType == null || mealType.trim().isEmpty) return '';
   switch (mealType.toLowerCase()) {
     case 'breakfast':
-      return 'Breakfast';
+      return l10n.mealTypeBreakfast;
     case 'lunch':
-      return 'Lunch';
+      return l10n.mealTypeLunch;
     case 'dinner':
-      return 'Dinner';
+      return l10n.mealTypeDinner;
     case 'snack':
-      return 'Snack';
+      return l10n.mealTypeSnack;
     default:
       return mealType;
   }

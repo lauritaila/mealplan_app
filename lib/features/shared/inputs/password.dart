@@ -1,4 +1,5 @@
 import 'package:formz/formz.dart';
+import 'package:meal_plan_app/l10n/app_localizations.dart';
 
 // Define input validation errors
 enum PasswordError { empty, length, format }
@@ -18,12 +19,14 @@ class Password extends FormzInput<String, PasswordError> {
   const Password.dirty( super.value ) : super.dirty();
 
 
-  String? get errorMessage {
-    if ( isValid || isPure ) return null;
+  String? getErrorMessage(AppLocalizations l10n) {
+    if (isValid || isPure) return null;
 
-    if ( displayError == PasswordError.empty ) return 'El campo es requerido';
-    if ( displayError == PasswordError.length ) return 'Mínimo 6 caracteres';
-    if ( displayError == PasswordError.format ) return 'Debe de tener Mayúscula, letras y un número';
+    if (displayError == PasswordError.empty) return l10n.errorFieldRequired;
+    if (displayError == PasswordError.length) {
+      return l10n.errorPasswordMinLength;
+    }
+    if (displayError == PasswordError.format) return l10n.errorPasswordFormat;
 
     return null;
   }

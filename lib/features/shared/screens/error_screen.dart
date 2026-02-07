@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:meal_plan_app/l10n/app_localizations.dart';
 
 class ErrorScreen extends StatelessWidget {
   final Exception? error;
@@ -6,10 +7,13 @@ class ErrorScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context);
     return Scaffold(
-      appBar: AppBar(title: const Text('Error')),
+      appBar: AppBar(title: Text(l10n.errorTitle)),
       body: Center(
-        child: Text('Ha ocurrido un error: ${error.toString()}'),
+        child: Text(
+          l10n.errorOccurred(error?.toString() ?? l10n.genericError),
+        ),
       ),
     );
   }
