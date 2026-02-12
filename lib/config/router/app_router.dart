@@ -4,6 +4,9 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import 'package:meal_plan_app/features/auth/auth.dart';
 import 'package:meal_plan_app/features/home/home.dart';
+import 'package:meal_plan_app/features/profile/profile.dart';
+import 'package:meal_plan_app/features/profile/presentation/screen/preferences_details_screen.dart';
+import 'package:meal_plan_app/features/profile/presentation/screen/language_settings_screen.dart';
 import 'package:meal_plan_app/features/auth/presentation/provider/provider.dart';
 import 'package:meal_plan_app/features/shared/shared.dart';
 
@@ -33,6 +36,9 @@ class MainLayout extends ConsumerWidget {
     if (location.startsWith('/nutrition')) {
       return 4;
     }
+    if (location.startsWith('/profile')) {
+      return 5;
+    }
     return 0;
   }
 
@@ -59,6 +65,9 @@ class MainLayout extends ConsumerWidget {
             case 4:
               context.go('/nutrition');
               break;
+            case 5:
+              context.go('/profile');
+              break;
           }
         },
         // Es importante definir el tipo como 'fixed' para que se vean más de 3 items
@@ -80,6 +89,10 @@ class MainLayout extends ConsumerWidget {
           BottomNavigationBarItem(
             icon: Icon(Icons.pie_chart),
             label: 'Nutrition',
+          ),
+          BottomNavigationBarItem(
+            icon: Icon(Icons.person),
+            label: 'Profile',
           ),
         ],
       ),
@@ -226,6 +239,32 @@ final appRouterProvider = Provider<GoRouter>((ref) {
           GoRoute(
             path: '/nutrition',
             builder: (context, state) => const NutritionScreen(),
+          ),
+          GoRoute(
+            path: '/profile',
+            builder: (context, state) => const ProfileScreen(),
+            routes: [
+              GoRoute(
+                path: 'preferences',
+                builder: (context, state) => const PreferencesDetailsScreen(),
+              ),
+              GoRoute(
+                path: 'language',
+                builder: (context, state) => const LanguageSettingsScreen(),
+              ),
+              GoRoute(
+                path: 'change-email',
+                builder: (context, state) => const ChangeEmailScreen(),
+              ),
+              GoRoute(
+                path: 'view-payments',
+                builder: (context, state) => const ViewPaymentsScreen(),
+              ),
+              GoRoute(
+                path: 'subscription',
+                builder: (context, state) => const SubscriptionScreen(),
+              ),
+            ],
           ),
         ],
       ),

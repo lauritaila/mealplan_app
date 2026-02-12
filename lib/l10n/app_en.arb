@@ -156,6 +156,10 @@
   "homeTitle": "Home",
   "generateNewPlan": "Generate New Plan",
   "logout": "Logout",
+  "deleteAccount": "Delete account",
+  "profileNotificationsTitle": "Notifications",
+  "profileLicensesTitle": "Licenses",
+  "profileTermsTitle": "Terms and Conditions",
   "unableToLoadPlanStatus": "Unable to load plan status: {error}",
   "@unableToLoadPlanStatus": {
     "placeholders": {
@@ -258,5 +262,25 @@
   "skillAdvanced": "Advanced",
   "time15Min": "15 min",
   "time30Min": "30 min",
-  "time1HourPlus": "1+ hour"
+  "time1HourPlus": "1+ hour",
+  "profileTitle": "Profile",
+  "settingsTitle": "Settings",
+  "profileGuestName": "Guest",
+  "profilePreferencesTitle": "Preferences",
+  "profileDietarySpecsLabel": "Dietary specifications",
+  "profileHideNutritionLabel": "Hide nutritional values",
+  "profileSecurityTitle": "Security",
+  "profileChangeEmailLabel": "Change email",
+  "profileLanguageTitle": "Language",
+  "profileLanguageLabel": "App language",
+  "profileLanguageEnglish": "English",
+  "profileLanguageSpanish": "Spanish",
+  "profilePaymentsTitle": "Payments",
+  "profilePaymentsEmpty": "No payments to show yet.",
+  "profileSubscriptionTitle": "Subscription",
+  "profileSubscriptionCurrentLabel": "Current plan",
+  "profileSubscriptionIncludesLabel": "Includes",
+  "profileSubscriptionFree": "Free",
+  "profileNoIncludes": "No benefits listed yet.",
+  "profileSavePreferences": "Save preferences"
 }

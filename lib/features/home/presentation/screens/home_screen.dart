@@ -37,13 +37,6 @@ class HomeScreen extends ConsumerWidget {
                 child: Text(l10n.generateNewPlan),
               ),
             ),
-            SizedBox(
-              width: double.infinity,
-              child: ElevatedButton(
-                onPressed: () => ref.read(authProvider.notifier).logOut(),
-                child: Text(l10n.logout),
-              ),
-            ),
           ],
         ),
       ),

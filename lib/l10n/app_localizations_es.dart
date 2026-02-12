@@ -370,6 +370,18 @@ class AppLocalizationsEs extends AppLocalizations {
   String get logout => 'Cerrar sesión';
 
   @override
+  String get deleteAccount => 'Eliminar cuenta';
+
+  @override
+  String get profileNotificationsTitle => 'Notificaciones';
+
+  @override
+  String get profileLicensesTitle => 'Licencias';
+
+  @override
+  String get profileTermsTitle => 'Términos y condiciones';
+
+  @override
   String unableToLoadPlanStatus(Object error) {
     return 'No se pudo cargar el estado del plan: $error';
   }
@@ -625,4 +637,64 @@ class AppLocalizationsEs extends AppLocalizations {
 
   @override
   String get time1HourPlus => '1+ hora';
+
+  @override
+  String get profileTitle => 'Perfil';
+
+  @override
+  String get settingsTitle => 'Configuración';
+
+  @override
+  String get profileGuestName => 'Invitado';
+
+  @override
+  String get profilePreferencesTitle => 'Preferencias';
+
+  @override
+  String get profileDietarySpecsLabel => 'Especificaciones dietéticas';
+
+  @override
+  String get profileHideNutritionLabel => 'Ocultar valores nutricionales';
+
+  @override
+  String get profileSecurityTitle => 'Seguridad';
+
+  @override
+  String get profileChangeEmailLabel => 'Cambiar correo';
+
+  @override
+  String get profileLanguageTitle => 'Idioma';
+
+  @override
+  String get profileLanguageLabel => 'Idioma de la app';
+
+  @override
+  String get profileLanguageEnglish => 'Inglés';
+
+  @override
+  String get profileLanguageSpanish => 'Español';
+
+  @override
+  String get profilePaymentsTitle => 'Pagos';
+
+  @override
+  String get profilePaymentsEmpty => 'Todavía no hay pagos para mostrar.';
+
+  @override
+  String get profileSubscriptionTitle => 'Suscripción';
+
+  @override
+  String get profileSubscriptionCurrentLabel => 'Plan actual';
+
+  @override
+  String get profileSubscriptionIncludesLabel => 'Incluye';
+
+  @override
+  String get profileSubscriptionFree => 'Gratis';
+
+  @override
+  String get profileNoIncludes => 'Aún no hay beneficios listados.';
+
+  @override
+  String get profileSavePreferences => 'Guardar preferencias';
 }

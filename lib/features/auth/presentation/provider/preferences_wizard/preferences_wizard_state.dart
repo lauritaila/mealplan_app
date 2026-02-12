@@ -1,4 +1,4 @@
-import '../../../domain/domain.dart';
+import 'package:meal_plan_app/features/preferences/domain/domain.dart';
 
 enum FormStatus { initial, submitting, success, error }
 

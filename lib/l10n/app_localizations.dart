@@ -734,6 +734,30 @@ abstract class AppLocalizations {
   /// **'Logout'**
   String get logout;
 
+  /// No description provided for @deleteAccount.
+  ///
+  /// In en, this message translates to:
+  /// **'Delete account'**
+  String get deleteAccount;
+
+  /// No description provided for @profileNotificationsTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Notifications'**
+  String get profileNotificationsTitle;
+
+  /// No description provided for @profileLicensesTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Licenses'**
+  String get profileLicensesTitle;
+
+  /// No description provided for @profileTermsTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Terms and Conditions'**
+  String get profileTermsTitle;
+
   /// No description provided for @unableToLoadPlanStatus.
   ///
   /// In en, this message translates to:
@@ -1219,6 +1243,126 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'1+ hour'**
   String get time1HourPlus;
+
+  /// No description provided for @profileTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Profile'**
+  String get profileTitle;
+
+  /// No description provided for @settingsTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Settings'**
+  String get settingsTitle;
+
+  /// No description provided for @profileGuestName.
+  ///
+  /// In en, this message translates to:
+  /// **'Guest'**
+  String get profileGuestName;
+
+  /// No description provided for @profilePreferencesTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Preferences'**
+  String get profilePreferencesTitle;
+
+  /// No description provided for @profileDietarySpecsLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Dietary specifications'**
+  String get profileDietarySpecsLabel;
+
+  /// No description provided for @profileHideNutritionLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Hide nutritional values'**
+  String get profileHideNutritionLabel;
+
+  /// No description provided for @profileSecurityTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Security'**
+  String get profileSecurityTitle;
+
+  /// No description provided for @profileChangeEmailLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Change email'**
+  String get profileChangeEmailLabel;
+
+  /// No description provided for @profileLanguageTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Language'**
+  String get profileLanguageTitle;
+
+  /// No description provided for @profileLanguageLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'App language'**
+  String get profileLanguageLabel;
+
+  /// No description provided for @profileLanguageEnglish.
+  ///
+  /// In en, this message translates to:
+  /// **'English'**
+  String get profileLanguageEnglish;
+
+  /// No description provided for @profileLanguageSpanish.
+  ///
+  /// In en, this message translates to:
+  /// **'Spanish'**
+  String get profileLanguageSpanish;
+
+  /// No description provided for @profilePaymentsTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Payments'**
+  String get profilePaymentsTitle;
+
+  /// No description provided for @profilePaymentsEmpty.
+  ///
+  /// In en, this message translates to:
+  /// **'No payments to show yet.'**
+  String get profilePaymentsEmpty;
+
+  /// No description provided for @profileSubscriptionTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Subscription'**
+  String get profileSubscriptionTitle;
+
+  /// No description provided for @profileSubscriptionCurrentLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Current plan'**
+  String get profileSubscriptionCurrentLabel;
+
+  /// No description provided for @profileSubscriptionIncludesLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Includes'**
+  String get profileSubscriptionIncludesLabel;
+
+  /// No description provided for @profileSubscriptionFree.
+  ///
+  /// In en, this message translates to:
+  /// **'Free'**
+  String get profileSubscriptionFree;
+
+  /// No description provided for @profileNoIncludes.
+  ///
+  /// In en, this message translates to:
+  /// **'No benefits listed yet.'**
+  String get profileNoIncludes;
+
+  /// No description provided for @profileSavePreferences.
+  ///
+  /// In en, this message translates to:
+  /// **'Save preferences'**
+  String get profileSavePreferences;
 }
 
 class _AppLocalizationsDelegate

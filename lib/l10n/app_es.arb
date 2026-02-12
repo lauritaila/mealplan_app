@@ -156,6 +156,10 @@
   "homeTitle": "Inicio",
   "generateNewPlan": "Generar nuevo plan",
   "logout": "Cerrar sesión",
+  "deleteAccount": "Eliminar cuenta",
+  "profileNotificationsTitle": "Notificaciones",
+  "profileLicensesTitle": "Licencias",
+  "profileTermsTitle": "Términos y condiciones",
   "unableToLoadPlanStatus": "No se pudo cargar el estado del plan: {error}",
   "@unableToLoadPlanStatus": {
     "placeholders": {
@@ -258,5 +262,25 @@
   "skillAdvanced": "Avanzado",
   "time15Min": "15 min",
   "time30Min": "30 min",
-  "time1HourPlus": "1+ hora"
+  "time1HourPlus": "1+ hora",
+  "profileTitle": "Perfil",
+  "settingsTitle": "Configuración",
+  "profileGuestName": "Invitado",
+  "profilePreferencesTitle": "Preferencias",
+  "profileDietarySpecsLabel": "Especificaciones dietéticas",
+  "profileHideNutritionLabel": "Ocultar valores nutricionales",
+  "profileSecurityTitle": "Seguridad",
+  "profileChangeEmailLabel": "Cambiar correo",
+  "profileLanguageTitle": "Idioma",
+  "profileLanguageLabel": "Idioma de la app",
+  "profileLanguageEnglish": "Inglés",
+  "profileLanguageSpanish": "Español",
+  "profilePaymentsTitle": "Pagos",
+  "profilePaymentsEmpty": "Todavía no hay pagos para mostrar.",
+  "profileSubscriptionTitle": "Suscripción",
+  "profileSubscriptionCurrentLabel": "Plan actual",
+  "profileSubscriptionIncludesLabel": "Incluye",
+  "profileSubscriptionFree": "Gratis",
+  "profileNoIncludes": "Aún no hay beneficios listados.",
+  "profileSavePreferences": "Guardar preferencias"
 }

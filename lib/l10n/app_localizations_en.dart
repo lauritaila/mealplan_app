@@ -367,6 +367,18 @@ class AppLocalizationsEn extends AppLocalizations {
   String get logout => 'Logout';
 
   @override
+  String get deleteAccount => 'Delete account';
+
+  @override
+  String get profileNotificationsTitle => 'Notifications';
+
+  @override
+  String get profileLicensesTitle => 'Licenses';
+
+  @override
+  String get profileTermsTitle => 'Terms and Conditions';
+
+  @override
   String unableToLoadPlanStatus(Object error) {
     return 'Unable to load plan status: $error';
   }
@@ -620,4 +632,64 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get time1HourPlus => '1+ hour';
+
+  @override
+  String get profileTitle => 'Profile';
+
+  @override
+  String get settingsTitle => 'Settings';
+
+  @override
+  String get profileGuestName => 'Guest';
+
+  @override
+  String get profilePreferencesTitle => 'Preferences';
+
+  @override
+  String get profileDietarySpecsLabel => 'Dietary specifications';
+
+  @override
+  String get profileHideNutritionLabel => 'Hide nutritional values';
+
+  @override
+  String get profileSecurityTitle => 'Security';
+
+  @override
+  String get profileChangeEmailLabel => 'Change email';
+
+  @override
+  String get profileLanguageTitle => 'Language';
+
+  @override
+  String get profileLanguageLabel => 'App language';
+
+  @override
+  String get profileLanguageEnglish => 'English';
+
+  @override
+  String get profileLanguageSpanish => 'Spanish';
+
+  @override
+  String get profilePaymentsTitle => 'Payments';
+
+  @override
+  String get profilePaymentsEmpty => 'No payments to show yet.';
+
+  @override
+  String get profileSubscriptionTitle => 'Subscription';
+
+  @override
+  String get profileSubscriptionCurrentLabel => 'Current plan';
+
+  @override
+  String get profileSubscriptionIncludesLabel => 'Includes';
+
+  @override
+  String get profileSubscriptionFree => 'Free';
+
+  @override
+  String get profileNoIncludes => 'No benefits listed yet.';
+
+  @override
+  String get profileSavePreferences => 'Save preferences';
 }

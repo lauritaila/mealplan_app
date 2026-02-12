@@ -42,14 +42,6 @@ class AuthRepositoryImpl implements AuthRepository {
   }
 
   @override
-  Future<void> saveUserPreference(
-    UserPreferences userPreference,
-    String userId,
-  ) {
-    return datasource.saveUserPreference(userPreference, userId);
-  }
-
-  @override
   Future<void> signInWithOtp(String email) {
     return datasource.signInWithOtp(email);
   }
@@ -57,6 +49,11 @@ class AuthRepositoryImpl implements AuthRepository {
   @override
   Future<UserProfile> verifyOtp(String email, String token) {
     return datasource.verifyOtp(email, token);
+  }
+
+  @override
+  Future<void> markOnboardingComplete(String userId) {
+    return datasource.markOnboardingComplete(userId);
   }
 
   @override

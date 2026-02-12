@@ -2,6 +2,7 @@
 
 import 'package:meal_plan_app/config/errors/app_errors.dart';
 import 'package:meal_plan_app/features/auth/presentation/provider/provider.dart';
+import 'package:meal_plan_app/features/preferences/presentation/providers/preferences_repository_provider.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 import 'preferences_wizard_state.dart';
 
@@ -70,11 +71,12 @@ class PreferencesWizard extends _$PreferencesWizard {
       }
 
       final userId = authState.user.id;
+      final preferencesRepository = ref.read(preferencesRepositoryProvider);
       final authRepository = ref.read(authRepositoryProvider);
-
       final userPreferences = state.toUserPreferences(userId);
 
-      await authRepository.saveUserPreference(userPreferences, userId);
+      await preferencesRepository.saveUserPreference(userPreferences, userId);
+      await authRepository.markOnboardingComplete(userId);
 
       state = state.copyWith(formStatus: FormStatus.success);
 
