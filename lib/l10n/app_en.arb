@@ -1,3 +1,4 @@
+
 {
   "@@locale": "en",
   "appTitle": "Meal Plan App",
@@ -282,5 +283,9 @@
   "profileSubscriptionIncludesLabel": "Includes",
   "profileSubscriptionFree": "Free",
   "profileNoIncludes": "No benefits listed yet.",
-  "profileSavePreferences": "Save preferences"
+  "profileSavePreferences": "Save preferences",
+  "mealPlanTitle": "Meal Plan",
+  "recipesTitle": "Recipes",
+  "groceryTitle": "Grocery",
+  "nutritionTitle": "Nutrition"
 }

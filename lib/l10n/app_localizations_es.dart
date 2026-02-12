@@ -697,4 +697,16 @@ class AppLocalizationsEs extends AppLocalizations {
 
   @override
   String get profileSavePreferences => 'Guardar preferencias';
+
+  @override
+  String get mealPlanTitle => 'Plan de comidas';
+
+  @override
+  String get recipesTitle => 'Recetas';
+
+  @override
+  String get groceryTitle => 'Compras';
+
+  @override
+  String get nutritionTitle => 'Nutrición';
 }

@@ -282,5 +282,9 @@
   "profileSubscriptionIncludesLabel": "Incluye",
   "profileSubscriptionFree": "Gratis",
   "profileNoIncludes": "Aún no hay beneficios listados.",
-  "profileSavePreferences": "Guardar preferencias"
+  "profileSavePreferences": "Guardar preferencias",
+  "mealPlanTitle": "Plan de comidas",
+  "recipesTitle": "Recetas",
+  "groceryTitle": "Compras",
+  "nutritionTitle": "Nutrición"
 }

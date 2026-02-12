@@ -5,100 +5,15 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:meal_plan_app/features/auth/auth.dart';
 import 'package:meal_plan_app/features/home/home.dart';
 import 'package:meal_plan_app/features/profile/profile.dart';
-import 'package:meal_plan_app/features/profile/presentation/screen/preferences_details_screen.dart';
-import 'package:meal_plan_app/features/profile/presentation/screen/language_settings_screen.dart';
 import 'package:meal_plan_app/features/auth/presentation/provider/provider.dart';
+import 'package:meal_plan_app/features/shared/screens/main_layout.dart';
 import 'package:meal_plan_app/features/shared/shared.dart';
 
 import '../../features/meal_plan/meal_plan.dart';
 import 'package:meal_plan_app/features/meal_plan/domain/domain.dart';
 import 'package:meal_plan_app/features/meal_plan/presentation/screens/loading_meal_plan_screen.dart';
 
-class MainLayout extends ConsumerWidget {
-  final Widget child;
-  const MainLayout({super.key, required this.child});
 
-  // Función para determinar el índice activo basado en la ruta actual
-  int _calculateSelectedIndex(BuildContext context) {
-    final String location = GoRouterState.of(context).matchedLocation;
-    if (location.startsWith('/home')) {
-      return 0;
-    }
-    if (location.startsWith('/meal-plan')) {
-      return 1;
-    }
-    if (location.startsWith('/recipes')) {
-      return 2;
-    }
-    if (location.startsWith('/grocery-list')) {
-      return 3;
-    }
-    if (location.startsWith('/nutrition')) {
-      return 4;
-    }
-    if (location.startsWith('/profile')) {
-      return 5;
-    }
-    return 0;
-  }
-
-  @override
-  Widget build(BuildContext context, WidgetRef ref) {
-    return Scaffold(
-      body: child,
-      bottomNavigationBar: BottomNavigationBar(
-        currentIndex: _calculateSelectedIndex(context),
-        onTap: (int index) {
-          switch (index) {
-            case 0:
-              context.go('/home');
-              break;
-            case 1:
-              context.go('/meal-plan');
-              break;
-            case 2:
-              context.go('/recipes');
-              break;
-            case 3:
-              context.go('/grocery-list');
-              break;
-            case 4:
-              context.go('/nutrition');
-              break;
-            case 5:
-              context.go('/profile');
-              break;
-          }
-        },
-        // Es importante definir el tipo como 'fixed' para que se vean más de 3 items
-        type: BottomNavigationBarType.fixed,
-        items: const [
-          BottomNavigationBarItem(icon: Icon(Icons.home), label: 'Home'),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.calendar_today),
-            label: 'Meal Plan',
-          ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.restaurant_menu),
-            label: 'Recipes',
-          ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.shopping_cart),
-            label: 'Grocery',
-          ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.pie_chart),
-            label: 'Nutrition',
-          ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.person),
-            label: 'Profile',
-          ),
-        ],
-      ),
-    );
-  }
-}
 
 // --- Placeholders para las pantallas ---
 class RecipesScreen extends StatelessWidget {

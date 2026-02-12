@@ -1363,6 +1363,30 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Save preferences'**
   String get profileSavePreferences;
+
+  /// No description provided for @mealPlanTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Meal Plan'**
+  String get mealPlanTitle;
+
+  /// No description provided for @recipesTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Recipes'**
+  String get recipesTitle;
+
+  /// No description provided for @groceryTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Grocery'**
+  String get groceryTitle;
+
+  /// No description provided for @nutritionTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Nutrition'**
+  String get nutritionTitle;
 }
 
 class _AppLocalizationsDelegate
