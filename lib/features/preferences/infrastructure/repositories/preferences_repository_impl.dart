@@ -11,16 +11,15 @@ class PreferencesRepositoryImpl implements PreferencesRepository {
   }
 
   @override
-  Future<UserPreferences?> fetchUserPreference(String userId) {
-    return datasource.fetchUserPreference(userId);
+  Future<UserPreferences?> fetchUserPreference() {
+    return datasource.fetchUserPreference();
   }
 
   @override
   Future<void> saveUserPreference(
     UserPreferences userPreference,
-    String userId,
   ) {
-    return datasource.saveUserPreference(userPreference, userId);
+    return datasource.saveUserPreference(userPreference);
   }
 }
 

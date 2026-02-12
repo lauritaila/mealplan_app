@@ -35,10 +35,11 @@ class AuthRepositoryImpl implements AuthRepository {
         final resp = await datasource.getAuthenticatedUserProfile();
         return resp;
       } catch (e) {
-        throw AuthAppError('Failed to check auth status: ${e.toString()}');
+        if (e is AppError) rethrow;
+        throw AuthAppError('Failed to load profile: ${e.toString()}');
       }
     }
-    throw Exception('No authenticated');
+    throw AuthAppError('User not authenticated', code: 'not_authenticated');
   }
 
   @override

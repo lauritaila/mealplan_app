@@ -54,7 +54,9 @@ class AwaitingEmailVerificationAuthState extends AuthState {
 
 class AwaitingOtpInputState extends AuthState {
   final String email;
-  const AwaitingOtpInputState(this.email);
+  final String? errorMessage;
+  final String? errorCode;
+  const AwaitingOtpInputState(this.email, {this.errorMessage, this.errorCode});
   @override
-  List<Object?> get props => [email];
+  List<Object?> get props => [email, errorMessage, errorCode];
 }

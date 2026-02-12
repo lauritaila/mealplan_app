@@ -29,7 +29,7 @@ class Auth extends _$Auth {
         });
 
     ref.onDispose(() {
-      // _authSubscription?.cancel();
+      _authSubscription?.cancel();
     });
 
     // Try to restore any persisted session as soon as the provider builds.
@@ -105,11 +105,13 @@ class Auth extends _$Auth {
       final userProfile = await _authRepository.verifyOtp(email, token);
       state = AuthenticatedAuthState(userProfile);
     } on AppError catch (e) {
-      state = ErrorAuthState(message: e.message, code: e.code);
-      state = AwaitingOtpInputState(email);
+      state = AwaitingOtpInputState(
+        email,
+        errorMessage: e.message,
+        errorCode: e.code,
+      );
     } catch (e) {
-      state = const ErrorAuthState(code: 'AUTH_UNEXPECTED');
-      state = AwaitingOtpInputState(email);
+      state = AwaitingOtpInputState(email, errorCode: 'AUTH_UNEXPECTED');
     }
   }
 

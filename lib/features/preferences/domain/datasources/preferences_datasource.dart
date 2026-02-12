@@ -2,10 +2,9 @@ import '../domain.dart';
 
 abstract class PreferencesDatasource {
   Future<PreferencesConfiguration> fetchPreferencesConfiguration();
-  Future<UserPreferences?> fetchUserPreference(String userId);
+  Future<UserPreferences?> fetchUserPreference();
   Future<void> saveUserPreference(
     UserPreferences userPreference,
-    String userId,
   );
 }
 

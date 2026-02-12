@@ -29,6 +29,8 @@ class AllergiesStep extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final configAsync = ref.watch(preferencesConfigurationProvider);
     final selectedAllergies = ref.watch(preferencesWizardProvider).allergies;
+    final customAllergy =
+        ref.watch(preferencesWizardProvider).customAllergy ?? '';
     final textTheme = Theme.of(context).textTheme;
     final l10n = AppLocalizations.of(context);
     final localeCode = Localizations.localeOf(context).languageCode;
@@ -87,8 +89,9 @@ class AllergiesStep extends ConsumerWidget {
                     ),
                     selected: isSelected,
                     onSelected: (selected) {
-                      final currentSelection =
-                          List<String>.from(selectedAllergies);
+                      final currentSelection = List<String>.from(
+                        selectedAllergies,
+                      );
                       if (selected) {
                         currentSelection.add(allergy);
                       } else {
@@ -105,12 +108,25 @@ class AllergiesStep extends ConsumerWidget {
                 const SizedBox(height: 24),
                 Text(otherTitle, style: textTheme.titleMedium),
                 const SizedBox(height: 8),
-                TextFormField(
-                  decoration: InputDecoration(
-                    hintText: otherHint,
-                    border: const OutlineInputBorder(),
-                  ),
-                  maxLines: 3,
+                Consumer(
+                  builder: (context, ref, _) {
+                    final controller = TextEditingController(
+                      text: customAllergy,
+                    );
+                    return TextFormField(
+                      controller: controller,
+                      decoration: InputDecoration(
+                        hintText: otherHint,
+                        border: const OutlineInputBorder(),
+                      ),
+                      maxLines: 3,
+                      onChanged: (value) {
+                        ref
+                            .read(preferencesWizardProvider.notifier)
+                            .updateCustomAllergy(value);
+                      },
+                    );
+                  },
                 ),
               ],
             ],

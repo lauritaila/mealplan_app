@@ -112,7 +112,7 @@ final appRouterProvider = Provider<GoRouter>((ref) {
           final message =
               (extra['message'] as String?) ??
               'You have run out of plan generations this week.';
-          return PremiunScreen(title: title, message: message);
+          return PremiumScreen(title: title, message: message);
         },
       ),
 

@@ -10,6 +10,10 @@ part 'preferences_wizard_provider.g.dart';
 
 @riverpod
 class PreferencesWizard extends _$PreferencesWizard {
+  void updateCustomAllergy(String value) {
+    state = state.copyWith(customAllergy: value);
+  }
+
   @override
   PreferencesWizardState build() {
     return PreferencesWizardState();
@@ -75,7 +79,7 @@ class PreferencesWizard extends _$PreferencesWizard {
       final authRepository = ref.read(authRepositoryProvider);
       final userPreferences = state.toUserPreferences(userId);
 
-      await preferencesRepository.saveUserPreference(userPreferences, userId);
+      await preferencesRepository.saveUserPreference(userPreferences);
       await authRepository.markOnboardingComplete(userId);
 
       state = state.copyWith(formStatus: FormStatus.success);

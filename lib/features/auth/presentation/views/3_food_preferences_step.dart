@@ -16,6 +16,8 @@ class FoodPreferencesStep extends ConsumerStatefulWidget {
 class _FoodPreferencesStepState extends ConsumerState<FoodPreferencesStep> {
   late final TextEditingController _dislikedController;
   late final TextEditingController _likedController;
+  late final FocusNode _dislikedFocus;
+  late final FocusNode _likedFocus;
 
   @override
   void initState() {
@@ -25,10 +27,14 @@ class _FoodPreferencesStepState extends ConsumerState<FoodPreferencesStep> {
       text: state.dislikedFoods.join(', '),
     );
     _likedController = TextEditingController(text: state.likedFoods.join(', '));
+    _dislikedFocus = FocusNode()..addListener(_updateFoods);
+    _likedFocus = FocusNode()..addListener(_updateFoods);
   }
 
   @override
   void dispose() {
+    _dislikedFocus.dispose();
+    _likedFocus.dispose();
     _dislikedController.dispose();
     _likedController.dispose();
     super.dispose();
@@ -113,12 +119,12 @@ class _FoodPreferencesStepState extends ConsumerState<FoodPreferencesStep> {
                 const SizedBox(height: 8),
                 TextFormField(
                   controller: _dislikedController,
+                  focusNode: _dislikedFocus,
                   decoration: InputDecoration(
                     hintText: dislikedHint,
                     border: const OutlineInputBorder(),
                   ),
                   maxLines: 4,
-                  onEditingComplete: _updateFoods,
                 ),
               ],
               if (showDisliked && showLiked) const SizedBox(height: 24),
@@ -127,12 +133,12 @@ class _FoodPreferencesStepState extends ConsumerState<FoodPreferencesStep> {
                 const SizedBox(height: 8),
                 TextFormField(
                   controller: _likedController,
+                  focusNode: _likedFocus,
                   decoration: InputDecoration(
                     hintText: likedHint,
                     border: const OutlineInputBorder(),
                   ),
                   maxLines: 4,
-                  onEditingComplete: _updateFoods,
                 ),
               ],
             ],

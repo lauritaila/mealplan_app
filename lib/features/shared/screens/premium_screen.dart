@@ -2,11 +2,11 @@ import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:meal_plan_app/l10n/app_localizations.dart';
 
-class PremiunScreen extends StatelessWidget {
+class PremiumScreen extends StatelessWidget {
   final String title;
   final String message;
 
-  const PremiunScreen({super.key, required this.title, required this.message});
+  const PremiumScreen({super.key, required this.title, required this.message});
 
   @override
   Widget build(BuildContext context) {

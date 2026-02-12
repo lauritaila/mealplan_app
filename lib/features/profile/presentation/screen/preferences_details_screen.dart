@@ -481,7 +481,6 @@ class _PreferencesDetailsScreenState
                         );
                         await repository.saveUserPreference(
                           userPreferences,
-                          auth.user.id,
                         );
                         if (!context.mounted) return;
                         ScaffoldMessenger.of(context).showSnackBar(

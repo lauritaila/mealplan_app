@@ -241,7 +241,13 @@ class AuthSupabaseDatasourceImpl implements AuthDatasource {
         params: {'p_email': email},
       );
       return result as bool;
+    } on PostgrestException catch (e) {
+      // RPC function may not exist or DB error - log and return false
+      print('userExists check failed: ${e.message}');
+      return false;
     } catch (e) {
+      // Network or unexpected error - could rethrow or return false
+      print('userExists unexpected error: $e');
       return false;
     }
   }
@@ -353,9 +359,18 @@ class AuthSupabaseDatasourceImpl implements AuthDatasource {
       );
 
       await _persistSession(res.session ?? _supabaseClient.auth.currentSession);
+    } on GoogleSignInException catch (e) {
+      if (e.code == 'canceled') {
+        print('Google sign-in canceled by user');
+        throw AuthAppError('Google sign-in canceled by user', code: 'canceled');
+      } else {
+        print('Google sign-in error: ${e.toString()}');
+        throw AuthAppError('Google sign-in error: ${e.toString()}');
+      }
     } on AuthException catch (e) {
       throw AuthAppError(e.message, code: e.statusCode);
     } catch (e) {
+      print('Google sign-in unexpected error: $e');
       throw AuthAppError.unexpected(message: e.toString());
     }
   }

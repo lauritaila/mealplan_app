@@ -18,6 +18,8 @@ class PreferencesWizardState {
   final String? errorCode;
   final String? errorMessage;
 
+  final String? customAllergy;
+
   PreferencesWizardState({
     this.step = 0,
     this.dietaryRestrictions = const [],
@@ -32,6 +34,7 @@ class PreferencesWizardState {
     this.formStatus = FormStatus.initial,
     this.errorCode,
     this.errorMessage,
+    this.customAllergy,
   });
 
   PreferencesWizardState copyWith({
@@ -48,6 +51,7 @@ class PreferencesWizardState {
     FormStatus? formStatus,
     String? errorCode,
     String? errorMessage,
+    String? customAllergy,
   }) {
     return PreferencesWizardState(
       step: step ?? this.step,
@@ -63,6 +67,7 @@ class PreferencesWizardState {
       formStatus: formStatus ?? this.formStatus,
       errorCode: errorCode ?? this.errorCode,
       errorMessage: errorMessage ?? this.errorMessage,
+      customAllergy: customAllergy ?? this.customAllergy,
     );
   }
 
