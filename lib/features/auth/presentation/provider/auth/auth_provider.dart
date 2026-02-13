@@ -57,10 +57,14 @@ class Auth extends _$Auth {
     await refreshUserStatus();
   }
 
+  //no se usa en ningún sitio, pero lo dejo por si acaso queremos forzar un refresh del estado del usuario desde algún sitio
   Future<void> login(String email, String password) async {
     state = const LoadingAuthState();
     try {
       final user = await _authRepository.logIn(email, password);
+      await ref
+          .read(appLocaleProvider.notifier)
+          .syncFromRemote(user.configurations?['language'] as String?);
       state = AuthenticatedAuthState(user);
     } on AppError catch (e) {
       state = ErrorAuthState(message: e.message, code: e.code);
@@ -83,6 +87,7 @@ class Auth extends _$Auth {
     }
   }
 
+  //verdadero login con OTP
   Future<void> sendOtp(String email) async {
     state = const LoadingAuthState();
     try {
@@ -103,6 +108,9 @@ class Auth extends _$Auth {
     state = const LoadingAuthState();
     try {
       final userProfile = await _authRepository.verifyOtp(email, token);
+      await ref
+          .read(appLocaleProvider.notifier)
+          .syncFromRemote(userProfile.configurations?['language'] as String?);
       state = AuthenticatedAuthState(userProfile);
     } on AppError catch (e) {
       state = AwaitingOtpInputState(
@@ -140,6 +148,9 @@ class Auth extends _$Auth {
   Future<void> refreshUserStatus() async {
     try {
       final user = await _authRepository.getAuthenticatedUserProfile();
+      await ref
+          .read(appLocaleProvider.notifier)
+          .syncFromRemote(user.configurations?['language'] as String?);
       state = AuthenticatedAuthState(user);
     } catch (_) {
       final session = sb.Supabase.instance.client.auth.currentSession;

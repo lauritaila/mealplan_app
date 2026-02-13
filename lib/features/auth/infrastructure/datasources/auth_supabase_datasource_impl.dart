@@ -236,17 +236,23 @@ class AuthSupabaseDatasourceImpl implements AuthDatasource {
   @override
   Future<bool> userExists(String email) async {
     try {
-      final result = await _supabaseClient.rpc(
-        'user_exists',
-        params: {'p_email': email},
-      );
-      return result as bool;
+      try {
+        final activeResult = await _supabaseClient.rpc(
+          'user_exists_with_active_subscription',
+          params: {'p_email': email},
+        );
+        return activeResult as bool;
+      } on PostgrestException {
+        final result = await _supabaseClient.rpc(
+          'user_exists',
+          params: {'p_email': email},
+        );
+        return result as bool;
+      }
     } on PostgrestException catch (e) {
-      // RPC function may not exist or DB error - log and return false
       print('userExists check failed: ${e.message}');
       return false;
     } catch (e) {
-      // Network or unexpected error - could rethrow or return false
       print('userExists unexpected error: $e');
       return false;
     }
@@ -303,6 +309,7 @@ class AuthSupabaseDatasourceImpl implements AuthDatasource {
         'profile_data': profileData['profileData'],
         'onboarding_complete': profileData['onboardingComplete'],
         'plan_name': profileData['planName'],
+        'configurations': profileData['configurations'],
         'email': supabaseUser.email!,
         'permissions': data['permissions'],
       };

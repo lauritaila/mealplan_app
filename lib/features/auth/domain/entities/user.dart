@@ -33,6 +33,7 @@ class UserProfile extends Equatable {
   final bool onboardingComplete;
   final Permissions? permissions;
   final String? planName;
+  final Map<String, dynamic>? configurations;
 
   const UserProfile({
     required this.onboardingComplete,
@@ -42,6 +43,7 @@ class UserProfile extends Equatable {
     this.profileData,
     this.permissions,
     this.planName,
+    this.configurations,
   });
 
   UserProfile copyWith({
@@ -52,6 +54,7 @@ class UserProfile extends Equatable {
     bool? onboardingComplete,
     Permissions? permissions,
     String? planName,
+    Map<String, dynamic>? configurations,
   }) {
     return UserProfile(
       id: id ?? this.id,
@@ -61,6 +64,7 @@ class UserProfile extends Equatable {
       onboardingComplete: onboardingComplete ?? this.onboardingComplete,
       permissions: permissions ?? this.permissions,
       planName: planName ?? this.planName,
+      configurations: configurations ?? this.configurations,
     );
   }
 
@@ -73,5 +77,6 @@ class UserProfile extends Equatable {
     onboardingComplete,
     permissions,
     planName,
+    configurations,
   ];
 }

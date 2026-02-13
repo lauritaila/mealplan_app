@@ -158,7 +158,6 @@
   "logout": "Cerrar sesión",
   "deleteAccount": "Eliminar cuenta",
   "profileNotificationsTitle": "Notificaciones",
-  "profileLicensesTitle": "Licencias",
   "profileTermsTitle": "Términos y condiciones",
   "unableToLoadPlanStatus": "No se pudo cargar el estado del plan: {error}",
   "@unableToLoadPlanStatus": {

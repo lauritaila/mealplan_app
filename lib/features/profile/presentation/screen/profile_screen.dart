@@ -1,8 +1,113 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:meal_plan_app/config/config.dart';
 import 'package:meal_plan_app/features/auth/presentation/provider/provider.dart';
+import 'package:meal_plan_app/features/profile/presentation/providers/delete_account_provider.dart';
+import 'package:meal_plan_app/features/shared/utils/app_error_localizations.dart';
 import 'package:meal_plan_app/l10n/app_localizations.dart';
 import 'package:go_router/go_router.dart';
+
+Future<void> _showDeleteAccountModal(
+  BuildContext context,
+  WidgetRef ref,
+  String email,
+) async {
+  final l10n = AppLocalizations.of(context);
+  final controller = TextEditingController();
+
+  await showDialog<void>(
+    context: context,
+    builder: (dialogContext) {
+      return AlertDialog(
+        title: Text(l10n.deleteAccount),
+        content: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Text(
+              '¿Estás seguro? Escribe tu correo para confirmar: $email',
+            ),
+            const SizedBox(height: 12),
+            TextField(
+              controller: controller,
+              keyboardType: TextInputType.emailAddress,
+              decoration: const InputDecoration(
+                border: OutlineInputBorder(),
+                hintText: 'correo@ejemplo.com',
+              ),
+            ),
+          ],
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.of(dialogContext).pop(),
+            child: const Text('Cancelar'),
+          ),
+          FilledButton(
+            onPressed: () async {
+              final confirmationEmail = controller.text.trim();
+              if (!dialogContext.mounted) return;
+              Navigator.of(dialogContext).pop();
+
+              final startedAt = DateTime.now();
+              AppError? appError;
+
+              if (!context.mounted) return;
+              showDialog<void>(
+                context: context,
+                barrierDismissible: false,
+                builder: (_) {
+                  return const AlertDialog(
+                    content: Row(
+                      children: [
+                        CircularProgressIndicator(),
+                        SizedBox(width: 16),
+                        Expanded(
+                          child: Text(
+                            'Lamentamos tu Partida.\nGuardaremos tu cocina y tus playlists por 30 días por si decides volver. Después de eso, limpiaremos la mesa para siempre.',
+                          ),
+                        ),
+                      ],
+                    ),
+                  );
+                },
+              );
+
+              try {
+                await ref
+                    .read(deleteAccountProvider.notifier)
+                    .deleteAccount(confirmationEmail);
+              } on AppError catch (e) {
+                appError = e;
+              }
+
+              final elapsed = DateTime.now().difference(startedAt);
+              if (elapsed < const Duration(seconds: 5)) {
+                await Future.delayed(const Duration(seconds: 5) - elapsed);
+              }
+
+              if (!context.mounted) return;
+              Navigator.of(context, rootNavigator: true).pop();
+
+              if (appError != null) {
+                final errorText = localizeAppError(l10n, appError);
+                ScaffoldMessenger.of(context).showSnackBar(
+                  SnackBar(content: Text(errorText)),
+                );
+                return;
+              }
+
+              if (!context.mounted) return;
+              context.go('/init');
+            },
+            child: Text(l10n.deleteAccount),
+          ),
+        ],
+      );
+    },
+  );
+
+  controller.dispose();
+}
 
 class ProfileScreen extends ConsumerWidget {
   const ProfileScreen({super.key});
@@ -124,13 +229,6 @@ class ProfileScreen extends ConsumerWidget {
                 ),
                 const Divider(height: 1),
                 ListTile(
-                  leading: const Icon(Icons.book_outlined),
-                  title: Text(l10n.profileLicensesTitle),
-                  trailing: const Icon(Icons.chevron_right),
-                  onTap: () {},
-                ),
-                const Divider(height: 1),
-                ListTile(
                   leading: const Icon(Icons.info_outline),
                   title: Text(l10n.profileTermsTitle),
                   trailing: const Icon(Icons.chevron_right),
@@ -151,7 +249,9 @@ class ProfileScreen extends ConsumerWidget {
           SizedBox(
             width: double.infinity,
             child: ElevatedButton(
-              onPressed: () {},
+              onPressed: authState is AuthenticatedAuthState
+                  ? () => _showDeleteAccountModal(context, ref, email)
+                  : null,
               child: Text(l10n.deleteAccount),
             ),
           ),

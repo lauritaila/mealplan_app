@@ -376,9 +376,6 @@ class AppLocalizationsEs extends AppLocalizations {
   String get profileNotificationsTitle => 'Notificaciones';
 
   @override
-  String get profileLicensesTitle => 'Licencias';
-
-  @override
   String get profileTermsTitle => 'Términos y condiciones';
 
   @override

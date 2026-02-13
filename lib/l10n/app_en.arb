@@ -159,7 +159,6 @@
   "logout": "Logout",
   "deleteAccount": "Delete account",
   "profileNotificationsTitle": "Notifications",
-  "profileLicensesTitle": "Licenses",
   "profileTermsTitle": "Terms and Conditions",
   "unableToLoadPlanStatus": "Unable to load plan status: {error}",
   "@unableToLoadPlanStatus": {

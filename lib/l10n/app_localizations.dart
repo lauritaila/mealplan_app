@@ -746,12 +746,6 @@ abstract class AppLocalizations {
   /// **'Notifications'**
   String get profileNotificationsTitle;
 
-  /// No description provided for @profileLicensesTitle.
-  ///
-  /// In en, this message translates to:
-  /// **'Licenses'**
-  String get profileLicensesTitle;
-
   /// No description provided for @profileTermsTitle.
   ///
   /// In en, this message translates to:
