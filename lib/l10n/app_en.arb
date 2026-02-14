@@ -2,6 +2,9 @@
 {
   "@@locale": "en",  
   "appTitle": "Meal Plan App",
+  "@appTitle": {
+    "description": "The title of the application."
+  },
   "genericError": "Something went wrong. Please try again.",
   "errorFieldRequired": "This field is required.",
   "errorEmailInvalid": "Enter a valid email address.",
@@ -44,6 +47,9 @@
   "approvePlanTitle": "Approve plan",
   "noPlanDataReceived": "No plan data received.",
   "done": "Done",
+  "graceWelcomeTitle": "We missed you! Welcome back.",
+  "graceWelcomeMessage": "All your information is saved and ready to continue.",
+  "continueLabel": "Continue",
   "mealsCount": "{count} meals",
   "@mealsCount": {
     "placeholders": {
@@ -132,7 +138,6 @@
   "mealTypeDinnerSubtitle": "Light and nutritious",
   "notesOptionalTitle": "Notes (optional)",
   "notesHint": "E.g.: Lactose-free, more proteins...",
-  "continueLabel": "Continue",
   "mealsOfDayTitle": "Meals of the day",
   "metricCalories": "Cal",
   "metricServings": "Servings",

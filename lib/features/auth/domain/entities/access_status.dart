@@ -1,4 +1,4 @@
-enum AccessStatus { notFound, active, gracePeriod, inactiveExpired }
+enum AccessStatus { notFound, active, gracePeriod, inactiveExpired, unknown }
 
 extension AccessStatusX on AccessStatus {
   bool get canLogIn =>
@@ -13,8 +13,11 @@ extension AccessStatusX on AccessStatus {
       case 'INACTIVE_EXPIRED':
         return AccessStatus.inactiveExpired;
       case 'NOT_FOUND':
-      default:
         return AccessStatus.notFound;
+      case 'UNKNOWN':
+        return AccessStatus.unknown;
+      default:
+        return AccessStatus.unknown;
     }
   }
 }

@@ -140,7 +140,7 @@ class _ChangeEmailScreenState extends ConsumerState<ChangeEmailScreen> {
                       ? const CircularProgressIndicator()
                       : Text(
                           state.otpRequested
-                              ? l10n.done
+                              ? l10n.otpVerifySignIn
                               : l10n.profileChangeEmailLabel,
                         ),
                 ),

@@ -2,6 +2,9 @@
 {
   "@@locale": "es",
   "appTitle": "Plan de comidas",
+  "@appTitle": {
+    "description": "El título de la aplicación."
+  },
   "genericError": "Algo salió mal. Inténtalo de nuevo.",
   "errorFieldRequired": "Este campo es obligatorio.",
   "errorEmailInvalid": "Ingresa un correo válido.",
@@ -44,6 +47,9 @@
   "approvePlanTitle": "Aprobar plan",
   "noPlanDataReceived": "No se recibieron datos del plan.",
   "done": "Listo",
+  "graceWelcomeTitle": "¡Te extrañábamos! Gracias por volver.",
+  "graceWelcomeMessage": "Toda tu información sigue guardada y lista para continuar.",
+  "continueLabel": "Continuar",
   "mealsCount": "{count} comidas",
   "@mealsCount": {
     "placeholders": {
@@ -132,7 +138,6 @@
   "mealTypeDinnerSubtitle": "Ligero y nutritivo",
   "notesOptionalTitle": "Notas (opcional)",
   "notesHint": "Ej.: Sin lactosa, más proteínas...",
-  "continueLabel": "Continuar",
   "mealsOfDayTitle": "Comidas del día",
   "metricCalories": "Cal",
   "metricServings": "Raciones",

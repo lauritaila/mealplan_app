@@ -17,27 +17,26 @@ class LanguageSettingsScreen extends ConsumerWidget {
       appBar: AppBar(title: Text(l10n.profileLanguageTitle)),
       body: Column(
         children: [
-          RadioListTile<String>(
-            value: 'en',
-            // ignore: deprecated_member_use
+          RadioGroup<String>(
             groupValue: state.selectedCode,
-            // ignore: deprecated_member_use
             onChanged: (value) {
               if (value == null) return;
               notifier.select(value);
             },
-            title: Text(l10n.profileLanguageEnglish),
-          ),
-          RadioListTile<String>(
-            value: 'es',
-            // ignore: deprecated_member_use
-            groupValue: state.selectedCode,
-            // ignore: deprecated_member_use
-            onChanged: (value) {
-              if (value == null) return;
-              notifier.select(value);
-            },
-            title: Text(l10n.profileLanguageSpanish),
+            child: Column(
+              children: [
+                RadioListTile<String>(
+                  value: 'en',
+                  title: Text(l10n.profileLanguageEnglish),
+                  // No definimos onChanged ni groupValue aquí, los toma del ancestro
+                ),
+                RadioListTile<String>(
+                  value: 'es',
+                  title: Text(l10n.profileLanguageSpanish),
+                  // No definimos onChanged ni groupValue aquí, los toma del ancestro
+                ),
+              ],
+            ),
           ),
           const SizedBox(height: 24),
           ElevatedButton(
@@ -68,7 +67,7 @@ class LanguageSettingsScreen extends ConsumerWidget {
                     height: 20,
                     child: CircularProgressIndicator(strokeWidth: 2),
                   )
-                : const Text('Confirmar'),
+                : Text(l10n.continueLabel),
           ),
         ],
       ),

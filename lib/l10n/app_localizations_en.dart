@@ -156,6 +156,16 @@ class AppLocalizationsEn extends AppLocalizations {
   String get done => 'Done';
 
   @override
+  String get graceWelcomeTitle => 'We missed you! Welcome back.';
+
+  @override
+  String get graceWelcomeMessage =>
+      'All your information is saved and ready to continue.';
+
+  @override
+  String get continueLabel => 'Continue';
+
+  @override
   String mealsCount(Object count) {
     return '$count meals';
   }
@@ -290,9 +300,6 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get notesHint => 'E.g.: Lactose-free, more proteins...';
-
-  @override
-  String get continueLabel => 'Continue';
 
   @override
   String get mealsOfDayTitle => 'Meals of the day';

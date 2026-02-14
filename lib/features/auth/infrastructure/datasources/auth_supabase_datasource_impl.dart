@@ -245,16 +245,16 @@ class AuthSupabaseDatasourceImpl implements AuthDatasource {
 
       if (result is! String) {
         _logger.warning('get_user_access_status returned non-string: $result');
-        return AccessStatus.notFound;
+        return AccessStatus.unknown;
       }
 
       return AccessStatusX.fromRpc(result);
     } on PostgrestException catch (e, st) {
       _logger.severe('getUserAccessStatus failed: ${e.message}', e, st);
-      return AccessStatus.notFound;
+      return AccessStatus.unknown;
     } catch (e, st) {
       _logger.severe('getUserAccessStatus unexpected error', e, st);
-      return AccessStatus.notFound;
+      return AccessStatus.unknown;
     }
   }
 

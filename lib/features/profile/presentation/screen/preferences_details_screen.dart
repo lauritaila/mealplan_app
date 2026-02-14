@@ -502,15 +502,43 @@ class _PreferencesDetailsScreenState
                         );
                         final userPreferences = updatedPreferencesState
                             .toUserPreferences(auth.user.id);
-                        await repository.saveUserPreference(userPreferences);
-                        await profileRepository.updateHideNutritionValues(
-                          auth.user.id,
-                          updatedPreferencesState.hideNutritionValues,
-                        );
-                        if (!context.mounted) return;
-                        ScaffoldMessenger.of(context).showSnackBar(
-                          SnackBar(content: Text(l10n.preferencesSaved)),
-                        );
+                        // Save previous state for rollback if needed
+                        final previousPreferences = await repository
+                            .fetchUserPreference();
+                        try {
+                          await repository.saveUserPreference(userPreferences);
+                          await profileRepository.updateHideNutritionValues(
+                            auth.user.id,
+                            updatedPreferencesState.hideNutritionValues,
+                          );
+                          if (!context.mounted) return;
+                          ScaffoldMessenger.of(context).showSnackBar(
+                            SnackBar(content: Text(l10n.preferencesSaved)),
+                          );
+                        } catch (e) {
+                          // Attempt rollback if first call succeeded but second failed
+                          if (previousPreferences != null) {
+                            try {
+                              await repository.saveUserPreference(
+                                previousPreferences,
+                              );
+                            } catch (_) {
+                              // If rollback fails, surface both errors
+                            }
+                          }
+                          if (!context.mounted) return;
+                          String message = e.toString();
+                          if (e is AppError) {
+                            message = localizeErrorCode(
+                              l10n,
+                              e.code,
+                              fallback: e.message,
+                            );
+                          }
+                          ScaffoldMessenger.of(
+                            context,
+                          ).showSnackBar(SnackBar(content: Text(message)));
+                        }
                       } catch (e) {
                         if (!context.mounted) return;
                         String message = e.toString();

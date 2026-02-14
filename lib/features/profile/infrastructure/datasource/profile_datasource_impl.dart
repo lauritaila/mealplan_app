@@ -158,16 +158,31 @@ class ProfileDatasourceImpl implements ProfileDatasource {
         );
       }
 
-      await Future.wait([
-        _supabaseClient
+      // Sequential updates with rollback logic and previous_status persistence
+      // 1. Read current status
+      final subRow = await _supabaseClient
+          .from('user_subscriptions')
+          .select('status')
+          .eq('user_id', userId)
+          .maybeSingle();
+      final prevStatus = subRow?['status'] as String?;
+      await _supabaseClient
+          .from('user_subscriptions')
+          .update({'status': 'deleted', 'previous_status': prevStatus})
+          .eq('user_id', userId);
+      try {
+        await _supabaseClient
             .from('user_profiles')
             .update({'deleted_at': DateTime.now().toIso8601String()})
-            .eq('id', userId),
-        _supabaseClient
+            .eq('id', userId);
+      } catch (e) {
+        // Rollback user_subscriptions if user_profiles update fails
+        await _supabaseClient
             .from('user_subscriptions')
-            .update({'status': 'deleted'})
-            .eq('user_id', userId),
-      ]);
+            .update({'status': prevStatus ?? 'active', 'previous_status': null})
+            .eq('user_id', userId);
+        rethrow;
+      }
     } on PostgrestException catch (e) {
       throw DataAppError(
         'Failed to deactivate subscription: ${e.message}',
@@ -193,16 +208,21 @@ class ProfileDatasourceImpl implements ProfileDatasource {
         throw const PermissionAppError.forbidden();
       }
 
-      await Future.wait([
-        _supabaseClient
-            .from('user_subscriptions')
-            .update({'status': 'active'})
-            .eq('user_id', userId),
-        _supabaseClient
-            .from('user_profiles')
-            .update({'deleted_at': null})
-            .eq('id', userId),
-      ]);
+      // Restore previous_status if present, else fallback to 'inactive'
+      final subRow = await _supabaseClient
+          .from('user_subscriptions')
+          .select('previous_status')
+          .eq('user_id', userId)
+          .maybeSingle();
+      final prevStatus = subRow?['previous_status'] as String?;
+      await _supabaseClient
+          .from('user_subscriptions')
+          .update({'status': prevStatus ?? 'inactive', 'previous_status': null})
+          .eq('user_id', userId);
+      await _supabaseClient
+          .from('user_profiles')
+          .update({'deleted_at': null})
+          .eq('id', userId);
     } on PostgrestException catch (e) {
       throw DataAppError(
         'Failed to reactivate account: ${e.message}',

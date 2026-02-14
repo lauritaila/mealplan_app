@@ -356,6 +356,24 @@ abstract class AppLocalizations {
   /// **'Done'**
   String get done;
 
+  /// No description provided for @graceWelcomeTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'We missed you! Welcome back.'**
+  String get graceWelcomeTitle;
+
+  /// No description provided for @graceWelcomeMessage.
+  ///
+  /// In en, this message translates to:
+  /// **'All your information is saved and ready to continue.'**
+  String get graceWelcomeMessage;
+
+  /// No description provided for @continueLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Continue'**
+  String get continueLabel;
+
   /// No description provided for @mealsCount.
   ///
   /// In en, this message translates to:
@@ -583,12 +601,6 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'E.g.: Lactose-free, more proteins...'**
   String get notesHint;
-
-  /// No description provided for @continueLabel.
-  ///
-  /// In en, this message translates to:
-  /// **'Continue'**
-  String get continueLabel;
 
   /// No description provided for @mealsOfDayTitle.
   ///

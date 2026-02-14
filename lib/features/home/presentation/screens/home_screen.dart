@@ -93,20 +93,20 @@ class _GraceWelcomeDialogState extends State<_GraceWelcomeDialog> {
             child: Column(
               mainAxisSize: MainAxisSize.min,
               children: [
-                const Text(
-                  '¡Te extrañábamos! Gracias por volver.',
+                Text(
+                  AppLocalizations.of(context).graceWelcomeTitle,
                   textAlign: TextAlign.center,
-                  style: TextStyle(fontWeight: FontWeight.bold),
+                  style: const TextStyle(fontWeight: FontWeight.bold),
                 ),
                 const SizedBox(height: 12),
-                const Text(
-                  'Toda tu información sigue guardada y lista para continuar.',
+                Text(
+                  AppLocalizations.of(context).graceWelcomeMessage,
                   textAlign: TextAlign.center,
                 ),
                 const SizedBox(height: 16),
                 ElevatedButton(
                   onPressed: () => Navigator.of(context).pop(),
-                  child: const Text('Continuar'),
+                  child: Text(AppLocalizations.of(context).continueLabel),
                 ),
               ],
             ),

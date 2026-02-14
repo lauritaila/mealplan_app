@@ -45,7 +45,13 @@ LoginFormState:
 @riverpod
 class LoginForm extends _$LoginForm {
   Future<void> signInWithGoogle() async {
-    await ref.read(authProvider.notifier).signInWithGoogle();
+    if (state.isPosting) return;
+    state = state.copyWith(isPosting: true);
+    try {
+      await ref.read(authProvider.notifier).signInWithGoogle();
+    } finally {
+      state = state.copyWith(isPosting: false);
+    }
   }
 
   @override
