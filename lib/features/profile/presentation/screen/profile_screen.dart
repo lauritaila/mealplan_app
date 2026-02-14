@@ -1,8 +1,138 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:meal_plan_app/config/config.dart';
 import 'package:meal_plan_app/features/auth/presentation/provider/provider.dart';
+import 'package:meal_plan_app/features/profile/presentation/providers/delete_account_provider.dart';
+import 'package:meal_plan_app/features/shared/utils/app_error_localizations.dart';
 import 'package:meal_plan_app/l10n/app_localizations.dart';
 import 'package:go_router/go_router.dart';
+
+Future<void> _showDeleteAccountModal(
+  BuildContext context,
+  WidgetRef ref,
+  String email,
+) async {
+  final l10n = AppLocalizations.of(context);
+  final controller = TextEditingController();
+
+  await showDialog<void>(
+    context: context,
+    builder: (dialogContext) {
+      return AlertDialog(
+        title: Text(l10n.deleteAccount),
+        content: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Text(l10n.confirmDeleteWithEmail(email)),
+            const SizedBox(height: 12),
+            TextField(
+              controller: controller,
+              keyboardType: TextInputType.emailAddress,
+              decoration: InputDecoration(
+                border: const OutlineInputBorder(),
+                hintText: l10n.emailPlaceholder,
+              ),
+            ),
+          ],
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.of(dialogContext).pop(),
+            child: Text(l10n.cancel),
+          ),
+          FilledButton(
+            onPressed: () async {
+              final confirmationEmail = controller.text.trim();
+              if (!dialogContext.mounted) return;
+
+              // Normalize both emails for comparison (case-insensitive, trimmed)
+              final normalizedInput = confirmationEmail.toLowerCase();
+              final normalizedAccount = email.trim().toLowerCase();
+
+              if (normalizedInput.isEmpty ||
+                  normalizedInput != normalizedAccount) {
+                final errorText = normalizedInput.isEmpty
+                    ? l10n.errorFieldRequired
+                    : l10n.errorEmailConfirmationMismatch;
+                ScaffoldMessenger.of(
+                  context,
+                ).showSnackBar(SnackBar(content: Text(errorText)));
+                return;
+              }
+
+              Navigator.of(dialogContext).pop();
+
+              final startedAt = DateTime.now();
+              AppError? appError;
+
+              if (!context.mounted) return;
+              showDialog<void>(
+                context: context,
+                barrierDismissible: false,
+                useRootNavigator: true,
+                builder: (_) {
+                  return AlertDialog(
+                    content: Row(
+                      children: [
+                        const CircularProgressIndicator(),
+                        const SizedBox(width: 16),
+                        Expanded(child: Text(l10n.profileFarewell)),
+                      ],
+                    ),
+                  );
+                },
+              );
+
+              try {
+                // Always pass the canonical account email, not the user input
+                await ref
+                    .read(deleteAccountProvider.notifier)
+                    .deleteAccount(email);
+              } catch (e, stack) {
+                if (e is AppError) {
+                  appError = e;
+                } else {
+                  // Optionally log stack for diagnostics
+                  // ignore: avoid_print
+                  print('Unexpected error in deleteAccount: $e\n$stack');
+                  appError = NetworkAppError(
+                    'Unexpected error deleting account. Please try again.',
+                    code: 'UNEXPECTED_DELETE_ACCOUNT_ERROR',
+                  );
+                }
+              }
+
+              final elapsed = DateTime.now().difference(startedAt);
+              if (elapsed < const Duration(seconds: 5)) {
+                await Future.delayed(const Duration(seconds: 5) - elapsed);
+              }
+
+              if (!context.mounted) return;
+              final rootNavigator = Navigator.of(context, rootNavigator: true);
+              if (rootNavigator.canPop()) {
+                rootNavigator.pop();
+              }
+
+              if (appError != null) {
+                final errorText = localizeAppError(l10n, appError);
+                ScaffoldMessenger.of(
+                  context,
+                ).showSnackBar(SnackBar(content: Text(errorText)));
+                return;
+              }
+
+              if (!context.mounted) return;
+              await ref.read(authProvider.notifier).logOut();
+            },
+            child: Text(l10n.deleteAccount),
+          ),
+        ],
+      );
+    },
+  );
+
+  controller.dispose();
+}
 
 class ProfileScreen extends ConsumerWidget {
   const ProfileScreen({super.key});
@@ -124,13 +254,6 @@ class ProfileScreen extends ConsumerWidget {
                 ),
                 const Divider(height: 1),
                 ListTile(
-                  leading: const Icon(Icons.book_outlined),
-                  title: Text(l10n.profileLicensesTitle),
-                  trailing: const Icon(Icons.chevron_right),
-                  onTap: () {},
-                ),
-                const Divider(height: 1),
-                ListTile(
                   leading: const Icon(Icons.info_outline),
                   title: Text(l10n.profileTermsTitle),
                   trailing: const Icon(Icons.chevron_right),
@@ -151,7 +274,9 @@ class ProfileScreen extends ConsumerWidget {
           SizedBox(
             width: double.infinity,
             child: ElevatedButton(
-              onPressed: () {},
+              onPressed: authState is AuthenticatedAuthState
+                  ? () => _showDeleteAccountModal(context, ref, email)
+                  : null,
               child: Text(l10n.deleteAccount),
             ),
           ),

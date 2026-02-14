@@ -47,6 +47,11 @@ class AuthAppError extends AppError {
         message ?? 'An unexpected authentication error occurred.',
         code: 'AUTH_UNEXPECTED',
       );
+  const AuthAppError.emailConfirmationMismatch()
+    : super(
+        'Email confirmation does not match.',
+        code: 'AUTH_EMAIL_CONFIRMATION_MISMATCH',
+      );
 }
 
 /// Exception for errors related to the network.

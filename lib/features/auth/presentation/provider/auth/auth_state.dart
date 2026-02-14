@@ -21,9 +21,10 @@ class LoadingAuthState extends AuthState {
 
 class AuthenticatedAuthState extends AuthState {
   final UserProfile user;
-  const AuthenticatedAuthState(this.user);
+  final bool showGraceWelcome;
+  const AuthenticatedAuthState(this.user, {this.showGraceWelcome = false});
   @override
-  List<Object?> get props => [user];
+  List<Object?> get props => [user, showGraceWelcome];
 }
 
 class UnauthenticatedAuthState extends AuthState {
@@ -56,7 +57,18 @@ class AwaitingOtpInputState extends AuthState {
   final String email;
   final String? errorMessage;
   final String? errorCode;
-  const AwaitingOtpInputState(this.email, {this.errorMessage, this.errorCode});
+  final bool cameFromGracePeriod;
+  const AwaitingOtpInputState(
+    this.email, {
+    this.errorMessage,
+    this.errorCode,
+    this.cameFromGracePeriod = false,
+  });
   @override
-  List<Object?> get props => [email, errorMessage, errorCode];
+  List<Object?> get props => [
+    email,
+    errorMessage,
+    errorCode,
+    cameFromGracePeriod,
+  ];
 }

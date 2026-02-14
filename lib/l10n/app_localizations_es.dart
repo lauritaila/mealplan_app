@@ -158,6 +158,16 @@ class AppLocalizationsEs extends AppLocalizations {
   String get done => 'Listo';
 
   @override
+  String get graceWelcomeTitle => '¡Te extrañábamos! Gracias por volver.';
+
+  @override
+  String get graceWelcomeMessage =>
+      'Toda tu información sigue guardada y lista para continuar.';
+
+  @override
+  String get continueLabel => 'Continuar';
+
+  @override
   String mealsCount(Object count) {
     return '$count comidas';
   }
@@ -295,9 +305,6 @@ class AppLocalizationsEs extends AppLocalizations {
   String get notesHint => 'Ej.: Sin lactosa, más proteínas...';
 
   @override
-  String get continueLabel => 'Continuar';
-
-  @override
   String get mealsOfDayTitle => 'Comidas del día';
 
   @override
@@ -374,9 +381,6 @@ class AppLocalizationsEs extends AppLocalizations {
 
   @override
   String get profileNotificationsTitle => 'Notificaciones';
-
-  @override
-  String get profileLicensesTitle => 'Licencias';
 
   @override
   String get profileTermsTitle => 'Términos y condiciones';
@@ -709,4 +713,27 @@ class AppLocalizationsEs extends AppLocalizations {
 
   @override
   String get nutritionTitle => 'Nutrición';
+
+  @override
+  String get profileFarewell =>
+      'Lamentamos tu partida.\nGuardaremos tu cocina y tus playlists por 30 días por si decides volver. Después de eso, limpiaremos la mesa para siempre.';
+
+  @override
+  String confirmDeleteWithEmail(Object email) {
+    return '¿Estás seguro? Escribe tu correo para confirmar: $email';
+  }
+
+  @override
+  String get emailPlaceholder => 'correo@ejemplo.com';
+
+  @override
+  String get cancel => 'Cancelar';
+
+  @override
+  String get errorLoadingConfiguration =>
+      'Error al cargar la configuración. Inténtalo de nuevo.';
+
+  @override
+  String get errorEmailConfirmationMismatch =>
+      'El correo no coincide con tu cuenta.';
 }

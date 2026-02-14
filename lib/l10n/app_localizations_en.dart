@@ -156,6 +156,16 @@ class AppLocalizationsEn extends AppLocalizations {
   String get done => 'Done';
 
   @override
+  String get graceWelcomeTitle => 'We missed you! Welcome back.';
+
+  @override
+  String get graceWelcomeMessage =>
+      'All your information is saved and ready to continue.';
+
+  @override
+  String get continueLabel => 'Continue';
+
+  @override
   String mealsCount(Object count) {
     return '$count meals';
   }
@@ -292,9 +302,6 @@ class AppLocalizationsEn extends AppLocalizations {
   String get notesHint => 'E.g.: Lactose-free, more proteins...';
 
   @override
-  String get continueLabel => 'Continue';
-
-  @override
   String get mealsOfDayTitle => 'Meals of the day';
 
   @override
@@ -371,9 +378,6 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get profileNotificationsTitle => 'Notifications';
-
-  @override
-  String get profileLicensesTitle => 'Licenses';
 
   @override
   String get profileTermsTitle => 'Terms and Conditions';
@@ -704,4 +708,27 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get nutritionTitle => 'Nutrition';
+
+  @override
+  String get profileFarewell =>
+      'We\'re sorry to see you go. We\'ll keep your kitchen and playlists for 30 days in case you decide to return. After that, we\'ll clear the table forever.';
+
+  @override
+  String confirmDeleteWithEmail(Object email) {
+    return 'Are you sure? Type your email to confirm: $email';
+  }
+
+  @override
+  String get emailPlaceholder => 'email@example.com';
+
+  @override
+  String get cancel => 'Cancel';
+
+  @override
+  String get errorLoadingConfiguration =>
+      'Error loading configuration. Please try again.';
+
+  @override
+  String get errorEmailConfirmationMismatch =>
+      'The email does not match your account.';
 }

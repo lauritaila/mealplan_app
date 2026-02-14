@@ -1,10 +1,9 @@
 import 'package:formz/formz.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 import 'package:meal_plan_app/features/shared/shared.dart';
-import '../provider.dart'; 
+import '../provider.dart';
 
 part 'login_form_provider.g.dart';
-
 
 class LoginFormState {
   final bool isPosting;
@@ -24,13 +23,12 @@ class LoginFormState {
     bool? isFormPosted,
     bool? isValid,
     Email? email,
-  }) =>
-      LoginFormState(
-        isPosting: isPosting ?? this.isPosting,
-        isFormPosted: isFormPosted ?? this.isFormPosted,
-        isValid: isValid ?? this.isValid,
-        email: email ?? this.email,
-      );
+  }) => LoginFormState(
+    isPosting: isPosting ?? this.isPosting,
+    isFormPosted: isFormPosted ?? this.isFormPosted,
+    isValid: isValid ?? this.isValid,
+    email: email ?? this.email,
+  );
 
   @override
   String toString() {
@@ -44,9 +42,18 @@ LoginFormState:
   }
 }
 
-
 @riverpod
-class LoginForm extends _$LoginForm { 
+class LoginForm extends _$LoginForm {
+  Future<void> signInWithGoogle() async {
+    if (state.isPosting) return;
+    state = state.copyWith(isPosting: true);
+    try {
+      await ref.read(authProvider.notifier).signInWithGoogle();
+    } finally {
+      state = state.copyWith(isPosting: false);
+    }
+  }
+
   @override
   LoginFormState build() {
     return LoginFormState();
@@ -61,7 +68,7 @@ class LoginForm extends _$LoginForm {
   }
 
   Future<void> onFormSubmitted() async {
-    _touchEveryField(); 
+    _touchEveryField();
 
     if (!state.isValid) {
       return;
@@ -70,9 +77,7 @@ class LoginForm extends _$LoginForm {
     state = state.copyWith(isPosting: true);
 
     try {
-      await ref.read(authProvider.notifier).sendOtp(
-        state.email.value,
-      );
+      await ref.read(authProvider.notifier).sendOtp(state.email.value);
     } finally {
       state = state.copyWith(isPosting: false);
     }

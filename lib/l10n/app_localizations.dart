@@ -98,7 +98,7 @@ abstract class AppLocalizations {
     Locale('es'),
   ];
 
-  /// No description provided for @appTitle.
+  /// The title of the application.
   ///
   /// In en, this message translates to:
   /// **'Meal Plan App'**
@@ -356,6 +356,24 @@ abstract class AppLocalizations {
   /// **'Done'**
   String get done;
 
+  /// No description provided for @graceWelcomeTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'We missed you! Welcome back.'**
+  String get graceWelcomeTitle;
+
+  /// No description provided for @graceWelcomeMessage.
+  ///
+  /// In en, this message translates to:
+  /// **'All your information is saved and ready to continue.'**
+  String get graceWelcomeMessage;
+
+  /// No description provided for @continueLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Continue'**
+  String get continueLabel;
+
   /// No description provided for @mealsCount.
   ///
   /// In en, this message translates to:
@@ -584,12 +602,6 @@ abstract class AppLocalizations {
   /// **'E.g.: Lactose-free, more proteins...'**
   String get notesHint;
 
-  /// No description provided for @continueLabel.
-  ///
-  /// In en, this message translates to:
-  /// **'Continue'**
-  String get continueLabel;
-
   /// No description provided for @mealsOfDayTitle.
   ///
   /// In en, this message translates to:
@@ -745,12 +757,6 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Notifications'**
   String get profileNotificationsTitle;
-
-  /// No description provided for @profileLicensesTitle.
-  ///
-  /// In en, this message translates to:
-  /// **'Licenses'**
-  String get profileLicensesTitle;
 
   /// No description provided for @profileTermsTitle.
   ///
@@ -1387,6 +1393,42 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Nutrition'**
   String get nutritionTitle;
+
+  /// Farewell message shown when deleting account.
+  ///
+  /// In en, this message translates to:
+  /// **'We\'re sorry to see you go. We\'ll keep your kitchen and playlists for 30 days in case you decide to return. After that, we\'ll clear the table forever.'**
+  String get profileFarewell;
+
+  /// Prompt to confirm account deletion with email entry.
+  ///
+  /// In en, this message translates to:
+  /// **'Are you sure? Type your email to confirm: {email}'**
+  String confirmDeleteWithEmail(Object email);
+
+  /// Placeholder for email input field.
+  ///
+  /// In en, this message translates to:
+  /// **'email@example.com'**
+  String get emailPlaceholder;
+
+  /// Label for cancel button.
+  ///
+  /// In en, this message translates to:
+  /// **'Cancel'**
+  String get cancel;
+
+  /// Shown when configuration fails to load.
+  ///
+  /// In en, this message translates to:
+  /// **'Error loading configuration. Please try again.'**
+  String get errorLoadingConfiguration;
+
+  /// Shown when the email entered for confirmation does not match the user's email.
+  ///
+  /// In en, this message translates to:
+  /// **'The email does not match your account.'**
+  String get errorEmailConfirmationMismatch;
 }
 
 class _AppLocalizationsDelegate

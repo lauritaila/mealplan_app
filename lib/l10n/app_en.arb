@@ -1,7 +1,9 @@
-
 {
-  "@@locale": "en",
+  "@@locale": "en",  
   "appTitle": "Meal Plan App",
+  "@appTitle": {
+    "description": "The title of the application."
+  },
   "genericError": "Something went wrong. Please try again.",
   "errorFieldRequired": "This field is required.",
   "errorEmailInvalid": "Enter a valid email address.",
@@ -44,6 +46,9 @@
   "approvePlanTitle": "Approve plan",
   "noPlanDataReceived": "No plan data received.",
   "done": "Done",
+  "graceWelcomeTitle": "We missed you! Welcome back.",
+  "graceWelcomeMessage": "All your information is saved and ready to continue.",
+  "continueLabel": "Continue",
   "mealsCount": "{count} meals",
   "@mealsCount": {
     "placeholders": {
@@ -132,7 +137,6 @@
   "mealTypeDinnerSubtitle": "Light and nutritious",
   "notesOptionalTitle": "Notes (optional)",
   "notesHint": "E.g.: Lactose-free, more proteins...",
-  "continueLabel": "Continue",
   "mealsOfDayTitle": "Meals of the day",
   "metricCalories": "Cal",
   "metricServings": "Servings",
@@ -159,7 +163,6 @@
   "logout": "Logout",
   "deleteAccount": "Delete account",
   "profileNotificationsTitle": "Notifications",
-  "profileLicensesTitle": "Licenses",
   "profileTermsTitle": "Terms and Conditions",
   "unableToLoadPlanStatus": "Unable to load plan status: {error}",
   "@unableToLoadPlanStatus": {
@@ -287,5 +290,30 @@
   "mealPlanTitle": "Meal Plan",
   "recipesTitle": "Recipes",
   "groceryTitle": "Grocery",
-  "nutritionTitle": "Nutrition"
+  "nutritionTitle": "Nutrition",
+  "profileFarewell": "We're sorry to see you go. We'll keep your kitchen and playlists for 30 days in case you decide to return. After that, we'll clear the table forever.",
+  "@profileFarewell": {
+    "description": "Farewell message shown when deleting account."
+  },
+  "confirmDeleteWithEmail": "Are you sure? Type your email to confirm: {email}",
+  "@confirmDeleteWithEmail": {
+    "description": "Prompt to confirm account deletion with email entry.",
+    "placeholders": { "email": {} }
+  },
+  "emailPlaceholder": "email@example.com",
+  "@emailPlaceholder": {
+    "description": "Placeholder for email input field."
+  },
+  "cancel": "Cancel",
+  "@cancel": {
+    "description": "Label for cancel button."
+  },
+  "errorLoadingConfiguration": "Error loading configuration. Please try again.",
+  "@errorLoadingConfiguration": {
+    "description": "Shown when configuration fails to load."
+  },
+  "errorEmailConfirmationMismatch": "The email does not match your account.",
+  "@errorEmailConfirmationMismatch": {
+    "description": "Shown when the email entered for confirmation does not match the user's email."
+  }
 }

@@ -34,7 +34,13 @@ class GoalsStep extends ConsumerWidget {
 
     return configAsync.when(
       loading: () => const Center(child: CircularProgressIndicator()),
-      error: (error, _) => Center(child: Text(error.toString())),
+      error: (error, _) {
+        debugPrint(
+          'Goals config error: '
+          '${error.toString()}',
+        );
+        return Center(child: Text(l10n.genericError));
+      },
       data: (config) {
         final goalOptions = config.goalOptions;
         final goalsTitle = _localizedTitle(
@@ -70,8 +76,7 @@ class GoalsStep extends ConsumerWidget {
                     ),
                     selected: isSelected,
                     onSelected: (selected) {
-                      final currentSelection =
-                          List<String>.from(selectedGoals);
+                      final currentSelection = List<String>.from(selectedGoals);
                       if (selected) {
                         currentSelection.add(goal);
                       } else {

@@ -63,7 +63,12 @@ class _SignUpForm extends ConsumerWidget {
             ),
             const SizedBox(height: 30),
             ElevatedButton.icon(
-              icon: Icon(Icons.g_mobiledata),
+              icon: Image.asset(
+                'assets/images/google_logo.png',
+                width: 24,
+                height: 24,
+                semanticLabel: 'Google logo',
+              ),
               label: Text(l10n.signInWithGoogle),
               onPressed: () {
                 ref.read(authProvider.notifier).signInWithGoogle();

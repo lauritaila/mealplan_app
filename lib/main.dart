@@ -24,6 +24,7 @@ class MyApp extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final appRouter = ref.watch(appRouterProvider);
+    final appLocale = ref.watch(appLocaleProvider);
     return MaterialApp.router(
       routerConfig: appRouter,
       onGenerateTitle: (context) => AppLocalizations.of(context).appTitle,
@@ -34,6 +35,7 @@ class MyApp extends ConsumerWidget {
         GlobalCupertinoLocalizations.delegate,
       ],
       supportedLocales: const [Locale('en'), Locale('es')],
+      locale: appLocale,
       localeResolutionCallback: (locale, supportedLocales) {
         if (locale == null) {
           return const Locale('en');

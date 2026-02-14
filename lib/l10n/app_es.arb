@@ -1,6 +1,9 @@
 {
   "@@locale": "es",
   "appTitle": "Plan de comidas",
+  "@appTitle": {
+    "description": "El título de la aplicación."
+  },
   "genericError": "Algo salió mal. Inténtalo de nuevo.",
   "errorFieldRequired": "Este campo es obligatorio.",
   "errorEmailInvalid": "Ingresa un correo válido.",
@@ -43,6 +46,9 @@
   "approvePlanTitle": "Aprobar plan",
   "noPlanDataReceived": "No se recibieron datos del plan.",
   "done": "Listo",
+  "graceWelcomeTitle": "¡Te extrañábamos! Gracias por volver.",
+  "graceWelcomeMessage": "Toda tu información sigue guardada y lista para continuar.",
+  "continueLabel": "Continuar",
   "mealsCount": "{count} comidas",
   "@mealsCount": {
     "placeholders": {
@@ -131,7 +137,6 @@
   "mealTypeDinnerSubtitle": "Ligero y nutritivo",
   "notesOptionalTitle": "Notas (opcional)",
   "notesHint": "Ej.: Sin lactosa, más proteínas...",
-  "continueLabel": "Continuar",
   "mealsOfDayTitle": "Comidas del día",
   "metricCalories": "Cal",
   "metricServings": "Raciones",
@@ -158,7 +163,6 @@
   "logout": "Cerrar sesión",
   "deleteAccount": "Eliminar cuenta",
   "profileNotificationsTitle": "Notificaciones",
-  "profileLicensesTitle": "Licencias",
   "profileTermsTitle": "Términos y condiciones",
   "unableToLoadPlanStatus": "No se pudo cargar el estado del plan: {error}",
   "@unableToLoadPlanStatus": {
@@ -286,5 +290,32 @@
   "mealPlanTitle": "Plan de comidas",
   "recipesTitle": "Recetas",
   "groceryTitle": "Compras",
-  "nutritionTitle": "Nutrición"
+  "nutritionTitle": "Nutrición",
+  "profileFarewell": "Lamentamos tu partida.\nGuardaremos tu cocina y tus playlists por 30 días por si decides volver. Después de eso, limpiaremos la mesa para siempre.",
+  "@profileFarewell": {
+    "description": "Mensaje de despedida al eliminar la cuenta."
+  },
+  "confirmDeleteWithEmail": "¿Estás seguro? Escribe tu correo para confirmar: {email}",
+  "@confirmDeleteWithEmail": {
+    "description": "Mensaje para confirmar eliminación de cuenta con correo.",
+    "placeholders": {
+      "email": {}
+    }
+  },
+  "emailPlaceholder": "correo@ejemplo.com",
+  "@emailPlaceholder": {
+    "description": "Placeholder para el campo de correo."
+  },
+  "cancel": "Cancelar",
+  "@cancel": {
+    "description": "Etiqueta para el botón cancelar."
+  },
+  "errorLoadingConfiguration": "Error al cargar la configuración. Inténtalo de nuevo.",
+  "@errorLoadingConfiguration": {
+    "description": "Se muestra cuando falla la carga de la configuración."
+  },
+  "errorEmailConfirmationMismatch": "El correo no coincide con tu cuenta.",
+  "@errorEmailConfirmationMismatch": {
+    "description": "Se muestra cuando el correo ingresado para confirmar no coincide con el del usuario."
+  }
 }

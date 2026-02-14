@@ -10,6 +10,7 @@ class UserMapper {
       onboardingComplete: json['onboarding_complete'] as bool? ?? false,
       permissions: _parsePermissions(json['permissions']),
       planName: json['plan_name'] as String?,
+      configurations: json['configurations'] as Map<String, dynamic>?,
     );
   }
 
