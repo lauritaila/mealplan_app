@@ -110,11 +110,8 @@ class AllergiesStep extends ConsumerWidget {
                 const SizedBox(height: 8),
                 Consumer(
                   builder: (context, ref, _) {
-                    final controller = TextEditingController(
-                      text: customAllergy,
-                    );
                     return TextFormField(
-                      controller: controller,
+                      initialValue: customAllergy,
                       decoration: InputDecoration(
                         hintText: otherHint,
                         border: const OutlineInputBorder(),

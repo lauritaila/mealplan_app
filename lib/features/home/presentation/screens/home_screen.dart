@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:confetti/confetti.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:meal_plan_app/features/auth/presentation/provider/provider.dart';
@@ -13,6 +14,19 @@ class HomeScreen extends ConsumerWidget {
     final authState = ref.watch(authProvider);
     final statusAsync = ref.watch(mealPlanGenerationStatusProvider);
     final l10n = AppLocalizations.of(context);
+
+    ref.listen(authProvider, (previous, next) {
+      if (next is AuthenticatedAuthState && next.showGraceWelcome) {
+        WidgetsBinding.instance.addPostFrameCallback((_) {
+          if (!context.mounted) return;
+          ref.read(authProvider.notifier).consumeGraceWelcome();
+          showDialog<void>(
+            context: context,
+            builder: (_) => const _GraceWelcomeDialog(),
+          );
+        });
+      }
+    });
 
     return Scaffold(
       appBar: AppBar(title: Text(l10n.homeTitle)),
@@ -39,6 +53,75 @@ class HomeScreen extends ConsumerWidget {
             ),
           ],
         ),
+      ),
+    );
+  }
+}
+
+class _GraceWelcomeDialog extends StatefulWidget {
+  const _GraceWelcomeDialog();
+
+  @override
+  State<_GraceWelcomeDialog> createState() => _GraceWelcomeDialogState();
+}
+
+class _GraceWelcomeDialogState extends State<_GraceWelcomeDialog> {
+  late final ConfettiController _confettiController;
+
+  @override
+  void initState() {
+    super.initState();
+    _confettiController = ConfettiController(
+      duration: const Duration(seconds: 2),
+    )..play();
+  }
+
+  @override
+  void dispose() {
+    _confettiController.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return AlertDialog(
+      content: Stack(
+        alignment: Alignment.topCenter,
+        children: [
+          Padding(
+            padding: const EdgeInsets.only(top: 36),
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                const Text(
+                  '¡Te extrañábamos! Gracias por volver.',
+                  textAlign: TextAlign.center,
+                  style: TextStyle(fontWeight: FontWeight.bold),
+                ),
+                const SizedBox(height: 12),
+                const Text(
+                  'Toda tu información sigue guardada y lista para continuar.',
+                  textAlign: TextAlign.center,
+                ),
+                const SizedBox(height: 16),
+                ElevatedButton(
+                  onPressed: () => Navigator.of(context).pop(),
+                  child: const Text('Continuar'),
+                ),
+              ],
+            ),
+          ),
+          ConfettiWidget(
+            confettiController: _confettiController,
+            blastDirectionality: BlastDirectionality.explosive,
+            shouldLoop: false,
+            emissionFrequency: 0.04,
+            numberOfParticles: 12,
+            gravity: 0.2,
+            maxBlastForce: 12,
+            minBlastForce: 6,
+          ),
+        ],
       ),
     );
   }

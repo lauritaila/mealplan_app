@@ -23,16 +23,14 @@ Future<void> _showDeleteAccountModal(
         content: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
-            Text(
-              '¿Estás seguro? Escribe tu correo para confirmar: $email',
-            ),
+            Text(l10n.confirmDeleteWithEmail(email)),
             const SizedBox(height: 12),
             TextField(
               controller: controller,
               keyboardType: TextInputType.emailAddress,
-              decoration: const InputDecoration(
-                border: OutlineInputBorder(),
-                hintText: 'correo@ejemplo.com',
+              decoration: InputDecoration(
+                border: const OutlineInputBorder(),
+                hintText: l10n.emailPlaceholder,
               ),
             ),
           ],
@@ -40,7 +38,7 @@ Future<void> _showDeleteAccountModal(
         actions: [
           TextButton(
             onPressed: () => Navigator.of(dialogContext).pop(),
-            child: const Text('Cancelar'),
+            child: Text(l10n.cancel),
           ),
           FilledButton(
             onPressed: () async {
@@ -55,17 +53,14 @@ Future<void> _showDeleteAccountModal(
               showDialog<void>(
                 context: context,
                 barrierDismissible: false,
+                useRootNavigator: true,
                 builder: (_) {
-                  return const AlertDialog(
+                  return AlertDialog(
                     content: Row(
                       children: [
-                        CircularProgressIndicator(),
-                        SizedBox(width: 16),
-                        Expanded(
-                          child: Text(
-                            'Lamentamos tu Partida.\nGuardaremos tu cocina y tus playlists por 30 días por si decides volver. Después de eso, limpiaremos la mesa para siempre.',
-                          ),
-                        ),
+                        const CircularProgressIndicator(),
+                        const SizedBox(width: 16),
+                        Expanded(child: Text(l10n.profileFarewell)),
                       ],
                     ),
                   );
@@ -86,18 +81,21 @@ Future<void> _showDeleteAccountModal(
               }
 
               if (!context.mounted) return;
-              Navigator.of(context, rootNavigator: true).pop();
+              final rootNavigator = Navigator.of(context, rootNavigator: true);
+              if (rootNavigator.canPop()) {
+                rootNavigator.pop();
+              }
 
               if (appError != null) {
                 final errorText = localizeAppError(l10n, appError);
-                ScaffoldMessenger.of(context).showSnackBar(
-                  SnackBar(content: Text(errorText)),
-                );
+                ScaffoldMessenger.of(
+                  context,
+                ).showSnackBar(SnackBar(content: Text(errorText)));
                 return;
               }
 
               if (!context.mounted) return;
-              context.go('/init');
+              await ref.read(authProvider.notifier).logOut();
             },
             child: Text(l10n.deleteAccount),
           ),

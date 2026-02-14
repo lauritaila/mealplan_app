@@ -1,3 +1,4 @@
+
 {
   "@@locale": "es",
   "appTitle": "Plan de comidas",
@@ -285,5 +286,26 @@
   "mealPlanTitle": "Plan de comidas",
   "recipesTitle": "Recetas",
   "groceryTitle": "Compras",
-  "nutritionTitle": "Nutrición"
+  "nutritionTitle": "Nutrición",
+  "profileFarewell": "Lamentamos tu partida.\nGuardaremos tu cocina y tus playlists por 30 días por si decides volver. Después de eso, limpiaremos la mesa para siempre.",
+  "@profileFarewell": {
+    "description": "Mensaje de despedida al eliminar la cuenta."
+  },
+  "confirmDeleteWithEmail": "¿Estás seguro? Escribe tu correo para confirmar: {email}",
+  "@confirmDeleteWithEmail": {
+    "description": "Mensaje para confirmar eliminación de cuenta con correo.",
+    "placeholders": { "email": {} }
+  },
+  "emailPlaceholder": "correo@ejemplo.com",
+  "@emailPlaceholder": {
+    "description": "Placeholder para el campo de correo."
+  },
+  "cancel": "Cancelar",
+  "@cancel": {
+    "description": "Etiqueta para el botón cancelar."
+  },
+    "errorLoadingConfiguration": "Error al cargar la configuración. Inténtalo de nuevo.",
+  "@errorLoadingConfiguration": {
+    "description": "Se muestra cuando falla la carga de la configuración."
+  }
 }

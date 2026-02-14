@@ -11,6 +11,14 @@ class ProfileRepositoryImpl implements ProfileRepository {
   }
 
   @override
+  Future<Map<String, dynamic>> updateHideNutritionValues(
+    String userId,
+    bool hideNutritionValues,
+  ) {
+    return _datasource.updateHideNutritionValues(userId, hideNutritionValues);
+  }
+
+  @override
   Future<void> requestEmailChange(String newEmail) {
     return _datasource.requestEmailChange(newEmail);
   }
@@ -18,6 +26,11 @@ class ProfileRepositoryImpl implements ProfileRepository {
   @override
   Future<void> verifyEmailChangeOtp(String newEmail, String token) {
     return _datasource.verifyEmailChangeOtp(newEmail, token);
+  }
+
+  @override
+  Future<void> reactivateAccount({required String userId}) {
+    return _datasource.reactivateAccount(userId: userId);
   }
 
   @override

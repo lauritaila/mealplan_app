@@ -1,6 +1,6 @@
 
 {
-  "@@locale": "en",
+  "@@locale": "en",  
   "appTitle": "Meal Plan App",
   "genericError": "Something went wrong. Please try again.",
   "errorFieldRequired": "This field is required.",
@@ -286,5 +286,26 @@
   "mealPlanTitle": "Meal Plan",
   "recipesTitle": "Recipes",
   "groceryTitle": "Grocery",
-  "nutritionTitle": "Nutrition"
+  "nutritionTitle": "Nutrition",
+  "profileFarewell": "We're sorry to see you go. We'll keep your kitchen and playlists for 30 days in case you decide to return. After that, we'll clear the table forever.",
+  "@profileFarewell": {
+    "description": "Farewell message shown when deleting account."
+  },
+  "confirmDeleteWithEmail": "Are you sure? Type your email to confirm: {email}",
+  "@confirmDeleteWithEmail": {
+    "description": "Prompt to confirm account deletion with email entry.",
+    "placeholders": { "email": {} }
+  },
+  "emailPlaceholder": "email@example.com",
+  "@emailPlaceholder": {
+    "description": "Placeholder for email input field."
+  },
+  "cancel": "Cancel",
+  "@cancel": {
+    "description": "Label for cancel button."
+  },
+  "errorLoadingConfiguration": "Error loading configuration. Please try again.",
+  "@errorLoadingConfiguration": {
+    "description": "Shown when configuration fails to load."
+  }
 }

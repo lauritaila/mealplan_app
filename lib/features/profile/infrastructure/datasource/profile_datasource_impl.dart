@@ -7,33 +7,36 @@ class ProfileDatasourceImpl implements ProfileDatasource {
 
   ProfileDatasourceImpl(this._supabaseClient);
 
+  Future<Map<String, dynamic>> _loadAndValidateConfig(String userId) async {
+    final authUserId = _supabaseClient.auth.currentUser?.id;
+    if (authUserId == null) {
+      throw const PermissionAppError.unauthorized();
+    }
+    if (authUserId != userId) {
+      throw const PermissionAppError.forbidden();
+    }
+
+    final profile = await _supabaseClient
+        .from('user_profiles')
+        .select('configurations')
+        .eq('id', userId)
+        .maybeSingle();
+
+    return (profile?['configurations'] as Map<String, dynamic>?) ??
+        const {
+          'language': 'en',
+          'notifications': {'reminders': false, 'weeklySummary': true},
+          'hideNutritionValues': false,
+        };
+  }
+
   @override
-  Future<Map<String, dynamic>> updateLanguage(String userId, String langCode) async {
+  Future<Map<String, dynamic>> updateLanguage(
+    String userId,
+    String langCode,
+  ) async {
     try {
-      final authUserId = _supabaseClient.auth.currentUser?.id;
-      if (authUserId == null) {
-        throw const PermissionAppError.unauthorized();
-      }
-      if (authUserId != userId) {
-        throw const PermissionAppError.forbidden();
-      }
-
-      final profile = await _supabaseClient
-          .from('user_profiles')
-          .select('configurations')
-          .eq('id', userId)
-          .maybeSingle();
-
-      final existingConfig =
-          (profile?['configurations'] as Map<String, dynamic>?) ??
-          const {
-            'language': 'en',
-            'notifications': {
-              'reminders': false,
-              'weeklySummary': true,
-            },
-            'hideNutritionValues': false,
-          };
+      final existingConfig = await _loadAndValidateConfig(userId);
 
       final updatedConfig = <String, dynamic>{
         ...existingConfig,
@@ -54,7 +57,42 @@ class ProfileDatasourceImpl implements ProfileDatasource {
     } on AppError {
       rethrow;
     } catch (e) {
-      throw NetworkAppError('Unexpected error updating language: ${e.toString()}');
+      throw NetworkAppError(
+        'Unexpected error updating language: ${e.toString()}',
+      );
+    }
+  }
+
+  @override
+  Future<Map<String, dynamic>> updateHideNutritionValues(
+    String userId,
+    bool hideNutritionValues,
+  ) async {
+    try {
+      final existingConfig = await _loadAndValidateConfig(userId);
+
+      final updatedConfig = <String, dynamic>{
+        ...existingConfig,
+        'hideNutritionValues': hideNutritionValues,
+      };
+
+      await _supabaseClient
+          .from('user_profiles')
+          .update({'configurations': updatedConfig})
+          .eq('id', userId);
+
+      return updatedConfig;
+    } on PostgrestException catch (e) {
+      throw DataAppError(
+        'Failed to update hide nutrition values: ${e.message}',
+        code: e.code ?? 'DATA_UPDATE_FAILED',
+      );
+    } on AppError {
+      rethrow;
+    } catch (e) {
+      throw NetworkAppError(
+        'Unexpected error updating hide nutrition values: ${e.toString()}',
+      );
     }
   }
 
@@ -70,7 +108,9 @@ class ProfileDatasourceImpl implements ProfileDatasource {
     } on AppError {
       rethrow;
     } catch (e) {
-      throw NetworkAppError('Unexpected error requesting email change: ${e.toString()}');
+      throw NetworkAppError(
+        'Unexpected error requesting email change: ${e.toString()}',
+      );
     }
   }
 
@@ -111,14 +151,23 @@ class ProfileDatasourceImpl implements ProfileDatasource {
       if (authUserId != userId) {
         throw const PermissionAppError.forbidden();
       }
-      if (email.trim().toLowerCase() != confirmationEmail.trim().toLowerCase()) {
-        throw const AuthAppError.unexpected(message: 'Email confirmation does not match.');
+      if (email.trim().toLowerCase() !=
+          confirmationEmail.trim().toLowerCase()) {
+        throw const AuthAppError.unexpected(
+          message: 'Email confirmation does not match.',
+        );
       }
 
-      await _supabaseClient
-          .from('user_subscriptions')
-          .update({'status': 'inactive'})
-          .eq('user_id', userId);
+      await Future.wait([
+        _supabaseClient
+            .from('user_profiles')
+            .update({'deleted_at': DateTime.now().toIso8601String()})
+            .eq('id', userId),
+        _supabaseClient
+            .from('user_subscriptions')
+            .update({'status': 'deleted'})
+            .eq('user_id', userId),
+      ]);
     } on PostgrestException catch (e) {
       throw DataAppError(
         'Failed to deactivate subscription: ${e.message}',
@@ -127,7 +176,44 @@ class ProfileDatasourceImpl implements ProfileDatasource {
     } on AppError {
       rethrow;
     } catch (e) {
-      throw NetworkAppError('Unexpected error deleting account: ${e.toString()}');
+      throw NetworkAppError(
+        'Unexpected error deleting account: ${e.toString()}',
+      );
+    }
+  }
+
+  @override
+  Future<void> reactivateAccount({required String userId}) async {
+    try {
+      final authUserId = _supabaseClient.auth.currentUser?.id;
+      if (authUserId == null) {
+        throw const PermissionAppError.unauthorized();
+      }
+      if (authUserId != userId) {
+        throw const PermissionAppError.forbidden();
+      }
+
+      await Future.wait([
+        _supabaseClient
+            .from('user_subscriptions')
+            .update({'status': 'active'})
+            .eq('user_id', userId),
+        _supabaseClient
+            .from('user_profiles')
+            .update({'deleted_at': null})
+            .eq('id', userId),
+      ]);
+    } on PostgrestException catch (e) {
+      throw DataAppError(
+        'Failed to reactivate account: ${e.message}',
+        code: e.code ?? 'DATA_UPDATE_FAILED',
+      );
+    } on AppError {
+      rethrow;
+    } catch (e) {
+      throw NetworkAppError(
+        'Unexpected error reactivating account: ${e.toString()}',
+      );
     }
   }
 }

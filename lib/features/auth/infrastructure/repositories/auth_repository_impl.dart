@@ -58,12 +58,12 @@ class AuthRepositoryImpl implements AuthRepository {
   }
 
   @override
-  Future<bool> userExists(String email) {
-    return datasource.userExists(email);
+  Future<AccessStatus> getUserAccessStatus(String email) {
+    return datasource.getUserAccessStatus(email);
   }
 
   @override
-  Future<void> signInWithGoogle() {
+  Future<AccessStatus> signInWithGoogle() {
     return datasource.signInWithGoogle();
   }
 }

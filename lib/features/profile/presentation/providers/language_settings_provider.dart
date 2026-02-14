@@ -1,39 +1,85 @@
-import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:riverpod_annotation/riverpod_annotation.dart';
 import 'package:meal_plan_app/config/config.dart';
 import 'package:meal_plan_app/features/auth/presentation/provider/provider.dart';
-import 'package:meal_plan_app/features/profile/presentation/providers/profile_provider.dart';
-
 import 'profile_repository_provider.dart';
 
-final languageSettingsProvider =
-    StateNotifierProvider<LanguageSettingsController, AsyncValue<void>>((ref) {
-      return LanguageSettingsController(ref);
-    });
+part 'language_settings_provider.g.dart';
 
-class LanguageSettingsController extends StateNotifier<AsyncValue<void>> {
-  final Ref _ref;
+class LanguageSettingsState {
+  final String selectedCode;
+  final String persistedCode;
+  final bool isSaving;
+  final AppError? error;
+  const LanguageSettingsState({
+    required this.selectedCode,
+    required this.persistedCode,
+    this.isSaving = false,
+    this.error,
+  });
 
-  LanguageSettingsController(this._ref) : super(const AsyncData(null));
+  LanguageSettingsState copyWith({
+    String? selectedCode,
+    String? persistedCode,
+    bool? isSaving,
+    AppError? Function()? error,
+  }) {
+    return LanguageSettingsState(
+      selectedCode: selectedCode ?? this.selectedCode,
+      persistedCode: persistedCode ?? this.persistedCode,
+      isSaving: isSaving ?? this.isSaving,
+      error: error != null ? error() : this.error,
+    );
+  }
+}
 
-  Future<void> updateLanguage(String langCode) async {
-    final authState = _ref.read(authProvider);
+@riverpod
+class LanguageSettings extends _$LanguageSettings {
+  @override
+  LanguageSettingsState build() {
+    final authState = ref.watch(authProvider);
+    final persistedCode = authState is AuthenticatedAuthState
+        ? (authState.user.configurations?['language'] as String? ?? 'en')
+        : 'en';
+    return LanguageSettingsState(
+      selectedCode: persistedCode,
+      persistedCode: persistedCode,
+    );
+  }
+
+  void select(String code) {
+    state = state.copyWith(selectedCode: code, error: () => null);
+  }
+
+  Future<void> confirm() async {
+    if (state.selectedCode == state.persistedCode) return;
+    final authState = ref.read(authProvider);
     if (authState is! AuthenticatedAuthState) {
-      throw const PermissionAppError.unauthorized();
+      state = state.copyWith(
+        error: () => const PermissionAppError.unauthorized(),
+      );
+      return;
     }
-
-    state = const AsyncLoading();
+    state = state.copyWith(isSaving: true, error: () => null);
     try {
-      await _ref.read(profileRepositoryProvider).updateLanguage(
-            authState.user.id,
-            langCode,
-          );
-      await _ref.read(appLocaleProvider.notifier).setLanguageCode(langCode);
-      _ref.read(profileProvider.notifier).setLanguageCode(langCode);
-      await _ref.read(authProvider.notifier).refreshUserStatus();
-      state = const AsyncData(null);
-    } catch (e, st) {
-      state = AsyncError(e, st);
-      rethrow;
+      await ref
+          .read(profileRepositoryProvider)
+          .updateLanguage(authState.user.id, state.selectedCode);
+      await ref
+          .read(appLocaleProvider.notifier)
+          .setLanguageCode(state.selectedCode);
+      await ref.read(authProvider.notifier).refreshUserStatus();
+      state = state.copyWith(
+        persistedCode: state.selectedCode,
+        isSaving: false,
+        error: () => null,
+      );
+    } catch (e) {
+      state = state.copyWith(
+        isSaving: false,
+        error: () => e is AppError
+            ? e
+            : const DataAppError.updateFailed('language settings'),
+      );
     }
   }
 }

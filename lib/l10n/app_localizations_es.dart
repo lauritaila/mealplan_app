@@ -706,4 +706,23 @@ class AppLocalizationsEs extends AppLocalizations {
 
   @override
   String get nutritionTitle => 'Nutrición';
+
+  @override
+  String get profileFarewell =>
+      'Lamentamos tu partida.\nGuardaremos tu cocina y tus playlists por 30 días por si decides volver. Después de eso, limpiaremos la mesa para siempre.';
+
+  @override
+  String confirmDeleteWithEmail(Object email) {
+    return '¿Estás seguro? Escribe tu correo para confirmar: $email';
+  }
+
+  @override
+  String get emailPlaceholder => 'correo@ejemplo.com';
+
+  @override
+  String get cancel => 'Cancelar';
+
+  @override
+  String get errorLoadingConfiguration =>
+      'Error al cargar la configuración. Inténtalo de nuevo.';
 }

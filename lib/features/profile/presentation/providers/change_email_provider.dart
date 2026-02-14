@@ -1,40 +1,74 @@
-import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:meal_plan_app/config/config.dart';
 import 'package:meal_plan_app/features/auth/presentation/provider/provider.dart';
+import 'package:riverpod_annotation/riverpod_annotation.dart';
 
 import 'profile_repository_provider.dart';
 
-final changeEmailProvider =
-    StateNotifierProvider<ChangeEmailController, AsyncValue<void>>((ref) {
-      return ChangeEmailController(ref);
-    });
+part 'change_email_provider.g.dart';
 
-class ChangeEmailController extends StateNotifier<AsyncValue<void>> {
-  final Ref _ref;
+class ChangeEmailState {
+  final bool isLoading;
+  final bool otpRequested;
+  final AppError? error;
 
-  ChangeEmailController(this._ref) : super(const AsyncData(null));
+  const ChangeEmailState({
+    this.isLoading = false,
+    this.otpRequested = false,
+    this.error,
+  });
+
+  ChangeEmailState copyWith({
+    bool? isLoading,
+    bool? otpRequested,
+    AppError? Function()? error,
+  }) {
+    return ChangeEmailState(
+      isLoading: isLoading ?? this.isLoading,
+      otpRequested: otpRequested ?? this.otpRequested,
+      error: error != null ? error() : this.error,
+    );
+  }
+}
+
+@riverpod
+class ChangeEmail extends _$ChangeEmail {
+  @override
+  ChangeEmailState build() => const ChangeEmailState();
 
   Future<void> requestEmailChange(String newEmail) async {
-    state = const AsyncLoading();
+    state = state.copyWith(isLoading: true, error: () => null);
     try {
-      await _ref.read(profileRepositoryProvider).requestEmailChange(newEmail);
-      state = const AsyncData(null);
-    } catch (e, st) {
-      state = AsyncError(e, st);
-      rethrow;
+      await ref.read(profileRepositoryProvider).requestEmailChange(newEmail);
+      state = state.copyWith(
+        isLoading: false,
+        otpRequested: true,
+        error: () => null,
+      );
+    } catch (e) {
+      state = state.copyWith(
+        isLoading: false,
+        error: () => e is AppError ? e : const AuthAppError.unexpected(),
+      );
     }
   }
 
   Future<void> verifyEmailChangeOtp(String newEmail, String token) async {
-    state = const AsyncLoading();
+    state = state.copyWith(isLoading: true, error: () => null);
     try {
-      await _ref
+      await ref
           .read(profileRepositoryProvider)
           .verifyEmailChangeOtp(newEmail, token);
-      await _ref.read(authProvider.notifier).refreshUserStatus();
-      state = const AsyncData(null);
-    } catch (e, st) {
-      state = AsyncError(e, st);
-      rethrow;
+      await ref.read(authProvider.notifier).refreshUserStatus();
+      state = state.copyWith(isLoading: false, error: () => null);
+    } catch (e) {
+      state = state.copyWith(
+        isLoading: false,
+        error: () => e is AppError ? e : const AuthAppError.unexpected(),
+      );
     }
+  }
+
+  void clearError() {
+    state = state.copyWith(error: () => null);
   }
 }

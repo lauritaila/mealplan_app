@@ -3,11 +3,13 @@ import 'package:meal_plan_app/config/config.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
-import 'package:meal_plan_app/config/constants/dio.dart';
-import 'package:meal_plan_app/config/constants/storage_keys.dart';
-
 import '../../domain/domain.dart';
 import '../infrastructure.dart';
+import 'package:meal_plan_app/config/constants/dio.dart';
+import 'package:meal_plan_app/config/constants/storage_keys.dart';
+import 'package:logging/logging.dart';
+
+final Logger _logger = Logger('AuthSupabaseDatasourceImpl');
 
 class AuthSupabaseDatasourceImpl implements AuthDatasource {
   final SupabaseClient _supabaseClient;
@@ -234,27 +236,25 @@ class AuthSupabaseDatasourceImpl implements AuthDatasource {
   }
 
   @override
-  Future<bool> userExists(String email) async {
+  Future<AccessStatus> getUserAccessStatus(String email) async {
     try {
-      try {
-        final activeResult = await _supabaseClient.rpc(
-          'user_exists_with_active_subscription',
-          params: {'p_email': email},
-        );
-        return activeResult as bool;
-      } on PostgrestException {
-        final result = await _supabaseClient.rpc(
-          'user_exists',
-          params: {'p_email': email},
-        );
-        return result as bool;
+      final result = await _supabaseClient.rpc(
+        'get_user_access_status',
+        params: {'p_email': email},
+      );
+
+      if (result is! String) {
+        _logger.warning('get_user_access_status returned non-string: $result');
+        return AccessStatus.notFound;
       }
-    } on PostgrestException catch (e) {
-      print('userExists check failed: ${e.message}');
-      return false;
-    } catch (e) {
-      print('userExists unexpected error: $e');
-      return false;
+
+      return AccessStatusX.fromRpc(result);
+    } on PostgrestException catch (e, st) {
+      _logger.severe('getUserAccessStatus failed: ${e.message}', e, st);
+      return AccessStatus.notFound;
+    } catch (e, st) {
+      _logger.severe('getUserAccessStatus unexpected error', e, st);
+      return AccessStatus.notFound;
     }
   }
 
@@ -346,13 +346,25 @@ class AuthSupabaseDatasourceImpl implements AuthDatasource {
   }
 
   @override
-  Future<void> signInWithGoogle() async {
+  Future<AccessStatus> signInWithGoogle() async {
     try {
       final webClientId = Enviroment.webClientId;
       final googleSignIn = GoogleSignIn.instance;
       await googleSignIn.initialize(serverClientId: webClientId);
 
+      final isSupported = googleSignIn.supportsAuthenticate();
+      if (!isSupported) {
+        throw const AuthAppError.unexpected(
+          message: 'Google sign-in is not supported on this platform.',
+        );
+      }
+
       final googleUser = await googleSignIn.authenticate();
+
+      final accessStatus = await getUserAccessStatus(googleUser.email);
+      if (!accessStatus.canLogIn) {
+        throw const AuthAppError.userNotFound();
+      }
 
       final googleAuth = googleUser.authentication;
 
@@ -366,18 +378,20 @@ class AuthSupabaseDatasourceImpl implements AuthDatasource {
       );
 
       await _persistSession(res.session ?? _supabaseClient.auth.currentSession);
-    } on GoogleSignInException catch (e) {
-      if (e.code == 'canceled') {
-        print('Google sign-in canceled by user');
+      return accessStatus;
+    } on GoogleSignInException catch (e, st) {
+      if (e.code == GoogleSignInExceptionCode.canceled) {
+        _logger.severe('Google sign-in canceled by user', e, st);
         throw AuthAppError('Google sign-in canceled by user', code: 'canceled');
       } else {
-        print('Google sign-in error: ${e.toString()}');
+        _logger.severe('Google sign-in error: ${e.toString()}', e, st);
         throw AuthAppError('Google sign-in error: ${e.toString()}');
       }
     } on AuthException catch (e) {
+      _logger.severe('Google sign-in AuthException: ${e.message}', e);
       throw AuthAppError(e.message, code: e.statusCode);
-    } catch (e) {
-      print('Google sign-in unexpected error: $e');
+    } catch (e, st) {
+      _logger.severe('Google sign-in unexpected error', e, st);
       throw AuthAppError.unexpected(message: e.toString());
     }
   }

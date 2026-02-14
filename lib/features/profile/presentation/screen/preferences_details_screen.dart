@@ -2,7 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:meal_plan_app/config/errors/app_errors.dart';
 import 'package:meal_plan_app/features/auth/presentation/provider/provider.dart';
-import 'package:meal_plan_app/features/profile/presentation/providers/profile_provider.dart';
+import 'package:meal_plan_app/features/profile/presentation/providers/preferences_details_provider.dart';
+import 'package:meal_plan_app/features/profile/presentation/providers/profile_repository_provider.dart';
 import 'package:meal_plan_app/features/preferences/presentation/providers/preferences_repository_provider.dart';
 import 'package:meal_plan_app/features/preferences/presentation/providers/preferences_configuration_provider.dart'
     as preferences;
@@ -21,17 +22,21 @@ class _PreferencesDetailsScreenState
     extends ConsumerState<PreferencesDetailsScreen> {
   late final TextEditingController _dislikedController;
   late final TextEditingController _likedController;
+  bool _controllersHydrated = false;
 
   @override
   void initState() {
     super.initState();
-    final profileState = ref.read(profileProvider);
-    _dislikedController = TextEditingController(
-      text: profileState.dislikedFoods.join(', '),
-    );
-    _likedController = TextEditingController(
-      text: profileState.likedFoods.join(', '),
-    );
+    _dislikedController = TextEditingController();
+    _likedController = TextEditingController();
+    Future.microtask(() async {
+      await ref.read(preferencesDetailsProvider.notifier).hydrateFromServer();
+      if (!mounted) return;
+      final hydrated = ref.read(preferencesDetailsProvider);
+      _dislikedController.text = hydrated.dislikedFoods.join(', ');
+      _likedController.text = hydrated.likedFoods.join(', ');
+      _controllersHydrated = true;
+    });
   }
 
   @override
@@ -58,7 +63,7 @@ class _PreferencesDetailsScreenState
     return map[key] ?? key;
   }
 
-  void _updateFoodPreferences(Profile profileNotifier) {
+  void _updateFoodPreferences(PreferencesDetails preferencesNotifier) {
     final disliked = _dislikedController.text
         .split(',')
         .map((e) => e.trim())
@@ -69,8 +74,8 @@ class _PreferencesDetailsScreenState
         .map((e) => e.trim())
         .where((e) => e.isNotEmpty)
         .toList();
-    profileNotifier.setDislikedFoods(disliked);
-    profileNotifier.setLikedFoods(liked);
+    preferencesNotifier.setDislikedFoods(disliked);
+    preferencesNotifier.setLikedFoods(liked);
   }
 
   @override
@@ -78,11 +83,17 @@ class _PreferencesDetailsScreenState
     final theme = Theme.of(context);
     final l10n = AppLocalizations.of(context);
     final authState = ref.watch(authProvider);
-    final profileState = ref.watch(profileProvider);
-    final profileNotifier = ref.read(profileProvider.notifier);
+    final preferencesState = ref.watch(preferencesDetailsProvider);
+    final preferencesNotifier = ref.read(preferencesDetailsProvider.notifier);
     final configAsync = ref.watch(preferences.preferencesConfigurationProvider);
     final localeCode = Localizations.localeOf(context).languageCode;
-    final effectiveLanguageCode = profileState.languageCode ?? localeCode;
+    final effectiveLanguageCode = preferencesState.languageCode ?? localeCode;
+
+    if (!_controllersHydrated && preferencesState.isHydrated) {
+      _dislikedController.text = preferencesState.dislikedFoods.join(', ');
+      _likedController.text = preferencesState.likedFoods.join(', ');
+      _controllersHydrated = true;
+    }
 
     return Scaffold(
       appBar: AppBar(title: Text(l10n.profilePreferencesTitle)),
@@ -179,8 +190,8 @@ class _PreferencesDetailsScreenState
                     child: SwitchListTile(
                       contentPadding: EdgeInsets.zero,
                       title: Text(l10n.profileHideNutritionLabel),
-                      value: profileState.hideNutritionValues,
-                      onChanged: profileNotifier.setHideNutritionValues,
+                      value: preferencesState.hideNutritionValues,
+                      onChanged: preferencesNotifier.setHideNutritionValues,
                     ),
                   ),
                 ),
@@ -199,7 +210,7 @@ class _PreferencesDetailsScreenState
                             spacing: 10,
                             runSpacing: 10,
                             children: dietOptions.map((diet) {
-                              final isSelected = profileState
+                              final isSelected = preferencesState
                                   .dietaryRestrictions
                                   .contains(diet);
                               return FilterChip(
@@ -212,7 +223,7 @@ class _PreferencesDetailsScreenState
                                 ),
                                 selected: isSelected,
                                 onSelected: (selected) {
-                                  profileNotifier.toggleDietaryRestriction(
+                                  preferencesNotifier.toggleDietaryRestriction(
                                     diet,
                                     selected,
                                   );
@@ -243,7 +254,7 @@ class _PreferencesDetailsScreenState
                             spacing: 10,
                             runSpacing: 10,
                             children: allergyOptions.map((allergy) {
-                              final isSelected = profileState.allergies
+                              final isSelected = preferencesState.allergies
                                   .contains(allergy);
                               return FilterChip(
                                 label: Text(
@@ -255,7 +266,7 @@ class _PreferencesDetailsScreenState
                                 ),
                                 selected: isSelected,
                                 onSelected: (selected) {
-                                  profileNotifier.toggleAllergy(
+                                  preferencesNotifier.toggleAllergy(
                                     allergy,
                                     selected,
                                   );
@@ -283,7 +294,7 @@ class _PreferencesDetailsScreenState
                             spacing: 10,
                             runSpacing: 10,
                             children: goalOptions.map((goal) {
-                              final isSelected = profileState.healthGoals
+                              final isSelected = preferencesState.healthGoals
                                   .contains(goal);
                               return FilterChip(
                                 label: Text(
@@ -295,7 +306,7 @@ class _PreferencesDetailsScreenState
                                 ),
                                 selected: isSelected,
                                 onSelected: (selected) {
-                                  profileNotifier.toggleHealthGoal(
+                                  preferencesNotifier.toggleHealthGoal(
                                     goal,
                                     selected,
                                   );
@@ -336,9 +347,11 @@ class _PreferencesDetailsScreenState
                                   ),
                                 ),
                                 selected:
-                                    profileState.cookingSkillLevel == level,
+                                    preferencesState.cookingSkillLevel == level,
                                 onSelected: (_) {
-                                  profileNotifier.setCookingSkillLevel(level);
+                                  preferencesNotifier.setCookingSkillLevel(
+                                    level,
+                                  );
                                 },
                               );
                             }).toList(),
@@ -360,9 +373,10 @@ class _PreferencesDetailsScreenState
                                     time,
                                   ),
                                 ),
-                                selected: profileState.timeAvailability == time,
+                                selected:
+                                    preferencesState.timeAvailability == time,
                                 onSelected: (_) {
-                                  profileNotifier.setTimeAvailability(time);
+                                  preferencesNotifier.setTimeAvailability(time);
                                 },
                               );
                             }).toList(),
@@ -379,23 +393,27 @@ class _PreferencesDetailsScreenState
                               IconButton(
                                 icon: const Icon(Icons.remove_circle_outline),
                                 onPressed:
-                                    profileState.householdSize > minHousehold
-                                    ? () => profileNotifier.updateHouseholdSize(
-                                        profileState.householdSize - 1,
-                                      )
+                                    preferencesState.householdSize >
+                                        minHousehold
+                                    ? () => preferencesNotifier
+                                          .updateHouseholdSize(
+                                            preferencesState.householdSize - 1,
+                                          )
                                     : null,
                               ),
                               Text(
-                                profileState.householdSize.toString(),
+                                preferencesState.householdSize.toString(),
                                 style: theme.textTheme.titleLarge,
                               ),
                               IconButton(
                                 icon: const Icon(Icons.add_circle_outline),
                                 onPressed:
-                                    profileState.householdSize < maxHousehold
-                                    ? () => profileNotifier.updateHouseholdSize(
-                                        profileState.householdSize + 1,
-                                      )
+                                    preferencesState.householdSize <
+                                        maxHousehold
+                                    ? () => preferencesNotifier
+                                          .updateHouseholdSize(
+                                            preferencesState.householdSize + 1,
+                                          )
                                     : null,
                               ),
                             ],
@@ -433,7 +451,7 @@ class _PreferencesDetailsScreenState
                               ),
                               maxLines: 3,
                               onEditingComplete: () =>
-                                  _updateFoodPreferences(profileNotifier),
+                                  _updateFoodPreferences(preferencesNotifier),
                             ),
                           ],
                           if (showDisliked && showLiked)
@@ -449,7 +467,7 @@ class _PreferencesDetailsScreenState
                               ),
                               maxLines: 3,
                               onEditingComplete: () =>
-                                  _updateFoodPreferences(profileNotifier),
+                                  _updateFoodPreferences(preferencesNotifier),
                             ),
                           ],
                         ],
@@ -472,15 +490,22 @@ class _PreferencesDetailsScreenState
                         return;
                       }
                       try {
-                        _updateFoodPreferences(profileNotifier);
+                        _updateFoodPreferences(preferencesNotifier);
+                        final updatedPreferencesState = ref.read(
+                          preferencesDetailsProvider,
+                        );
                         final repository = ref.read(
                           preferencesRepositoryProvider,
                         );
-                        final userPreferences = profileState.toUserPreferences(
-                          auth.user.id,
+                        final profileRepository = ref.read(
+                          profileRepositoryProvider,
                         );
-                        await repository.saveUserPreference(
-                          userPreferences,
+                        final userPreferences = updatedPreferencesState
+                            .toUserPreferences(auth.user.id);
+                        await repository.saveUserPreference(userPreferences);
+                        await profileRepository.updateHideNutritionValues(
+                          auth.user.id,
+                          updatedPreferencesState.hideNutritionValues,
                         );
                         if (!context.mounted) return;
                         ScaffoldMessenger.of(context).showSnackBar(

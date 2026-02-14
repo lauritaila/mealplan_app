@@ -37,7 +37,13 @@ class DietaryStep extends ConsumerWidget {
 
     return configAsync.when(
       loading: () => const Center(child: CircularProgressIndicator()),
-      error: (error, _) => Center(child: Text(error.toString())),
+      error: (error, _) {
+        debugPrint(
+          'Dietary config error: '
+          '${error.toString()}',
+        );
+        return Center(child: Text(l10n.errorLoadingConfiguration));
+      },
       data: (config) {
         final dietOptions = config.dietOptions;
         final dietaryTitle = _localizedTitle(

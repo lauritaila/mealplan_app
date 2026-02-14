@@ -701,4 +701,23 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get nutritionTitle => 'Nutrition';
+
+  @override
+  String get profileFarewell =>
+      'We\'re sorry to see you go. We\'ll keep your kitchen and playlists for 30 days in case you decide to return. After that, we\'ll clear the table forever.';
+
+  @override
+  String confirmDeleteWithEmail(Object email) {
+    return 'Are you sure? Type your email to confirm: $email';
+  }
+
+  @override
+  String get emailPlaceholder => 'email@example.com';
+
+  @override
+  String get cancel => 'Cancel';
+
+  @override
+  String get errorLoadingConfiguration =>
+      'Error loading configuration. Please try again.';
 }

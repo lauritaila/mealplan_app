@@ -1381,6 +1381,36 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Nutrition'**
   String get nutritionTitle;
+
+  /// Farewell message shown when deleting account.
+  ///
+  /// In en, this message translates to:
+  /// **'We\'re sorry to see you go. We\'ll keep your kitchen and playlists for 30 days in case you decide to return. After that, we\'ll clear the table forever.'**
+  String get profileFarewell;
+
+  /// Prompt to confirm account deletion with email entry.
+  ///
+  /// In en, this message translates to:
+  /// **'Are you sure? Type your email to confirm: {email}'**
+  String confirmDeleteWithEmail(Object email);
+
+  /// Placeholder for email input field.
+  ///
+  /// In en, this message translates to:
+  /// **'email@example.com'**
+  String get emailPlaceholder;
+
+  /// Label for cancel button.
+  ///
+  /// In en, this message translates to:
+  /// **'Cancel'**
+  String get cancel;
+
+  /// Shown when configuration fails to load.
+  ///
+  /// In en, this message translates to:
+  /// **'Error loading configuration. Please try again.'**
+  String get errorLoadingConfiguration;
 }
 
 class _AppLocalizationsDelegate

@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:meal_plan_app/config/config.dart';
 import 'package:meal_plan_app/features/profile/presentation/providers/change_email_provider.dart';
 import 'package:meal_plan_app/features/shared/utils/app_error_localizations.dart';
 import 'package:meal_plan_app/l10n/app_localizations.dart';
@@ -16,8 +15,6 @@ class _ChangeEmailScreenState extends ConsumerState<ChangeEmailScreen> {
   final _formKey = GlobalKey<FormState>();
   final _emailController = TextEditingController();
   final _codeController = TextEditingController();
-  bool _loading = false;
-  bool _otpRequested = false;
 
   @override
   void dispose() {
@@ -30,66 +27,62 @@ class _ChangeEmailScreenState extends ConsumerState<ChangeEmailScreen> {
     final l10n = AppLocalizations.of(context);
     if (!_formKey.currentState!.validate()) return;
 
-    setState(() => _loading = true);
+    await ref
+        .read(changeEmailProvider.notifier)
+        .requestEmailChange(_emailController.text.trim());
 
-    try {
-      await ref
-          .read(changeEmailProvider.notifier)
-          .requestEmailChange(_emailController.text.trim());
-      setState(() => _otpRequested = true);
-      if (!mounted) return;
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text(l10n.done)),
-      );
-    } on AppError catch (e) {
-      if (!mounted) return;
-      final errorText = localizeAppError(l10n, e);
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text(errorText)),
-      );
-    } finally {
-      if (mounted) {
-        setState(() => _loading = false);
-      }
+    if (!mounted) return;
+    final state = ref.read(changeEmailProvider);
+    if (state.error != null) {
+      final errorText = localizeAppError(l10n, state.error!);
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(SnackBar(content: Text(errorText)));
+      return;
+    }
+
+    if (state.otpRequested) {
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(SnackBar(content: Text(l10n.done)));
     }
   }
 
   Future<void> _verifyCode() async {
     final l10n = AppLocalizations.of(context);
     if (_codeController.text.trim().length != 6) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text(l10n.errorAuthInvalidOtp)),
-      );
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(SnackBar(content: Text(l10n.errorAuthInvalidOtp)));
       return;
     }
 
-    setState(() => _loading = true);
+    await ref
+        .read(changeEmailProvider.notifier)
+        .verifyEmailChangeOtp(
+          _emailController.text.trim(),
+          _codeController.text.trim(),
+        );
 
-    try {
-      await ref.read(changeEmailProvider.notifier).verifyEmailChangeOtp(
-        _emailController.text.trim(),
-        _codeController.text.trim(),
-      );
-      if (!mounted) return;
+    if (!mounted) return;
+    final state = ref.read(changeEmailProvider);
+    if (state.error != null) {
+      final errorText = localizeAppError(l10n, state.error!);
       ScaffoldMessenger.of(
         context,
-      ).showSnackBar(SnackBar(content: Text(l10n.done)));
-      Navigator.of(context).pop();
-    } on AppError catch (e) {
-      if (!mounted) return;
-      final errorText = localizeAppError(l10n, e);
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text(errorText)),
-      );
-    } finally {
-      if (mounted) {
-        setState(() => _loading = false);
-      }
+      ).showSnackBar(SnackBar(content: Text(errorText)));
+      return;
     }
+
+    ScaffoldMessenger.of(
+      context,
+    ).showSnackBar(SnackBar(content: Text(l10n.done)));
+    Navigator.of(context).pop();
   }
 
   Future<void> _submit() async {
-    if (_otpRequested) {
+    final state = ref.read(changeEmailProvider);
+    if (state.otpRequested) {
       await _verifyCode();
       return;
     }
@@ -99,6 +92,7 @@ class _ChangeEmailScreenState extends ConsumerState<ChangeEmailScreen> {
   @override
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context);
+    final state = ref.watch(changeEmailProvider);
     return Scaffold(
       appBar: AppBar(title: Text(l10n.profileChangeEmailLabel)),
       body: Padding(
@@ -125,15 +119,15 @@ class _ChangeEmailScreenState extends ConsumerState<ChangeEmailScreen> {
                   return null;
                 },
               ),
-              if (_otpRequested) ...[
+              if (state.otpRequested) ...[
                 const SizedBox(height: 16),
                 TextFormField(
                   controller: _codeController,
                   keyboardType: TextInputType.number,
                   maxLength: 6,
-                  decoration: const InputDecoration(
-                    labelText: 'Código de 6 dígitos',
-                    border: OutlineInputBorder(),
+                  decoration: InputDecoration(
+                    labelText: l10n.otpVerificationCodeLabel,
+                    border: const OutlineInputBorder(),
                   ),
                 ),
               ],
@@ -141,10 +135,14 @@ class _ChangeEmailScreenState extends ConsumerState<ChangeEmailScreen> {
               SizedBox(
                 width: double.infinity,
                 child: ElevatedButton(
-                  onPressed: _loading ? null : _submit,
-                  child: _loading
+                  onPressed: state.isLoading ? null : _submit,
+                  child: state.isLoading
                       ? const CircularProgressIndicator()
-                      : Text(_otpRequested ? l10n.done : l10n.profileChangeEmailLabel),
+                      : Text(
+                          state.otpRequested
+                              ? l10n.done
+                              : l10n.profileChangeEmailLabel,
+                        ),
                 ),
               ),
             ],
