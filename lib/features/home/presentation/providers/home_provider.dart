@@ -12,6 +12,7 @@ class HomeViewState {
   final AsyncValue<MealPlanGenerationStatus>? statusAsync;
   final int? totalAllowed;
   final String? planName;
+  final bool isFreePlan;
 
   const HomeViewState({
     required this.isAuthenticated,
@@ -19,6 +20,7 @@ class HomeViewState {
     required this.statusAsync,
     required this.totalAllowed,
     required this.planName,
+    required this.isFreePlan,
   });
 }
 
@@ -39,14 +41,21 @@ HomeViewState homeViewState(Ref ref) {
       statusAsync: null,
       totalAllowed: null,
       planName: null,
+      isFreePlan: false,
     );
   }
+
+  final planName = authState.user.planName;
+  // Consider planName null or 'free' (case-insensitive) as free plan
+  final isFreePlan =
+      planName == null || planName.trim().toLowerCase() == 'free';
 
   return HomeViewState(
     isAuthenticated: true,
     showGraceWelcome: authState.showGraceWelcome,
     statusAsync: ref.watch(mealPlanGenerationStatusProvider),
     totalAllowed: authState.user.permissions?.permissions.mealPlanGenerate,
-    planName: authState.user.planName,
+    planName: planName,
+    isFreePlan: isFreePlan,
   );
 }

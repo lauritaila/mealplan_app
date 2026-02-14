@@ -88,8 +88,18 @@ Future<void> _showDeleteAccountModal(
                 await ref
                     .read(deleteAccountProvider.notifier)
                     .deleteAccount(email);
-              } on AppError catch (e) {
-                appError = e;
+              } catch (e, stack) {
+                if (e is AppError) {
+                  appError = e;
+                } else {
+                  // Optionally log stack for diagnostics
+                  // ignore: avoid_print
+                  print('Unexpected error in deleteAccount: $e\n$stack');
+                  appError = NetworkAppError(
+                    'Unexpected error deleting account. Please try again.',
+                    code: 'UNEXPECTED_DELETE_ACCOUNT_ERROR',
+                  );
+                }
               }
 
               final elapsed = DateTime.now().difference(startedAt);

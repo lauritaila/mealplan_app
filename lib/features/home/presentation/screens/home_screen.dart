@@ -38,7 +38,7 @@ class HomeScreen extends ConsumerWidget {
               _PlanStatusCard(
                 statusAsync: homeState.statusAsync!,
                 totalAllowed: homeState.totalAllowed,
-                planName: homeState.planName ?? l10n.profileSubscriptionFree,
+                isFreePlan: homeState.isFreePlan,
               ),
               const SizedBox(height: 16),
             ],
@@ -128,17 +128,16 @@ class _GraceWelcomeDialogState extends State<_GraceWelcomeDialog> {
 class _PlanStatusCard extends StatelessWidget {
   final AsyncValue statusAsync;
   final int? totalAllowed;
-  final String planName;
+  final bool isFreePlan;
 
   const _PlanStatusCard({
     required this.statusAsync,
     required this.totalAllowed,
-    required this.planName,
+    required this.isFreePlan,
   });
 
   @override
   Widget build(BuildContext context) {
-    final isFree = planName.toLowerCase() == 'free';
     final theme = Theme.of(context);
     final l10n = AppLocalizations.of(context);
 
@@ -186,7 +185,7 @@ class _PlanStatusCard extends StatelessWidget {
                     ),
                   ),
                 ],
-                if (isFree) ...[
+                if (isFreePlan) ...[
                   const SizedBox(height: 12),
                   Text(
                     l10n.goPremiumUnlockMorePlans,

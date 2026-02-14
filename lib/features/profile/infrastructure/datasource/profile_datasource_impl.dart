@@ -29,59 +29,23 @@ class ProfileDatasourceImpl implements ProfileDatasource {
         normalizedStatus == 'user_already_exists';
   }
 
-  Future<Map<String, dynamic>> _loadAndValidateConfig(String userId) async {
-    final authUserId = _supabaseClient.auth.currentUser?.id;
-    if (authUserId == null) {
-      throw const PermissionAppError.unauthorized();
-    }
-    if (authUserId != userId) {
-      throw const PermissionAppError.forbidden();
-    }
-
-    final profile = await _supabaseClient
-        .from('user_profiles')
-        .select('configurations')
-        .eq('id', userId)
-        .maybeSingle();
-
-    return (profile?['configurations'] as Map<String, dynamic>?) ??
-        const {
-          'language': 'en',
-          'notifications': {'reminders': false, 'weeklySummary': true},
-          'hideNutritionValues': false,
-        };
-  }
-
   @override
   Future<Map<String, dynamic>> updateLanguage(
     String userId,
     String langCode,
   ) async {
     try {
-      final existingConfig = await _loadAndValidateConfig(userId);
-
-      final updatedConfig = <String, dynamic>{
-        ...existingConfig,
-        'language': langCode,
-      };
-
-      await _supabaseClient
-          .from('user_profiles')
-          .update({'configurations': updatedConfig})
-          .eq('id', userId);
-
-      return updatedConfig;
-    } on PostgrestException catch (e) {
-      throw DataAppError(
-        'Failed to update language: ${e.message}',
-        code: e.code ?? 'DATA_UPDATE_FAILED',
+      // Llamamos al RPC pasándole el nombre de la llave y el valor
+      final response = await _supabaseClient.rpc(
+        'patch_user_config',
+        params: {
+          'key_name': 'language',
+          'key_value': langCode, // Supabase manejará la conversión a JSONB
+        },
       );
-    } on AppError {
-      rethrow;
+      return Map<String, dynamic>.from(response);
     } catch (e) {
-      throw NetworkAppError(
-        'Unexpected error updating language: ${e.toString()}',
-      );
+      throw NetworkAppError('Error updating language: $e');
     }
   }
 
@@ -91,30 +55,16 @@ class ProfileDatasourceImpl implements ProfileDatasource {
     bool hideNutritionValues,
   ) async {
     try {
-      final existingConfig = await _loadAndValidateConfig(userId);
-
-      final updatedConfig = <String, dynamic>{
-        ...existingConfig,
-        'hideNutritionValues': hideNutritionValues,
-      };
-
-      await _supabaseClient
-          .from('user_profiles')
-          .update({'configurations': updatedConfig})
-          .eq('id', userId);
-
-      return updatedConfig;
-    } on PostgrestException catch (e) {
-      throw DataAppError(
-        'Failed to update hide nutrition values: ${e.message}',
-        code: e.code ?? 'DATA_UPDATE_FAILED',
+      final response = await _supabaseClient.rpc(
+        'patch_user_config',
+        params: {
+          'key_name': 'hideNutritionValues',
+          'key_value': hideNutritionValues,
+        },
       );
-    } on AppError {
-      rethrow;
+      return Map<String, dynamic>.from(response);
     } catch (e) {
-      throw NetworkAppError(
-        'Unexpected error updating hide nutrition values: ${e.toString()}',
-      );
+      throw NetworkAppError('Error updating nutrition toggle: $e');
     }
   }
 
@@ -165,14 +115,18 @@ class ProfileDatasourceImpl implements ProfileDatasource {
     required String confirmationEmail,
   }) async {
     // 1. Mantener validaciones de identidad y confirmación de correo
-    final authUserId = _supabaseClient.auth.currentUser?.id;
+    final currentUser = _supabaseClient.auth.currentUser;
+    final authUserId = currentUser?.id;
     if (authUserId == null) {
       throw const PermissionAppError.unauthorized();
     }
     if (authUserId != userId) {
       throw const PermissionAppError.forbidden();
     }
-    if (email.trim().toLowerCase() != confirmationEmail.trim().toLowerCase()) {
+    final canonicalEmail = currentUser!.email;
+    if (canonicalEmail == null ||
+        canonicalEmail.trim().toLowerCase() !=
+            confirmationEmail.trim().toLowerCase()) {
       throw const AuthAppError.emailConfirmationMismatch();
     }
 
