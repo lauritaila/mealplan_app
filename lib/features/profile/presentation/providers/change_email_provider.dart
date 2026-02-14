@@ -59,7 +59,11 @@ class ChangeEmail extends _$ChangeEmail {
           .read(profileRepositoryProvider)
           .verifyEmailChangeOtp(newEmail, token);
       await ref.read(authProvider.notifier).refreshUserStatus();
-      state = state.copyWith(isLoading: false, error: () => null);
+      state = state.copyWith(
+        isLoading: false,
+        error: () => null,
+        otpRequested: false,
+      );
     } catch (e) {
       state = state.copyWith(
         isLoading: false,

@@ -732,4 +732,8 @@ class AppLocalizationsEs extends AppLocalizations {
   @override
   String get errorLoadingConfiguration =>
       'Error al cargar la configuración. Inténtalo de nuevo.';
+
+  @override
+  String get errorEmailConfirmationMismatch =>
+      'El correo no coincide con tu cuenta.';
 }

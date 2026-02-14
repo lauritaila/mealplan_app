@@ -44,6 +44,18 @@ Future<void> _showDeleteAccountModal(
             onPressed: () async {
               final confirmationEmail = controller.text.trim();
               if (!dialogContext.mounted) return;
+
+              // Client-side validation: must match user email and not be empty
+              if (confirmationEmail.isEmpty || confirmationEmail != email) {
+                final errorText = confirmationEmail.isEmpty
+                    ? l10n.errorFieldRequired
+                    : l10n.errorEmailConfirmationMismatch;
+                ScaffoldMessenger.of(
+                  context,
+                ).showSnackBar(SnackBar(content: Text(errorText)));
+                return;
+              }
+
               Navigator.of(dialogContext).pop();
 
               final startedAt = DateTime.now();

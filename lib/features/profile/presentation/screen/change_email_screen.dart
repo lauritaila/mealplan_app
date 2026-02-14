@@ -105,6 +105,7 @@ class _ChangeEmailScreenState extends ConsumerState<ChangeEmailScreen> {
               TextFormField(
                 controller: _emailController,
                 keyboardType: TextInputType.emailAddress,
+                enabled: !state.otpRequested,
                 decoration: InputDecoration(
                   labelText: l10n.profileChangeEmailLabel,
                   hintText: 'example@email.com',

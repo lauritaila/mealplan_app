@@ -1,4 +1,3 @@
-
 {
   "@@locale": "es",
   "appTitle": "Plan de comidas",
@@ -299,7 +298,9 @@
   "confirmDeleteWithEmail": "¿Estás seguro? Escribe tu correo para confirmar: {email}",
   "@confirmDeleteWithEmail": {
     "description": "Mensaje para confirmar eliminación de cuenta con correo.",
-    "placeholders": { "email": {} }
+    "placeholders": {
+      "email": {}
+    }
   },
   "emailPlaceholder": "correo@ejemplo.com",
   "@emailPlaceholder": {
@@ -309,8 +310,12 @@
   "@cancel": {
     "description": "Etiqueta para el botón cancelar."
   },
-    "errorLoadingConfiguration": "Error al cargar la configuración. Inténtalo de nuevo.",
+  "errorLoadingConfiguration": "Error al cargar la configuración. Inténtalo de nuevo.",
   "@errorLoadingConfiguration": {
     "description": "Se muestra cuando falla la carga de la configuración."
+  },
+  "errorEmailConfirmationMismatch": "El correo no coincide con tu cuenta.",
+  "@errorEmailConfirmationMismatch": {
+    "description": "Se muestra cuando el correo ingresado para confirmar no coincide con el del usuario."
   }
 }

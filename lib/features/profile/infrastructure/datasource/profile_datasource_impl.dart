@@ -143,49 +143,27 @@ class ProfileDatasourceImpl implements ProfileDatasource {
     required String email,
     required String confirmationEmail,
   }) async {
-    try {
-      final authUserId = _supabaseClient.auth.currentUser?.id;
-      if (authUserId == null) {
-        throw const PermissionAppError.unauthorized();
-      }
-      if (authUserId != userId) {
-        throw const PermissionAppError.forbidden();
-      }
-      if (email.trim().toLowerCase() !=
-          confirmationEmail.trim().toLowerCase()) {
-        throw const AuthAppError.unexpected(
-          message: 'Email confirmation does not match.',
-        );
-      }
+    // 1. Mantener validaciones de identidad y confirmación de correo
+    final authUserId = _supabaseClient.auth.currentUser?.id;
+    if (authUserId == null) {
+      throw const PermissionAppError.unauthorized();
+    }
+    if (authUserId != userId) {
+      throw const PermissionAppError.forbidden();
+    }
+    if (email.trim().toLowerCase() !=
+        confirmationEmail.trim().toLowerCase()) {
+      throw const AuthAppError.unexpected(
+        message: 'Email confirmation does not match.',
+      );
+    }
 
-      // Sequential updates with rollback logic and previous_status persistence
-      // 1. Read current status
-      final subRow = await _supabaseClient
-          .from('user_subscriptions')
-          .select('status')
-          .eq('user_id', userId)
-          .maybeSingle();
-      final prevStatus = subRow?['status'] as String?;
-      await _supabaseClient
-          .from('user_subscriptions')
-          .update({'status': 'deleted', 'previous_status': prevStatus})
-          .eq('user_id', userId);
-      try {
-        await _supabaseClient
-            .from('user_profiles')
-            .update({'deleted_at': DateTime.now().toIso8601String()})
-            .eq('id', userId);
-      } catch (e) {
-        // Rollback user_subscriptions if user_profiles update fails
-        await _supabaseClient
-            .from('user_subscriptions')
-            .update({'status': prevStatus ?? 'active', 'previous_status': null})
-            .eq('user_id', userId);
-        rethrow;
-      }
+    try {
+       await _supabaseClient.rpc('soft_delete_user_account');
+      
     } on PostgrestException catch (e) {
       throw DataAppError(
-        'Failed to deactivate subscription: ${e.message}',
+        'Failed to deactivate account: ${e.message}',
         code: e.code ?? 'DATA_UPDATE_FAILED',
       );
     } on AppError {

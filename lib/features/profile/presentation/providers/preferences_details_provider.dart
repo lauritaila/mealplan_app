@@ -45,19 +45,30 @@ class PreferencesDetailsState {
     String? Function()? languageCode,
     bool? isHydrated,
   }) {
+    final int newHouseholdSize = householdSize ?? this.householdSize;
     return PreferencesDetailsState(
-      dietaryRestrictions: dietaryRestrictions ?? this.dietaryRestrictions,
-      allergies: allergies ?? this.allergies,
-      healthGoals: healthGoals ?? this.healthGoals,
+      dietaryRestrictions: dietaryRestrictions != null
+          ? List<String>.from(dietaryRestrictions)
+          : List<String>.from(this.dietaryRestrictions),
+      allergies: allergies != null
+          ? List<String>.from(allergies)
+          : List<String>.from(this.allergies),
+      healthGoals: healthGoals != null
+          ? List<String>.from(healthGoals)
+          : List<String>.from(this.healthGoals),
       cookingSkillLevel: cookingSkillLevel != null
           ? cookingSkillLevel()
           : this.cookingSkillLevel,
       timeAvailability: timeAvailability != null
           ? timeAvailability()
           : this.timeAvailability,
-      dislikedFoods: dislikedFoods ?? this.dislikedFoods,
-      likedFoods: likedFoods ?? this.likedFoods,
-      householdSize: householdSize ?? this.householdSize,
+      dislikedFoods: dislikedFoods != null
+          ? List<String>.from(dislikedFoods)
+          : List<String>.from(this.dislikedFoods),
+      likedFoods: likedFoods != null
+          ? List<String>.from(likedFoods)
+          : List<String>.from(this.likedFoods),
+      householdSize: newHouseholdSize > 0 ? newHouseholdSize : 1,
       hideNutritionValues: hideNutritionValues ?? this.hideNutritionValues,
       languageCode: languageCode != null ? languageCode() : this.languageCode,
       isHydrated: isHydrated ?? this.isHydrated,
@@ -91,7 +102,10 @@ class PreferencesDetails extends _$PreferencesDetails {
     String? languageCode = state.languageCode;
     bool hideNutritionValues = state.hideNutritionValues;
     if (authState is AuthenticatedAuthState) {
-      languageCode = authState.user.configurations?['language'] as String?;
+      final langRaw = authState.user.configurations?['language'];
+      if (langRaw is String) {
+        languageCode = langRaw;
+      }
       final hideNutritionRaw =
           authState.user.configurations?['hideNutritionValues'];
       if (hideNutritionRaw is bool) {
@@ -188,7 +202,8 @@ class PreferencesDetails extends _$PreferencesDetails {
   }
 
   void updateHouseholdSize(int size) {
-    state = state.copyWith(householdSize: size);
+    final safeSize = size > 0 ? size : 1;
+    state = state.copyWith(householdSize: safeSize);
   }
 
   void setHideNutritionValues(bool value) {

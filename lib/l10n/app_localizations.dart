@@ -98,7 +98,7 @@ abstract class AppLocalizations {
     Locale('es'),
   ];
 
-  /// No description provided for @appTitle.
+  /// The title of the application.
   ///
   /// In en, this message translates to:
   /// **'Meal Plan App'**
@@ -1423,6 +1423,12 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Error loading configuration. Please try again.'**
   String get errorLoadingConfiguration;
+
+  /// Shown when the email entered for confirmation does not match the user's email.
+  ///
+  /// In en, this message translates to:
+  /// **'The email does not match your account.'**
+  String get errorEmailConfirmationMismatch;
 }
 
 class _AppLocalizationsDelegate

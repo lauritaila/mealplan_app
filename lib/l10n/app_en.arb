@@ -1,4 +1,3 @@
-
 {
   "@@locale": "en",  
   "appTitle": "Meal Plan App",
@@ -312,5 +311,9 @@
   "errorLoadingConfiguration": "Error loading configuration. Please try again.",
   "@errorLoadingConfiguration": {
     "description": "Shown when configuration fails to load."
+  },
+  "errorEmailConfirmationMismatch": "The email does not match your account.",
+  "@errorEmailConfirmationMismatch": {
+    "description": "Shown when the email entered for confirmation does not match the user's email."
   }
 }

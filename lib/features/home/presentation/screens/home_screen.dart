@@ -3,7 +3,7 @@ import 'package:confetti/confetti.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:meal_plan_app/features/auth/presentation/provider/provider.dart';
-import 'package:meal_plan_app/features/meal_plan/presentation/providers/provider.dart';
+import 'package:meal_plan_app/features/home/presentation/providers/home_provider.dart';
 import 'package:meal_plan_app/l10n/app_localizations.dart';
 
 class HomeScreen extends ConsumerWidget {
@@ -11,12 +11,11 @@ class HomeScreen extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final authState = ref.watch(authProvider);
-    final statusAsync = ref.watch(mealPlanGenerationStatusProvider);
+    final homeState = ref.watch(homeViewStateProvider);
     final l10n = AppLocalizations.of(context);
 
-    ref.listen(authProvider, (previous, next) {
-      if (next is AuthenticatedAuthState && next.showGraceWelcome) {
+    ref.listen(homeShowGraceWelcomeProvider, (previous, next) {
+      if (next == true && previous != true) {
         WidgetsBinding.instance.addPostFrameCallback((_) {
           if (!context.mounted) return;
           ref.read(authProvider.notifier).consumeGraceWelcome();
@@ -35,12 +34,11 @@ class HomeScreen extends ConsumerWidget {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            if (authState is AuthenticatedAuthState) ...[
+            if (homeState.isAuthenticated && homeState.statusAsync != null) ...[
               _PlanStatusCard(
-                statusAsync: statusAsync,
-                totalAllowed:
-                    authState.user.permissions?.permissions.mealPlanGenerate,
-                planName: authState.user.planName ?? 'Free',
+                statusAsync: homeState.statusAsync!,
+                totalAllowed: homeState.totalAllowed,
+                planName: homeState.planName ?? 'Free',
               ),
               const SizedBox(height: 16),
             ],
@@ -158,7 +156,7 @@ class _PlanStatusCard extends StatelessWidget {
               // ),
               // const SizedBox(height: 8),
               Text(
-                l10n.unableToLoadPlanStatus(error.toString()),
+                l10n.unableToLoadPlanStatus(l10n.genericError),
                 style: theme.textTheme.bodyMedium?.copyWith(
                   color: theme.colorScheme.error,
                 ),

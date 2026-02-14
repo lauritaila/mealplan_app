@@ -28,12 +28,10 @@ class LanguageSettingsScreen extends ConsumerWidget {
                 RadioListTile<String>(
                   value: 'en',
                   title: Text(l10n.profileLanguageEnglish),
-                  // No definimos onChanged ni groupValue aquí, los toma del ancestro
                 ),
                 RadioListTile<String>(
                   value: 'es',
                   title: Text(l10n.profileLanguageSpanish),
-                  // No definimos onChanged ni groupValue aquí, los toma del ancestro
                 ),
               ],
             ),

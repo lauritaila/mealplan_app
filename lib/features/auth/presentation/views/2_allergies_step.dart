@@ -5,8 +5,39 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:meal_plan_app/features/auth/presentation/provider/provider.dart';
 import 'package:meal_plan_app/l10n/app_localizations.dart';
 
-class AllergiesStep extends ConsumerWidget {
+class AllergiesStep extends ConsumerStatefulWidget {
   const AllergiesStep({super.key});
+
+  @override
+  ConsumerState<AllergiesStep> createState() => _AllergiesStepState();
+}
+
+class _AllergiesStepState extends ConsumerState<AllergiesStep> {
+  late final TextEditingController _customAllergyController;
+
+  @override
+  void initState() {
+    super.initState();
+    final customAllergy =
+        ref.read(preferencesWizardProvider).customAllergy ?? '';
+    _customAllergyController = TextEditingController(text: customAllergy);
+  }
+
+  @override
+  void dispose() {
+    _customAllergyController.dispose();
+    super.dispose();
+  }
+
+  @override
+  void didUpdateWidget(covariant AllergiesStep oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    final customAllergy =
+        ref.read(preferencesWizardProvider).customAllergy ?? '';
+    if (_customAllergyController.text != customAllergy) {
+      _customAllergyController.text = customAllergy;
+    }
+  }
 
   String _localizedTitle(
     Map<String, String> titles,
@@ -26,11 +57,9 @@ class AllergiesStep extends ConsumerWidget {
   }
 
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
+  Widget build(BuildContext context) {
     final configAsync = ref.watch(preferencesConfigurationProvider);
     final selectedAllergies = ref.watch(preferencesWizardProvider).allergies;
-    final customAllergy =
-        ref.watch(preferencesWizardProvider).customAllergy ?? '';
     final textTheme = Theme.of(context).textTheme;
     final l10n = AppLocalizations.of(context);
     final localeCode = Localizations.localeOf(context).languageCode;
@@ -108,21 +137,17 @@ class AllergiesStep extends ConsumerWidget {
                 const SizedBox(height: 24),
                 Text(otherTitle, style: textTheme.titleMedium),
                 const SizedBox(height: 8),
-                Consumer(
-                  builder: (context, ref, _) {
-                    return TextFormField(
-                      initialValue: customAllergy,
-                      decoration: InputDecoration(
-                        hintText: otherHint,
-                        border: const OutlineInputBorder(),
-                      ),
-                      maxLines: 3,
-                      onChanged: (value) {
-                        ref
-                            .read(preferencesWizardProvider.notifier)
-                            .updateCustomAllergy(value);
-                      },
-                    );
+                TextFormField(
+                  controller: _customAllergyController,
+                  decoration: InputDecoration(
+                    hintText: otherHint,
+                    border: const OutlineInputBorder(),
+                  ),
+                  maxLines: 3,
+                  onChanged: (value) {
+                    ref
+                        .read(preferencesWizardProvider.notifier)
+                        .updateCustomAllergy(value);
                   },
                 ),
               ],

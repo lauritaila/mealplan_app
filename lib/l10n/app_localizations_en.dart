@@ -727,4 +727,8 @@ class AppLocalizationsEn extends AppLocalizations {
   @override
   String get errorLoadingConfiguration =>
       'Error loading configuration. Please try again.';
+
+  @override
+  String get errorEmailConfirmationMismatch =>
+      'The email does not match your account.';
 }
