@@ -6,16 +6,15 @@ class ProfileRepositoryImpl implements ProfileRepository {
   ProfileRepositoryImpl(this._datasource);
 
   @override
-  Future<Map<String, dynamic>> updateLanguage(String userId, String langCode) {
-    return _datasource.updateLanguage(userId, langCode);
+  Future<Map<String, dynamic>> updateLanguage(String langCode) {
+    return _datasource.updateLanguage( langCode);
   }
 
   @override
   Future<Map<String, dynamic>> updateHideNutritionValues(
-    String userId,
     bool hideNutritionValues,
   ) {
-    return _datasource.updateHideNutritionValues(userId, hideNutritionValues);
+    return _datasource.updateHideNutritionValues( hideNutritionValues);
   }
 
   @override
@@ -36,12 +35,10 @@ class ProfileRepositoryImpl implements ProfileRepository {
   @override
   Future<void> softDeleteAccount({
     required String userId,
-    required String email,
     required String confirmationEmail,
   }) {
     return _datasource.softDeleteAccount(
       userId: userId,
-      email: email,
       confirmationEmail: confirmationEmail,
     );
   }

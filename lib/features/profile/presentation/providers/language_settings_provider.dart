@@ -63,7 +63,7 @@ class LanguageSettings extends _$LanguageSettings {
     try {
       await ref
           .read(profileRepositoryProvider)
-          .updateLanguage(authState.user.id, state.selectedCode);
+          .updateLanguage(state.selectedCode);
       await ref
           .read(appLocaleProvider.notifier)
           .setLanguageCode(state.selectedCode);

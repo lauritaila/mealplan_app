@@ -23,7 +23,6 @@ class DeleteAccount extends _$DeleteAccount {
           .read(profileRepositoryProvider)
           .softDeleteAccount(
             userId: authState.user.id,
-            email: authState.user.email,
             confirmationEmail: confirmationEmail,
           );
       state = const AsyncData(null);

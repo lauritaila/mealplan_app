@@ -508,7 +508,6 @@ class _PreferencesDetailsScreenState
                         try {
                           await repository.saveUserPreference(userPreferences);
                           await profileRepository.updateHideNutritionValues(
-                            auth.user.id,
                             updatedPreferencesState.hideNutritionValues,
                           );
                           if (!context.mounted) return;

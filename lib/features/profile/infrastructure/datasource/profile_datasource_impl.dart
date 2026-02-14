@@ -31,7 +31,6 @@ class ProfileDatasourceImpl implements ProfileDatasource {
 
   @override
   Future<Map<String, dynamic>> updateLanguage(
-    String userId,
     String langCode,
   ) async {
     try {
@@ -51,7 +50,6 @@ class ProfileDatasourceImpl implements ProfileDatasource {
 
   @override
   Future<Map<String, dynamic>> updateHideNutritionValues(
-    String userId,
     bool hideNutritionValues,
   ) async {
     try {
@@ -111,7 +109,6 @@ class ProfileDatasourceImpl implements ProfileDatasource {
   @override
   Future<void> softDeleteAccount({
     required String userId,
-    required String email,
     required String confirmationEmail,
   }) async {
     // 1. Mantener validaciones de identidad y confirmación de correo
