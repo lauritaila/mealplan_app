@@ -51,7 +51,8 @@ class LanguageSettings extends _$LanguageSettings {
   }
 
   Future<void> confirm() async {
-    if (state.selectedCode == state.persistedCode) return;
+    final selected = state.selectedCode;
+    if (state.isSaving || selected == state.persistedCode) return;
     final authState = ref.read(authProvider);
     if (authState is! AuthenticatedAuthState) {
       state = state.copyWith(
@@ -61,15 +62,11 @@ class LanguageSettings extends _$LanguageSettings {
     }
     state = state.copyWith(isSaving: true, error: () => null);
     try {
-      await ref
-          .read(profileRepositoryProvider)
-          .updateLanguage(state.selectedCode);
-      await ref
-          .read(appLocaleProvider.notifier)
-          .setLanguageCode(state.selectedCode);
+      await ref.read(profileRepositoryProvider).updateLanguage(selected);
+      await ref.read(appLocaleProvider.notifier).setLanguageCode(selected);
       await ref.read(authProvider.notifier).refreshUserStatus();
       state = state.copyWith(
-        persistedCode: state.selectedCode,
+        persistedCode: selected,
         isSaving: false,
         error: () => null,
       );

@@ -30,12 +30,19 @@ class _PreferencesDetailsScreenState
     _dislikedController = TextEditingController();
     _likedController = TextEditingController();
     Future.microtask(() async {
-      await ref.read(preferencesDetailsProvider.notifier).hydrateFromServer();
-      if (!mounted) return;
-      final hydrated = ref.read(preferencesDetailsProvider);
-      _dislikedController.text = hydrated.dislikedFoods.join(', ');
-      _likedController.text = hydrated.likedFoods.join(', ');
-      _controllersHydrated = true;
+      if (!_controllersHydrated) {
+        await ref.read(preferencesDetailsProvider.notifier).hydrateFromServer();
+        if (!mounted) return;
+        final hydrated = ref.read(preferencesDetailsProvider);
+        // Only set text if controllers are empty (user hasn't typed yet)
+        if (_dislikedController.text.isEmpty) {
+          _dislikedController.text = hydrated.dislikedFoods.join(', ');
+        }
+        if (_likedController.text.isEmpty) {
+          _likedController.text = hydrated.likedFoods.join(', ');
+        }
+        _controllersHydrated = true;
+      }
     });
   }
 
@@ -90,8 +97,13 @@ class _PreferencesDetailsScreenState
     final effectiveLanguageCode = preferencesState.languageCode ?? localeCode;
 
     if (!_controllersHydrated && preferencesState.isHydrated) {
-      _dislikedController.text = preferencesState.dislikedFoods.join(', ');
-      _likedController.text = preferencesState.likedFoods.join(', ');
+      // Only set text if controllers are empty (user hasn't typed yet)
+      if (_dislikedController.text.isEmpty) {
+        _dislikedController.text = preferencesState.dislikedFoods.join(', ');
+      }
+      if (_likedController.text.isEmpty) {
+        _likedController.text = preferencesState.likedFoods.join(', ');
+      }
       _controllersHydrated = true;
     }
 
