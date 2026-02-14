@@ -1,4 +1,4 @@
-import 'package:meal_plan_app/features/auth/domain/domain.dart'; 
+import 'package:meal_plan_app/features/auth/domain/domain.dart';
 import 'package:equatable/equatable.dart';
 
 abstract class AuthState extends Equatable {
@@ -31,10 +31,11 @@ class UnauthenticatedAuthState extends AuthState {
 }
 
 class ErrorAuthState extends AuthState {
-  final String message;
-  const ErrorAuthState(this.message);
+  final String? message;
+  final String? code;
+  const ErrorAuthState({this.message, this.code});
   @override
-  List<Object?> get props => [message];
+  List<Object?> get props => [message, code];
 }
 
 class MessageAuthState extends AuthState {
@@ -51,10 +52,11 @@ class AwaitingEmailVerificationAuthState extends AuthState {
   List<Object?> get props => [email];
 }
 
-
 class AwaitingOtpInputState extends AuthState {
   final String email;
-  const AwaitingOtpInputState(this.email);
+  final String? errorMessage;
+  final String? errorCode;
+  const AwaitingOtpInputState(this.email, {this.errorMessage, this.errorCode});
   @override
-  List<Object?> get props => [email];
+  List<Object?> get props => [email, errorMessage, errorCode];
 }

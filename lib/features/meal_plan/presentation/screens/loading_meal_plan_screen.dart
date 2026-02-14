@@ -4,6 +4,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:meal_plan_app/features/meal_plan/presentation/providers/provider.dart';
+import 'package:meal_plan_app/l10n/app_localizations.dart';
+import 'package:meal_plan_app/features/shared/utils/app_error_localizations.dart';
 
 class LoadingMealPlanScreen extends ConsumerStatefulWidget {
   final String description;
@@ -25,14 +27,8 @@ class LoadingMealPlanScreen extends ConsumerStatefulWidget {
 }
 
 class _LoadingMealPlanScreenState extends ConsumerState<LoadingMealPlanScreen> {
-  static const _messages = [
-    "Checking grandma's cookbook...",
-    "Dusting off the old recipes...",
-    "Asking the aunts for their secrets...",
-    "Peeking into the fridge...",
-    "Sharpening imaginary knives...",
-    "Measuring tablespoons by eye...",
-  ];
+  List<String> _messages = const [];
+  bool _tickerStarted = false;
 
   int _messageIndex = 0;
   Timer? _ticker;
@@ -40,8 +36,28 @@ class _LoadingMealPlanScreenState extends ConsumerState<LoadingMealPlanScreen> {
   @override
   void initState() {
     super.initState();
-    _cycleMessages();
     _triggerGeneration();
+  }
+
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    final l10n = AppLocalizations.of(context);
+    _messages = [
+      l10n.loadingMessageCookbook,
+      l10n.loadingMessageRecipes,
+      l10n.loadingMessageAunts,
+      l10n.loadingMessageFridge,
+      l10n.loadingMessageKnives,
+      l10n.loadingMessageTablespoons,
+    ];
+    if (_messageIndex >= _messages.length) {
+      _messageIndex = 0;
+    }
+    if (!_tickerStarted) {
+      _cycleMessages();
+      _tickerStarted = true;
+    }
   }
 
   @override
@@ -51,6 +67,7 @@ class _LoadingMealPlanScreenState extends ConsumerState<LoadingMealPlanScreen> {
   }
 
   void _cycleMessages() {
+    if (_messages.isEmpty) return;
     _ticker = Timer.periodic(const Duration(seconds: 2), (_) {
       setState(() {
         _messageIndex = (_messageIndex + 1) % _messages.length;
@@ -71,7 +88,8 @@ class _LoadingMealPlanScreenState extends ConsumerState<LoadingMealPlanScreen> {
     });
   }
 
-  bool _isQuotaError(String? message) {
+  bool _isQuotaError(String? message, String? code) {
+    if (code == 'MEAL_PLAN_QUOTA_REACHED') return true;
     if (message == null) return false;
     final normalized = message.toLowerCase();
     return normalized.contains('limit of') && normalized.contains('plans');
@@ -79,6 +97,7 @@ class _LoadingMealPlanScreenState extends ConsumerState<LoadingMealPlanScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context);
     ref.listen<MealPlanGeneratorState>(mealPlanGeneratorProvider, (prev, next) {
       if (!mounted) return;
       if (next.status == MealPlanGeneratorStatus.success &&
@@ -86,14 +105,13 @@ class _LoadingMealPlanScreenState extends ConsumerState<LoadingMealPlanScreen> {
         context.go('/meal-plan/approve', extra: next.generatedPlan);
       } else if (next.status == MealPlanGeneratorStatus.error) {
         final message = next.errorMessage;
-        if (_isQuotaError(message)) {
+        if (_isQuotaError(message, next.errorCode)) {
           ref.read(mealPlanGeneratorProvider.notifier).reset();
           context.go(
             '/premium',
             extra: {
-              'title': 'Plan limit reached',
-              'message':
-                  message ?? 'You have run out of plan generations this week.',
+              'title': l10n.planLimitReachedTitle,
+              'message': l10n.planLimitReachedMessage,
             },
           );
           return;
@@ -105,7 +123,7 @@ class _LoadingMealPlanScreenState extends ConsumerState<LoadingMealPlanScreen> {
           ..showSnackBar(
             SnackBar(
               content: Text(
-                message ?? 'Could not generate the plan. Please try again.',
+                localizeErrorCode(l10n, next.errorCode, fallback: message),
               ),
             ),
           );
@@ -116,7 +134,7 @@ class _LoadingMealPlanScreenState extends ConsumerState<LoadingMealPlanScreen> {
 
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Preparando tu plan'),
+        title: Text(l10n.preparingPlanTitle),
         leading: IconButton(
           icon: const Icon(Icons.arrow_back),
           onPressed: () {
@@ -142,7 +160,7 @@ class _LoadingMealPlanScreenState extends ConsumerState<LoadingMealPlanScreen> {
                 transitionBuilder: (child, anim) =>
                     FadeTransition(opacity: anim, child: child),
                 child: Text(
-                  _messages[_messageIndex],
+                  _messages.isEmpty ? '' : _messages[_messageIndex],
                   key: ValueKey(_messageIndex),
                   textAlign: TextAlign.center,
                   style: const TextStyle(
@@ -154,9 +172,12 @@ class _LoadingMealPlanScreenState extends ConsumerState<LoadingMealPlanScreen> {
               const SizedBox(height: 12),
               Text(
                 state.status == MealPlanGeneratorStatus.error
-                    ? (state.errorMessage ??
-                          'Could not generate the plan. Please try again.')
-                    : 'Cooking up tasty, healthy combos for you...',
+                    ? localizeErrorCode(
+                        l10n,
+                        state.errorCode,
+                        fallback: state.errorMessage,
+                      )
+                    : l10n.cookingCombosMessage,
                 textAlign: TextAlign.center,
                 style: Theme.of(context).textTheme.bodyMedium,
               ),
@@ -167,7 +188,7 @@ class _LoadingMealPlanScreenState extends ConsumerState<LoadingMealPlanScreen> {
                   context.pop();
                 },
                 icon: const Icon(Icons.close),
-                label: const Text('Cancel and go back'),
+                label: Text(l10n.cancelAndGoBack),
               ),
             ],
           ),

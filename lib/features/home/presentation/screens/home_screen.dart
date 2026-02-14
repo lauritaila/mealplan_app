@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:meal_plan_app/features/auth/presentation/provider/provider.dart';
 import 'package:meal_plan_app/features/meal_plan/presentation/providers/provider.dart';
+import 'package:meal_plan_app/l10n/app_localizations.dart';
 
 class HomeScreen extends ConsumerWidget {
   const HomeScreen({super.key});
@@ -11,9 +12,10 @@ class HomeScreen extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final authState = ref.watch(authProvider);
     final statusAsync = ref.watch(mealPlanGenerationStatusProvider);
+    final l10n = AppLocalizations.of(context);
 
     return Scaffold(
-      appBar: AppBar(title: const Text('Home')),
+      appBar: AppBar(title: Text(l10n.homeTitle)),
       body: Padding(
         padding: const EdgeInsets.all(16),
         child: Column(
@@ -32,14 +34,7 @@ class HomeScreen extends ConsumerWidget {
               width: double.infinity,
               child: ElevatedButton(
                 onPressed: () => context.push('/meal-plan/new'),
-                child: const Text('Generate New Plan'),
-              ),
-            ),
-            SizedBox(
-              width: double.infinity,
-              child: ElevatedButton(
-                onPressed: () => ref.read(authProvider.notifier).logOut(),
-                child: const Text('Logout'),
+                child: Text(l10n.generateNewPlan),
               ),
             ),
           ],
@@ -64,6 +59,7 @@ class _PlanStatusCard extends StatelessWidget {
   Widget build(BuildContext context) {
     final isFree = planName.toLowerCase() == 'free';
     final theme = Theme.of(context);
+    final l10n = AppLocalizations.of(context);
 
     return Card(
       child: Padding(
@@ -79,7 +75,7 @@ class _PlanStatusCard extends StatelessWidget {
               // ),
               // const SizedBox(height: 8),
               Text(
-                'Unable to load plan status: $error',
+                l10n.unableToLoadPlanStatus(error.toString()),
                 style: theme.textTheme.bodyMedium?.copyWith(
                   color: theme.colorScheme.error,
                 ),
@@ -101,7 +97,7 @@ class _PlanStatusCard extends StatelessWidget {
                 // ),
                 // const SizedBox(height: 8),
                 Text(
-                  '$remaining of $total plans left this week',
+                  l10n.plansLeftThisWeek(remaining, total),
                   style: theme.textTheme.bodyMedium,
                 ),
                 const SizedBox(height: 8),
@@ -122,7 +118,7 @@ class _PlanStatusCard extends StatelessWidget {
                 if (isFree) ...[
                   const SizedBox(height: 12),
                   Text(
-                    'Go premium to unlock more meal plans.',
+                    l10n.goPremiumUnlockMorePlans,
                     style: Theme.of(context).textTheme.bodyMedium,
                   ),
                   const SizedBox(height: 8),
@@ -132,12 +128,11 @@ class _PlanStatusCard extends StatelessWidget {
                       onPressed: () => context.go(
                         '/premium',
                         extra: {
-                          'title': 'Go Premium',
-                          'message':
-                              'Your free plan has limited meal plan generations.',
+                          'title': l10n.goPremiumTitle,
+                          'message': l10n.freePlanLimitedGenerations,
                         },
                       ),
-                      child: const Text('Go Premium'),
+                      child: Text(l10n.goPremiumTitle),
                     ),
                   ),
                 ],

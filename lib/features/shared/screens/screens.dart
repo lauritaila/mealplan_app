@@ -1,2 +1,2 @@
 export 'error_screen.dart';
-export 'premiun_screen.dart';
+export 'premium_screen.dart';

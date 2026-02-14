@@ -140,3 +140,25 @@ class ConfigAppError extends AppError {
         code: 'CONFIG_INVALID',
       );
 }
+
+/// Exception for errors related to meal plan rules and generation.
+class MealPlanAppError extends AppError {
+  const MealPlanAppError(super.message, {super.code});
+
+  const MealPlanAppError.notAuthenticated()
+    : super('User not authenticated.', code: 'MEAL_PLAN_NOT_AUTHENTICATED');
+  const MealPlanAppError.daysNotAllowed()
+    : super('Number of days not allowed.', code: 'MEAL_PLAN_DAYS_NOT_ALLOWED');
+  const MealPlanAppError.typesNotAllowed()
+    : super('Meal types not allowed.', code: 'MEAL_PLAN_TYPES_NOT_ALLOWED');
+  const MealPlanAppError.generateFailed()
+    : super(
+        'Could not generate the plan. Please try again.',
+        code: 'MEAL_PLAN_GENERATE_FAILED',
+      );
+  const MealPlanAppError.quotaReached()
+    : super(
+        'You have run out of plan generations this week.',
+        code: 'MEAL_PLAN_QUOTA_REACHED',
+      );
+}

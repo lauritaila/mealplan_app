@@ -6,19 +6,16 @@ import 'package:meal_plan_app/features/meal_plan/infrastructure/mappers/meal_pla
 import 'package:meal_plan_app/config/constants/dio.dart';
 
 class SupabaseMealPlanDatasource extends MealPlanDatasource {
-
   final Dio _dio;
   final String _mealPlanApiBaseUrl;
 
-  SupabaseMealPlanDatasource({
-    Dio? httpClient,
-    String? mealPlanApiBaseUrl,
-  }) : _mealPlanApiBaseUrl = mealPlanApiBaseUrl ?? Enviroment.apiBaseUrl,
-       _dio =
-           httpClient ??
-           DioFactory.create(
-             baseUrl: mealPlanApiBaseUrl ?? Enviroment.apiBaseUrl,
-           );
+  SupabaseMealPlanDatasource({Dio? httpClient, String? mealPlanApiBaseUrl})
+    : _mealPlanApiBaseUrl = mealPlanApiBaseUrl ?? Enviroment.apiBaseUrl,
+      _dio =
+          httpClient ??
+          DioFactory.create(
+            baseUrl: mealPlanApiBaseUrl ?? Enviroment.apiBaseUrl,
+          );
 
   @override
   Future<MealPlanResponse> generateMealPlan(NewMealPlanRequest request) async {
@@ -36,11 +33,7 @@ class SupabaseMealPlanDatasource extends MealPlanDatasource {
       final status = response.statusCode ?? 200;
       if (status < 200 || status >= 300) {
         if (status == 403) {
-          final message = _extractErrorMessage(response.data);
-          throw PermissionAppError(
-            message ?? 'You do not have permission to perform this action.',
-            code: 'PERMISSION_FORBIDDEN',
-          );
+          throw const PermissionAppError.forbidden();
         }
         _throwByStatus(status);
       }
@@ -207,15 +200,5 @@ class SupabaseMealPlanDatasource extends MealPlanDatasource {
       throw const NetworkAppError.serverError();
     }
     throw const NetworkAppError.badResponse();
-  }
-
-  String? _extractErrorMessage(dynamic data) {
-    if (data is Map<String, dynamic>) {
-      final message = data['message'];
-      if (message is String && message.trim().isNotEmpty) {
-        return message;
-      }
-    }
-    return null;
   }
 }

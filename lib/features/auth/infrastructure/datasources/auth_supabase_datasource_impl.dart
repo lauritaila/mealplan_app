@@ -4,17 +4,18 @@ import 'package:google_sign_in/google_sign_in.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:meal_plan_app/config/constants/dio.dart';
+import 'package:meal_plan_app/config/constants/storage_keys.dart';
 
 import '../../domain/domain.dart';
 import '../infrastructure.dart';
 
-class SupabaseDatasourceImpl implements AuthDatasource {
+class AuthSupabaseDatasourceImpl implements AuthDatasource {
   final SupabaseClient _supabaseClient;
   final Dio _dio;
   final String _userApiBaseUrl;
   final FlutterSecureStorage _secureStorage;
 
-  SupabaseDatasourceImpl(
+  AuthSupabaseDatasourceImpl(
     this._supabaseClient, {
     Dio? httpClient,
     String? userApiBaseUrl,
@@ -91,8 +92,8 @@ class SupabaseDatasourceImpl implements AuthDatasource {
   Future<void> logOut() async {
     try {
       await _supabaseClient.auth.signOut();
-      await _secureStorage.delete(key: 'SUPABASE_ACCESS_TOKEN');
-      await _secureStorage.delete(key: 'SUPABASE_REFRESH_TOKEN');
+      await _secureStorage.delete(key: StorageKeys.supabaseAccessToken);
+      await _secureStorage.delete(key: StorageKeys.supabaseRefreshToken);
     } catch (e) {
       throw const AuthAppError.unexpected(
         message: 'An unexpected error occurred during logout.',
@@ -141,15 +142,12 @@ class SupabaseDatasourceImpl implements AuthDatasource {
   }
 
   @override
-  Future<void> saveUserPreference(
-    UserPreferences userPreference,
-    String userId,
-  ) async {
+  Future<void> markOnboardingComplete(String userId) async {
     try {
       String? authUserId = _supabaseClient.auth.currentUser?.id;
       if (authUserId == null) {
         final refreshToken = await _secureStorage.read(
-          key: 'SUPABASE_REFRESH_TOKEN',
+          key: StorageKeys.supabaseRefreshToken,
         );
         if (refreshToken != null && refreshToken.isNotEmpty) {
           await _supabaseClient.auth.setSession(refreshToken);
@@ -159,15 +157,10 @@ class SupabaseDatasourceImpl implements AuthDatasource {
       if (authUserId == null) {
         throw const PermissionAppError.unauthorized();
       }
-      final preferencesMap = UserPreferencesMapper.toMap(userPreference);
-      preferencesMap.remove('id');
-      preferencesMap.remove('created_at');
-      preferencesMap.remove('updated_at');
-      preferencesMap['user_id'] = authUserId;
+      if (authUserId != userId) {
+        throw const PermissionAppError.forbidden();
+      }
 
-      await _supabaseClient
-          .from('user_preferences')
-          .upsert(preferencesMap, onConflict: 'user_id');
       await _supabaseClient
           .from('user_profiles')
           .update({'onboarding_complete': true})
@@ -181,8 +174,8 @@ class SupabaseDatasourceImpl implements AuthDatasource {
       ].join(' | ');
       throw DataAppError(
         details.isNotEmpty
-            ? 'Failed to update user preferences: $details'
-            : 'Failed to update user preferences.',
+            ? 'Failed to update onboarding status: $details'
+            : 'Failed to update onboarding status.',
         code: e.code ?? 'DATA_UPDATE_FAILED',
       );
     } on AppError {
@@ -248,7 +241,13 @@ class SupabaseDatasourceImpl implements AuthDatasource {
         params: {'p_email': email},
       );
       return result as bool;
+    } on PostgrestException catch (e) {
+      // RPC function may not exist or DB error - log and return false
+      print('userExists check failed: ${e.message}');
+      return false;
     } catch (e) {
+      // Network or unexpected error - could rethrow or return false
+      print('userExists unexpected error: $e');
       return false;
     }
   }
@@ -313,23 +312,29 @@ class SupabaseDatasourceImpl implements AuthDatasource {
       if (e.type == DioExceptionType.connectionTimeout ||
           e.type == DioExceptionType.sendTimeout ||
           e.type == DioExceptionType.receiveTimeout) {
-        throw const NetworkAppError.timeout();
+        return _loadUserProfile(supabaseUser.id, supabaseUser.email);
       }
 
       if (e.type == DioExceptionType.badResponse) {
         final status = e.response?.statusCode ?? -1;
-        _throwByStatus(status);
+        if (status == 401 || status == 403) {
+          _throwByStatus(status);
+        }
+        return _loadUserProfile(supabaseUser.id, supabaseUser.email);
       }
 
       if (e.type == DioExceptionType.connectionError) {
-        throw const NetworkAppError.unreachableHost();
+        return _loadUserProfile(supabaseUser.id, supabaseUser.email);
       }
 
-      throw const NetworkAppError.serverError();
-    } on AppError {
-      rethrow;
+      return _loadUserProfile(supabaseUser.id, supabaseUser.email);
+    } on AppError catch (e) {
+      if (e is PermissionAppError || e is AuthAppError) {
+        rethrow;
+      }
+      return _loadUserProfile(supabaseUser.id, supabaseUser.email);
     } catch (_) {
-      throw const NetworkAppError.serverError();
+      return _loadUserProfile(supabaseUser.id, supabaseUser.email);
     }
   }
 
@@ -354,9 +359,18 @@ class SupabaseDatasourceImpl implements AuthDatasource {
       );
 
       await _persistSession(res.session ?? _supabaseClient.auth.currentSession);
+    } on GoogleSignInException catch (e) {
+      if (e.code == 'canceled') {
+        print('Google sign-in canceled by user');
+        throw AuthAppError('Google sign-in canceled by user', code: 'canceled');
+      } else {
+        print('Google sign-in error: ${e.toString()}');
+        throw AuthAppError('Google sign-in error: ${e.toString()}');
+      }
     } on AuthException catch (e) {
       throw AuthAppError(e.message, code: e.statusCode);
     } catch (e) {
+      print('Google sign-in unexpected error: $e');
       throw AuthAppError.unexpected(message: e.toString());
     }
   }
@@ -381,13 +395,13 @@ class SupabaseDatasourceImpl implements AuthDatasource {
     final refreshToken = session?.refreshToken;
     if (accessToken != null && accessToken.isNotEmpty) {
       await _secureStorage.write(
-        key: 'SUPABASE_ACCESS_TOKEN',
+        key: StorageKeys.supabaseAccessToken,
         value: accessToken,
       );
     }
     if (refreshToken != null && refreshToken.isNotEmpty) {
       await _secureStorage.write(
-        key: 'SUPABASE_REFRESH_TOKEN',
+        key: StorageKeys.supabaseRefreshToken,
         value: refreshToken,
       );
     }
@@ -400,7 +414,7 @@ class SupabaseDatasourceImpl implements AuthDatasource {
     }
 
     final refreshToken = await _secureStorage.read(
-      key: 'SUPABASE_REFRESH_TOKEN',
+      key: StorageKeys.supabaseRefreshToken,
     );
     if (refreshToken != null && refreshToken.isNotEmpty) {
       try {

@@ -8,10 +8,7 @@ abstract class AuthDatasource {
   Future<UserProfile> getAuthenticatedUserProfile();
   Future<void> signInWithOtp(String email);
   Future<UserProfile> verifyOtp(String email, String token);
-  Future<void> saveUserPreference(
-    UserPreferences userPreference,
-    String userId,
-  );
+  Future<void> markOnboardingComplete(String userId);
   Future<bool> userExists(String email);
   Future<void> signInWithGoogle();
 }

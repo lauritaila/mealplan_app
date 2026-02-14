@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
+import 'package:meal_plan_app/l10n/app_localizations.dart';
 
 import '../../../shared/shared.dart';
+import 'package:meal_plan_app/features/shared/utils/app_error_localizations.dart';
 import '../provider/provider.dart';
 
 class LoginScreen extends StatelessWidget {
@@ -27,18 +29,19 @@ class _LoginForm extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final colors = Theme.of(context).colorScheme;
+    final l10n = AppLocalizations.of(context);
     final loginFormState = ref.watch(loginFormProvider);
     final loginFormNotifier = ref.read(loginFormProvider.notifier);
 
     ref.listen(authProvider, (previous, next) {
       if (next is ErrorAuthState) {
-        showSnackbar(context, next.message);
-      }
-      if (previous is LoadingAuthState && next is AwaitingOtpInputState) {
         showSnackbar(
           context,
-          'A verification code has been sent to your email.',
+          localizeErrorCode(l10n, next.code, fallback: next.message),
         );
+      }
+      if (previous is LoadingAuthState && next is AwaitingOtpInputState) {
+        showSnackbar(context, l10n.verificationCodeSentEmail);
       }
     });
 
@@ -50,7 +53,7 @@ class _LoginForm extends ConsumerWidget {
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
               Text(
-                'Login',
+                l10n.login,
                 style: TextStyle(
                   fontSize: 30,
                   fontWeight: FontWeight.bold,
@@ -60,7 +63,7 @@ class _LoginForm extends ConsumerWidget {
               const SizedBox(height: 30),
               ElevatedButton.icon(
                 icon: Icon(Icons.usb_rounded),
-                label: const Text('Sign in with Google'),
+                label: Text(l10n.signInWithGoogle),
                 onPressed: () {
                   ref.read(authProvider.notifier).signInWithGoogle();
                 },
@@ -75,7 +78,7 @@ class _LoginForm extends ConsumerWidget {
               ),
               const SizedBox(height: 16),
               CustomTextFormField(
-                label: 'Email',
+                label: l10n.email,
                 keyboardType: TextInputType.emailAddress,
                 textInputAction: TextInputAction.done,
                 autofillHints: const [
@@ -85,7 +88,7 @@ class _LoginForm extends ConsumerWidget {
                 ],
                 onChanged: loginFormNotifier.onEmailChanged,
                 errorMessage: loginFormState.isFormPosted
-                    ? loginFormState.email.errorMessage
+                    ? loginFormState.email.getErrorMessage(l10n)
                     : null,
               ),
               const SizedBox(height: 30),
@@ -93,7 +96,7 @@ class _LoginForm extends ConsumerWidget {
                 width: double.infinity,
                 height: 40,
                 child: CustomFilledButton(
-                  text: 'Send Verification Code OTP',
+                  text: l10n.sendVerificationCodeOtp,
                   buttonColor: colors.primary,
                   onPressed: loginFormState.isPosting
                       ? null
@@ -104,11 +107,11 @@ class _LoginForm extends ConsumerWidget {
               Row(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  const Text('Don\'t have an account?'),
+                  Text(l10n.dontHaveAccount),
                   SizedBox(width: 5),
                   TextButton(
                     onPressed: () => context.push('/signup'),
-                    child: const Text('Sign Up'),
+                    child: Text(l10n.signUp),
                   ),
                 ],
               ),

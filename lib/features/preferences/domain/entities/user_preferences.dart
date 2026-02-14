@@ -28,4 +28,5 @@ class UserPreferences {
     this.createdAt,
     this.updatedAt,
   });
-} 
+}
+
