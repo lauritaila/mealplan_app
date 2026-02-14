@@ -140,7 +140,9 @@ class PreferencesDetails extends _$PreferencesDetails {
         languageCode: () => languageCode,
         isHydrated: true,
       );
-    } catch (_) {
+    } catch (e, stack) {
+      // ignore: avoid_print
+      print('[PreferencesDetails] hydrateFromServer error: $e\n$stack');
       state = state.copyWith(
         languageCode: () => languageCode,
         hideNutritionValues: hideNutritionValues,

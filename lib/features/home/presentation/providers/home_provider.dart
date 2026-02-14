@@ -47,6 +47,6 @@ HomeViewState homeViewState(Ref ref) {
     showGraceWelcome: authState.showGraceWelcome,
     statusAsync: ref.watch(mealPlanGenerationStatusProvider),
     totalAllowed: authState.user.permissions?.permissions.mealPlanGenerate,
-    planName: authState.user.planName ?? 'Free',
+    planName: authState.user.planName,
   );
 }

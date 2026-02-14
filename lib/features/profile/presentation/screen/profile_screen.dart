@@ -45,9 +45,13 @@ Future<void> _showDeleteAccountModal(
               final confirmationEmail = controller.text.trim();
               if (!dialogContext.mounted) return;
 
-              // Client-side validation: must match user email and not be empty
-              if (confirmationEmail.isEmpty || confirmationEmail != email) {
-                final errorText = confirmationEmail.isEmpty
+              // Normalize both emails for comparison (case-insensitive, trimmed)
+              final normalizedInput = confirmationEmail.toLowerCase();
+              final normalizedAccount = email.trim().toLowerCase();
+
+              if (normalizedInput.isEmpty ||
+                  normalizedInput != normalizedAccount) {
+                final errorText = normalizedInput.isEmpty
                     ? l10n.errorFieldRequired
                     : l10n.errorEmailConfirmationMismatch;
                 ScaffoldMessenger.of(
@@ -80,9 +84,10 @@ Future<void> _showDeleteAccountModal(
               );
 
               try {
+                // Always pass the canonical account email, not the user input
                 await ref
                     .read(deleteAccountProvider.notifier)
-                    .deleteAccount(confirmationEmail);
+                    .deleteAccount(email);
               } on AppError catch (e) {
                 appError = e;
               }

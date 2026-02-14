@@ -38,7 +38,7 @@ class HomeScreen extends ConsumerWidget {
               _PlanStatusCard(
                 statusAsync: homeState.statusAsync!,
                 totalAllowed: homeState.totalAllowed,
-                planName: homeState.planName ?? 'Free',
+                planName: homeState.planName ?? l10n.profileSubscriptionFree,
               ),
               const SizedBox(height: 16),
             ],
@@ -150,11 +150,6 @@ class _PlanStatusCard extends StatelessWidget {
           error: (error, stack) => Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              // Text(
-              //   'Plan: $planName',
-              //   style: Theme.of(context).textTheme.titleMedium,
-              // ),
-              // const SizedBox(height: 8),
               Text(
                 l10n.unableToLoadPlanStatus(l10n.genericError),
                 style: theme.textTheme.bodyMedium?.copyWith(
@@ -172,11 +167,6 @@ class _PlanStatusCard extends StatelessWidget {
             return Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                // Text(
-                //   'Plan: $planName',
-                //   style: Theme.of(context).textTheme.titleMedium,
-                // ),
-                // const SizedBox(height: 8),
                 Text(
                   l10n.plansLeftThisWeek(remaining, total),
                   style: theme.textTheme.bodyMedium,

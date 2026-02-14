@@ -7,6 +7,28 @@ class ProfileDatasourceImpl implements ProfileDatasource {
 
   ProfileDatasourceImpl(this._supabaseClient);
 
+  bool _isInvalidOrExpiredOtp(AuthException exception) {
+    final normalizedStatus = exception.statusCode?.toString().toLowerCase();
+    if (normalizedStatus == null) return false;
+
+    return normalizedStatus == '400' ||
+        normalizedStatus == '401' ||
+        normalizedStatus == '422' ||
+        normalizedStatus == 'invalid_otp' ||
+        normalizedStatus == 'otp_expired';
+  }
+
+  bool _isDuplicateEmailError(AuthException exception) {
+    final normalizedStatus = exception.statusCode?.toString().toLowerCase();
+    if (normalizedStatus == null) return false;
+
+    // Supabase auth usually reports duplicate/conflict email with 409/422.
+    return normalizedStatus == '409' ||
+        normalizedStatus == '422' ||
+        normalizedStatus == 'email_exists' ||
+        normalizedStatus == 'user_already_exists';
+  }
+
   Future<Map<String, dynamic>> _loadAndValidateConfig(String userId) async {
     final authUserId = _supabaseClient.auth.currentUser?.id;
     if (authUserId == null) {
@@ -101,10 +123,10 @@ class ProfileDatasourceImpl implements ProfileDatasource {
     try {
       await _supabaseClient.auth.updateUser(UserAttributes(email: newEmail));
     } on AuthException catch (e) {
-      if (e.message.toLowerCase().contains('already')) {
+      if (_isDuplicateEmailError(e)) {
         throw const AuthAppError.emailAlreadyInUse();
       }
-      throw AuthAppError(e.message, code: e.statusCode);
+      throw AuthAppError(e.message, code: e.statusCode?.toString());
     } on AppError {
       rethrow;
     } catch (e) {
@@ -123,11 +145,10 @@ class ProfileDatasourceImpl implements ProfileDatasource {
         token: token,
       );
     } on AuthException catch (e) {
-      if (e.message.toLowerCase().contains('invalid') ||
-          e.message.toLowerCase().contains('expired')) {
+      if (_isInvalidOrExpiredOtp(e)) {
         throw const AuthAppError.invalidOtp();
       }
-      throw AuthAppError(e.message, code: e.statusCode);
+      throw AuthAppError(e.message, code: e.statusCode?.toString());
     } on AppError {
       rethrow;
     } catch (e) {
@@ -151,16 +172,12 @@ class ProfileDatasourceImpl implements ProfileDatasource {
     if (authUserId != userId) {
       throw const PermissionAppError.forbidden();
     }
-    if (email.trim().toLowerCase() !=
-        confirmationEmail.trim().toLowerCase()) {
-      throw const AuthAppError.unexpected(
-        message: 'Email confirmation does not match.',
-      );
+    if (email.trim().toLowerCase() != confirmationEmail.trim().toLowerCase()) {
+      throw const AuthAppError.emailConfirmationMismatch();
     }
 
     try {
-       await _supabaseClient.rpc('soft_delete_user_account');
-      
+      await _supabaseClient.rpc('soft_delete_user_account');
     } on PostgrestException catch (e) {
       throw DataAppError(
         'Failed to deactivate account: ${e.message}',
@@ -186,21 +203,11 @@ class ProfileDatasourceImpl implements ProfileDatasource {
         throw const PermissionAppError.forbidden();
       }
 
-      // Restore previous_status if present, else fallback to 'inactive'
-      final subRow = await _supabaseClient
-          .from('user_subscriptions')
-          .select('previous_status')
-          .eq('user_id', userId)
-          .maybeSingle();
-      final prevStatus = subRow?['previous_status'] as String?;
-      await _supabaseClient
-          .from('user_subscriptions')
-          .update({'status': prevStatus ?? 'inactive', 'previous_status': null})
-          .eq('user_id', userId);
-      await _supabaseClient
-          .from('user_profiles')
-          .update({'deleted_at': null})
-          .eq('id', userId);
+      final result = await _supabaseClient.rpc('reactivate_user_account');
+
+      if (result is bool && result == false) {
+        throw const DataAppError.updateFailed('account reactivation');
+      }
     } on PostgrestException catch (e) {
       throw DataAppError(
         'Failed to reactivate account: ${e.message}',

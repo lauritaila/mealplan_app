@@ -14,6 +14,7 @@ class AllergiesStep extends ConsumerStatefulWidget {
 
 class _AllergiesStepState extends ConsumerState<AllergiesStep> {
   late final TextEditingController _customAllergyController;
+  late final ProviderSubscription<String?> _customAllergySubscription;
 
   @override
   void initState() {
@@ -21,22 +22,23 @@ class _AllergiesStepState extends ConsumerState<AllergiesStep> {
     final customAllergy =
         ref.read(preferencesWizardProvider).customAllergy ?? '';
     _customAllergyController = TextEditingController(text: customAllergy);
+
+    _customAllergySubscription = ref.listenManual<String?>(
+      preferencesWizardProvider.select((s) => s.customAllergy),
+      (previous, next) {
+        final newValue = next ?? '';
+        if (_customAllergyController.text != newValue) {
+          _customAllergyController.text = newValue;
+        }
+      },
+    );
   }
 
   @override
   void dispose() {
+    _customAllergySubscription.close();
     _customAllergyController.dispose();
     super.dispose();
-  }
-
-  @override
-  void didUpdateWidget(covariant AllergiesStep oldWidget) {
-    super.didUpdateWidget(oldWidget);
-    final customAllergy =
-        ref.read(preferencesWizardProvider).customAllergy ?? '';
-    if (_customAllergyController.text != customAllergy) {
-      _customAllergyController.text = customAllergy;
-    }
   }
 
   String _localizedTitle(
