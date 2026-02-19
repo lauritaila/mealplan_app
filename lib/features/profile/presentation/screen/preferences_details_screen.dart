@@ -30,7 +30,33 @@ class _PreferencesDetailsScreenState
     _dislikedController = TextEditingController();
     _likedController = TextEditingController();
     Future.microtask(() async {
-      await ref.read(preferencesDetailsProvider.notifier).hydrateFromServer();
+      var hydrationSucceeded = false;
+      try {
+        await ref.read(preferencesDetailsProvider.notifier).hydrateFromServer();
+        hydrationSucceeded = true;
+      } catch (e, stack) {
+        debugPrint(
+          '[PreferencesDetailsScreen] hydrateFromServer error: $e\n$stack',
+        );
+        ref.read(preferencesDetailsProvider.notifier).handleHydrationError(e);
+        if (mounted) {
+          final l10n = AppLocalizations.of(context);
+          final message = localizeErrorCode(
+            l10n,
+            e is AppError ? e.code : null,
+            fallback: e is AppError ? e.message : null,
+          );
+          ScaffoldMessenger.of(
+            context,
+          ).showSnackBar(SnackBar(content: Text(message)));
+        }
+      }
+
+      if (!hydrationSucceeded) {
+        _controllersHydrated = false;
+        return;
+      }
+
       WidgetsBinding.instance.addPostFrameCallback((_) {
         if (!mounted || _controllersHydrated) return;
         final hydrated = ref.read(preferencesDetailsProvider);
@@ -549,8 +575,12 @@ class _PreferencesDetailsScreenState
                                     fallback: rollbackError.message,
                                   )
                                 : rollbackError.toString();
+                            final rollbackBaseMessage = localizeErrorCode(
+                              l10n,
+                              'errorSavePreferencesRollbackFailed',
+                            );
                             message =
-                                'Failed to save preferences and rollback also failed. The app may be in an inconsistent state.\n$message\nRollback error: $rollbackMsg';
+                                '$rollbackBaseMessage\n$message\nRollback error: $rollbackMsg';
                           }
                           ScaffoldMessenger.of(
                             context,

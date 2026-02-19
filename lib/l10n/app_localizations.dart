@@ -860,6 +860,12 @@ abstract class AppLocalizations {
   /// **'Favorite Recipes'**
   String get favoriteRecipesTitle;
 
+  /// No description provided for @favoriteUpdateFailed.
+  ///
+  /// In en, this message translates to:
+  /// **'Failed to update favorite. Please try again.'**
+  String get favoriteUpdateFailed;
+
   /// No description provided for @favoritesTooltip.
   ///
   /// In en, this message translates to:
@@ -1003,6 +1009,12 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Preferences saved successfully'**
   String get preferencesSaved;
+
+  /// No description provided for @errorSavePreferencesRollbackFailed.
+  ///
+  /// In en, this message translates to:
+  /// **'Failed to save preferences and rollback also failed. The app may be in an inconsistent state.'**
+  String get errorSavePreferencesRollbackFailed;
 
   /// No description provided for @unknownError.
   ///

@@ -66,13 +66,36 @@ class LanguageSettings extends _$LanguageSettings {
       await ref.read(profileRepositoryProvider).updateLanguage(selected);
       // Immediately update persistedCode to reflect backend change
       state = state.copyWith(persistedCode: selected);
+      var localLocaleUpdated = false;
       try {
         await ref.read(appLocaleProvider.notifier).setLanguageCode(selected);
+        localLocaleUpdated = true;
         await ref.read(authProvider.notifier).refreshUserStatus();
         state = state.copyWith(isSaving: false, error: () => null);
       } catch (e) {
-        // Rollback backend change if local update fails
-        await ref.read(profileRepositoryProvider).updateLanguage(previousCode);
+        if (localLocaleUpdated) {
+          try {
+            await ref
+                .read(appLocaleProvider.notifier)
+                .setLanguageCode(previousCode);
+          } catch (_) {}
+        }
+
+        try {
+          await ref
+              .read(profileRepositoryProvider)
+              .updateLanguage(previousCode);
+        } catch (rollbackError) {
+          state = state.copyWith(
+            persistedCode: previousCode,
+            isSaving: false,
+            error: () => rollbackError is AppError
+                ? rollbackError
+                : const DataAppError.updateFailed('language settings'),
+          );
+          return;
+        }
+
         state = state.copyWith(
           persistedCode: previousCode,
           isSaving: false,
@@ -83,6 +106,7 @@ class LanguageSettings extends _$LanguageSettings {
       }
     } catch (e) {
       state = state.copyWith(
+        persistedCode: previousCode,
         isSaving: false,
         error: () => e is AppError
             ? e

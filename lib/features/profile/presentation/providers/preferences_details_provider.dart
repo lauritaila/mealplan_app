@@ -1,4 +1,5 @@
 import 'package:meal_plan_app/features/auth/presentation/provider/provider.dart';
+import 'package:meal_plan_app/config/config.dart';
 import 'package:meal_plan_app/features/preferences/domain/domain.dart';
 import 'package:meal_plan_app/features/preferences/presentation/providers/preferences_repository_provider.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
@@ -17,6 +18,7 @@ class PreferencesDetailsState {
   final bool hideNutritionValues;
   final String? languageCode;
   final bool isHydrated;
+  final AppError? hydrationError;
 
   const PreferencesDetailsState({
     this.dietaryRestrictions = const [],
@@ -30,6 +32,7 @@ class PreferencesDetailsState {
     this.hideNutritionValues = false,
     this.languageCode,
     this.isHydrated = false,
+    this.hydrationError,
   });
 
   PreferencesDetailsState copyWith({
@@ -44,6 +47,7 @@ class PreferencesDetailsState {
     bool? hideNutritionValues,
     String? Function()? languageCode,
     bool? isHydrated,
+    AppError? Function()? hydrationError,
   }) {
     final int newHouseholdSize = householdSize ?? this.householdSize;
     return PreferencesDetailsState(
@@ -72,6 +76,9 @@ class PreferencesDetailsState {
       hideNutritionValues: hideNutritionValues ?? this.hideNutritionValues,
       languageCode: languageCode != null ? languageCode() : this.languageCode,
       isHydrated: isHydrated ?? this.isHydrated,
+      hydrationError: hydrationError != null
+          ? hydrationError()
+          : this.hydrationError,
     );
   }
 
@@ -123,6 +130,7 @@ class PreferencesDetails extends _$PreferencesDetails {
           languageCode: () => languageCode,
           hideNutritionValues: hideNutritionValues,
           isHydrated: true,
+          hydrationError: () => null,
         );
         return;
       }
@@ -139,16 +147,23 @@ class PreferencesDetails extends _$PreferencesDetails {
         hideNutritionValues: hideNutritionValues,
         languageCode: () => languageCode,
         isHydrated: true,
+        hydrationError: () => null,
       );
     } catch (e, stack) {
       // ignore: avoid_print
       print('[PreferencesDetails] hydrateFromServer error: $e\n$stack');
-      state = state.copyWith(
-        languageCode: () => languageCode,
-        hideNutritionValues: hideNutritionValues,
-        isHydrated: true,
-      );
+      handleHydrationError(e);
+      rethrow;
     }
+  }
+
+  void handleHydrationError(Object error) {
+    state = state.copyWith(
+      isHydrated: false,
+      hydrationError: () => error is AppError
+          ? error
+          : const DataAppError.fetchFailed('user preferences'),
+    );
   }
 
   void toggleDietaryRestriction(String diet, bool selected) {

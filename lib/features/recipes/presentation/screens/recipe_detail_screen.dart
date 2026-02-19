@@ -38,11 +38,7 @@ class RecipeDetailScreen extends ConsumerWidget {
                 } catch (e) {
                   if (!context.mounted) return;
                   ScaffoldMessenger.of(context).showSnackBar(
-                    SnackBar(
-                      content: Text(
-                        'Failed to update favorite. Please try again.',
-                      ),
-                    ),
+                    SnackBar(content: Text(l10n.favoriteUpdateFailed)),
                   );
                   // Optionally revert optimistic UI changes here if needed
                 }

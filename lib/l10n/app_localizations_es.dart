@@ -442,6 +442,10 @@ class AppLocalizationsEs extends AppLocalizations {
   String get favoriteRecipesTitle => 'Recetas favoritas';
 
   @override
+  String get favoriteUpdateFailed =>
+      'No se pudo actualizar favoritos. Inténtalo de nuevo.';
+
+  @override
   String get favoritesTooltip => 'Favoritas';
 
   @override
@@ -515,6 +519,10 @@ class AppLocalizationsEs extends AppLocalizations {
 
   @override
   String get preferencesSaved => 'Preferencias guardadas correctamente';
+
+  @override
+  String get errorSavePreferencesRollbackFailed =>
+      'No se pudieron guardar las preferencias y también falló la reversión. La app puede quedar en un estado inconsistente.';
 
   @override
   String get unknownError => 'Ocurrió un error desconocido';

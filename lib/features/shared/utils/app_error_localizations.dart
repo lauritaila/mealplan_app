@@ -87,6 +87,8 @@ String localizeErrorCode(
       return l10n.errorMealPlanGenerateFailed;
     case 'MEAL_PLAN_QUOTA_REACHED':
       return l10n.errorMealPlanQuotaReached;
+    case 'errorSavePreferencesRollbackFailed':
+      return l10n.errorSavePreferencesRollbackFailed;
     default:
       return fallback ?? l10n.genericError;
   }
