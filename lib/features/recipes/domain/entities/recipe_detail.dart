@@ -4,6 +4,7 @@ class RecipeDetail {
   final int id;
   final String name;
   final String instructions;
+  final String description;
   final List<RecipeIngredient> ingredients;
   final bool isFavorite;
   final List<String> categories;
@@ -16,6 +17,7 @@ class RecipeDetail {
     required this.id,
     required this.name,
     required this.instructions,
+    required this.description,
     required this.ingredients,
     required this.isFavorite,
     required this.categories,

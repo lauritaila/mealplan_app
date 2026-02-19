@@ -308,6 +308,28 @@ class AppLocalizationsEs extends AppLocalizations {
   String get mealsOfDayTitle => 'Comidas del día';
 
   @override
+  String get skipMealAction => 'Saltar comida';
+
+  @override
+  String get unskipMealAction => 'Quitar salto';
+
+  @override
+  String get mealSkippedLabel => 'Saltada';
+
+  @override
+  String get skipMealDialogTitle => 'Comida saltada';
+
+  @override
+  String get skipMealDialogMessage =>
+      'No pasa nada por saltar una comida. Puedes continuar con tu plan cuando quieras.';
+
+  @override
+  String get viewRecipeDetails => 'Ver receta';
+
+  @override
+  String get categoriesTitle => 'Categorías';
+
+  @override
   String get metricCalories => 'Cal';
 
   @override

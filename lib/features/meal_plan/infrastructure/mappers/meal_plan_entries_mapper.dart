@@ -21,12 +21,18 @@ class MealPlanEntriesMapper {
   static DayMealEntry _mapEntry(Map<String, dynamic> entry) {
     final recipeMap = Map<String, dynamic>.from(entry['recipe'] ?? {});
     final ingredients = _mapIngredients(recipeMap);
+    final categories = _mapCategories(recipeMap['categories']);
     return DayMealEntry(
+      entryId: _toInt(entry['id']) ?? 0,
+      recipeId: _toInt(recipeMap['id'] ?? entry['recipe_id']) ?? 0,
       mealType: _toMealType(entry['meal_type'] ?? entry['mealType']),
       name: (recipeMap['name'] ?? entry['name'] ?? '') as String,
-      description:
-          (recipeMap['description'] ?? entry['description'] ?? '') as String,
-      instructions: (recipeMap['instructions'] ?? '') as String,
+      status: _toStatus(entry['status']),
+      categories: categories,
+      description: _toNullableString(
+        recipeMap['description'] ?? entry['description'],
+      ),
+      instructions: _toNullableString(recipeMap['instructions']),
       ingredients: ingredients,
       servings: _toInt(
         entry['servings_planned'] ?? recipeMap['servings'] ?? entry['servings'],
@@ -51,6 +57,28 @@ class MealPlanEntriesMapper {
             entry['proteinGrams'],
       ),
     );
+  }
+
+  static String? _toStatus(dynamic value) {
+    if (value == null) return null;
+    final text = value.toString().trim().toLowerCase();
+    if (text.isEmpty) return null;
+    if (text == 'skiped') return 'skipped';
+    return text;
+  }
+
+  static String? _toNullableString(dynamic value) {
+    if (value == null) return null;
+    final text = value.toString();
+    return text.trim().isEmpty ? null : text;
+  }
+
+  static List<String> _mapCategories(dynamic value) {
+    if (value is! List) return const [];
+    return value
+        .map((item) => item?.toString().trim() ?? '')
+        .where((item) => item.isNotEmpty)
+        .toList();
   }
 
   static String? _toMealType(dynamic value) {

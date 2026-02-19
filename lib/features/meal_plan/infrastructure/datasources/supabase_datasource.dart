@@ -4,31 +4,81 @@ import 'package:meal_plan_app/features/meal_plan/domain/domain.dart';
 import 'package:meal_plan_app/features/meal_plan/infrastructure/mappers/meal_plan_mapper.dart';
 import 'package:meal_plan_app/features/meal_plan/infrastructure/mappers/meal_plan_entries_mapper.dart';
 import 'package:meal_plan_app/config/constants/dio.dart';
+import 'package:supabase_flutter/supabase_flutter.dart';
 import 'package:talker_flutter/talker_flutter.dart';
 import 'package:talker_dio_logger/talker_dio_logger.dart';
 
 class SupabaseMealPlanDatasource extends MealPlanDatasource {
   final Dio _dio;
+  final SupabaseClient? _supabaseClient;
   final String _mealPlanApiBaseUrl;
 
-  SupabaseMealPlanDatasource({Dio? httpClient, String? mealPlanApiBaseUrl})
-    : _mealPlanApiBaseUrl = mealPlanApiBaseUrl ?? Enviroment.apiBaseUrl,
-      _dio =
-          httpClient ??
-                DioFactory.create(
-                  baseUrl: mealPlanApiBaseUrl ?? Enviroment.apiBaseUrl,
-                )
-            ..interceptors.add(
-              TalkerDioLogger(
-                talker: TalkerFlutter.init(),
-                settings: const TalkerDioLoggerSettings(
-                  printRequestHeaders: true,
-                  printRequestData: true,
-                  printResponseData: true,
-                  printResponseHeaders: false,
-                ),
-              ),
-            );
+  SupabaseMealPlanDatasource({
+    Dio? httpClient,
+    String? mealPlanApiBaseUrl,
+    SupabaseClient? supabaseClient,
+  }) : _supabaseClient = supabaseClient,
+       _mealPlanApiBaseUrl = mealPlanApiBaseUrl ?? Enviroment.apiBaseUrl,
+       _dio =
+           httpClient ??
+                 DioFactory.create(
+                   baseUrl: mealPlanApiBaseUrl ?? Enviroment.apiBaseUrl,
+                 )
+             ..interceptors.add(
+               TalkerDioLogger(
+                 talker: TalkerFlutter.init(),
+                 settings: const TalkerDioLoggerSettings(
+                   printRequestHeaders: true,
+                   printRequestData: true,
+                   printResponseData: true,
+                   printResponseHeaders: false,
+                 ),
+               ),
+             );
+
+  @override
+  Future<void> updateDayMealEntryStatus(
+    int entryId, {
+    required String? status,
+  }) async {
+    final client = _supabaseClient;
+    if (client == null) {
+      throw const ConfigAppError.missing('SUPABASE_CLIENT');
+    }
+
+    final normalizedStatus = status?.trim().toLowerCase();
+    final valueToPersist = normalizedStatus == null || normalizedStatus.isEmpty
+        ? null
+        : normalizedStatus == 'skiped'
+        ? 'skipped'
+        : normalizedStatus;
+
+    try {
+      await client
+          .from('meal_plan_entries')
+          .update({'status': valueToPersist})
+          .eq('id', entryId)
+          .select('id')
+          .single();
+    } on PostgrestException catch (e) {
+      final details = [
+        if (e.message.isNotEmpty) e.message,
+        if (e.details != null && e.details.toString().isNotEmpty)
+          e.details.toString(),
+        if (e.hint != null && e.hint.toString().isNotEmpty) e.hint.toString(),
+      ].join(' | ');
+      throw DataAppError(
+        details.isNotEmpty
+            ? 'Failed to update meal entry status: $details'
+            : 'Failed to update meal entry status.',
+        code: e.code ?? 'DATA_UPDATE_FAILED',
+      );
+    } on AppError {
+      rethrow;
+    } catch (_) {
+      throw const NetworkAppError.serverError();
+    }
+  }
 
   @override
   Future<MealPlanResponse> generateMealPlan(NewMealPlanRequest request) async {

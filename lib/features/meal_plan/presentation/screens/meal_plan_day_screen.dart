@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:go_router/go_router.dart';
 import 'package:meal_plan_app/config/errors/app_errors.dart';
 import 'package:meal_plan_app/features/auth/presentation/provider/provider.dart';
 import 'package:meal_plan_app/features/meal_plan/domain/domain.dart';
@@ -15,6 +16,7 @@ class MealPlanDayScreen extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final selectedDate = ref.watch(selectedMealPlanDayProvider);
     final entriesAsync = ref.watch(mealPlanDayEntriesProvider(selectedDate));
+    final statusUpdateState = ref.watch(dayMealEntryStatusUpdateProvider);
     final authState = ref.watch(authProvider);
     final l10n = AppLocalizations.of(context);
     final hideNutritionValues =
@@ -55,23 +57,15 @@ class MealPlanDayScreen extends ConsumerWidget {
                     children: [
                       _DaySelector(
                         selectedDate: selectedDate,
-                        onSelect: (date) =>
-                            ref
-                                    .read(selectedMealPlanDayProvider.notifier)
-                                    .state =
-                                date,
-                        onPrevious: () =>
-                            ref
-                                .read(selectedMealPlanDayProvider.notifier)
-                                .state = selectedDate.subtract(
-                              const Duration(days: 1),
-                            ),
-                        onNext: () =>
-                            ref
-                                .read(selectedMealPlanDayProvider.notifier)
-                                .state = selectedDate.add(
-                              const Duration(days: 1),
-                            ),
+                        onSelect: (date) => ref
+                            .read(selectedMealPlanDayProvider.notifier)
+                            .setDate(date),
+                        onPrevious: () => ref
+                            .read(selectedMealPlanDayProvider.notifier)
+                            .previousDay(),
+                        onNext: () => ref
+                            .read(selectedMealPlanDayProvider.notifier)
+                            .nextDay(),
                       ),
                       if (!hideNutritionValues) ...[
                         const SizedBox(height: 12),
@@ -103,23 +97,15 @@ class MealPlanDayScreen extends ConsumerWidget {
                     children: [
                       _DaySelector(
                         selectedDate: selectedDate,
-                        onSelect: (date) =>
-                            ref
-                                    .read(selectedMealPlanDayProvider.notifier)
-                                    .state =
-                                date,
-                        onPrevious: () =>
-                            ref
-                                .read(selectedMealPlanDayProvider.notifier)
-                                .state = selectedDate.subtract(
-                              const Duration(days: 1),
-                            ),
-                        onNext: () =>
-                            ref
-                                .read(selectedMealPlanDayProvider.notifier)
-                                .state = selectedDate.add(
-                              const Duration(days: 1),
-                            ),
+                        onSelect: (date) => ref
+                            .read(selectedMealPlanDayProvider.notifier)
+                            .setDate(date),
+                        onPrevious: () => ref
+                            .read(selectedMealPlanDayProvider.notifier)
+                            .previousDay(),
+                        onNext: () => ref
+                            .read(selectedMealPlanDayProvider.notifier)
+                            .nextDay(),
                       ),
                       if (!hideNutritionValues) ...[
                         const SizedBox(height: 12),
@@ -142,6 +128,38 @@ class MealPlanDayScreen extends ConsumerWidget {
                   child: _MealEntryCard(
                     entry: entry,
                     hideNutritionValues: hideNutritionValues,
+                    isUpdating:
+                        statusUpdateState.status ==
+                        DayMealEntryStatusUpdateStatus.loading,
+                    onOpenRecipe: entry.recipeId > 0
+                        ? () => context.push('/recipes/${entry.recipeId}')
+                        : null,
+                    onToggleSkipped: () async {
+                      final wasSkipped = _isSkippedStatus(entry.status);
+                      await ref
+                          .read(dayMealEntryStatusUpdateProvider.notifier)
+                          .toggleSkipped(entry, selectedDate);
+                      final updateState = ref.read(
+                        dayMealEntryStatusUpdateProvider,
+                      );
+
+                      if (!context.mounted) return;
+
+                      if (updateState.status ==
+                              DayMealEntryStatusUpdateStatus.success &&
+                          !wasSkipped) {
+                        await _showSkippedMealDialog(context);
+                      } else if (updateState.status ==
+                          DayMealEntryStatusUpdateStatus.error) {
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          SnackBar(
+                            content: Text(
+                              updateState.errorMessage ?? l10n.genericError,
+                            ),
+                          ),
+                        );
+                      }
+                    },
                   ),
                 );
               },
@@ -157,46 +175,66 @@ class MealPlanDayScreen extends ConsumerWidget {
 class _MealEntryCard extends StatelessWidget {
   final DayMealEntry entry;
   final bool hideNutritionValues;
+  final bool isUpdating;
+  final VoidCallback? onOpenRecipe;
+  final Future<void> Function() onToggleSkipped;
 
   const _MealEntryCard({
     required this.entry,
     required this.hideNutritionValues,
+    required this.isUpdating,
+    required this.onToggleSkipped,
+    this.onOpenRecipe,
   });
 
   @override
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context);
+    final isSkipped = _isSkippedStatus(entry.status);
     return Card(
       elevation: 0.5,
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(14)),
-      child: ExpansionTile(
-        leading: _MealTypeAvatar(mealType: entry.mealType),
-        tilePadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-        childrenPadding: const EdgeInsets.fromLTRB(16, 0, 16, 16),
-        title: Text(
-          entry.name,
-          style: const TextStyle(fontSize: 16, fontWeight: FontWeight.w700),
-        ),
-        subtitle: Column(
+      child: Padding(
+        padding: const EdgeInsets.fromLTRB(16, 14, 16, 14),
+        child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            if (entry.mealType != null && entry.mealType!.isNotEmpty)
-              Padding(
-                padding: const EdgeInsets.only(top: 4),
-                child: Text(
-                  _formatMealType(l10n, entry.mealType),
-                  style: Theme.of(context).textTheme.labelSmall?.copyWith(
-                    color: Theme.of(context).colorScheme.primary,
+            Row(
+              children: [
+                _MealTypeAvatar(mealType: entry.mealType),
+                const SizedBox(width: 12),
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        entry.name,
+                        style: const TextStyle(
+                          fontSize: 16,
+                          fontWeight: FontWeight.w700,
+                        ),
+                      ),
+                      if (entry.mealType != null && entry.mealType!.isNotEmpty)
+                        Padding(
+                          padding: const EdgeInsets.only(top: 4),
+                          child: Text(
+                            _formatMealType(l10n, entry.mealType),
+                            style: Theme.of(context).textTheme.labelSmall
+                                ?.copyWith(
+                                  color: Theme.of(context).colorScheme.primary,
+                                ),
+                          ),
+                        ),
+                    ],
                   ),
                 ),
-              ),
-            // const SizedBox(height: 6),
-            // Text(
-            //   entry.description,
-            //   maxLines: 2,
-            //   overflow: TextOverflow.ellipsis,
-            //   style: Theme.of(context).textTheme.bodySmall,
-            // ),
+                if (isSkipped)
+                  Chip(
+                    label: Text(l10n.mealSkippedLabel),
+                    visualDensity: VisualDensity.compact,
+                  ),
+              ],
+            ),
             const SizedBox(height: 10),
             Wrap(
               spacing: 8,
@@ -231,58 +269,72 @@ class _MealEntryCard extends StatelessWidget {
                   ),
               ],
             ),
-          ],
-        ),
-        children: [
-          Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
+            if (entry.categories.isNotEmpty) ...[
+              const SizedBox(height: 10),
               Text(
-                l10n.descriptionTitle,
-                style: Theme.of(context).textTheme.titleSmall,
+                l10n.categoriesTitle,
+                style: Theme.of(context).textTheme.labelMedium,
               ),
               const SizedBox(height: 6),
-              Text(
-                entry.description,
-                style: Theme.of(context).textTheme.bodyMedium,
+              Wrap(
+                spacing: 8,
+                runSpacing: 8,
+                children: entry.categories
+                    .map((category) => _CategoryChip(label: category))
+                    .toList(),
               ),
-              const SizedBox(height: 12),
-              Text(
-                l10n.instructionsTitle,
-                style: Theme.of(context).textTheme.titleSmall,
-              ),
-              const SizedBox(height: 6),
-              Text(
-                entry.instructions.isEmpty
-                    ? l10n.noInstructions
-                    : entry.instructions,
-                style: Theme.of(context).textTheme.bodyMedium,
-              ),
-              const SizedBox(height: 12),
-              Text(
-                l10n.ingredientsTitle,
-                style: Theme.of(context).textTheme.titleSmall,
-              ),
-              const SizedBox(height: 6),
-              if (entry.ingredients.isEmpty)
-                Text(
-                  l10n.noIngredients,
-                  style: Theme.of(context).textTheme.bodyMedium,
-                )
-              else
-                ...entry.ingredients.map(
-                  (ingredient) => Padding(
-                    padding: const EdgeInsets.only(bottom: 4),
-                    child: Text(
-                      '• ${_formatIngredient(ingredient)}',
-                      style: Theme.of(context).textTheme.bodyMedium,
+            ],
+            const SizedBox(height: 12),
+            Row(
+              children: [
+                Expanded(
+                  child: OutlinedButton.icon(
+                    onPressed: onOpenRecipe,
+                    icon: const Icon(Icons.open_in_new),
+                    label: Text(l10n.viewRecipeDetails),
+                  ),
+                ),
+                const SizedBox(width: 10),
+                Expanded(
+                  child: FilledButton.tonalIcon(
+                    onPressed: isUpdating ? null : onToggleSkipped,
+                    icon: Icon(
+                      isSkipped
+                          ? Icons.replay_circle_filled
+                          : Icons.do_not_disturb_on,
+                    ),
+                    label: Text(
+                      isSkipped ? l10n.unskipMealAction : l10n.skipMealAction,
                     ),
                   ),
                 ),
+              ],
+            ),
+            if (isUpdating) ...[
+              const SizedBox(height: 8),
+              const LinearProgressIndicator(minHeight: 2),
             ],
-          ),
-        ],
+          ],
+        ),
       ),
+    );
+  }
+}
+
+class _CategoryChip extends StatelessWidget {
+  final String label;
+
+  const _CategoryChip({required this.label});
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
+      decoration: BoxDecoration(
+        color: Theme.of(context).colorScheme.secondaryContainer,
+        borderRadius: BorderRadius.circular(12),
+      ),
+      child: Text(label, style: Theme.of(context).textTheme.bodySmall),
     );
   }
 }
@@ -323,11 +375,14 @@ class _TotalsSummary {
   });
 
   factory _TotalsSummary.fromEntries(List<DayMealEntry> entries) {
+    final activeEntries = entries.where(
+      (entry) => !_isSkippedStatus(entry.status),
+    );
     return _TotalsSummary(
-      protein: _sumNullable(entries.map((entry) => entry.proteinGrams)),
-      fats: _sumNullable(entries.map((entry) => entry.fatsGrams)),
-      carbs: _sumNullable(entries.map((entry) => entry.carbsGrams)),
-      calories: _sumNullable(entries.map((entry) => entry.calories)),
+      protein: _sumNullable(activeEntries.map((entry) => entry.proteinGrams)),
+      fats: _sumNullable(activeEntries.map((entry) => entry.fatsGrams)),
+      carbs: _sumNullable(activeEntries.map((entry) => entry.carbsGrams)),
+      calories: _sumNullable(activeEntries.map((entry) => entry.calories)),
     );
   }
 }
@@ -516,18 +571,33 @@ String _formatInt(int? value) {
   return value.toString();
 }
 
-String _formatIngredient(DayMealIngredient ingredient) {
-  final quantity = ingredient.quantity;
-  final unit = ingredient.unit ?? '';
-  final quantityText = quantity == null ? '' : quantity.toString();
-  final unitText = unit.isEmpty ? '' : ' $unit';
-  final prefix = (quantityText + unitText).trim();
-  if (prefix.isEmpty) return ingredient.name;
-  return '$prefix ${ingredient.name}'.trim();
-}
-
 bool _isSameDate(DateTime a, DateTime b) {
   return a.year == b.year && a.month == b.month && a.day == b.day;
+}
+
+bool _isSkippedStatus(String? status) {
+  if (status == null) return false;
+  final value = status.trim().toLowerCase();
+  return value == 'skipped' || value == 'skiped';
+}
+
+Future<void> _showSkippedMealDialog(BuildContext context) async {
+  final l10n = AppLocalizations.of(context);
+  await showDialog<void>(
+    context: context,
+    builder: (dialogContext) {
+      return AlertDialog(
+        title: Text(l10n.skipMealDialogTitle),
+        content: Text(l10n.skipMealDialogMessage),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.of(dialogContext).pop(),
+            child: Text(l10n.done),
+          ),
+        ],
+      );
+    },
+  );
 }
 
 String _weekdayLabel(AppLocalizations l10n, DateTime date) {

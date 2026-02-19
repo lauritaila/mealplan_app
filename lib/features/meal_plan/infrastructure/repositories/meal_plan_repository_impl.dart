@@ -10,10 +10,17 @@ class MealPlanRepositoryImpl extends MealPlanRepository {
     return datasource.generateMealPlan(request);
   }
 
-
   @override
   Future<List<DayMealEntry>> getDayMealEntries(String userId, {String? date}) {
     return datasource.getDayMealEntries(userId, date: date);
+  }
+
+  @override
+  Future<void> updateDayMealEntryStatus(
+    int entryId, {
+    required String? status,
+  }) {
+    return datasource.updateDayMealEntryStatus(entryId, status: status);
   }
 
   @override

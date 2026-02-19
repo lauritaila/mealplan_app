@@ -608,6 +608,48 @@ abstract class AppLocalizations {
   /// **'Meals of the day'**
   String get mealsOfDayTitle;
 
+  /// No description provided for @skipMealAction.
+  ///
+  /// In en, this message translates to:
+  /// **'Skip meal'**
+  String get skipMealAction;
+
+  /// No description provided for @unskipMealAction.
+  ///
+  /// In en, this message translates to:
+  /// **'Unskip meal'**
+  String get unskipMealAction;
+
+  /// No description provided for @mealSkippedLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Skipped'**
+  String get mealSkippedLabel;
+
+  /// No description provided for @skipMealDialogTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Meal skipped'**
+  String get skipMealDialogTitle;
+
+  /// No description provided for @skipMealDialogMessage.
+  ///
+  /// In en, this message translates to:
+  /// **'It\'s okay to skip a meal sometimes. You can continue with your plan whenever you\'re ready.'**
+  String get skipMealDialogMessage;
+
+  /// No description provided for @viewRecipeDetails.
+  ///
+  /// In en, this message translates to:
+  /// **'View recipe'**
+  String get viewRecipeDetails;
+
+  /// No description provided for @categoriesTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Categories'**
+  String get categoriesTitle;
+
   /// No description provided for @metricCalories.
   ///
   /// In en, this message translates to:

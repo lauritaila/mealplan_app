@@ -28,6 +28,7 @@ class RecipeDetailMapper {
     return RecipeDetail(
       id: _parseRecipeId(data['id']),
       name: (data['name'] ?? '') as String,
+      description: (data['description'] ?? '') as String,
       instructions: (data['instructions'] ?? '') as String,
       ingredients: ingredientsList,
       isFavorite: (data['is_favorite'] ?? false) as bool,

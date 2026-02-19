@@ -100,6 +100,19 @@ class RecipeDetailScreen extends ConsumerWidget {
                   const SizedBox(height: 24),
                 ],
 
+                Text(
+                  l10n.descriptionTitle,
+                  style: theme.textTheme.titleLarge?.copyWith(
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+                const SizedBox(height: 12),
+                Text(
+                  recipe.description.trim().isEmpty ? '-' : recipe.description,
+                  style: theme.textTheme.bodyLarge,
+                ),
+                const SizedBox(height: 24),
+
                 // Ingredients Section
                 Text(
                   l10n.ingredientsTitle,
