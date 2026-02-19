@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
+import 'package:meal_plan_app/features/auth/presentation/provider/provider.dart';
 import 'package:meal_plan_app/features/meal_plan/domain/domain.dart';
 import 'package:meal_plan_app/l10n/app_localizations.dart';
 
@@ -13,6 +14,10 @@ class DetailMealPlanScreen extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final plan = generatedPlan?.plan;
     final l10n = AppLocalizations.of(context);
+    final authState = ref.watch(authProvider);
+    final hideNutritionValues =
+        authState is AuthenticatedAuthState &&
+        authState.user.configurations?['hideNutritionValues'] == true;
 
     return Scaffold(
       appBar: AppBar(title: Text(l10n.approvePlanTitle)),
@@ -37,7 +42,12 @@ class DetailMealPlanScreen extends ConsumerWidget {
                         style: TextStyle(color: Colors.grey.shade700),
                       ),
                       const SizedBox(height: 16),
-                      ...plan.dailyMeals.map((day) => _DayCard(day: day)),
+                      ...plan.dailyMeals.map(
+                        (day) => _DayCard(
+                          day: day,
+                          hideNutritionValues: hideNutritionValues,
+                        ),
+                      ),
                       const SizedBox(height: 40),
                     ],
                   ),
@@ -67,8 +77,9 @@ class DetailMealPlanScreen extends ConsumerWidget {
 
 class _DayCard extends StatelessWidget {
   final DailyMeals day;
+  final bool hideNutritionValues;
 
-  const _DayCard({required this.day});
+  const _DayCard({required this.day, required this.hideNutritionValues});
 
   @override
   Widget build(BuildContext context) {
@@ -105,7 +116,10 @@ class _DayCard extends StatelessWidget {
             ],
           ),
           const SizedBox(height: 10),
-          ...day.meals.map((meal) => _MealTile(meal: meal)),
+          ...day.meals.map(
+            (meal) =>
+                _MealTile(meal: meal, hideNutritionValues: hideNutritionValues),
+          ),
         ],
       ),
     );
@@ -114,8 +128,9 @@ class _DayCard extends StatelessWidget {
 
 class _MealTile extends StatelessWidget {
   final MealEntry meal;
+  final bool hideNutritionValues;
 
-  const _MealTile({required this.meal});
+  const _MealTile({required this.meal, required this.hideNutritionValues});
 
   @override
   Widget build(BuildContext context) {
@@ -139,7 +154,7 @@ class _MealTile extends StatelessWidget {
                 mealTypeLabel.toUpperCase(),
                 style: const TextStyle(fontWeight: FontWeight.w700),
               ),
-              if (recipe.calories != null)
+              if (!hideNutritionValues && recipe.calories != null)
                 Text(
                   l10n.caloriesKcal(recipe.calories!.toStringAsFixed(0)),
                   style: TextStyle(color: Colors.grey.shade700),
@@ -175,17 +190,17 @@ class _MealTile extends StatelessWidget {
                     recipe.cookTimeMinutes.toString(),
                   ),
                 ),
-              if (recipe.proteinGrams != null)
+              if (!hideNutritionValues && recipe.proteinGrams != null)
                 _Chip(
                   label: l10n.proteinLabel(
                     recipe.proteinGrams!.toStringAsFixed(1),
                   ),
                 ),
-              if (recipe.carbsGrams != null)
+              if (!hideNutritionValues && recipe.carbsGrams != null)
                 _Chip(
                   label: l10n.carbsLabel(recipe.carbsGrams!.toStringAsFixed(1)),
                 ),
-              if (recipe.fatsGrams != null)
+              if (!hideNutritionValues && recipe.fatsGrams != null)
                 _Chip(
                   label: l10n.fatsLabel(recipe.fatsGrams!.toStringAsFixed(1)),
                 ),

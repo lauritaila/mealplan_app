@@ -5,6 +5,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:meal_plan_app/features/auth/auth.dart';
 import 'package:meal_plan_app/features/home/home.dart';
 import 'package:meal_plan_app/features/profile/profile.dart';
+import 'package:meal_plan_app/features/recipes/recipes.dart';
 import 'package:meal_plan_app/features/auth/presentation/provider/provider.dart';
 import 'package:meal_plan_app/features/shared/screens/main_layout.dart';
 import 'package:meal_plan_app/features/shared/shared.dart';
@@ -14,16 +15,7 @@ import 'package:meal_plan_app/features/meal_plan/domain/domain.dart';
 import 'package:meal_plan_app/features/meal_plan/presentation/screens/loading_meal_plan_screen.dart';
 
 
-
 // --- Placeholders para las pantallas ---
-class RecipesScreen extends StatelessWidget {
-  const RecipesScreen({super.key});
-  @override
-  Widget build(BuildContext context) => Scaffold(
-    appBar: AppBar(title: const Text('Recipes')),
-    body: Center(child: Text('Recipes Screen')),
-  );
-}
 
 class GroceryListScreen extends StatelessWidget {
   const GroceryListScreen({super.key});
@@ -145,7 +137,20 @@ final appRouterProvider = Provider<GoRouter>((ref) {
           ),
           GoRoute(
             path: '/recipes',
-            builder: (context, state) => const RecipesScreen(),
+            builder: (context, state) => const RecipesListScreen(),
+            routes: [
+              GoRoute(
+                path: 'favorites',
+                builder: (context, state) => const FavoriteRecipesScreen(),
+              ),
+              GoRoute(
+                path: ':id',
+                builder: (context, state) {
+                  final recipeId = int.tryParse(state.pathParameters['id'] ?? '0') ?? 0;
+                  return RecipeDetailScreen(recipeId: recipeId);
+                },
+              ),
+            ],
           ),
           GoRoute(
             path: '/grocery-list',

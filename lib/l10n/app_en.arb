@@ -182,6 +182,12 @@
   "freePlanLimitedGenerations": "Your free plan has limited meal plan generations.",
   "goPremiumKeepGenerating": "Go premium to keep generating meal plans.",
   "goToHome": "Go to Home",
+  "recipesTitle": "Recipes",
+  "favoriteRecipesTitle": "Favorite Recipes",
+  "favoritesTooltip": "Favorites",
+  "noRecipesAvailable": "No recipes available",
+  "noFavoriteRecipes": "You don't have favorite recipes",
+  "recipeDetailTitle": "Recipe Detail",
   "errorTitle": "Error",
   "errorOccurred": "An error occurred: {error}",
   "@errorOccurred": {

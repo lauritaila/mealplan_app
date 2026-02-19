@@ -6,14 +6,20 @@ import 'package:meal_plan_app/features/meal_plan/presentation/providers/provider
 
 final mealPlanGenerationStatusProvider =
     FutureProvider<MealPlanGenerationStatus>((ref) async {
-      final authState = ref.watch(authProvider);
-      if (authState is! AuthenticatedAuthState) {
+      final userId = ref.watch(
+        authProvider.select((state) {
+          if (state is AuthenticatedAuthState) {
+            return state.user.id;
+          }
+          return null;
+        }),
+      );
+
+      if (userId == null) {
         throw const PermissionAppError.unauthorized();
       }
 
       final repository = ref.read(mealPlanRepositoryProvider);
-      final result = await repository.getMealPlanGenerationStatus(
-        authState.user.id,
-      );
+      final result = await repository.getMealPlanGenerationStatus(userId);
       return result;
     });

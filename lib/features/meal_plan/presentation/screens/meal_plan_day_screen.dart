@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:meal_plan_app/config/errors/app_errors.dart';
+import 'package:meal_plan_app/features/auth/presentation/provider/provider.dart';
 import 'package:meal_plan_app/features/meal_plan/domain/domain.dart';
 import 'package:meal_plan_app/features/meal_plan/presentation/providers/provider.dart';
+import 'package:meal_plan_app/features/shared/widgets/widgets.dart';
 import 'package:meal_plan_app/features/shared/utils/app_error_localizations.dart';
 import 'package:meal_plan_app/l10n/app_localizations.dart';
 
@@ -13,7 +15,11 @@ class MealPlanDayScreen extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final selectedDate = ref.watch(selectedMealPlanDayProvider);
     final entriesAsync = ref.watch(mealPlanDayEntriesProvider(selectedDate));
+    final authState = ref.watch(authProvider);
     final l10n = AppLocalizations.of(context);
+    final hideNutritionValues =
+        authState is AuthenticatedAuthState &&
+        authState.user.configurations?['hideNutritionValues'] == true;
 
     return Scaffold(
       appBar: AppBar(
@@ -67,8 +73,15 @@ class MealPlanDayScreen extends ConsumerWidget {
                               const Duration(days: 1),
                             ),
                       ),
-                      const SizedBox(height: 12),
-                      _TotalsSummaryCard(summary: totals),
+                      if (!hideNutritionValues) ...[
+                        const SizedBox(height: 12),
+                        NutritionSummaryCard(
+                          protein: totals.protein,
+                          fats: totals.fats,
+                          carbs: totals.carbs,
+                          calories: totals.calories,
+                        ),
+                      ],
                     ],
                   ),
                 ),
@@ -108,9 +121,17 @@ class MealPlanDayScreen extends ConsumerWidget {
                               const Duration(days: 1),
                             ),
                       ),
-                      const SizedBox(height: 12),
-                      _TotalsSummaryCard(summary: totals),
-                      const SizedBox(height: 16),
+                      if (!hideNutritionValues) ...[
+                        const SizedBox(height: 12),
+                        NutritionSummaryCard(
+                          protein: totals.protein,
+                          fats: totals.fats,
+                          carbs: totals.carbs,
+                          calories: totals.calories,
+                        ),
+                        const SizedBox(height: 16),
+                      ] else
+                        const SizedBox(height: 8),
                     ],
                   );
                 }
@@ -118,7 +139,10 @@ class MealPlanDayScreen extends ConsumerWidget {
                 final entry = entries[index - 1];
                 return Padding(
                   padding: const EdgeInsets.only(bottom: 12),
-                  child: _MealEntryCard(entry: entry),
+                  child: _MealEntryCard(
+                    entry: entry,
+                    hideNutritionValues: hideNutritionValues,
+                  ),
                 );
               },
               itemCount: entries.length + 1,
@@ -132,8 +156,12 @@ class MealPlanDayScreen extends ConsumerWidget {
 
 class _MealEntryCard extends StatelessWidget {
   final DayMealEntry entry;
+  final bool hideNutritionValues;
 
-  const _MealEntryCard({required this.entry});
+  const _MealEntryCard({
+    required this.entry,
+    required this.hideNutritionValues,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -175,29 +203,32 @@ class _MealEntryCard extends StatelessWidget {
               runSpacing: 8,
               children: [
                 _MetricChip(
-                  label: l10n.metricCalories,
-                  value: _formatDouble(entry.calories),
-                ),
-                _MetricChip(
                   label: l10n.metricServings,
                   value: _formatInt(entry.servings),
                 ),
-                _MetricChip(
-                  label: l10n.metricFat,
-                  value: _formatDouble(
-                    entry.fatsGrams,
-                    decimals: 1,
-                    suffix: 'g',
+                if (!hideNutritionValues)
+                  _MetricChip(
+                    label: l10n.metricCalories,
+                    value: _formatDouble(entry.calories),
                   ),
-                ),
-                _MetricChip(
-                  label: l10n.metricCarbs,
-                  value: _formatDouble(
-                    entry.carbsGrams,
-                    decimals: 1,
-                    suffix: 'g',
+                if (!hideNutritionValues)
+                  _MetricChip(
+                    label: l10n.metricFat,
+                    value: _formatDouble(
+                      entry.fatsGrams,
+                      decimals: 1,
+                      suffix: 'g',
+                    ),
                   ),
-                ),
+                if (!hideNutritionValues)
+                  _MetricChip(
+                    label: l10n.metricCarbs,
+                    value: _formatDouble(
+                      entry.carbsGrams,
+                      decimals: 1,
+                      suffix: 'g',
+                    ),
+                  ),
               ],
             ),
           ],
@@ -297,77 +328,6 @@ class _TotalsSummary {
       fats: _sumNullable(entries.map((entry) => entry.fatsGrams)),
       carbs: _sumNullable(entries.map((entry) => entry.carbsGrams)),
       calories: _sumNullable(entries.map((entry) => entry.calories)),
-    );
-  }
-}
-
-class _TotalsSummaryCard extends StatelessWidget {
-  final _TotalsSummary summary;
-
-  const _TotalsSummaryCard({required this.summary});
-
-  @override
-  Widget build(BuildContext context) {
-    final colorScheme = Theme.of(context).colorScheme;
-    final l10n = AppLocalizations.of(context);
-    return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
-      decoration: BoxDecoration(
-        color: colorScheme.primaryContainer,
-        borderRadius: BorderRadius.circular(18),
-      ),
-      child: Row(
-        children: [
-          Expanded(
-            child: _TotalMetric(
-              label: l10n.metricProtein,
-              value: _formatDouble(summary.protein, suffix: 'g'),
-            ),
-          ),
-          Expanded(
-            child: _TotalMetric(
-              label: l10n.metricFat,
-              value: _formatDouble(summary.fats, suffix: 'g'),
-            ),
-          ),
-          Expanded(
-            child: _TotalMetric(
-              label: l10n.metricCarbs,
-              value: _formatDouble(summary.carbs, suffix: 'g'),
-            ),
-          ),
-          Expanded(
-            child: _TotalMetric(
-              label: l10n.metricKcal,
-              value: _formatDouble(summary.calories),
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-}
-
-class _TotalMetric extends StatelessWidget {
-  final String label;
-  final String value;
-
-  const _TotalMetric({required this.label, required this.value});
-
-  @override
-  Widget build(BuildContext context) {
-    return Column(
-      mainAxisSize: MainAxisSize.min,
-      children: [
-        Text(
-          value,
-          style: Theme.of(
-            context,
-          ).textTheme.titleSmall?.copyWith(fontWeight: FontWeight.w700),
-        ),
-        const SizedBox(height: 4),
-        Text(label, style: Theme.of(context).textTheme.labelSmall),
-      ],
     );
   }
 }

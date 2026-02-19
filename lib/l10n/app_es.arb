@@ -182,6 +182,12 @@
   "freePlanLimitedGenerations": "Tu plan gratuito tiene generaciones limitadas de planes.",
   "goPremiumKeepGenerating": "Hazte premium para seguir generando planes.",
   "goToHome": "Ir a Inicio",
+  "recipesTitle": "Recetas",
+  "favoriteRecipesTitle": "Recetas favoritas",
+  "favoritesTooltip": "Favoritas",
+  "noRecipesAvailable": "No hay recetas disponibles",
+  "noFavoriteRecipes": "No tienes recetas favoritas",
+  "recipeDetailTitle": "Detalle de receta",
   "errorTitle": "Error",
   "errorOccurred": "Ocurrió un error: {error}",
   "@errorOccurred": {

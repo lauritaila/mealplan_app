@@ -411,6 +411,24 @@ class AppLocalizationsEn extends AppLocalizations {
   String get goToHome => 'Go to Home';
 
   @override
+  String get recipesTitle => 'Recipes';
+
+  @override
+  String get favoriteRecipesTitle => 'Favorite Recipes';
+
+  @override
+  String get favoritesTooltip => 'Favorites';
+
+  @override
+  String get noRecipesAvailable => 'No recipes available';
+
+  @override
+  String get noFavoriteRecipes => 'You don\'t have favorite recipes';
+
+  @override
+  String get recipeDetailTitle => 'Recipe Detail';
+
+  @override
   String get errorTitle => 'Error';
 
   @override
@@ -699,9 +717,6 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get mealPlanTitle => 'Meal Plan';
-
-  @override
-  String get recipesTitle => 'Recipes';
 
   @override
   String get groceryTitle => 'Grocery';

@@ -806,6 +806,42 @@ abstract class AppLocalizations {
   /// **'Go to Home'**
   String get goToHome;
 
+  /// No description provided for @recipesTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Recipes'**
+  String get recipesTitle;
+
+  /// No description provided for @favoriteRecipesTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Favorite Recipes'**
+  String get favoriteRecipesTitle;
+
+  /// No description provided for @favoritesTooltip.
+  ///
+  /// In en, this message translates to:
+  /// **'Favorites'**
+  String get favoritesTooltip;
+
+  /// No description provided for @noRecipesAvailable.
+  ///
+  /// In en, this message translates to:
+  /// **'No recipes available'**
+  String get noRecipesAvailable;
+
+  /// No description provided for @noFavoriteRecipes.
+  ///
+  /// In en, this message translates to:
+  /// **'You don\'t have favorite recipes'**
+  String get noFavoriteRecipes;
+
+  /// No description provided for @recipeDetailTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Recipe Detail'**
+  String get recipeDetailTitle;
+
   /// No description provided for @errorTitle.
   ///
   /// In en, this message translates to:
@@ -1375,12 +1411,6 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Meal Plan'**
   String get mealPlanTitle;
-
-  /// No description provided for @recipesTitle.
-  ///
-  /// In en, this message translates to:
-  /// **'Recipes'**
-  String get recipesTitle;
 
   /// No description provided for @groceryTitle.
   ///

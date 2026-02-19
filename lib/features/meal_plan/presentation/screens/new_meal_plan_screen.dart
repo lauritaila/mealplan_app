@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:meal_plan_app/features/meal_plan/presentation/providers/provider.dart';
 import 'package:meal_plan_app/l10n/app_localizations.dart';
+import 'package:meal_plan_app/features/profile/presentation/providers/preferences_details_provider.dart';
 
 class NewMealPlanScreen extends ConsumerStatefulWidget {
   const NewMealPlanScreen({super.key});
@@ -13,9 +14,26 @@ class NewMealPlanScreen extends ConsumerStatefulWidget {
 
 class _NewMealPlanScreenState extends ConsumerState<NewMealPlanScreen> {
   final _descriptionController = TextEditingController();
-  final Set<String> _selectedMealTypes = {'breakfast', 'lunch', 'dinner'};
+  final Set<String> _selectedMealTypes = {
+    'breakfast',
+    'lunch',
+    'dinner',
+    'snack',
+  };
   int _selectedDays = 5;
   int _peopleCount = 2;
+
+  @override
+  void initState() {
+    super.initState();
+    Future.microtask(() {
+      final preferences = ref.read(preferencesDetailsProvider);
+      final prefCount = preferences.householdSize;
+      setState(() {
+        _peopleCount = prefCount > 0 ? prefCount : 2;
+      });
+    });
+  }
 
   @override
   void dispose() {
@@ -32,7 +50,9 @@ class _NewMealPlanScreenState extends ConsumerState<NewMealPlanScreen> {
       _selectedDays = availableDurations.contains(5)
           ? 5
           : availableDurations.first;
-      _peopleCount = 2;
+      final preferences = ref.read(preferencesDetailsProvider);
+      final prefCount = preferences.householdSize;
+      _peopleCount = prefCount > 0 ? prefCount : 2;
       if (showMealTypeSelection) {
         _selectedMealTypes
           ..clear()
@@ -260,12 +280,13 @@ class _NewMealPlanScreenState extends ConsumerState<NewMealPlanScreen> {
   }
 
   void _onGenerate() {
+    final peopleCount = _peopleCount;
     context.push(
       '/meal-plan/loading',
       extra: {
         'description': _descriptionController.text.trim(),
         'numberOfDays': _selectedDays,
-        'quantityOfPeople': _peopleCount,
+        'quantityOfPeople': peopleCount,
         'mealTypes': _selectedMealTypes.toList(),
       },
     );

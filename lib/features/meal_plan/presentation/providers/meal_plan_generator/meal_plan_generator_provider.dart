@@ -118,6 +118,9 @@ class MealPlanGenerator extends _$MealPlanGenerator {
       final mealPlanRepo = ref.read(mealPlanRepositoryProvider);
       final generatedPlan = await mealPlanRepo.generateMealPlan(request);
 
+      // Refresh remaining quota/status after each successful generation.
+      ref.invalidate(mealPlanGenerationStatusProvider);
+
       state = state.copyWith(
         status: MealPlanGeneratorStatus.success,
         generatedPlan: generatedPlan,

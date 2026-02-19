@@ -522,6 +522,9 @@ class _PreferencesDetailsScreenState
                           await profileRepository.updateHideNutritionValues(
                             updatedPreferencesState.hideNutritionValues,
                           );
+                          await ref
+                              .read(authProvider.notifier)
+                              .refreshUserStatus();
                           if (!context.mounted) return;
                           ScaffoldMessenger.of(context).showSnackBar(
                             SnackBar(content: Text(l10n.preferencesSaved)),
