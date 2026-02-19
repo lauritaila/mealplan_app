@@ -146,7 +146,8 @@ class Profile extends _$Profile {
   }
 
   void updateHouseholdSize(int size) {
-    state = state.copyWith(householdSize: size);
+    final safeSize = size <= 0 ? 1 : size;
+    state = state.copyWith(householdSize: safeSize);
   }
 
   void setHideNutritionValues(bool value) {

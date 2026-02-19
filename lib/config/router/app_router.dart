@@ -14,7 +14,6 @@ import '../../features/meal_plan/meal_plan.dart';
 import 'package:meal_plan_app/features/meal_plan/domain/domain.dart';
 import 'package:meal_plan_app/features/meal_plan/presentation/screens/loading_meal_plan_screen.dart';
 
-
 // --- Placeholders para las pantallas ---
 
 class GroceryListScreen extends StatelessWidget {
@@ -146,8 +145,13 @@ final appRouterProvider = Provider<GoRouter>((ref) {
               GoRoute(
                 path: ':id',
                 builder: (context, state) {
-                  final recipeId = int.tryParse(state.pathParameters['id'] ?? '0') ?? 0;
-                  return RecipeDetailScreen(recipeId: recipeId);
+                  final idParam = state.pathParameters['id'];
+                  final parsedId = int.tryParse(idParam ?? '');
+                  if (parsedId == null || parsedId <= 0) {
+                    // Invalid ID: show recipes list or error screen
+                    return const RecipesListScreen();
+                  }
+                  return RecipeDetailScreen(recipeId: parsedId);
                 },
               ),
             ],

@@ -36,7 +36,7 @@ class CookingDetailsStep extends ConsumerWidget {
 
     return configAsync.when(
       loading: () => const Center(child: CircularProgressIndicator()),
-      error: (error, _) => Center(child: Text(error.toString())),
+      error: (error, _) => Center(child: Text(l10n.genericError)),
       data: (config) {
         final skillLevels = config.skillLevels;
         final timeOptions = config.timeOptions;
@@ -131,8 +131,8 @@ class CookingDetailsStep extends ConsumerWidget {
                     icon: const Icon(Icons.remove_circle_outline),
                     onPressed: state.householdSize > minSize
                         ? () => notifier.updateHouseholdSize(
-                              state.householdSize - 1,
-                            )
+                            state.householdSize - 1,
+                          )
                         : null,
                   ),
                   Text(
@@ -143,8 +143,8 @@ class CookingDetailsStep extends ConsumerWidget {
                     icon: const Icon(Icons.add_circle_outline),
                     onPressed: state.householdSize < maxSize
                         ? () => notifier.updateHouseholdSize(
-                              state.householdSize + 1,
-                            )
+                            state.householdSize + 1,
+                          )
                         : null,
                   ),
                 ],

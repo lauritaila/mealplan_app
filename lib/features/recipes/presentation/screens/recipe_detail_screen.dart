@@ -31,9 +31,21 @@ class RecipeDetailScreen extends ConsumerWidget {
                 color: recipe.isFavorite ? Colors.red : null,
               ),
               onPressed: () async {
-                await ref
-                    .read(toggleFavoriteProvider.notifier)
-                    .toggle(recipeId);
+                try {
+                  await ref
+                      .read(toggleFavoriteProvider.notifier)
+                      .toggle(recipeId);
+                } catch (e) {
+                  if (!context.mounted) return;
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    SnackBar(
+                      content: Text(
+                        'Failed to update favorite. Please try again.',
+                      ),
+                    ),
+                  );
+                  // Optionally revert optimistic UI changes here if needed
+                }
               },
             ),
             orElse: () => const SizedBox.shrink(),

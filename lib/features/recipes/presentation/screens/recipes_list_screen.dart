@@ -54,9 +54,21 @@ class RecipesListScreen extends ConsumerWidget {
                   hideNutritionValues: hideNutritionValues,
                   onTap: () => context.push('/recipes/${recipe.id}'),
                   onFavoriteTap: () async {
-                    await ref
-                        .read(toggleFavoriteProvider.notifier)
-                        .toggle(recipe.id);
+                    try {
+                      await ref
+                          .read(toggleFavoriteProvider.notifier)
+                          .toggle(recipe.id);
+                    } catch (e) {
+                      if (!context.mounted) return;
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        SnackBar(
+                          content: Text(
+                            'Failed to update favorite. Please try again.',
+                          ),
+                        ),
+                      );
+                      // Optionally revert optimistic UI changes here if needed
+                    }
                   },
                 );
               },

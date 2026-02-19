@@ -9,6 +9,7 @@ import 'package:talker_dio_logger/talker_dio_logger.dart';
 
 class SupabaseRecipeDatasource extends RecipeDatasource {
   final Dio _dio;
+  static const String defaultPlaceholder = 'No configure';
   final String _apiBaseUrl;
 
   SupabaseRecipeDatasource({Dio? httpClient, String? apiBaseUrl})
@@ -31,7 +32,7 @@ class SupabaseRecipeDatasource extends RecipeDatasource {
   @override
   Future<List<RecipeListItem>> getUserRecipes() async {
     try {
-      if (_apiBaseUrl.startsWith('No configure')) {
+      if (_apiBaseUrl.isEmpty || _apiBaseUrl == defaultPlaceholder) {
         throw const ConfigAppError.missing('API_BASE_URL');
       }
 
@@ -85,7 +86,7 @@ class SupabaseRecipeDatasource extends RecipeDatasource {
   @override
   Future<List<RecipeListItem>> getFavoriteRecipes() async {
     try {
-      if (_apiBaseUrl.startsWith('No configure')) {
+      if (_apiBaseUrl.isEmpty || _apiBaseUrl == defaultPlaceholder) {
         throw const ConfigAppError.missing('API_BASE_URL');
       }
 
@@ -139,7 +140,7 @@ class SupabaseRecipeDatasource extends RecipeDatasource {
   @override
   Future<RecipeDetail> getRecipeDetail(int id) async {
     try {
-      if (_apiBaseUrl.startsWith('No configure')) {
+      if (_apiBaseUrl.isEmpty || _apiBaseUrl == defaultPlaceholder) {
         throw const ConfigAppError.missing('API_BASE_URL');
       }
 
@@ -190,7 +191,7 @@ class SupabaseRecipeDatasource extends RecipeDatasource {
   @override
   Future<bool> toggleFavorite(int id) async {
     try {
-      if (_apiBaseUrl.startsWith('No configure')) {
+      if (_apiBaseUrl.isEmpty || _apiBaseUrl == defaultPlaceholder) {
         throw const ConfigAppError.missing('API_BASE_URL');
       }
 

@@ -26,7 +26,7 @@ class RecipeDetailMapper {
         .toList();
 
     return RecipeDetail(
-      id: data['id'] as int,
+      id: _parseRecipeId(data['id']),
       name: (data['name'] ?? '') as String,
       instructions: (data['instructions'] ?? '') as String,
       ingredients: ingredientsList,
@@ -36,6 +36,22 @@ class RecipeDetailMapper {
       proteinGrams: _toDouble(data['protein_grams']),
       carbsGrams: _toDouble(data['carbs_grams']),
       fatsGrams: _toDouble(data['fats_grams']),
+    );
+  }
+
+  static int _parseRecipeId(dynamic id) {
+    if (id == null) {
+      throw ArgumentError('RecipeDetail mapping error: id is null');
+    }
+    if (id is int) {
+      return id;
+    }
+    if (id is String) {
+      final parsed = int.tryParse(id);
+      if (parsed != null) return parsed;
+    }
+    throw ArgumentError(
+      'RecipeDetail mapping error: id is invalid type or value ($id)',
     );
   }
 

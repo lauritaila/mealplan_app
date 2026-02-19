@@ -5,7 +5,7 @@ class PreferencesConfigurationMapper {
   static PreferencesConfiguration fromRow(Map<String, dynamic> row) {
     final config = _toMap(row['configuration']);
     if (config.isEmpty) {
-      throw const ConfigAppError.invalid('dietaryPreferences');
+      throw const ConfigAppError.invalid('configuration');
     }
 
     final dietary = _toMap(config['dietaryPreferences']);
@@ -133,4 +133,3 @@ class PreferencesConfigurationMapper {
     return result;
   }
 }
-

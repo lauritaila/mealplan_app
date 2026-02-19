@@ -16,13 +16,15 @@ class HomeScreen extends ConsumerWidget {
 
     ref.listen(homeShowGraceWelcomeProvider, (previous, next) {
       if (next == true && previous != true) {
-        WidgetsBinding.instance.addPostFrameCallback((_) {
+        WidgetsBinding.instance.addPostFrameCallback((_) async {
           if (!context.mounted) return;
-          ref.read(authProvider.notifier).consumeGraceWelcome();
-          showDialog<void>(
+          await showDialog<void>(
             context: context,
             builder: (_) => const _GraceWelcomeDialog(),
           );
+          if (context.mounted) {
+            ref.read(authProvider.notifier).consumeGraceWelcome();
+          }
         });
       }
     });

@@ -52,7 +52,8 @@ class LanguageSettings extends _$LanguageSettings {
 
   Future<void> confirm() async {
     final selected = state.selectedCode;
-    if (state.isSaving || selected == state.persistedCode) return;
+    final previousCode = state.persistedCode;
+    if (state.isSaving || selected == previousCode) return;
     final authState = ref.read(authProvider);
     if (authState is! AuthenticatedAuthState) {
       state = state.copyWith(
@@ -63,13 +64,23 @@ class LanguageSettings extends _$LanguageSettings {
     state = state.copyWith(isSaving: true, error: () => null);
     try {
       await ref.read(profileRepositoryProvider).updateLanguage(selected);
-      await ref.read(appLocaleProvider.notifier).setLanguageCode(selected);
-      await ref.read(authProvider.notifier).refreshUserStatus();
-      state = state.copyWith(
-        persistedCode: selected,
-        isSaving: false,
-        error: () => null,
-      );
+      // Immediately update persistedCode to reflect backend change
+      state = state.copyWith(persistedCode: selected);
+      try {
+        await ref.read(appLocaleProvider.notifier).setLanguageCode(selected);
+        await ref.read(authProvider.notifier).refreshUserStatus();
+        state = state.copyWith(isSaving: false, error: () => null);
+      } catch (e) {
+        // Rollback backend change if local update fails
+        await ref.read(profileRepositoryProvider).updateLanguage(previousCode);
+        state = state.copyWith(
+          persistedCode: previousCode,
+          isSaving: false,
+          error: () => e is AppError
+              ? e
+              : const DataAppError.updateFailed('language settings'),
+        );
+      }
     } catch (e) {
       state = state.copyWith(
         isSaving: false,

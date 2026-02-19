@@ -30,19 +30,20 @@ class _PreferencesDetailsScreenState
     _dislikedController = TextEditingController();
     _likedController = TextEditingController();
     Future.microtask(() async {
-      if (!_controllersHydrated) {
-        await ref.read(preferencesDetailsProvider.notifier).hydrateFromServer();
-        if (!mounted) return;
+      await ref.read(preferencesDetailsProvider.notifier).hydrateFromServer();
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        if (!mounted || _controllersHydrated) return;
         final hydrated = ref.read(preferencesDetailsProvider);
-        // Only set text if controllers are empty (user hasn't typed yet)
-        if (_dislikedController.text.isEmpty) {
-          _dislikedController.text = hydrated.dislikedFoods.join(', ');
+        if (hydrated.isHydrated) {
+          if (_dislikedController.text.isEmpty) {
+            _dislikedController.text = hydrated.dislikedFoods.join(', ');
+          }
+          if (_likedController.text.isEmpty) {
+            _likedController.text = hydrated.likedFoods.join(', ');
+          }
+          _controllersHydrated = true;
         }
-        if (_likedController.text.isEmpty) {
-          _likedController.text = hydrated.likedFoods.join(', ');
-        }
-        _controllersHydrated = true;
-      }
+      });
     });
   }
 
@@ -95,17 +96,6 @@ class _PreferencesDetailsScreenState
     final configAsync = ref.watch(preferences.preferencesConfigurationProvider);
     final localeCode = Localizations.localeOf(context).languageCode;
     final effectiveLanguageCode = preferencesState.languageCode ?? localeCode;
-
-    if (!_controllersHydrated && preferencesState.isHydrated) {
-      // Only set text if controllers are empty (user hasn't typed yet)
-      if (_dislikedController.text.isEmpty) {
-        _dislikedController.text = preferencesState.dislikedFoods.join(', ');
-      }
-      if (_likedController.text.isEmpty) {
-        _likedController.text = preferencesState.likedFoods.join(', ');
-      }
-      _controllersHydrated = true;
-    }
 
     return Scaffold(
       appBar: AppBar(title: Text(l10n.profilePreferencesTitle)),
@@ -531,23 +521,36 @@ class _PreferencesDetailsScreenState
                           );
                         } catch (e) {
                           // Attempt rollback if first call succeeded but second failed
+                          Object? rollbackError;
                           if (previousPreferences != null) {
                             try {
                               await repository.saveUserPreference(
                                 previousPreferences,
                               );
-                            } catch (_) {
-                              // If rollback fails, surface both errors
+                            } catch (rollback) {
+                              rollbackError = rollback;
+                              // Log rollback error
+                              debugPrint('Rollback failed: $rollback');
                             }
                           }
                           if (!context.mounted) return;
-                          String message = e.toString();
-                          if (e is AppError) {
-                            message = localizeErrorCode(
-                              l10n,
-                              e.code,
-                              fallback: e.message,
-                            );
+                          String message = e is AppError
+                              ? localizeErrorCode(
+                                  l10n,
+                                  e.code,
+                                  fallback: e.message,
+                                )
+                              : e.toString();
+                          if (rollbackError != null) {
+                            String rollbackMsg = rollbackError is AppError
+                                ? localizeErrorCode(
+                                    l10n,
+                                    rollbackError.code,
+                                    fallback: rollbackError.message,
+                                  )
+                                : rollbackError.toString();
+                            message =
+                                'Failed to save preferences and rollback also failed. The app may be in an inconsistent state.\n$message\nRollback error: $rollbackMsg';
                           }
                           ScaffoldMessenger.of(
                             context,
