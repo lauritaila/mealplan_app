@@ -577,7 +577,7 @@ class _PreferencesDetailsScreenState
                                 : rollbackError.toString();
                             final rollbackBaseMessage = localizeErrorCode(
                               l10n,
-                              'errorSavePreferencesRollbackFailed',
+                              'ERROR_SAVE_PREFERENCES_ROLLBACK_FAILED',
                             );
                             message =
                                 '$rollbackBaseMessage\n$message\nRollback error: $rollbackMsg';

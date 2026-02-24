@@ -1,4 +1,3 @@
-import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:meal_plan_app/config/errors/app_errors.dart';
 import 'package:meal_plan_app/features/meal_plan/domain/domain.dart';
 import 'package:meal_plan_app/features/meal_plan/presentation/providers/provider.dart';
@@ -104,7 +103,10 @@ class MealPlanEntryActions extends _$MealPlanEntryActions {
     );
     try {
       final repo = ref.read(mealPlanRepositoryProvider);
-      await repo.deleteMealPlan(mealPlanId, deleteDescription: deleteDescription);
+      await repo.deleteMealPlan(
+        mealPlanId,
+        deleteDescription: deleteDescription,
+      );
       state = state.copyWith(status: MealPlanEntryActionStatus.success);
     } on AppError catch (e) {
       state = state.copyWith(

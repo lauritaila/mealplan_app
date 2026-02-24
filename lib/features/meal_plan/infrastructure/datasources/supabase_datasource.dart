@@ -370,8 +370,8 @@ class SupabaseMealPlanDatasource extends MealPlanDatasource {
           ? {'delete_description': deleteDescription}
           : null;
 
-      final response = await _dio.delete(
-        '/api/meal-plan/$mealPlanId',
+      final response = await _dio.post(
+        '/api/meal-plan/$mealPlanId/delete',
         data: body,
         options: Options(headers: {'Content-Type': 'application/json'}),
       );
@@ -412,10 +412,7 @@ class SupabaseMealPlanDatasource extends MealPlanDatasource {
       final dateOnly = newDate.toIso8601String().split('T').first;
       await client.rpc(
         'update_meal_plan_entry_date',
-        params: {
-          'p_entry_id': entryId,
-          'p_new_date': dateOnly,
-        },
+        params: {'p_entry_id': entryId, 'p_new_date': dateOnly},
       );
     } on PostgrestException catch (e) {
       if (e.code == '23505') {

@@ -247,6 +247,7 @@ Future<void> _confirmDeleteEntry(
         ),
       ),
     );
+    ref.read(mealPlanEntryActionsProvider.notifier).reset();
   }
 }
 
@@ -271,7 +272,21 @@ Future<void> _swapRecipe(
   final notifier = ref.read(mealPlanEntryActionsProvider.notifier);
   final updated = await notifier.swapRecipe(entryId, selectedRecipeId);
 
-  if (updated == null || !context.mounted) return;
+  if (updated == null) {
+    if (!context.mounted) return;
+    final state = ref.read(mealPlanEntryActionsProvider);
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        content: Text(
+          state.errorMessage ?? AppLocalizations.of(context).genericError,
+        ),
+      ),
+    );
+    notifier.reset();
+    return;
+  }
+
+  if (!context.mounted) return;
   ref.invalidate(mealPlanDayEntriesProvider(selectedDate));
   notifier.reset();
 }
@@ -314,6 +329,7 @@ Future<void> _changeEntryDate(
         ),
       ),
     );
+    notifier.reset();
   }
 }
 

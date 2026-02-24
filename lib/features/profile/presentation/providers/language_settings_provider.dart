@@ -1,9 +1,12 @@
 import 'package:riverpod_annotation/riverpod_annotation.dart';
+import 'package:logging/logging.dart';
 import 'package:meal_plan_app/config/config.dart';
 import 'package:meal_plan_app/features/auth/presentation/provider/provider.dart';
 import 'profile_repository_provider.dart';
 
 part 'language_settings_provider.g.dart';
+
+final Logger _logger = Logger('LanguageSettings');
 
 class LanguageSettingsState {
   final String selectedCode;
@@ -70,17 +73,25 @@ class LanguageSettings extends _$LanguageSettings {
       try {
         await ref.read(appLocaleProvider.notifier).setLanguageCode(selected);
         localLocaleUpdated = true;
-        await ref.read(authProvider.notifier).refreshUserStatus();
+        // Update UI state immediately to reflect persisted backend change
         state = state.copyWith(isSaving: false, error: () => null);
       } catch (e) {
+        // If local update partially applied, try to rollback locale
         if (localLocaleUpdated) {
           try {
             await ref
                 .read(appLocaleProvider.notifier)
                 .setLanguageCode(previousCode);
-          } catch (_) {}
+          } catch (e, st) {
+            _logger.warning(
+              'Failed to revert local locale from "$selected" to "$previousCode"',
+              e,
+              st,
+            );
+          }
         }
 
+        // Try to rollback server-side persisted language
         try {
           await ref
               .read(profileRepositoryProvider)
@@ -103,6 +114,14 @@ class LanguageSettings extends _$LanguageSettings {
               ? e
               : const DataAppError.updateFailed('language settings'),
         );
+        return;
+      }
+
+      // Refresh user status but do not revert locale/state if this fails.
+      try {
+        await ref.read(authProvider.notifier).refreshUserStatus();
+      } catch (_) {
+        // ignore refresh errors - they should not revert user's language choice
       }
     } catch (e) {
       state = state.copyWith(

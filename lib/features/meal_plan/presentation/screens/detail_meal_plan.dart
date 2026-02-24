@@ -202,6 +202,7 @@ class _DetailMealPlanScreenState extends ConsumerState<DetailMealPlanScreen> {
           ),
         ),
       );
+      ref.read(mealPlanEntryActionsProvider.notifier).reset();
     }
   }
 
@@ -284,6 +285,7 @@ class _DetailMealPlanScreenState extends ConsumerState<DetailMealPlanScreen> {
           ),
         ),
       );
+      ref.read(mealPlanEntryActionsProvider.notifier).reset();
     }
   }
 
@@ -324,13 +326,27 @@ class _DetailMealPlanScreenState extends ConsumerState<DetailMealPlanScreen> {
       builder: (_) => const SwapRecipeSheet(),
     );
 
-    if (selectedRecipeId == null || !mounted) return;
+    if (selectedRecipeId == null || !context.mounted) return;
 
     final updated = await ref
         .read(mealPlanEntryActionsProvider.notifier)
         .swapRecipe(entryId, selectedRecipeId);
 
-    if (updated == null || !mounted) return;
+    if (updated == null) {
+      if (!context.mounted) return;
+      final state = ref.read(mealPlanEntryActionsProvider);
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text(
+            state.errorMessage ?? AppLocalizations.of(context).genericError,
+          ),
+        ),
+      );
+      ref.read(mealPlanEntryActionsProvider.notifier).reset();
+      return;
+    }
+
+    if (!context.mounted) return;
 
     // Update locally
     final updatedDays = _plan!.plan.dailyMeals.map((d) {
@@ -1250,9 +1266,25 @@ class _DeletePlanSheetState extends State<_DeletePlanSheet> {
           : _reasonController.text.trim(),
     );
 
-    if (!mounted) return;
-    Navigator.of(context).pop();
-    widget.onDeleted();
+    // Inspect notifier state to determine outcome
+    // Accessing the notifier's .state is protected; suppress analyzer for this check.
+    // ignore: invalid_use_of_visible_for_testing_member, invalid_use_of_protected_member
+    final state = widget.actionsNotifier.state;
+    if (state.status == MealPlanEntryActionStatus.success) {
+      if (!mounted) return;
+      Navigator.of(context).pop();
+      widget.onDeleted();
+      widget.actionsNotifier.reset();
+    } else {
+      if (!mounted) return;
+      setState(() {
+        _isLoading = false;
+        _error =
+            state.errorMessage ??
+            AppLocalizations.of(context).genericDeleteError;
+      });
+      widget.actionsNotifier.reset();
+    }
   }
 }
 
