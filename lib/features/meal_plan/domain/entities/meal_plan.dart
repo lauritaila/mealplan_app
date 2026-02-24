@@ -6,12 +6,14 @@ class MealPlanResponse {
 }
 
 class MealPlan {
+  final int id;
   final String planName;
   final DateTime startDate;
   final DateTime endDate;
   final List<DailyMeals> dailyMeals;
 
   const MealPlan({
+    required this.id,
     required this.planName,
     required this.startDate,
     required this.endDate,
@@ -27,16 +29,41 @@ class DailyMeals {
 }
 
 class MealEntry {
+  final int entryId;
   final String mealType;
+  final String name;
+  final String? description;
+  final int? servings;
+  final double? calories;
+  final double? proteinGrams;
+  final double? carbsGrams;
+  final double? fatsGrams;
+  final List<String> categories;
+  final String? status;
   final Recipe recipe;
 
-  const MealEntry({required this.mealType, required this.recipe});
+  const MealEntry({
+    required this.entryId,
+    required this.mealType,
+    required this.name,
+    required this.recipe,
+    this.description,
+    this.servings,
+    this.calories,
+    this.proteinGrams,
+    this.carbsGrams,
+    this.fatsGrams,
+    this.categories = const [],
+    this.status,
+  });
 }
 
 class Recipe {
+  final int? id;
   final String name;
   final String description;
   final String instructions;
+  final bool isFavorite;
   final int? prepTimeMinutes;
   final int? cookTimeMinutes;
   final int? servings;
@@ -47,10 +74,12 @@ class Recipe {
   final List<Ingredient> ingredients;
 
   const Recipe({
+    this.id,
     required this.name,
     required this.description,
     required this.instructions,
     required this.ingredients,
+    this.isFavorite = false,
     this.prepTimeMinutes,
     this.cookTimeMinutes,
     this.servings,
@@ -81,6 +110,7 @@ class MealPlanMeta {
   final int recipesProvided;
   final String subscription;
   final String subscriptionPlan;
+  final String persistenceStatus;
 
   const MealPlanMeta({
     required this.userId,
@@ -88,5 +118,6 @@ class MealPlanMeta {
     required this.recipesProvided,
     required this.subscription,
     required this.subscriptionPlan,
+    required this.persistenceStatus,
   });
 }

@@ -318,6 +318,37 @@
   "@emailPlaceholder": {
     "description": "Placeholder for email input field."
   },
+  "deletePlanTooltip": "Delete plan",
+  "deleteMealDialogTitle": "Delete this meal?",
+  "deleteMealDialogMessage": "This recipe will be removed from the plan. This action cannot be undone.",
+  "deleteAction": "Delete",
+  "changeMealDateAction": "Change meal date",
+  "swapFavoriteAction": "Swap with favorite",
+  "regenerateRecipeAction": "Regenerate recipe",
+  "genericMoveError": "Couldn't move the meal. Please try again.",
+  "genericDeleteError": "Couldn't delete. Please try again.",
+  "genericRegenerateError": "Couldn't regenerate the recipe. Please try again.",
+  "dragDropHint": "Long press a recipe to drag it to another day or use the menu to change date.",
+  "dragDropTooltip": "Tip: you can move meals by dragging between days or from the “Change meal date” menu.",
+  "emptyDayDropText": "Drop a meal here",
+  "viewDetailsLabel": "View details",
+  "hideDetailsLabel": "Hide details",
+  "regenerateSheetSubtitle": "Tell us what to change or leave it blank so AI can choose.",
+  "regenerateSheetNotesLabel": "Description (optional)",
+  "regenerateSheetNotesHint": "E.g.: Something lighter, gluten-free...",
+  "regenerateSheetMaxPrepTimeLabel": "Maximum prep time",
+  "regenerateSheetButton": "Regenerate",
+  "deletePlanSheetTitle": "Delete meal plan",
+  "deletePlanSheetWarning": "Deleting this plan still counts toward your meal plan generation limit. This action cannot be undone.",
+  "deletePlanSheetReasonLabel": "Why are you deleting the plan? (optional)",
+  "deletePlanSheetReasonHint": "E.g.: I didn't like the recipes...",
+  "deletePlanSheetConfirmAction": "Yes, delete plan",
+  "minutesShortWithPlaceholder": "{minutes} min",
+  "@minutesShortWithPlaceholder": {
+    "placeholders": {
+      "minutes": {}
+    }
+  },
   "cancel": "Cancel",
   "@cancel": {
     "description": "Label for cancel button."

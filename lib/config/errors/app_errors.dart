@@ -115,6 +115,12 @@ class DataAppError extends AppError {
     : super('Failed to parse $entity data.', code: 'DATA_SERIALIZATION_FAILED');
   const DataAppError.emptyResponse(String entity)
     : super('$entity response was empty.', code: 'DATA_EMPTY_RESPONSE');
+  const DataAppError.uniqueViolation(String entity)
+    : super('Unique violation in $entity.', code: 'DATA_UNIQUE_VIOLATION');
+  const DataAppError.queryError()
+    : super('Database query failed.', code: 'DATA_QUERY_ERROR');
+  const DataAppError.mappingError()
+    : super('Error mapping data.', code: 'DATA_MAPPING_ERROR');
 }
 
 /// Exception for errors related to permissions.

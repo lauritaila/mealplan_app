@@ -58,6 +58,11 @@ class UserMapper {
               ?.map((e) => e as String)
               .toList() ??
           [],
+      mealPlanTime:
+          (permJson?['mealPlanTime'] as List<dynamic>?)
+              ?.map((e) => e as int)
+              .toList() ??
+          [],
     );
 
     return Permissions(
@@ -75,6 +80,7 @@ class UserMapper {
         'mealPlanDays': permissions.permissions.mealPlanDays,
         'mealPlanGenerate': permissions.permissions.mealPlanGenerate,
         'mealPlanTypeFood': permissions.permissions.mealPlanTypeFood,
+        'mealPlanTime': permissions.permissions.mealPlanTime,
       },
     };
   }

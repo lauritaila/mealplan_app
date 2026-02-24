@@ -8,6 +8,10 @@ class MealPlanEntriesMapper {
         .toList();
   }
 
+  static DayMealEntry fromEntryMap(Map<String, dynamic> data) {
+    return _mapEntry(data);
+  }
+
   static List<dynamic> _extractEntriesList(dynamic data) {
     if (data == null) return const [];
     if (data is List) return data;

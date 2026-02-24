@@ -11,11 +11,32 @@ class MealPlanResponseMapper {
         final mealMap = Map<String, dynamic>.from(meal as Map);
         final recipeMap = Map<String, dynamic>.from(mealMap['recipe'] ?? {});
         return MealEntry(
+          entryId: _toInt(mealMap['id'] ?? mealMap['entry_id']) ?? 0,
           mealType: (mealMap['meal_type'] ?? '') as String,
+          name: (recipeMap['name'] ?? mealMap['name'] ?? '') as String,
+          description: recipeMap['description'] as String?,
+          servings: _toInt(
+            mealMap['servings_planned'] ??
+                recipeMap['servings'] ??
+                mealMap['servings'],
+          ),
+          calories: _toDouble(recipeMap['calories'] ?? mealMap['calories']),
+          proteinGrams: _toDouble(
+            recipeMap['protein_grams'] ?? recipeMap['proteinGrams'],
+          ),
+          carbsGrams: _toDouble(
+            recipeMap['carbs_grams'] ?? recipeMap['carbsGrams'],
+          ),
+          fatsGrams: _toDouble(
+            recipeMap['fats_grams'] ?? recipeMap['fatsGrams'],
+          ),
+          categories: _toStringList(recipeMap['categories']),
           recipe: Recipe(
+            id: _toInt(recipeMap['id']),
             name: (recipeMap['name'] ?? '') as String,
             description: (recipeMap['description'] ?? '') as String,
             instructions: (recipeMap['instructions'] ?? '') as String,
+            isFavorite: (recipeMap['is_favorite'] ?? false) as bool,
             prepTimeMinutes: _toInt(recipeMap['prep_time_minutes']),
             cookTimeMinutes: _toInt(recipeMap['cook_time_minutes']),
             servings: _toInt(recipeMap['servings']),
@@ -44,6 +65,7 @@ class MealPlanResponseMapper {
     }).toList();
 
     final plan = MealPlan(
+      id: _toInt(planMap['id']) ?? 0,
       planName: (planMap['plan_name'] ?? '') as String,
       startDate: _parseDate(planMap['start_date']),
       endDate: _parseDate(planMap['end_date']),
@@ -56,11 +78,14 @@ class MealPlanResponseMapper {
           (metaMap['preferencesFound'] ?? metaMap['preferences_found'] ?? false)
               as bool,
       recipesProvided:
-          (metaMap['recipesProvided'] ?? metaMap['recipes_provided'] ?? 0)
-              as int,
+          _toInt(metaMap['recipesProvided'] ?? metaMap['recipes_provided']) ??
+          0,
       subscription: (metaMap['subscription'] ?? '') as String,
       subscriptionPlan:
           (metaMap['subscriptionPlan'] ?? metaMap['subscription_plan'] ?? '')
+              as String,
+      persistenceStatus:
+          (metaMap['persistenceStatus'] ?? metaMap['persistence_status'] ?? '')
               as String,
     );
 
@@ -80,12 +105,15 @@ class MealPlanResponseMapper {
                 'meals': day.meals
                     .map(
                       (meal) => {
+                        'entry_id': meal.entryId,
                         'meal_type': meal.mealType,
                         'recipe': {
+                          'id': meal.recipe.id,
                           'name': meal.recipe.name,
                           'description': meal.recipe.description,
                           'instructions': meal.recipe.instructions,
                           'prep_time_minutes': meal.recipe.prepTimeMinutes,
+                          'is_favorite': meal.recipe.isFavorite,
                           'cook_time_minutes': meal.recipe.cookTimeMinutes,
                           'servings': meal.recipe.servings,
                           'calories': meal.recipe.calories,
@@ -116,6 +144,7 @@ class MealPlanResponseMapper {
         'recipesProvided': response.meta.recipesProvided,
         'subscription': response.meta.subscription,
         'subscriptionPlan': response.meta.subscriptionPlan,
+        'persistenceStatus': response.meta.persistenceStatus,
       },
     };
   }
@@ -146,4 +175,12 @@ class MealPlanResponseMapper {
 
   static String _dateOnly(DateTime date) =>
       date.toIso8601String().split('T').first;
+
+  static List<String> _toStringList(dynamic value) {
+    if (value is! List) return const [];
+    return value
+        .map((item) => item?.toString().trim() ?? '')
+        .where((item) => item.isNotEmpty)
+        .toList();
+  }
 }

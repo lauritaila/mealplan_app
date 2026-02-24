@@ -1496,6 +1496,162 @@ abstract class AppLocalizations {
   /// **'email@example.com'**
   String get emailPlaceholder;
 
+  /// No description provided for @deletePlanTooltip.
+  ///
+  /// In en, this message translates to:
+  /// **'Delete plan'**
+  String get deletePlanTooltip;
+
+  /// No description provided for @deleteMealDialogTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Delete this meal?'**
+  String get deleteMealDialogTitle;
+
+  /// No description provided for @deleteMealDialogMessage.
+  ///
+  /// In en, this message translates to:
+  /// **'This recipe will be removed from the plan. This action cannot be undone.'**
+  String get deleteMealDialogMessage;
+
+  /// No description provided for @deleteAction.
+  ///
+  /// In en, this message translates to:
+  /// **'Delete'**
+  String get deleteAction;
+
+  /// No description provided for @changeMealDateAction.
+  ///
+  /// In en, this message translates to:
+  /// **'Change meal date'**
+  String get changeMealDateAction;
+
+  /// No description provided for @swapFavoriteAction.
+  ///
+  /// In en, this message translates to:
+  /// **'Swap with favorite'**
+  String get swapFavoriteAction;
+
+  /// No description provided for @regenerateRecipeAction.
+  ///
+  /// In en, this message translates to:
+  /// **'Regenerate recipe'**
+  String get regenerateRecipeAction;
+
+  /// No description provided for @genericMoveError.
+  ///
+  /// In en, this message translates to:
+  /// **'Couldn\'t move the meal. Please try again.'**
+  String get genericMoveError;
+
+  /// No description provided for @genericDeleteError.
+  ///
+  /// In en, this message translates to:
+  /// **'Couldn\'t delete. Please try again.'**
+  String get genericDeleteError;
+
+  /// No description provided for @genericRegenerateError.
+  ///
+  /// In en, this message translates to:
+  /// **'Couldn\'t regenerate the recipe. Please try again.'**
+  String get genericRegenerateError;
+
+  /// No description provided for @dragDropHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Long press a recipe to drag it to another day or use the menu to change date.'**
+  String get dragDropHint;
+
+  /// No description provided for @dragDropTooltip.
+  ///
+  /// In en, this message translates to:
+  /// **'Tip: you can move meals by dragging between days or from the “Change meal date” menu.'**
+  String get dragDropTooltip;
+
+  /// No description provided for @emptyDayDropText.
+  ///
+  /// In en, this message translates to:
+  /// **'Drop a meal here'**
+  String get emptyDayDropText;
+
+  /// No description provided for @viewDetailsLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'View details'**
+  String get viewDetailsLabel;
+
+  /// No description provided for @hideDetailsLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Hide details'**
+  String get hideDetailsLabel;
+
+  /// No description provided for @regenerateSheetSubtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Tell us what to change or leave it blank so AI can choose.'**
+  String get regenerateSheetSubtitle;
+
+  /// No description provided for @regenerateSheetNotesLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Description (optional)'**
+  String get regenerateSheetNotesLabel;
+
+  /// No description provided for @regenerateSheetNotesHint.
+  ///
+  /// In en, this message translates to:
+  /// **'E.g.: Something lighter, gluten-free...'**
+  String get regenerateSheetNotesHint;
+
+  /// No description provided for @regenerateSheetMaxPrepTimeLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Maximum prep time'**
+  String get regenerateSheetMaxPrepTimeLabel;
+
+  /// No description provided for @regenerateSheetButton.
+  ///
+  /// In en, this message translates to:
+  /// **'Regenerate'**
+  String get regenerateSheetButton;
+
+  /// No description provided for @deletePlanSheetTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Delete meal plan'**
+  String get deletePlanSheetTitle;
+
+  /// No description provided for @deletePlanSheetWarning.
+  ///
+  /// In en, this message translates to:
+  /// **'Deleting this plan still counts toward your meal plan generation limit. This action cannot be undone.'**
+  String get deletePlanSheetWarning;
+
+  /// No description provided for @deletePlanSheetReasonLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Why are you deleting the plan? (optional)'**
+  String get deletePlanSheetReasonLabel;
+
+  /// No description provided for @deletePlanSheetReasonHint.
+  ///
+  /// In en, this message translates to:
+  /// **'E.g.: I didn\'t like the recipes...'**
+  String get deletePlanSheetReasonHint;
+
+  /// No description provided for @deletePlanSheetConfirmAction.
+  ///
+  /// In en, this message translates to:
+  /// **'Yes, delete plan'**
+  String get deletePlanSheetConfirmAction;
+
+  /// No description provided for @minutesShortWithPlaceholder.
+  ///
+  /// In en, this message translates to:
+  /// **'{minutes} min'**
+  String minutesShortWithPlaceholder(Object minutes);
+
   /// Label for cancel button.
   ///
   /// In en, this message translates to:

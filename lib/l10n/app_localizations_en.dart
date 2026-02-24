@@ -767,6 +767,94 @@ class AppLocalizationsEn extends AppLocalizations {
   String get emailPlaceholder => 'email@example.com';
 
   @override
+  String get deletePlanTooltip => 'Delete plan';
+
+  @override
+  String get deleteMealDialogTitle => 'Delete this meal?';
+
+  @override
+  String get deleteMealDialogMessage =>
+      'This recipe will be removed from the plan. This action cannot be undone.';
+
+  @override
+  String get deleteAction => 'Delete';
+
+  @override
+  String get changeMealDateAction => 'Change meal date';
+
+  @override
+  String get swapFavoriteAction => 'Swap with favorite';
+
+  @override
+  String get regenerateRecipeAction => 'Regenerate recipe';
+
+  @override
+  String get genericMoveError => 'Couldn\'t move the meal. Please try again.';
+
+  @override
+  String get genericDeleteError => 'Couldn\'t delete. Please try again.';
+
+  @override
+  String get genericRegenerateError =>
+      'Couldn\'t regenerate the recipe. Please try again.';
+
+  @override
+  String get dragDropHint =>
+      'Long press a recipe to drag it to another day or use the menu to change date.';
+
+  @override
+  String get dragDropTooltip =>
+      'Tip: you can move meals by dragging between days or from the “Change meal date” menu.';
+
+  @override
+  String get emptyDayDropText => 'Drop a meal here';
+
+  @override
+  String get viewDetailsLabel => 'View details';
+
+  @override
+  String get hideDetailsLabel => 'Hide details';
+
+  @override
+  String get regenerateSheetSubtitle =>
+      'Tell us what to change or leave it blank so AI can choose.';
+
+  @override
+  String get regenerateSheetNotesLabel => 'Description (optional)';
+
+  @override
+  String get regenerateSheetNotesHint =>
+      'E.g.: Something lighter, gluten-free...';
+
+  @override
+  String get regenerateSheetMaxPrepTimeLabel => 'Maximum prep time';
+
+  @override
+  String get regenerateSheetButton => 'Regenerate';
+
+  @override
+  String get deletePlanSheetTitle => 'Delete meal plan';
+
+  @override
+  String get deletePlanSheetWarning =>
+      'Deleting this plan still counts toward your meal plan generation limit. This action cannot be undone.';
+
+  @override
+  String get deletePlanSheetReasonLabel =>
+      'Why are you deleting the plan? (optional)';
+
+  @override
+  String get deletePlanSheetReasonHint => 'E.g.: I didn\'t like the recipes...';
+
+  @override
+  String get deletePlanSheetConfirmAction => 'Yes, delete plan';
+
+  @override
+  String minutesShortWithPlaceholder(Object minutes) {
+    return '$minutes min';
+  }
+
+  @override
   String get cancel => 'Cancel';
 
   @override

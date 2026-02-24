@@ -320,6 +320,37 @@
   "@emailPlaceholder": {
     "description": "Placeholder para el campo de correo."
   },
+  "deletePlanTooltip": "Eliminar plan",
+  "deleteMealDialogTitle": "¿Eliminar esta comida?",
+  "deleteMealDialogMessage": "Esta receta se eliminará del plan. Esta acción no se puede deshacer.",
+  "deleteAction": "Eliminar",
+  "changeMealDateAction": "Cambiar fecha de comida",
+  "swapFavoriteAction": "Cambiar por favorita",
+  "regenerateRecipeAction": "Regenerar receta",
+  "genericMoveError": "No se pudo mover la comida. Inténtalo de nuevo.",
+  "genericDeleteError": "No se pudo eliminar. Inténtalo de nuevo.",
+  "genericRegenerateError": "No se pudo regenerar la receta. Inténtalo de nuevo.",
+  "dragDropHint": "Mantén presionada una receta para arrastrarla a otro día o usa el menú para cambiar fecha.",
+  "dragDropTooltip": "Tip: puedes mover comidas arrastrando entre días o desde el menú “Cambiar fecha de comida”.",
+  "emptyDayDropText": "Suelta una comida aquí",
+  "viewDetailsLabel": "Ver detalle",
+  "hideDetailsLabel": "Ocultar detalle",
+  "regenerateSheetSubtitle": "Cuéntanos qué cambiar o déjalo en blanco para que la IA elija.",
+  "regenerateSheetNotesLabel": "Descripción (opcional)",
+  "regenerateSheetNotesHint": "Ej: Algo más ligero, sin gluten...",
+  "regenerateSheetMaxPrepTimeLabel": "Tiempo máximo de preparación",
+  "regenerateSheetButton": "Regenerar",
+  "deletePlanSheetTitle": "Eliminar plan de comidas",
+  "deletePlanSheetWarning": "Eliminar este plan igual se cuenta en tu límite de generación de planes. Esta acción no se puede deshacer.",
+  "deletePlanSheetReasonLabel": "¿Por qué eliminás el plan? (opcional)",
+  "deletePlanSheetReasonHint": "Ej: No me gustaron las recetas...",
+  "deletePlanSheetConfirmAction": "Sí, eliminar plan",
+  "minutesShortWithPlaceholder": "{minutes} min",
+  "@minutesShortWithPlaceholder": {
+    "placeholders": {
+      "minutes": {}
+    }
+  },
   "cancel": "Cancelar",
   "@cancel": {
     "description": "Etiqueta para el botón cancelar."

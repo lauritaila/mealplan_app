@@ -27,4 +27,35 @@ class MealPlanRepositoryImpl extends MealPlanRepository {
   Future<MealPlanGenerationStatus> getMealPlanGenerationStatus(String userId) {
     return datasource.getMealPlanGenerationStatus(userId);
   }
+
+  @override
+  Future<void> deleteMealPlanEntry(int entryId) {
+    return datasource.deleteMealPlanEntry(entryId);
+  }
+
+  @override
+  Future<DayMealEntry> changeMealPlanRecipe(
+    int entryId,
+    ChangeMealPlanRecipeRequest request,
+  ) {
+    return datasource.changeMealPlanRecipe(entryId, request);
+  }
+
+  @override
+  Future<void> deleteMealPlan(int mealPlanId, {String? deleteDescription}) {
+    return datasource.deleteMealPlan(
+      mealPlanId,
+      deleteDescription: deleteDescription,
+    );
+  }
+
+  @override
+  Future<void> moveMealPlanEntryToDate(int entryId, DateTime newDate) {
+    return datasource.moveMealPlanEntryToDate(entryId, newDate);
+  }
+
+  @override
+  Future<DayMealEntry> swapMealPlanRecipe(int entryId, int recipeId) {
+    return datasource.swapMealPlanRecipe(entryId, recipeId);
+  }
 }

@@ -14,15 +14,17 @@ class PermissionDetails extends Equatable {
   final List<int> mealPlanDays;
   final int? mealPlanGenerate;
   final List<String> mealPlanTypeFood;
+  final List<int> mealPlanTime;
 
   const PermissionDetails({
     required this.mealPlanDays,
     required this.mealPlanGenerate,
     required this.mealPlanTypeFood,
+    required this.mealPlanTime
   });
 
   @override
-  List<Object?> get props => [mealPlanDays, mealPlanGenerate, mealPlanTypeFood];
+  List<Object?> get props => [mealPlanDays, mealPlanGenerate, mealPlanTypeFood, mealPlanTime];
 }
 
 class UserProfile extends Equatable {

@@ -772,6 +772,94 @@ class AppLocalizationsEs extends AppLocalizations {
   String get emailPlaceholder => 'correo@ejemplo.com';
 
   @override
+  String get deletePlanTooltip => 'Eliminar plan';
+
+  @override
+  String get deleteMealDialogTitle => '¿Eliminar esta comida?';
+
+  @override
+  String get deleteMealDialogMessage =>
+      'Esta receta se eliminará del plan. Esta acción no se puede deshacer.';
+
+  @override
+  String get deleteAction => 'Eliminar';
+
+  @override
+  String get changeMealDateAction => 'Cambiar fecha de comida';
+
+  @override
+  String get swapFavoriteAction => 'Cambiar por favorita';
+
+  @override
+  String get regenerateRecipeAction => 'Regenerar receta';
+
+  @override
+  String get genericMoveError =>
+      'No se pudo mover la comida. Inténtalo de nuevo.';
+
+  @override
+  String get genericDeleteError => 'No se pudo eliminar. Inténtalo de nuevo.';
+
+  @override
+  String get genericRegenerateError =>
+      'No se pudo regenerar la receta. Inténtalo de nuevo.';
+
+  @override
+  String get dragDropHint =>
+      'Mantén presionada una receta para arrastrarla a otro día o usa el menú para cambiar fecha.';
+
+  @override
+  String get dragDropTooltip =>
+      'Tip: puedes mover comidas arrastrando entre días o desde el menú “Cambiar fecha de comida”.';
+
+  @override
+  String get emptyDayDropText => 'Suelta una comida aquí';
+
+  @override
+  String get viewDetailsLabel => 'Ver detalle';
+
+  @override
+  String get hideDetailsLabel => 'Ocultar detalle';
+
+  @override
+  String get regenerateSheetSubtitle =>
+      'Cuéntanos qué cambiar o déjalo en blanco para que la IA elija.';
+
+  @override
+  String get regenerateSheetNotesLabel => 'Descripción (opcional)';
+
+  @override
+  String get regenerateSheetNotesHint => 'Ej: Algo más ligero, sin gluten...';
+
+  @override
+  String get regenerateSheetMaxPrepTimeLabel => 'Tiempo máximo de preparación';
+
+  @override
+  String get regenerateSheetButton => 'Regenerar';
+
+  @override
+  String get deletePlanSheetTitle => 'Eliminar plan de comidas';
+
+  @override
+  String get deletePlanSheetWarning =>
+      'Eliminar este plan igual se cuenta en tu límite de generación de planes. Esta acción no se puede deshacer.';
+
+  @override
+  String get deletePlanSheetReasonLabel =>
+      '¿Por qué eliminás el plan? (opcional)';
+
+  @override
+  String get deletePlanSheetReasonHint => 'Ej: No me gustaron las recetas...';
+
+  @override
+  String get deletePlanSheetConfirmAction => 'Sí, eliminar plan';
+
+  @override
+  String minutesShortWithPlaceholder(Object minutes) {
+    return '$minutes min';
+  }
+
+  @override
   String get cancel => 'Cancelar';
 
   @override
