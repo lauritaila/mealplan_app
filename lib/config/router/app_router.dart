@@ -153,6 +153,19 @@ final appRouterProvider = Provider<GoRouter>((ref) {
                   }
                   return RecipeDetailScreen(recipeId: parsedId);
                 },
+                routes: [
+                  GoRoute(
+                    path: 'assistant',
+                    builder: (context, state) {
+                      final idParam = state.pathParameters['id'];
+                      final parsedId = int.tryParse(idParam ?? '');
+                      if (parsedId == null || parsedId <= 0) {
+                        return const RecipesListScreen();
+                      }
+                      return CookingAssistantScreen(recipeId: parsedId);
+                    },
+                  ),
+                ],
               ),
             ],
           ),

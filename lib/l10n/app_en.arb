@@ -349,6 +349,52 @@
       "minutes": {}
     }
   },
+  "ingredientSubstitutesTitle": "Substitutes for {ingredient}",
+  "@ingredientSubstitutesTitle": {
+    "placeholders": {
+      "ingredient": {}
+    }
+  },
+  "ingredientSubstitutesTooltip": "Find substitutes",
+  "loadingSubstitutes": "Loading substitutes...",
+  "noSubstitutesAvailable": "No substitutes available.",
+  "substituteDetails": "Ratio: {ratio} | {reason} | {category}",
+  "@substituteDetails": {
+    "placeholders": {
+      "ratio": {},
+      "reason": {},
+      "category": {}
+    }
+  },
+  "substituteConfirmTitle": "Confirm substitute",
+  "substituteConfirmMessage": "Changing an ingredient can significantly change the flavor.",
+  "substituteConfirmNutritionWarning": "This change can also affect the recipe's nutrition values.",
+  "applySubstituteAction": "Apply substitute",
+  "applyingSubstitute": "Applying substitute...",
+  "substituteMissingIngredientId": "Substitute cannot be applied for this ingredient.",
+  "openCookingAssistant": "Open cooking assistant",
+  "cookingAssistantTitle": "Cooking assistant",
+  "cookingAssistantDisclaimer": "Times are estimates and can change.",
+  "cookingAssistantStepLabel": "Step {step}",
+  "@cookingAssistantStepLabel": {
+    "placeholders": {
+      "step": {}
+    }
+  },
+  "cookingAssistantIngredientsTitle": "Ingredients in this step",
+  "cookingAssistantToolsTitle": "Tools needed",
+  "noCookingSteps": "No cooking steps available.",
+  "noToolsNeeded": "No tools listed.",
+  "estimatedTimeLabel": "Estimated time: {time}",
+  "@estimatedTimeLabel": {
+    "placeholders": {
+      "time": {}
+    }
+  },
+  "startTimer": "Start",
+  "pauseTimer": "Pause",
+  "resetTimer": "Reset",
+  "noTimerAvailable": "No timer available for this step.",
   "cancel": "Cancel",
   "@cancel": {
     "description": "Label for cancel button."

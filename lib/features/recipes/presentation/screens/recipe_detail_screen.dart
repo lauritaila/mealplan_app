@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:go_router/go_router.dart';
 import 'package:meal_plan_app/features/auth/presentation/provider/provider.dart';
 import 'package:meal_plan_app/features/recipes/presentation/providers/providers.dart';
+import 'package:meal_plan_app/features/recipes/presentation/utils/ingredient_substitute_flow.dart';
 import 'package:meal_plan_app/features/shared/widgets/widgets.dart';
 import 'package:meal_plan_app/l10n/app_localizations.dart';
 
@@ -137,10 +139,33 @@ class RecipeDetailScreen extends ConsumerWidget {
                               style: theme.textTheme.bodyLarge,
                             ),
                           ),
+                          IconButton(
+                            icon: const Icon(Icons.swap_horiz),
+                            tooltip: l10n.ingredientSubstitutesTooltip,
+                            onPressed: () {
+                              showIngredientSubstituteFlow(
+                                context: context,
+                                ref: ref,
+                                recipeId: recipeId,
+                                ingredient: ingredient,
+                                hideNutritionValues: hideNutritionValues,
+                                contextHint: recipe.name,
+                              );
+                            },
+                          ),
                         ],
                       ),
                     );
                   }),
+                const SizedBox(height: 24),
+
+                FilledButton.icon(
+                  onPressed: () {
+                    context.push('/recipes/$recipeId/assistant');
+                  },
+                  icon: const Icon(Icons.play_circle_fill),
+                  label: Text(l10n.openCookingAssistant),
+                ),
                 const SizedBox(height: 24),
 
                 // Instructions Section

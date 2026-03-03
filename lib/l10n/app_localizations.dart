@@ -1652,6 +1652,150 @@ abstract class AppLocalizations {
   /// **'{minutes} min'**
   String minutesShortWithPlaceholder(Object minutes);
 
+  /// No description provided for @ingredientSubstitutesTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Substitutes for {ingredient}'**
+  String ingredientSubstitutesTitle(Object ingredient);
+
+  /// No description provided for @ingredientSubstitutesTooltip.
+  ///
+  /// In en, this message translates to:
+  /// **'Find substitutes'**
+  String get ingredientSubstitutesTooltip;
+
+  /// No description provided for @loadingSubstitutes.
+  ///
+  /// In en, this message translates to:
+  /// **'Loading substitutes...'**
+  String get loadingSubstitutes;
+
+  /// No description provided for @noSubstitutesAvailable.
+  ///
+  /// In en, this message translates to:
+  /// **'No substitutes available.'**
+  String get noSubstitutesAvailable;
+
+  /// No description provided for @substituteDetails.
+  ///
+  /// In en, this message translates to:
+  /// **'Ratio: {ratio} | {reason} | {category}'**
+  String substituteDetails(Object ratio, Object reason, Object category);
+
+  /// No description provided for @substituteConfirmTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Confirm substitute'**
+  String get substituteConfirmTitle;
+
+  /// No description provided for @substituteConfirmMessage.
+  ///
+  /// In en, this message translates to:
+  /// **'Changing an ingredient can significantly change the flavor.'**
+  String get substituteConfirmMessage;
+
+  /// No description provided for @substituteConfirmNutritionWarning.
+  ///
+  /// In en, this message translates to:
+  /// **'This change can also affect the recipe\'s nutrition values.'**
+  String get substituteConfirmNutritionWarning;
+
+  /// No description provided for @applySubstituteAction.
+  ///
+  /// In en, this message translates to:
+  /// **'Apply substitute'**
+  String get applySubstituteAction;
+
+  /// No description provided for @applyingSubstitute.
+  ///
+  /// In en, this message translates to:
+  /// **'Applying substitute...'**
+  String get applyingSubstitute;
+
+  /// No description provided for @substituteMissingIngredientId.
+  ///
+  /// In en, this message translates to:
+  /// **'Substitute cannot be applied for this ingredient.'**
+  String get substituteMissingIngredientId;
+
+  /// No description provided for @openCookingAssistant.
+  ///
+  /// In en, this message translates to:
+  /// **'Open cooking assistant'**
+  String get openCookingAssistant;
+
+  /// No description provided for @cookingAssistantTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Cooking assistant'**
+  String get cookingAssistantTitle;
+
+  /// No description provided for @cookingAssistantDisclaimer.
+  ///
+  /// In en, this message translates to:
+  /// **'Times are estimates and can change.'**
+  String get cookingAssistantDisclaimer;
+
+  /// No description provided for @cookingAssistantStepLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Step {step}'**
+  String cookingAssistantStepLabel(Object step);
+
+  /// No description provided for @cookingAssistantIngredientsTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Ingredients in this step'**
+  String get cookingAssistantIngredientsTitle;
+
+  /// No description provided for @cookingAssistantToolsTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Tools needed'**
+  String get cookingAssistantToolsTitle;
+
+  /// No description provided for @noCookingSteps.
+  ///
+  /// In en, this message translates to:
+  /// **'No cooking steps available.'**
+  String get noCookingSteps;
+
+  /// No description provided for @noToolsNeeded.
+  ///
+  /// In en, this message translates to:
+  /// **'No tools listed.'**
+  String get noToolsNeeded;
+
+  /// No description provided for @estimatedTimeLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Estimated time: {time}'**
+  String estimatedTimeLabel(Object time);
+
+  /// No description provided for @startTimer.
+  ///
+  /// In en, this message translates to:
+  /// **'Start'**
+  String get startTimer;
+
+  /// No description provided for @pauseTimer.
+  ///
+  /// In en, this message translates to:
+  /// **'Pause'**
+  String get pauseTimer;
+
+  /// No description provided for @resetTimer.
+  ///
+  /// In en, this message translates to:
+  /// **'Reset'**
+  String get resetTimer;
+
+  /// No description provided for @noTimerAvailable.
+  ///
+  /// In en, this message translates to:
+  /// **'No timer available for this step.'**
+  String get noTimerAvailable;
+
   /// Label for cancel button.
   ///
   /// In en, this message translates to:

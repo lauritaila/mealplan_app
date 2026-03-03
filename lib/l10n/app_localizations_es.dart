@@ -860,6 +860,90 @@ class AppLocalizationsEs extends AppLocalizations {
   }
 
   @override
+  String ingredientSubstitutesTitle(Object ingredient) {
+    return 'Sustitutos de $ingredient';
+  }
+
+  @override
+  String get ingredientSubstitutesTooltip => 'Buscar sustitutos';
+
+  @override
+  String get loadingSubstitutes => 'Cargando sustitutos...';
+
+  @override
+  String get noSubstitutesAvailable => 'No hay sustitutos disponibles.';
+
+  @override
+  String substituteDetails(Object ratio, Object reason, Object category) {
+    return 'Proporción: $ratio | $reason | $category';
+  }
+
+  @override
+  String get substituteConfirmTitle => 'Confirmar sustituto';
+
+  @override
+  String get substituteConfirmMessage =>
+      'Cambiar un ingrediente puede cambiar significativamente el sabor.';
+
+  @override
+  String get substituteConfirmNutritionWarning =>
+      'Este cambio también puede afectar los valores nutricionales de la receta.';
+
+  @override
+  String get applySubstituteAction => 'Aplicar sustituto';
+
+  @override
+  String get applyingSubstitute => 'Aplicando sustituto...';
+
+  @override
+  String get substituteMissingIngredientId =>
+      'No se puede aplicar un sustituto para este ingrediente.';
+
+  @override
+  String get openCookingAssistant => 'Abrir ayudante de cocina';
+
+  @override
+  String get cookingAssistantTitle => 'Ayudante de cocina';
+
+  @override
+  String get cookingAssistantDisclaimer =>
+      'Los tiempos son estimados y pueden cambiar.';
+
+  @override
+  String cookingAssistantStepLabel(Object step) {
+    return 'Paso $step';
+  }
+
+  @override
+  String get cookingAssistantIngredientsTitle => 'Ingredientes en este paso';
+
+  @override
+  String get cookingAssistantToolsTitle => 'Herramientas necesarias';
+
+  @override
+  String get noCookingSteps => 'No hay pasos disponibles.';
+
+  @override
+  String get noToolsNeeded => 'No hay herramientas listadas.';
+
+  @override
+  String estimatedTimeLabel(Object time) {
+    return 'Tiempo estimado: $time';
+  }
+
+  @override
+  String get startTimer => 'Iniciar';
+
+  @override
+  String get pauseTimer => 'Pausar';
+
+  @override
+  String get resetTimer => 'Reiniciar';
+
+  @override
+  String get noTimerAvailable => 'No hay temporizador para este paso.';
+
+  @override
   String get cancel => 'Cancelar';
 
   @override

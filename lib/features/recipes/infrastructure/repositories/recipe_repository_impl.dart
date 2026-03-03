@@ -24,4 +24,25 @@ class RecipeRepositoryImpl implements RecipeRepository {
   Future<bool> toggleFavorite(int id) {
     return _datasource.toggleFavorite(id);
   }
+
+  @override
+  Future<List<IngredientSubstitute>> getIngredientSubstitutes(
+    int id,
+    IngredientSubstitutesRequest request,
+  ) {
+    return _datasource.getIngredientSubstitutes(id, request);
+  }
+
+  @override
+  Future<ApplyRecipeSubstituteResult> applySubstitute(
+    int id,
+    ApplyRecipeSubstituteRequest request,
+  ) {
+    return _datasource.applySubstitute(id, request);
+  }
+
+  @override
+  Future<List<CookingAssistantStep>> getCookingAssistantSteps(int id) {
+    return _datasource.getCookingAssistantSteps(id);
+  }
 }

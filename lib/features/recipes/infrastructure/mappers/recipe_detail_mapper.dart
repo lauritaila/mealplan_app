@@ -17,6 +17,10 @@ class RecipeDetailMapper {
               '';
 
           return RecipeIngredient(
+            id:
+                _toInt(ingredientMap['id']) ??
+                _toInt(ingredientMap['recipe_ingredient_id']) ??
+                _toInt(nestedIngredientMap['id']),
             name: name,
             quantity: _toDouble(ingredientMap['quantity']),
             unit: _toStringOrNull(ingredientMap['unit']) ?? '',
@@ -64,6 +68,7 @@ class RecipeDetailMapper {
       'ingredients': entity.ingredients
           .map(
             (ingredient) => {
+              if (ingredient.id != null) 'id': ingredient.id,
               'name': ingredient.name,
               'quantity': ingredient.quantity,
               'unit': ingredient.unit,
@@ -91,5 +96,12 @@ class RecipeDetailMapper {
     final parsed = value.toString().trim();
     if (parsed.isEmpty) return null;
     return parsed;
+  }
+
+  static int? _toInt(dynamic value) {
+    if (value == null) return null;
+    if (value is int) return value;
+    if (value is num) return value.toInt();
+    return int.tryParse(value.toString());
   }
 }

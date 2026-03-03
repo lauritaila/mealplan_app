@@ -351,6 +351,52 @@
       "minutes": {}
     }
   },
+  "ingredientSubstitutesTitle": "Sustitutos de {ingredient}",
+  "@ingredientSubstitutesTitle": {
+    "placeholders": {
+      "ingredient": {}
+    }
+  },
+  "ingredientSubstitutesTooltip": "Buscar sustitutos",
+  "loadingSubstitutes": "Cargando sustitutos...",
+  "noSubstitutesAvailable": "No hay sustitutos disponibles.",
+  "substituteDetails": "Proporción: {ratio} | {reason} | {category}",
+  "@substituteDetails": {
+    "placeholders": {
+      "ratio": {},
+      "reason": {},
+      "category": {}
+    }
+  },
+  "substituteConfirmTitle": "Confirmar sustituto",
+  "substituteConfirmMessage": "Cambiar un ingrediente puede cambiar significativamente el sabor.",
+  "substituteConfirmNutritionWarning": "Este cambio también puede afectar los valores nutricionales de la receta.",
+  "applySubstituteAction": "Aplicar sustituto",
+  "applyingSubstitute": "Aplicando sustituto...",
+  "substituteMissingIngredientId": "No se puede aplicar un sustituto para este ingrediente.",
+  "openCookingAssistant": "Abrir ayudante de cocina",
+  "cookingAssistantTitle": "Ayudante de cocina",
+  "cookingAssistantDisclaimer": "Los tiempos son estimados y pueden cambiar.",
+  "cookingAssistantStepLabel": "Paso {step}",
+  "@cookingAssistantStepLabel": {
+    "placeholders": {
+      "step": {}
+    }
+  },
+  "cookingAssistantIngredientsTitle": "Ingredientes en este paso",
+  "cookingAssistantToolsTitle": "Herramientas necesarias",
+  "noCookingSteps": "No hay pasos disponibles.",
+  "noToolsNeeded": "No hay herramientas listadas.",
+  "estimatedTimeLabel": "Tiempo estimado: {time}",
+  "@estimatedTimeLabel": {
+    "placeholders": {
+      "time": {}
+    }
+  },
+  "startTimer": "Iniciar",
+  "pauseTimer": "Pausar",
+  "resetTimer": "Reiniciar",
+  "noTimerAvailable": "No hay temporizador para este paso.",
   "cancel": "Cancelar",
   "@cancel": {
     "description": "Etiqueta para el botón cancelar."
