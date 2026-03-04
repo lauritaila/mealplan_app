@@ -1,4 +1,4 @@
-import 'package:meal_plan_app/features/auth/domain/domain.dart'; 
+import 'package:meal_plan_app/features/auth/domain/domain.dart';
 import 'package:equatable/equatable.dart';
 
 abstract class AuthState extends Equatable {
@@ -21,9 +21,10 @@ class LoadingAuthState extends AuthState {
 
 class AuthenticatedAuthState extends AuthState {
   final UserProfile user;
-  const AuthenticatedAuthState(this.user);
+  final bool showGraceWelcome;
+  const AuthenticatedAuthState(this.user, {this.showGraceWelcome = false});
   @override
-  List<Object?> get props => [user];
+  List<Object?> get props => [user, showGraceWelcome];
 }
 
 class UnauthenticatedAuthState extends AuthState {
@@ -31,10 +32,11 @@ class UnauthenticatedAuthState extends AuthState {
 }
 
 class ErrorAuthState extends AuthState {
-  final String message;
-  const ErrorAuthState(this.message);
+  final String? message;
+  final String? code;
+  const ErrorAuthState({this.message, this.code});
   @override
-  List<Object?> get props => [message];
+  List<Object?> get props => [message, code];
 }
 
 class MessageAuthState extends AuthState {
@@ -51,10 +53,22 @@ class AwaitingEmailVerificationAuthState extends AuthState {
   List<Object?> get props => [email];
 }
 
-
 class AwaitingOtpInputState extends AuthState {
   final String email;
-  const AwaitingOtpInputState(this.email);
+  final String? errorMessage;
+  final String? errorCode;
+  final bool cameFromGracePeriod;
+  const AwaitingOtpInputState(
+    this.email, {
+    this.errorMessage,
+    this.errorCode,
+    this.cameFromGracePeriod = false,
+  });
   @override
-  List<Object?> get props => [email];
+  List<Object?> get props => [
+    email,
+    errorMessage,
+    errorCode,
+    cameFromGracePeriod,
+  ];
 }

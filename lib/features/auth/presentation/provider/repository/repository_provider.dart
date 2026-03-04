@@ -12,5 +12,5 @@ AuthRepositoryImpl authRepository(Ref ref) {
   if (client == null) {
     throw StateError('Supabase client is not initialized.');
   }
-  return AuthRepositoryImpl(SupabaseDatasourceImpl(client));
+  return AuthRepositoryImpl(AuthSupabaseDatasourceImpl(client));
 }

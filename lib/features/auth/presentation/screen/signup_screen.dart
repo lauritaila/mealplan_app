@@ -5,6 +5,8 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
 import 'package:meal_plan_app/features/shared/shared.dart';
+import 'package:meal_plan_app/l10n/app_localizations.dart';
+import 'package:meal_plan_app/features/shared/utils/app_error_localizations.dart';
 import '../provider/provider.dart';
 
 class SignUpScreen extends StatelessWidget {
@@ -29,18 +31,19 @@ class _SignUpForm extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final colors = Theme.of(context).colorScheme;
+    final l10n = AppLocalizations.of(context);
     final signupFormState = ref.watch(signupFormProvider);
     final signupFormNotifier = ref.read(signupFormProvider.notifier);
 
     ref.listen(authProvider, (previous, next) {
       if (next is ErrorAuthState) {
-        showSnackbar(context, next.message);
-      }
-      if (previous is LoadingAuthState && next is AwaitingOtpInputState) {
         showSnackbar(
           context,
-          'A verification code has been sent to your email.',
+          localizeErrorCode(l10n, next.code, fallback: next.message),
         );
+      }
+      if (previous is LoadingAuthState && next is AwaitingOtpInputState) {
+        showSnackbar(context, l10n.verificationCodeSentEmail);
       }
     });
 
@@ -51,43 +54,49 @@ class _SignUpForm extends ConsumerWidget {
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
             Text(
-              'Sign Up',
+              l10n.signUp,
               style: TextStyle(
                 fontSize: 30,
                 fontWeight: FontWeight.bold,
                 color: colors.primary,
               ),
             ),
-                        const SizedBox(height: 30),
-              ElevatedButton.icon(
-                icon: Icon(Icons.usb_rounded), 
-                label: const Text('Sign in with Google'),
-                onPressed: () {
-              ref.read(authProvider.notifier).signInWithGoogle();
-                },
-                style: ElevatedButton.styleFrom(
-              foregroundColor: Colors.black, backgroundColor: Colors.white,
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(8.0),
-                side: const BorderSide(color: Colors.grey),
+            const SizedBox(height: 30),
+            ElevatedButton.icon(
+              icon: Image.asset(
+                'assets/images/google_logo.png',
+                width: 24,
+                height: 24,
+                semanticLabel: 'Google logo',
               ),
+              label: Text(l10n.signInWithGoogle),
+              onPressed: () {
+                ref.read(authProvider.notifier).signInWithGoogle();
+              },
+              style: ElevatedButton.styleFrom(
+                foregroundColor: Colors.black,
+                backgroundColor: Colors.white,
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(8.0),
+                  side: const BorderSide(color: Colors.grey),
                 ),
               ),
+            ),
             const SizedBox(height: 16),
             CustomTextFormField(
-              label: 'Name',
+              label: l10n.name,
               onChanged: signupFormNotifier.onNameChanged,
               errorMessage: signupFormState.isFormPosted
-                  ? signupFormState.name.errorMessage
+                  ? signupFormState.name.getErrorMessage(l10n)
                   : null,
             ),
             const SizedBox(height: 15),
             CustomTextFormField(
-              label: 'Email',
+              label: l10n.email,
               keyboardType: TextInputType.emailAddress,
               onChanged: signupFormNotifier.onEmailChanged,
               errorMessage: signupFormState.isFormPosted
-                  ? signupFormState.email.errorMessage
+                  ? signupFormState.email.getErrorMessage(l10n)
                   : null,
             ),
             const SizedBox(height: 30),
@@ -95,7 +104,7 @@ class _SignUpForm extends ConsumerWidget {
               width: double.infinity,
               height: 40,
               child: CustomFilledButton(
-                text: 'Send OTP',
+                text: l10n.sendOtp,
                 buttonColor: colors.primary,
                 onPressed: signupFormState.isPosting
                     ? null
@@ -106,11 +115,11 @@ class _SignUpForm extends ConsumerWidget {
             Row(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                const Text('Do you have an account?'),
+                Text(l10n.doYouHaveAccount),
                 const SizedBox(width: 5),
                 TextButton(
                   onPressed: () => context.go('/login'),
-                  child: const Text('Login'),
+                  child: Text(l10n.login),
                 ),
               ],
             ),

@@ -1,0 +1,412 @@
+{
+  "@@locale": "es",
+  "appTitle": "Plan de comidas",
+  "@appTitle": {
+    "description": "El título de la aplicación."
+  },
+  "genericError": "Algo salió mal. Inténtalo de nuevo.",
+  "errorFieldRequired": "Este campo es obligatorio.",
+  "errorEmailInvalid": "Ingresa un correo válido.",
+  "errorPasswordMinLength": "Mínimo 6 caracteres.",
+  "errorPasswordFormat": "Debe incluir mayúscula, minúscula y un número.",
+  "errorAuthInvalidCredentials": "Credenciales inválidas. Revisa tu correo y contraseña.",
+  "errorAuthEmailNotVerified": "Tu correo no ha sido verificado. Revisa tu bandeja de entrada.",
+  "errorAuthUserNotFound": "Usuario no encontrado.",
+  "errorAuthEmailInUse": "Este correo ya está registrado.",
+  "errorAuthPasswordResetFailed": "No se pudo restablecer la contraseña. Inténtalo más tarde.",
+  "errorAuthResendVerificationFailed": "No se pudo reenviar el correo de verificación.",
+  "errorAuthInvalidOtp": "El código ingresado es inválido o expiró.",
+  "errorAuthUnexpected": "Ocurrió un error inesperado de autenticación.",
+  "errorAuthGoogleSignInFailed": "Ocurrió un error inesperado al iniciar sesión con Google.",
+  "errorAuthSendOtpFailed": "No se pudo enviar el OTP. Inténtalo de nuevo.",
+  "errorNetworkTimeout": "La solicitud tardó demasiado. Revisa tu conexión.",
+  "errorNetworkNoConnection": "Sin conexión a internet. Conéctate e inténtalo de nuevo.",
+  "errorNetworkServer": "Error del servidor. Inténtalo más tarde.",
+  "errorNetworkBadResponse": "Respuesta inesperada del servidor.",
+  "errorNetworkUnreachableHost": "No se puede llegar al servidor. Revisa host, puerto o VPN.",
+  "errorNetworkSsl": "Falló la conexión segura (SSL/TLS).",
+  "errorNetworkRateLimit": "Demasiadas solicitudes. Espera e inténtalo de nuevo.",
+  "errorNetworkBadRequest": "La solicitud fue rechazada por el servidor.",
+  "errorDataNotFound": "No se encontró la información solicitada.",
+  "errorDataInvalid": "Datos inválidos.",
+  "errorDataCreationFailed": "No se pudo crear la información.",
+  "errorDataUpdateFailed": "No se pudo actualizar la información.",
+  "errorDataFetchFailed": "No se pudo obtener la información.",
+  "errorDataSerializationFailed": "No se pudo procesar la información.",
+  "errorDataEmptyResponse": "La respuesta llegó vacía.",
+  "errorPermissionUnauthorized": "No autorizado. Inicia sesión nuevamente.",
+  "errorPermissionForbidden": "No tienes permisos para realizar esta acción.",
+  "errorConfigMissing": "Falta configuración.",
+  "errorConfigInvalid": "La configuración es inválida.",
+  "errorMealPlanNotAuthenticated": "Inicia sesión para continuar.",
+  "errorMealPlanDaysNotAllowed": "La cantidad de días seleccionada no está permitida.",
+  "errorMealPlanTypesNotAllowed": "Algunos tipos de comida no están permitidos.",
+  "errorMealPlanGenerateFailed": "No se pudo generar el plan. Inténtalo de nuevo.",
+  "errorMealPlanQuotaReached": "Has agotado las generaciones de planes esta semana.",
+  "approvePlanTitle": "Aprobar plan",
+  "noPlanDataReceived": "No se recibieron datos del plan.",
+  "done": "Listo",
+  "graceWelcomeTitle": "¡Te extrañábamos! Gracias por volver.",
+  "graceWelcomeMessage": "Toda tu información sigue guardada y lista para continuar.",
+  "continueLabel": "Continuar",
+  "mealsCount": "{count} comidas",
+  "@mealsCount": {
+    "placeholders": {
+      "count": {}
+    }
+  },
+  "caloriesKcal": "{calories} kcal",
+  "@caloriesKcal": {
+    "placeholders": {
+      "calories": {}
+    }
+  },
+  "servingsLabel": "Raciones: {count}",
+  "@servingsLabel": {
+    "placeholders": {
+      "count": {}
+    }
+  },
+  "prepMinutesLabel": "Prep: {minutes} min",
+  "@prepMinutesLabel": {
+    "placeholders": {
+      "minutes": {}
+    }
+  },
+  "cookMinutesLabel": "Cocción: {minutes} min",
+  "@cookMinutesLabel": {
+    "placeholders": {
+      "minutes": {}
+    }
+  },
+  "proteinLabel": "Proteína: {grams} g",
+  "@proteinLabel": {
+    "placeholders": {
+      "grams": {}
+    }
+  },
+  "carbsLabel": "Carbohidratos: {grams} g",
+  "@carbsLabel": {
+    "placeholders": {
+      "grams": {}
+    }
+  },
+  "fatsLabel": "Grasas: {grams} g",
+  "@fatsLabel": {
+    "placeholders": {
+      "grams": {}
+    }
+  },
+  "preparingPlanTitle": "Preparando tu plan",
+  "loadingMessageCookbook": "Revisando el recetario de la abuela...",
+  "loadingMessageRecipes": "Quitando el polvo a las recetas...",
+  "loadingMessageAunts": "Preguntando a las tías sus secretos...",
+  "loadingMessageFridge": "Mirando en la nevera...",
+  "loadingMessageKnives": "Afilando cuchillos imaginarios...",
+  "loadingMessageTablespoons": "Midiendo cucharadas al ojo...",
+  "cookingCombosMessage": "Preparando combinaciones ricas y saludables para ti...",
+  "cancelAndGoBack": "Cancelar y volver",
+  "planLimitReachedTitle": "Límite de planes alcanzado",
+  "planLimitReachedMessage": "Has agotado las generaciones de planes esta semana.",
+  "newPlanTitle": "Nuevo plan",
+  "clear": "Limpiar",
+  "configurePlanTitle": "Configura tu plan",
+  "configurePlanSubtitle": "Define duración, personas y comidas base.",
+  "durationTitle": "Duración",
+  "daysLabel": "{days} días",
+  "@daysLabel": {
+    "placeholders": {
+      "days": {}
+    }
+  },
+  "dinersTitle": "Comensales",
+  "peopleCount": "{count} personas",
+  "@peopleCount": {
+    "placeholders": {
+      "count": {}
+    }
+  },
+  "mealTypesTitle": "Tipos de comida",
+  "mealTypeBreakfast": "Desayuno",
+  "mealTypeLunch": "Almuerzo",
+  "mealTypeSnack": "Merienda",
+  "mealTypeDinner": "Cena",
+  "mealTypeBreakfastSubtitle": "Energía para el día",
+  "mealTypeLunchSubtitle": "Comida principal",
+  "mealTypeSnackSubtitle": "Algo ligero",
+  "mealTypeDinnerSubtitle": "Ligero y nutritivo",
+  "notesOptionalTitle": "Notas (opcional)",
+  "notesHint": "Ej.: Sin lactosa, más proteínas...",
+  "mealsOfDayTitle": "Comidas del día",
+  "skipMealAction": "Saltar comida",
+  "unskipMealAction": "Quitar salto",
+  "mealSkippedLabel": "Saltada",
+  "skipMealDialogTitle": "Comida saltada",
+  "skipMealDialogMessage": "No pasa nada por saltar una comida. Puedes continuar con tu plan cuando quieras.",
+  "viewRecipeDetails": "Ver receta",
+  "categoriesTitle": "Categorías",
+  "metricCalories": "Cal",
+  "metricServings": "Raciones",
+  "metricFat": "Grasa",
+  "metricCarbs": "Carbs",
+  "metricProtein": "Proteína",
+  "metricKcal": "Kcal",
+  "descriptionTitle": "Descripción",
+  "instructionsTitle": "Instrucciones",
+  "ingredientsTitle": "Ingredientes",
+  "noInstructions": "Sin instrucciones.",
+  "noIngredients": "Sin ingredientes.",
+  "retry": "Reintentar",
+  "noMealsLoggedToday": "No hay comidas registradas para hoy.",
+  "weekdayMonShort": "Lun",
+  "weekdayTueShort": "Mar",
+  "weekdayWedShort": "Mié",
+  "weekdayThuShort": "Jue",
+  "weekdayFriShort": "Vie",
+  "weekdaySatShort": "Sáb",
+  "weekdaySunShort": "Dom",
+  "homeTitle": "Inicio",
+  "generateNewPlan": "Generar nuevo plan",
+  "logout": "Cerrar sesión",
+  "deleteAccount": "Eliminar cuenta",
+  "profileNotificationsTitle": "Notificaciones",
+  "profileTermsTitle": "Términos y condiciones",
+  "unableToLoadPlanStatus": "No se pudo cargar el estado del plan: {error}",
+  "@unableToLoadPlanStatus": {
+    "placeholders": {
+      "error": {}
+    }
+  },
+  "plansLeftThisWeek": "Quedan {remaining} de {total} planes esta semana",
+  "@plansLeftThisWeek": {
+    "placeholders": {
+      "remaining": {},
+      "total": {}
+    }
+  },
+  "goPremiumUnlockMorePlans": "Pásate a premium para desbloquear más planes.",
+  "goPremiumTitle": "Hazte Premium",
+  "freePlanLimitedGenerations": "Tu plan gratuito tiene generaciones limitadas de planes.",
+  "goPremiumKeepGenerating": "Hazte premium para seguir generando planes.",
+  "goToHome": "Ir a Inicio",
+  "recipesTitle": "Recetas",
+  "favoriteRecipesTitle": "Recetas favoritas",
+  "favoriteUpdateFailed": "No se pudo actualizar favoritos. Inténtalo de nuevo.",
+  "favoritesTooltip": "Favoritas",
+  "noRecipesAvailable": "No hay recetas disponibles",
+  "noFavoriteRecipes": "No tienes recetas favoritas",
+  "recipeDetailTitle": "Detalle de receta",
+  "errorTitle": "Error",
+  "errorOccurred": "Ocurrió un error: {error}",
+  "@errorOccurred": {
+    "placeholders": {
+      "error": {}
+    }
+  },
+  "login": "Iniciar sesión",
+  "register": "Registrarse",
+  "signUp": "Registrarse",
+  "email": "Correo electrónico",
+  "name": "Nombre",
+  "sendOtp": "Enviar OTP",
+  "sendVerificationCodeOtp": "Enviar código de verificación OTP",
+  "signInWithGoogle": "Continuar con Google",
+  "dontHaveAccount": "¿No tienes una cuenta?",
+  "doYouHaveAccount": "¿Ya tienes una cuenta?",
+  "verificationCodeSentEmail": "Se ha enviado un código de verificación a tu correo.",
+  "otpEnterTitle": "Ingresa el código de verificación",
+  "otpEnterSubtitle": "Ingresa el código de 6 dígitos enviado a:",
+  "otpVerificationCodeLabel": "Código de verificación",
+  "otpResend": "¿No recibiste un código? Enviar de nuevo",
+  "otpVerifySignIn": "Verificar e iniciar sesión",
+  "otpSentSnack": "¡Código de verificación enviado!",
+  "preferencesSaved": "Preferencias guardadas correctamente",
+  "errorSavePreferencesRollbackFailed": "No se pudieron guardar las preferencias y también falló la reversión. La app puede quedar en un estado inconsistente.",
+  "unknownError": "Ocurrió un error desconocido",
+  "wizardPrevious": "Anterior",
+  "wizardNext": "Siguiente",
+  "wizardFinish": "Finalizar",
+  "stepOf": "Paso {current} de {total}",
+  "@stepOf": {
+    "placeholders": {
+      "current": {},
+      "total": {}
+    }
+  },
+  "dietaryTitle": "Preferencias y restricciones alimentarias",
+  "allergiesTitle": "Alergias",
+  "allergiesOtherTitle": "Otras alergias",
+  "allergiesOtherHint": "Indica otras alergias...",
+  "foodPreferencesTitle": "Preferencias de alimentos",
+  "dislikedFoodsTitle": "Alimentos que no te gustan",
+  "dislikedFoodsHint": "Lista los alimentos que no te gustan o quieres evitar...",
+  "likedFoodsTitle": "Alimentos que te gustan",
+  "likedFoodsHint": "Lista tus alimentos e ingredientes favoritos...",
+  "goalsTitle": "Objetivos y elecciones alimentarias",
+  "cookingDetailsTitle": "Detalles de cocina",
+  "cookingSkillTitle": "Nivel de cocina",
+  "timeAvailabilityTitle": "Disponibilidad de tiempo",
+  "householdSizeTitle": "Tamaño del hogar",
+  "dietVegetarian": "Vegetariano",
+  "dietVegan": "Vegano",
+  "dietPescatarian": "Pescetariano",
+  "dietKeto": "Keto",
+  "dietPaleo": "Paleo",
+  "dietMediterranean": "Mediterránea",
+  "dietLowCarb": "Baja en carbohidratos",
+  "dietLowFat": "Baja en grasa",
+  "dietGlutenFree": "Sin gluten",
+  "dietDairyFree": "Sin lácteos",
+  "dietNutFree": "Sin frutos secos",
+  "dietHalal": "Halal",
+  "dietKosher": "Kosher",
+  "allergyNuts": "Frutos secos",
+  "allergyDairy": "Lácteos",
+  "allergyEggs": "Huevos",
+  "allergySoy": "Soja",
+  "allergyWheat": "Trigo",
+  "allergyFish": "Pescado",
+  "allergyShellfish": "Mariscos",
+  "allergySesame": "Sésamo",
+  "goalWeightLoss": "Pérdida de peso",
+  "goalWeightGain": "Aumento de peso",
+  "goalMuscleBuilding": "Ganar músculo",
+  "goalHeartHealth": "Salud cardiovascular",
+  "goalDiabetesManagement": "Control de diabetes",
+  "goalHighProtein": "Alta en proteína",
+  "goalLowSodium": "Baja en sodio",
+  "goalAntiInflammatory": "Antiinflamatoria",
+  "skillBeginner": "Principiante",
+  "skillIntermediate": "Intermedio",
+  "skillAdvanced": "Avanzado",
+  "time15Min": "15 min",
+  "time30Min": "30 min",
+  "time1HourPlus": "1+ hora",
+  "profileTitle": "Perfil",
+  "settingsTitle": "Configuración",
+  "profileGuestName": "Invitado",
+  "profilePreferencesTitle": "Preferencias",
+  "profileDietarySpecsLabel": "Especificaciones dietéticas",
+  "profileHideNutritionLabel": "Ocultar valores nutricionales",
+  "profileSecurityTitle": "Seguridad",
+  "profileChangeEmailLabel": "Cambiar correo",
+  "profileLanguageTitle": "Idioma",
+  "profileLanguageLabel": "Idioma de la app",
+  "profileLanguageEnglish": "Inglés",
+  "profileLanguageSpanish": "Español",
+  "profilePaymentsTitle": "Pagos",
+  "profilePaymentsEmpty": "Todavía no hay pagos para mostrar.",
+  "profileSubscriptionTitle": "Suscripción",
+  "profileSubscriptionCurrentLabel": "Plan actual",
+  "profileSubscriptionIncludesLabel": "Incluye",
+  "profileSubscriptionFree": "Gratis",
+  "profileNoIncludes": "Aún no hay beneficios listados.",
+  "profileSavePreferences": "Guardar preferencias",
+  "mealPlanTitle": "Plan de comidas",
+  "groceryTitle": "Compras",
+  "nutritionTitle": "Nutrición",
+  "profileFarewell": "Lamentamos tu partida.\nGuardaremos tu cocina y tus playlists por 30 días por si decides volver. Después de eso, limpiaremos la mesa para siempre.",
+  "@profileFarewell": {
+    "description": "Mensaje de despedida al eliminar la cuenta."
+  },
+  "confirmDeleteWithEmail": "¿Estás seguro? Escribe tu correo para confirmar: {email}",
+  "@confirmDeleteWithEmail": {
+    "description": "Mensaje para confirmar eliminación de cuenta con correo.",
+    "placeholders": {
+      "email": {}
+    }
+  },
+  "emailPlaceholder": "correo@ejemplo.com",
+  "@emailPlaceholder": {
+    "description": "Placeholder para el campo de correo."
+  },
+  "deletePlanTooltip": "Eliminar plan",
+  "deleteMealDialogTitle": "¿Eliminar esta comida?",
+  "deleteMealDialogMessage": "Esta receta se eliminará del plan. Esta acción no se puede deshacer.",
+  "deleteAction": "Eliminar",
+  "changeMealDateAction": "Cambiar fecha de comida",
+  "swapFavoriteAction": "Cambiar por favorita",
+  "regenerateRecipeAction": "Regenerar receta",
+  "genericMoveError": "No se pudo mover la comida. Inténtalo de nuevo.",
+  "genericDeleteError": "No se pudo eliminar. Inténtalo de nuevo.",
+  "genericRegenerateError": "No se pudo regenerar la receta. Inténtalo de nuevo.",
+  "dragDropHint": "Mantén presionada una receta para arrastrarla a otro día o usa el menú para cambiar fecha.",
+  "dragDropTooltip": "Tip: puedes mover comidas arrastrando entre días o desde el menú “Cambiar fecha de comida”.",
+  "emptyDayDropText": "Suelta una comida aquí",
+  "viewDetailsLabel": "Ver detalle",
+  "hideDetailsLabel": "Ocultar detalle",
+  "regenerateSheetSubtitle": "Cuéntanos qué cambiar o déjalo en blanco para que la IA elija.",
+  "regenerateSheetNotesLabel": "Descripción (opcional)",
+  "regenerateSheetNotesHint": "Ej: Algo más ligero, sin gluten...",
+  "regenerateSheetMaxPrepTimeLabel": "Tiempo máximo de preparación",
+  "regenerateSheetButton": "Regenerar",
+  "deletePlanSheetTitle": "Eliminar plan de comidas",
+  "deletePlanSheetWarning": "Eliminar este plan igual se cuenta en tu límite de generación de planes. Esta acción no se puede deshacer.",
+  "deletePlanSheetReasonLabel": "¿Por qué eliminás el plan? (opcional)",
+  "deletePlanSheetReasonHint": "Ej: No me gustaron las recetas...",
+  "deletePlanSheetConfirmAction": "Sí, eliminar plan",
+  "minutesShortWithPlaceholder": "{minutes} min",
+  "@minutesShortWithPlaceholder": {
+    "placeholders": {
+      "minutes": {}
+    }
+  },
+  "ingredientSubstitutesTitle": "Sustitutos de {ingredient}",
+  "@ingredientSubstitutesTitle": {
+    "placeholders": {
+      "ingredient": {}
+    }
+  },
+  "ingredientSubstitutesTooltip": "Buscar sustitutos",
+  "loadingSubstitutes": "Cargando sustitutos...",
+  "noSubstitutesAvailable": "No hay sustitutos disponibles.",
+  "substituteDetails": "Proporción: {ratio} | {reason} | {category}",
+  "@substituteDetails": {
+    "placeholders": {
+      "ratio": {},
+      "reason": {},
+      "category": {}
+    }
+  },
+  "substituteConfirmTitle": "Confirmar sustituto",
+  "substituteConfirmMessage": "Cambiar un ingrediente puede cambiar significativamente el sabor.",
+  "substituteConfirmNutritionWarning": "Este cambio también puede afectar los valores nutricionales de la receta.",
+  "applySubstituteAction": "Aplicar sustituto",
+  "applyingSubstitute": "Aplicando sustituto...",
+  "substituteMissingIngredientId": "No se puede aplicar un sustituto para este ingrediente.",
+  "openCookingAssistant": "Abrir ayudante de cocina",
+  "cookingAssistantTitle": "Ayudante de cocina",
+  "cookingAssistantDisclaimer": "Los tiempos son estimados y pueden cambiar.",
+  "cookingAssistantStepLabel": "Paso {step}",
+  "@cookingAssistantStepLabel": {
+    "placeholders": {
+      "step": {}
+    }
+  },
+  "cookingAssistantIngredientsTitle": "Ingredientes en este paso",
+  "cookingAssistantToolsTitle": "Herramientas necesarias",
+  "noCookingSteps": "No hay pasos disponibles.",
+  "noToolsNeeded": "No hay herramientas listadas.",
+  "estimatedTimeLabel": "Tiempo estimado: {time}",
+  "@estimatedTimeLabel": {
+    "placeholders": {
+      "time": {}
+    }
+  },
+  "startTimer": "Iniciar",
+  "pauseTimer": "Pausar",
+  "resetTimer": "Reiniciar",
+  "noTimerAvailable": "No hay temporizador para este paso.",
+  "cancel": "Cancelar",
+  "@cancel": {
+    "description": "Etiqueta para el botón cancelar."
+  },
+  "errorLoadingConfiguration": "Error al cargar la configuración. Inténtalo de nuevo.",
+  "@errorLoadingConfiguration": {
+    "description": "Se muestra cuando falla la carga de la configuración."
+  },
+  "errorEmailConfirmationMismatch": "El correo no coincide con tu cuenta.",
+  "@errorEmailConfirmationMismatch": {
+    "description": "Se muestra cuando el correo ingresado para confirmar no coincide con el del usuario."
+  }
+}

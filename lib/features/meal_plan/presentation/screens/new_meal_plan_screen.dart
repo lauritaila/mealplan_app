@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:meal_plan_app/features/meal_plan/presentation/providers/provider.dart';
+import 'package:meal_plan_app/l10n/app_localizations.dart';
+import 'package:meal_plan_app/features/profile/presentation/providers/preferences_details_provider.dart';
 
 class NewMealPlanScreen extends ConsumerStatefulWidget {
   const NewMealPlanScreen({super.key});
@@ -12,9 +14,26 @@ class NewMealPlanScreen extends ConsumerStatefulWidget {
 
 class _NewMealPlanScreenState extends ConsumerState<NewMealPlanScreen> {
   final _descriptionController = TextEditingController();
-  final Set<String> _selectedMealTypes = {'breakfast', 'lunch', 'dinner'};
+  final Set<String> _selectedMealTypes = {
+    'breakfast',
+    'lunch',
+    'dinner',
+    'snack',
+  };
   int _selectedDays = 5;
   int _peopleCount = 2;
+
+  @override
+  void initState() {
+    super.initState();
+    Future.microtask(() {
+      final preferences = ref.read(preferencesDetailsProvider);
+      final prefCount = preferences.householdSize;
+      setState(() {
+        _peopleCount = prefCount > 0 ? prefCount : 2;
+      });
+    });
+  }
 
   @override
   void dispose() {
@@ -31,7 +50,9 @@ class _NewMealPlanScreenState extends ConsumerState<NewMealPlanScreen> {
       _selectedDays = availableDurations.contains(5)
           ? 5
           : availableDurations.first;
-      _peopleCount = 2;
+      final preferences = ref.read(preferencesDetailsProvider);
+      final prefCount = preferences.householdSize;
+      _peopleCount = prefCount > 0 ? prefCount : 2;
       if (showMealTypeSelection) {
         _selectedMealTypes
           ..clear()
@@ -48,6 +69,7 @@ class _NewMealPlanScreenState extends ConsumerState<NewMealPlanScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context);
     final state = ref.watch(mealPlanGeneratorProvider);
     final isLoading = state.status == MealPlanGeneratorStatus.loading;
 
@@ -75,12 +97,12 @@ class _NewMealPlanScreenState extends ConsumerState<NewMealPlanScreen> {
 
     return Scaffold(
       appBar: AppBar(
-        title: const Text('New Plan'),
+        title: Text(l10n.newPlanTitle),
         actions: [
           TextButton(
             onPressed: _resetForm,
             child: Text(
-              'Clear',
+              l10n.clear,
               style: TextStyle(color: Theme.of(context).colorScheme.primary),
             ),
           ),
@@ -95,25 +117,28 @@ class _NewMealPlanScreenState extends ConsumerState<NewMealPlanScreen> {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   const SizedBox(height: 4),
-                  const Text(
-                    'Configure your plan',
-                    style: TextStyle(fontSize: 22, fontWeight: FontWeight.w700),
+                  Text(
+                    l10n.configurePlanTitle,
+                    style: const TextStyle(
+                      fontSize: 22,
+                      fontWeight: FontWeight.w700,
+                    ),
                   ),
                   const SizedBox(height: 4),
                   Text(
-                    'Define duration, people and base meals.',
+                    l10n.configurePlanSubtitle,
                     style: Theme.of(context).textTheme.bodySmall,
                   ),
                   const SizedBox(height: 20),
                   _Section(
-                    title: 'Duration',
+                    title: l10n.durationTitle,
                     child: Wrap(
                       spacing: 12,
                       runSpacing: 12,
                       children: availableDurations
                           .map(
                             (days) => _PillOption(
-                              label: '$days days',
+                              label: l10n.daysLabel(days),
                               selected: _selectedDays == days,
                               onTap: () => setState(() => _selectedDays = days),
                             ),
@@ -122,7 +147,7 @@ class _NewMealPlanScreenState extends ConsumerState<NewMealPlanScreen> {
                     ),
                   ),
                   _Section(
-                    title: 'Diners',
+                    title: l10n.dinersTitle,
                     child: Row(
                       children: [
                         _IconCircleButton(
@@ -136,7 +161,7 @@ class _NewMealPlanScreenState extends ConsumerState<NewMealPlanScreen> {
                         Expanded(
                           child: Center(
                             child: Text(
-                              '$_peopleCount people',
+                              l10n.peopleCount(_peopleCount),
                               style: const TextStyle(
                                 fontSize: 18,
                                 fontWeight: FontWeight.w600,
@@ -153,13 +178,13 @@ class _NewMealPlanScreenState extends ConsumerState<NewMealPlanScreen> {
                   ),
                   if (showMealTypeSelection)
                     _Section(
-                      title: 'Meal types',
+                      title: l10n.mealTypesTitle,
                       child: Column(
                         children: [
                           if (availableMealTypes.contains('breakfast'))
                             _MealTypeTile(
-                              title: 'Breakfast',
-                              subtitle: 'Energy for the day',
+                              title: l10n.mealTypeBreakfast,
+                              subtitle: l10n.mealTypeBreakfastSubtitle,
                               selected: _selectedMealTypes.contains(
                                 'breakfast',
                               ),
@@ -170,8 +195,8 @@ class _NewMealPlanScreenState extends ConsumerState<NewMealPlanScreen> {
                             const SizedBox(height: 10),
                           if (availableMealTypes.contains('lunch'))
                             _MealTypeTile(
-                              title: 'Lunch',
-                              subtitle: 'Main meal',
+                              title: l10n.mealTypeLunch,
+                              subtitle: l10n.mealTypeLunchSubtitle,
                               selected: _selectedMealTypes.contains('lunch'),
                               onTap: () => _toggleMealType('lunch'),
                             ),
@@ -180,8 +205,8 @@ class _NewMealPlanScreenState extends ConsumerState<NewMealPlanScreen> {
                             const SizedBox(height: 10),
                           if (availableMealTypes.contains('snack'))
                             _MealTypeTile(
-                              title: 'Snack',
-                              subtitle: 'Something light',
+                              title: l10n.mealTypeSnack,
+                              subtitle: l10n.mealTypeSnackSubtitle,
                               selected: _selectedMealTypes.contains('snack'),
                               onTap: () => _toggleMealType('snack'),
                             ),
@@ -190,8 +215,8 @@ class _NewMealPlanScreenState extends ConsumerState<NewMealPlanScreen> {
                             const SizedBox(height: 10),
                           if (availableMealTypes.contains('dinner'))
                             _MealTypeTile(
-                              title: 'Dinner',
-                              subtitle: 'Light and nutritious',
+                              title: l10n.mealTypeDinner,
+                              subtitle: l10n.mealTypeDinnerSubtitle,
                               selected: _selectedMealTypes.contains('dinner'),
                               onTap: () => _toggleMealType('dinner'),
                             ),
@@ -199,13 +224,13 @@ class _NewMealPlanScreenState extends ConsumerState<NewMealPlanScreen> {
                       ),
                     ),
                   _Section(
-                    title: 'Notes (optional)',
+                    title: l10n.notesOptionalTitle,
                     child: TextField(
                       controller: _descriptionController,
                       maxLines: 4,
-                      decoration: const InputDecoration(
-                        border: OutlineInputBorder(),
-                        hintText: 'E.g.: Lactose-free, more proteins...',
+                      decoration: InputDecoration(
+                        border: const OutlineInputBorder(),
+                        hintText: l10n.notesHint,
                       ),
                     ),
                   ),
@@ -229,7 +254,7 @@ class _NewMealPlanScreenState extends ConsumerState<NewMealPlanScreen> {
                                 strokeWidth: 2,
                               ),
                             )
-                          : const Text('Continue'),
+                          : Text(l10n.continueLabel),
                     ),
                   ),
                   const SizedBox(height: 12),
@@ -255,12 +280,13 @@ class _NewMealPlanScreenState extends ConsumerState<NewMealPlanScreen> {
   }
 
   void _onGenerate() {
+    final peopleCount = _peopleCount;
     context.push(
       '/meal-plan/loading',
       extra: {
         'description': _descriptionController.text.trim(),
         'numberOfDays': _selectedDays,
-        'quantityOfPeople': _peopleCount,
+        'quantityOfPeople': peopleCount,
         'mealTypes': _selectedMealTypes.toList(),
       },
     );

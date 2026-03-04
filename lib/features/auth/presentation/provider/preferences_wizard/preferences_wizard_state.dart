@@ -1,4 +1,4 @@
-import '../../../domain/domain.dart';
+import 'package:meal_plan_app/features/preferences/domain/domain.dart';
 
 enum FormStatus { initial, submitting, success, error }
 
@@ -15,8 +15,10 @@ class PreferencesWizardState {
   final int householdSize;
 
   final FormStatus formStatus;
+  final String? errorCode;
   final String? errorMessage;
 
+  final String? customAllergy;
 
   PreferencesWizardState({
     this.step = 0,
@@ -30,7 +32,9 @@ class PreferencesWizardState {
     this.likedFoods = const [],
     this.householdSize = 1,
     this.formStatus = FormStatus.initial,
+    this.errorCode,
     this.errorMessage,
+    this.customAllergy,
   });
 
   PreferencesWizardState copyWith({
@@ -45,7 +49,9 @@ class PreferencesWizardState {
     List<String>? likedFoods,
     int? householdSize,
     FormStatus? formStatus,
+    String? errorCode,
     String? errorMessage,
+    String? customAllergy,
   }) {
     return PreferencesWizardState(
       step: step ?? this.step,
@@ -59,7 +65,9 @@ class PreferencesWizardState {
       likedFoods: likedFoods ?? this.likedFoods,
       householdSize: householdSize ?? this.householdSize,
       formStatus: formStatus ?? this.formStatus,
+      errorCode: errorCode ?? this.errorCode,
       errorMessage: errorMessage ?? this.errorMessage,
+      customAllergy: customAllergy ?? this.customAllergy,
     );
   }
 

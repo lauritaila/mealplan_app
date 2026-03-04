@@ -4,21 +4,81 @@ import 'package:meal_plan_app/features/meal_plan/domain/domain.dart';
 import 'package:meal_plan_app/features/meal_plan/infrastructure/mappers/meal_plan_mapper.dart';
 import 'package:meal_plan_app/features/meal_plan/infrastructure/mappers/meal_plan_entries_mapper.dart';
 import 'package:meal_plan_app/config/constants/dio.dart';
+import 'package:supabase_flutter/supabase_flutter.dart';
+import 'package:talker_flutter/talker_flutter.dart';
+import 'package:talker_dio_logger/talker_dio_logger.dart';
 
 class SupabaseMealPlanDatasource extends MealPlanDatasource {
-
   final Dio _dio;
+  final SupabaseClient? _supabaseClient;
   final String _mealPlanApiBaseUrl;
 
   SupabaseMealPlanDatasource({
     Dio? httpClient,
     String? mealPlanApiBaseUrl,
-  }) : _mealPlanApiBaseUrl = mealPlanApiBaseUrl ?? Enviroment.apiBaseUrl,
+    SupabaseClient? supabaseClient,
+  }) : _supabaseClient = supabaseClient,
+       _mealPlanApiBaseUrl = mealPlanApiBaseUrl ?? Enviroment.apiBaseUrl,
        _dio =
            httpClient ??
-           DioFactory.create(
-             baseUrl: mealPlanApiBaseUrl ?? Enviroment.apiBaseUrl,
-           );
+                 DioFactory.create(
+                   baseUrl: mealPlanApiBaseUrl ?? Enviroment.apiBaseUrl,
+                 )
+             ..interceptors.add(
+               TalkerDioLogger(
+                 talker: TalkerFlutter.init(),
+                 settings: const TalkerDioLoggerSettings(
+                   printRequestHeaders: true,
+                   printRequestData: true,
+                   printResponseData: true,
+                   printResponseHeaders: false,
+                 ),
+               ),
+             );
+
+  @override
+  Future<void> updateDayMealEntryStatus(
+    int entryId, {
+    required String? status,
+  }) async {
+    final client = _supabaseClient;
+    if (client == null) {
+      throw const ConfigAppError.missing('SUPABASE_CLIENT');
+    }
+
+    final normalizedStatus = status?.trim().toLowerCase();
+    final valueToPersist = normalizedStatus == null || normalizedStatus.isEmpty
+        ? null
+        : normalizedStatus == 'skiped'
+        ? 'skipped'
+        : normalizedStatus;
+
+    try {
+      await client
+          .from('meal_plan_entries')
+          .update({'status': valueToPersist})
+          .eq('id', entryId)
+          .select('id')
+          .single();
+    } on PostgrestException catch (e) {
+      final details = [
+        if (e.message.isNotEmpty) e.message,
+        if (e.details != null && e.details.toString().isNotEmpty)
+          e.details.toString(),
+        if (e.hint != null && e.hint.toString().isNotEmpty) e.hint.toString(),
+      ].join(' | ');
+      throw DataAppError(
+        details.isNotEmpty
+            ? 'Failed to update meal entry status: $details'
+            : 'Failed to update meal entry status.',
+        code: e.code ?? 'DATA_UPDATE_FAILED',
+      );
+    } on AppError {
+      rethrow;
+    } catch (_) {
+      throw const NetworkAppError.serverError();
+    }
+  }
 
   @override
   Future<MealPlanResponse> generateMealPlan(NewMealPlanRequest request) async {
@@ -36,11 +96,7 @@ class SupabaseMealPlanDatasource extends MealPlanDatasource {
       final status = response.statusCode ?? 200;
       if (status < 200 || status >= 300) {
         if (status == 403) {
-          final message = _extractErrorMessage(response.data);
-          throw PermissionAppError(
-            message ?? 'You do not have permission to perform this action.',
-            code: 'PERMISSION_FORBIDDEN',
-          );
+          throw const PermissionAppError.forbidden();
         }
         _throwByStatus(status);
       }
@@ -209,13 +265,209 @@ class SupabaseMealPlanDatasource extends MealPlanDatasource {
     throw const NetworkAppError.badResponse();
   }
 
-  String? _extractErrorMessage(dynamic data) {
-    if (data is Map<String, dynamic>) {
-      final message = data['message'];
-      if (message is String && message.trim().isNotEmpty) {
-        return message;
+  @override
+  Future<void> deleteMealPlanEntry(int entryId) async {
+    try {
+      if (_mealPlanApiBaseUrl.startsWith('No configure')) {
+        throw const ConfigAppError.missing('API_BASE_URL');
       }
+
+      final response = await _dio.delete(
+        '/api/meal-plan/entries/$entryId',
+        options: Options(headers: {'Content-Type': 'application/json'}),
+      );
+
+      final status = response.statusCode ?? 200;
+      if (status < 200 || status >= 300) {
+        _throwByStatus(status);
+      }
+    } on DioException catch (e) {
+      if (e.type == DioExceptionType.connectionTimeout ||
+          e.type == DioExceptionType.sendTimeout ||
+          e.type == DioExceptionType.receiveTimeout) {
+        throw const NetworkAppError.timeout();
+      }
+      if (e.type == DioExceptionType.badResponse) {
+        final status = e.response?.statusCode ?? -1;
+        _throwByStatus(status);
+      }
+      if (e.type == DioExceptionType.connectionError) {
+        throw const NetworkAppError.unreachableHost();
+      }
+      throw const NetworkAppError.serverError();
+    } on AppError {
+      rethrow;
+    } catch (_) {
+      throw const NetworkAppError.serverError();
     }
-    return null;
+  }
+
+  @override
+  Future<DayMealEntry> changeMealPlanRecipe(
+    int entryId,
+    ChangeMealPlanRecipeRequest request,
+  ) async {
+    try {
+      if (_mealPlanApiBaseUrl.startsWith('No configure')) {
+        throw const ConfigAppError.missing('API_BASE_URL');
+      }
+
+      final response = await _dio.patch(
+        '/api/meal-plan/entries/$entryId/change-recipe',
+        data: request.toJson(),
+        options: Options(headers: {'Content-Type': 'application/json'}),
+      );
+
+      final status = response.statusCode ?? 200;
+      if (status < 200 || status >= 300) {
+        _throwByStatus(status);
+      }
+
+      final data = response.data;
+      if (data == null) {
+        throw const DataAppError.emptyResponse('meal plan entry');
+      }
+
+      if (data is! Map<String, dynamic>) {
+        throw const DataAppError.serializationFailed('meal plan entry');
+      }
+
+      return MealPlanEntriesMapper.fromEntryMap(
+        Map<String, dynamic>.from(data),
+      );
+    } on DioException catch (e) {
+      if (e.type == DioExceptionType.connectionTimeout ||
+          e.type == DioExceptionType.sendTimeout ||
+          e.type == DioExceptionType.receiveTimeout) {
+        throw const NetworkAppError.timeout();
+      }
+      if (e.type == DioExceptionType.badResponse) {
+        final status = e.response?.statusCode ?? -1;
+        _throwByStatus(status);
+      }
+      if (e.type == DioExceptionType.connectionError) {
+        throw const NetworkAppError.unreachableHost();
+      }
+      throw const NetworkAppError.serverError();
+    } on AppError {
+      rethrow;
+    } catch (_) {
+      throw const NetworkAppError.serverError();
+    }
+  }
+
+  @override
+  Future<void> deleteMealPlan(
+    int mealPlanId, {
+    String? deleteDescription,
+  }) async {
+    try {
+      if (_mealPlanApiBaseUrl.startsWith('No configure')) {
+        throw const ConfigAppError.missing('API_BASE_URL');
+      }
+
+      final body = deleteDescription != null && deleteDescription.isNotEmpty
+          ? {'delete_description': deleteDescription}
+          : null;
+
+      final response = await _dio.post(
+        '/api/meal-plan/$mealPlanId/delete',
+        data: body,
+        options: Options(headers: {'Content-Type': 'application/json'}),
+      );
+
+      final status = response.statusCode ?? 200;
+      if (status < 200 || status >= 300) {
+        _throwByStatus(status);
+      }
+    } on DioException catch (e) {
+      if (e.type == DioExceptionType.connectionTimeout ||
+          e.type == DioExceptionType.sendTimeout ||
+          e.type == DioExceptionType.receiveTimeout) {
+        throw const NetworkAppError.timeout();
+      }
+      if (e.type == DioExceptionType.badResponse) {
+        final status = e.response?.statusCode ?? -1;
+        _throwByStatus(status);
+      }
+      if (e.type == DioExceptionType.connectionError) {
+        throw const NetworkAppError.unreachableHost();
+      }
+      throw const NetworkAppError.serverError();
+    } on AppError {
+      rethrow;
+    } catch (_) {
+      throw const NetworkAppError.serverError();
+    }
+  }
+
+  @override
+  Future<void> moveMealPlanEntryToDate(int entryId, DateTime newDate) async {
+    final client = _supabaseClient;
+    if (client == null) {
+      throw const ConfigAppError.missing('SUPABASE_CLIENT');
+    }
+
+    try {
+      final dateOnly = newDate.toIso8601String().split('T').first;
+      await client.rpc(
+        'update_meal_plan_entry_date',
+        params: {'p_entry_id': entryId, 'p_new_date': dateOnly},
+      );
+    } on PostgrestException catch (e) {
+      if (e.code == '23505') {
+        throw const DataAppError.uniqueViolation('meal_plan_entries');
+      }
+      throw const DataAppError.queryError();
+    } catch (_) {
+      throw const NetworkAppError.serverError();
+    }
+  }
+
+  @override
+  Future<DayMealEntry> swapMealPlanRecipe(int entryId, int recipeId) async {
+    try {
+      if (_mealPlanApiBaseUrl.startsWith('No configure')) {
+        throw const ConfigAppError.missing('API_BASE_URL');
+      }
+
+      final response = await _dio.patch(
+        '/api/meal-plan/entries/$entryId/swap-favorite',
+        data: {'recipeId': recipeId},
+        options: Options(headers: {'Content-Type': 'application/json'}),
+      );
+
+      final status = response.statusCode ?? 200;
+      if (status < 200 || status >= 300) {
+        _throwByStatus(status);
+      }
+
+      final data = response.data;
+      if (data == null || data is! Map<String, dynamic>) {
+        throw const DataAppError.mappingError();
+      }
+
+      return MealPlanEntriesMapper.fromEntryMap(
+        Map<String, dynamic>.from(data),
+      );
+    } on DioException catch (e) {
+      if (e.type == DioExceptionType.connectionTimeout ||
+          e.type == DioExceptionType.sendTimeout ||
+          e.type == DioExceptionType.receiveTimeout) {
+        throw const NetworkAppError.timeout();
+      }
+      if (e.type == DioExceptionType.badResponse) {
+        final status = e.response?.statusCode ?? -1;
+        _throwByStatus(status);
+      }
+      if (e.type == DioExceptionType.connectionError) {
+        throw const NetworkAppError.unreachableHost();
+      }
+      throw const NetworkAppError.serverError();
+    } on AppError {
+      rethrow;
+    } catch (_) {
+      throw const NetworkAppError.serverError();
+    }
   }
 }

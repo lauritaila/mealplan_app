@@ -35,18 +35,11 @@ class AuthRepositoryImpl implements AuthRepository {
         final resp = await datasource.getAuthenticatedUserProfile();
         return resp;
       } catch (e) {
-        throw AuthAppError('Failed to check auth status: ${e.toString()}');
+        if (e is AppError) rethrow;
+        throw AuthAppError('Failed to load profile');
       }
     }
-    throw Exception('No authenticated');
-  }
-
-  @override
-  Future<void> saveUserPreference(
-    UserPreferences userPreference,
-    String userId,
-  ) {
-    return datasource.saveUserPreference(userPreference, userId);
+    throw AuthAppError('User not authenticated', code: 'not_authenticated');
   }
 
   @override
@@ -60,12 +53,17 @@ class AuthRepositoryImpl implements AuthRepository {
   }
 
   @override
-  Future<bool> userExists(String email) {
-    return datasource.userExists(email);
+  Future<void> markOnboardingComplete(String userId) {
+    return datasource.markOnboardingComplete(userId);
   }
 
   @override
-  Future<void> signInWithGoogle() {
+  Future<AccessStatus> getUserAccessStatus(String email) {
+    return datasource.getUserAccessStatus(email);
+  }
+
+  @override
+  Future<AccessStatus> signInWithGoogle() {
     return datasource.signInWithGoogle();
   }
 }

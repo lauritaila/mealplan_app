@@ -14,17 +14,20 @@ enum MealPlanGeneratorStatus { initial, loading, success, error }
 class MealPlanGeneratorState {
   final MealPlanGeneratorStatus status;
   final String? errorMessage;
+  final String? errorCode;
   final MealPlanResponse? generatedPlan;
 
   MealPlanGeneratorState({
     this.status = MealPlanGeneratorStatus.initial,
     this.errorMessage,
+    this.errorCode,
     this.generatedPlan,
   });
 
   MealPlanGeneratorState copyWith({
     MealPlanGeneratorStatus? status,
     String? errorMessage,
+    String? errorCode,
     MealPlanResponse? generatedPlan,
     bool clearGeneratedPlan = false,
     bool clearError = false,
@@ -32,6 +35,7 @@ class MealPlanGeneratorState {
     return MealPlanGeneratorState(
       status: status ?? this.status,
       errorMessage: clearError ? null : errorMessage ?? this.errorMessage,
+      errorCode: clearError ? null : errorCode ?? this.errorCode,
       generatedPlan: clearGeneratedPlan
           ? null
           : generatedPlan ?? this.generatedPlan,
@@ -89,18 +93,18 @@ class MealPlanGenerator extends _$MealPlanGenerator {
     try {
       final authState = ref.read(authProvider);
       if (authState is! AuthenticatedAuthState) {
-        throw Exception('User not authenticated');
+        throw const MealPlanAppError.notAuthenticated();
       }
 
       final user = authState.user;
       if (user.permissions != null) {
         final allowedDays = user.permissions!.permissions.mealPlanDays;
         if (!allowedDays.contains(numberOfDays)) {
-          throw Exception('Number of days not allowed');
+          throw const MealPlanAppError.daysNotAllowed();
         }
         final allowedTypes = user.permissions!.permissions.mealPlanTypeFood;
         if (!mealTypes.every((type) => allowedTypes.contains(type))) {
-          throw Exception('Meal types not allowed');
+          throw const MealPlanAppError.typesNotAllowed();
         }
       }
 
@@ -114,6 +118,9 @@ class MealPlanGenerator extends _$MealPlanGenerator {
       final mealPlanRepo = ref.read(mealPlanRepositoryProvider);
       final generatedPlan = await mealPlanRepo.generateMealPlan(request);
 
+      // Refresh remaining quota/status after each successful generation.
+      ref.invalidate(mealPlanGenerationStatusProvider);
+
       state = state.copyWith(
         status: MealPlanGeneratorStatus.success,
         generatedPlan: generatedPlan,
@@ -123,9 +130,10 @@ class MealPlanGenerator extends _$MealPlanGenerator {
       // Keep provider error message concise for UI
       state = state.copyWith(
         status: MealPlanGeneratorStatus.error,
-        errorMessage: e is AppError
-            ? e.message
-            : 'Could not generate the plan. Try again.',
+        errorMessage: e is AppError ? e.message : null,
+        errorCode: e is AppError
+            ? e.code
+            : const MealPlanAppError.generateFailed().code,
         clearGeneratedPlan: true,
       );
     }

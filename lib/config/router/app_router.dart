@@ -4,98 +4,17 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import 'package:meal_plan_app/features/auth/auth.dart';
 import 'package:meal_plan_app/features/home/home.dart';
+import 'package:meal_plan_app/features/profile/profile.dart';
+import 'package:meal_plan_app/features/recipes/recipes.dart';
 import 'package:meal_plan_app/features/auth/presentation/provider/provider.dart';
+import 'package:meal_plan_app/features/shared/screens/main_layout.dart';
 import 'package:meal_plan_app/features/shared/shared.dart';
 
 import '../../features/meal_plan/meal_plan.dart';
 import 'package:meal_plan_app/features/meal_plan/domain/domain.dart';
 import 'package:meal_plan_app/features/meal_plan/presentation/screens/loading_meal_plan_screen.dart';
 
-class MainLayout extends ConsumerWidget {
-  final Widget child;
-  const MainLayout({super.key, required this.child});
-
-  // Función para determinar el índice activo basado en la ruta actual
-  int _calculateSelectedIndex(BuildContext context) {
-    final String location = GoRouterState.of(context).matchedLocation;
-    if (location.startsWith('/home')) {
-      return 0;
-    }
-    if (location.startsWith('/meal-plan')) {
-      return 1;
-    }
-    if (location.startsWith('/recipes')) {
-      return 2;
-    }
-    if (location.startsWith('/grocery-list')) {
-      return 3;
-    }
-    if (location.startsWith('/nutrition')) {
-      return 4;
-    }
-    return 0;
-  }
-
-  @override
-  Widget build(BuildContext context, WidgetRef ref) {
-    return Scaffold(
-      body: child,
-      bottomNavigationBar: BottomNavigationBar(
-        currentIndex: _calculateSelectedIndex(context),
-        onTap: (int index) {
-          switch (index) {
-            case 0:
-              context.go('/home');
-              break;
-            case 1:
-              context.go('/meal-plan');
-              break;
-            case 2:
-              context.go('/recipes');
-              break;
-            case 3:
-              context.go('/grocery-list');
-              break;
-            case 4:
-              context.go('/nutrition');
-              break;
-          }
-        },
-        // Es importante definir el tipo como 'fixed' para que se vean más de 3 items
-        type: BottomNavigationBarType.fixed,
-        items: const [
-          BottomNavigationBarItem(icon: Icon(Icons.home), label: 'Home'),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.calendar_today),
-            label: 'Meal Plan',
-          ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.restaurant_menu),
-            label: 'Recipes',
-          ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.shopping_cart),
-            label: 'Grocery',
-          ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.pie_chart),
-            label: 'Nutrition',
-          ),
-        ],
-      ),
-    );
-  }
-}
-
 // --- Placeholders para las pantallas ---
-class RecipesScreen extends StatelessWidget {
-  const RecipesScreen({super.key});
-  @override
-  Widget build(BuildContext context) => Scaffold(
-    appBar: AppBar(title: const Text('Recipes')),
-    body: Center(child: Text('Recipes Screen')),
-  );
-}
 
 class GroceryListScreen extends StatelessWidget {
   const GroceryListScreen({super.key});
@@ -184,7 +103,7 @@ final appRouterProvider = Provider<GoRouter>((ref) {
           final message =
               (extra['message'] as String?) ??
               'You have run out of plan generations this week.';
-          return PremiunScreen(title: title, message: message);
+          return PremiumScreen(title: title, message: message);
         },
       ),
 
@@ -217,7 +136,38 @@ final appRouterProvider = Provider<GoRouter>((ref) {
           ),
           GoRoute(
             path: '/recipes',
-            builder: (context, state) => const RecipesScreen(),
+            builder: (context, state) => const RecipesListScreen(),
+            routes: [
+              GoRoute(
+                path: 'favorites',
+                builder: (context, state) => const FavoriteRecipesScreen(),
+              ),
+              GoRoute(
+                path: ':id',
+                builder: (context, state) {
+                  final idParam = state.pathParameters['id'];
+                  final parsedId = int.tryParse(idParam ?? '');
+                  if (parsedId == null || parsedId <= 0) {
+                    // Invalid ID: show recipes list or error screen
+                    return const RecipesListScreen();
+                  }
+                  return RecipeDetailScreen(recipeId: parsedId);
+                },
+                routes: [
+                  GoRoute(
+                    path: 'assistant',
+                    builder: (context, state) {
+                      final idParam = state.pathParameters['id'];
+                      final parsedId = int.tryParse(idParam ?? '');
+                      if (parsedId == null || parsedId <= 0) {
+                        return const RecipesListScreen();
+                      }
+                      return CookingAssistantScreen(recipeId: parsedId);
+                    },
+                  ),
+                ],
+              ),
+            ],
           ),
           GoRoute(
             path: '/grocery-list',
@@ -226,6 +176,32 @@ final appRouterProvider = Provider<GoRouter>((ref) {
           GoRoute(
             path: '/nutrition',
             builder: (context, state) => const NutritionScreen(),
+          ),
+          GoRoute(
+            path: '/profile',
+            builder: (context, state) => const ProfileScreen(),
+            routes: [
+              GoRoute(
+                path: 'preferences',
+                builder: (context, state) => const PreferencesDetailsScreen(),
+              ),
+              GoRoute(
+                path: 'language',
+                builder: (context, state) => const LanguageSettingsScreen(),
+              ),
+              GoRoute(
+                path: 'change-email',
+                builder: (context, state) => const ChangeEmailScreen(),
+              ),
+              GoRoute(
+                path: 'view-payments',
+                builder: (context, state) => const ViewPaymentsScreen(),
+              ),
+              GoRoute(
+                path: 'subscription',
+                builder: (context, state) => const SubscriptionScreen(),
+              ),
+            ],
           ),
         ],
       ),

@@ -1,30 +1,46 @@
 import 'package:flutter/material.dart';
+import 'package:confetti/confetti.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:meal_plan_app/features/auth/presentation/provider/provider.dart';
-import 'package:meal_plan_app/features/meal_plan/presentation/providers/provider.dart';
+import 'package:meal_plan_app/features/home/presentation/providers/home_provider.dart';
+import 'package:meal_plan_app/l10n/app_localizations.dart';
 
 class HomeScreen extends ConsumerWidget {
   const HomeScreen({super.key});
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final authState = ref.watch(authProvider);
-    final statusAsync = ref.watch(mealPlanGenerationStatusProvider);
+    final homeState = ref.watch(homeViewStateProvider);
+    final l10n = AppLocalizations.of(context);
+
+    ref.listen(homeShowGraceWelcomeProvider, (previous, next) {
+      if (next == true && previous != true) {
+        WidgetsBinding.instance.addPostFrameCallback((_) async {
+          if (!context.mounted) return;
+          await showDialog<void>(
+            context: context,
+            builder: (_) => const _GraceWelcomeDialog(),
+          );
+          if (context.mounted) {
+            ref.read(authProvider.notifier).consumeGraceWelcome();
+          }
+        });
+      }
+    });
 
     return Scaffold(
-      appBar: AppBar(title: const Text('Home')),
+      appBar: AppBar(title: Text(l10n.homeTitle)),
       body: Padding(
         padding: const EdgeInsets.all(16),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            if (authState is AuthenticatedAuthState) ...[
+            if (homeState.isAuthenticated && homeState.statusAsync != null) ...[
               _PlanStatusCard(
-                statusAsync: statusAsync,
-                totalAllowed:
-                    authState.user.permissions?.permissions.mealPlanGenerate,
-                planName: authState.user.planName ?? 'Free',
+                statusAsync: homeState.statusAsync!,
+                totalAllowed: homeState.totalAllowed,
+                isFreePlan: homeState.isFreePlan,
               ),
               const SizedBox(height: 16),
             ],
@@ -32,14 +48,7 @@ class HomeScreen extends ConsumerWidget {
               width: double.infinity,
               child: ElevatedButton(
                 onPressed: () => context.push('/meal-plan/new'),
-                child: const Text('Generate New Plan'),
-              ),
-            ),
-            SizedBox(
-              width: double.infinity,
-              child: ElevatedButton(
-                onPressed: () => ref.read(authProvider.notifier).logOut(),
-                child: const Text('Logout'),
+                child: Text(l10n.generateNewPlan),
               ),
             ),
           ],
@@ -49,21 +58,90 @@ class HomeScreen extends ConsumerWidget {
   }
 }
 
+class _GraceWelcomeDialog extends StatefulWidget {
+  const _GraceWelcomeDialog();
+
+  @override
+  State<_GraceWelcomeDialog> createState() => _GraceWelcomeDialogState();
+}
+
+class _GraceWelcomeDialogState extends State<_GraceWelcomeDialog> {
+  late final ConfettiController _confettiController;
+
+  @override
+  void initState() {
+    super.initState();
+    _confettiController = ConfettiController(
+      duration: const Duration(seconds: 2),
+    )..play();
+  }
+
+  @override
+  void dispose() {
+    _confettiController.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return AlertDialog(
+      content: Stack(
+        alignment: Alignment.topCenter,
+        children: [
+          Padding(
+            padding: const EdgeInsets.only(top: 36),
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Text(
+                  AppLocalizations.of(context).graceWelcomeTitle,
+                  textAlign: TextAlign.center,
+                  style: const TextStyle(fontWeight: FontWeight.bold),
+                ),
+                const SizedBox(height: 12),
+                Text(
+                  AppLocalizations.of(context).graceWelcomeMessage,
+                  textAlign: TextAlign.center,
+                ),
+                const SizedBox(height: 16),
+                ElevatedButton(
+                  onPressed: () => Navigator.of(context).pop(),
+                  child: Text(AppLocalizations.of(context).continueLabel),
+                ),
+              ],
+            ),
+          ),
+          ConfettiWidget(
+            confettiController: _confettiController,
+            blastDirectionality: BlastDirectionality.explosive,
+            shouldLoop: false,
+            emissionFrequency: 0.04,
+            numberOfParticles: 12,
+            gravity: 0.2,
+            maxBlastForce: 12,
+            minBlastForce: 6,
+          ),
+        ],
+      ),
+    );
+  }
+}
+
 class _PlanStatusCard extends StatelessWidget {
   final AsyncValue statusAsync;
   final int? totalAllowed;
-  final String planName;
+  final bool isFreePlan;
 
   const _PlanStatusCard({
     required this.statusAsync,
     required this.totalAllowed,
-    required this.planName,
+    required this.isFreePlan,
   });
 
   @override
   Widget build(BuildContext context) {
-    final isFree = planName.toLowerCase() == 'free';
     final theme = Theme.of(context);
+    final l10n = AppLocalizations.of(context);
 
     return Card(
       child: Padding(
@@ -73,13 +151,8 @@ class _PlanStatusCard extends StatelessWidget {
           error: (error, stack) => Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              // Text(
-              //   'Plan: $planName',
-              //   style: Theme.of(context).textTheme.titleMedium,
-              // ),
-              // const SizedBox(height: 8),
               Text(
-                'Unable to load plan status: $error',
+                l10n.unableToLoadPlanStatus(l10n.genericError),
                 style: theme.textTheme.bodyMedium?.copyWith(
                   color: theme.colorScheme.error,
                 ),
@@ -95,13 +168,8 @@ class _PlanStatusCard extends StatelessWidget {
             return Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                // Text(
-                //   'Plan: $planName',
-                //   style: Theme.of(context).textTheme.titleMedium,
-                // ),
-                // const SizedBox(height: 8),
                 Text(
-                  '$remaining of $total plans left this week',
+                  l10n.plansLeftThisWeek(remaining, total),
                   style: theme.textTheme.bodyMedium,
                 ),
                 const SizedBox(height: 8),
@@ -119,10 +187,10 @@ class _PlanStatusCard extends StatelessWidget {
                     ),
                   ),
                 ],
-                if (isFree) ...[
+                if (isFreePlan) ...[
                   const SizedBox(height: 12),
                   Text(
-                    'Go premium to unlock more meal plans.',
+                    l10n.goPremiumUnlockMorePlans,
                     style: Theme.of(context).textTheme.bodyMedium,
                   ),
                   const SizedBox(height: 8),
@@ -132,12 +200,11 @@ class _PlanStatusCard extends StatelessWidget {
                       onPressed: () => context.go(
                         '/premium',
                         extra: {
-                          'title': 'Go Premium',
-                          'message':
-                              'Your free plan has limited meal plan generations.',
+                          'title': l10n.goPremiumTitle,
+                          'message': l10n.freePlanLimitedGenerations,
                         },
                       ),
-                      child: const Text('Go Premium'),
+                      child: Text(l10n.goPremiumTitle),
                     ),
                   ),
                 ],

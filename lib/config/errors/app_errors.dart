@@ -47,6 +47,11 @@ class AuthAppError extends AppError {
         message ?? 'An unexpected authentication error occurred.',
         code: 'AUTH_UNEXPECTED',
       );
+  const AuthAppError.emailConfirmationMismatch()
+    : super(
+        'Email confirmation does not match.',
+        code: 'AUTH_EMAIL_CONFIRMATION_MISMATCH',
+      );
 }
 
 /// Exception for errors related to the network.
@@ -110,6 +115,12 @@ class DataAppError extends AppError {
     : super('Failed to parse $entity data.', code: 'DATA_SERIALIZATION_FAILED');
   const DataAppError.emptyResponse(String entity)
     : super('$entity response was empty.', code: 'DATA_EMPTY_RESPONSE');
+  const DataAppError.uniqueViolation(String entity)
+    : super('Unique violation in $entity.', code: 'DATA_UNIQUE_VIOLATION');
+  const DataAppError.queryError()
+    : super('Database query failed.', code: 'DATA_QUERY_ERROR');
+  const DataAppError.mappingError()
+    : super('Error mapping data.', code: 'DATA_MAPPING_ERROR');
 }
 
 /// Exception for errors related to permissions.
@@ -138,5 +149,27 @@ class ConfigAppError extends AppError {
     : super(
         'Configuration invalid: $key value is not valid.',
         code: 'CONFIG_INVALID',
+      );
+}
+
+/// Exception for errors related to meal plan rules and generation.
+class MealPlanAppError extends AppError {
+  const MealPlanAppError(super.message, {super.code});
+
+  const MealPlanAppError.notAuthenticated()
+    : super('User not authenticated.', code: 'MEAL_PLAN_NOT_AUTHENTICATED');
+  const MealPlanAppError.daysNotAllowed()
+    : super('Number of days not allowed.', code: 'MEAL_PLAN_DAYS_NOT_ALLOWED');
+  const MealPlanAppError.typesNotAllowed()
+    : super('Meal types not allowed.', code: 'MEAL_PLAN_TYPES_NOT_ALLOWED');
+  const MealPlanAppError.generateFailed()
+    : super(
+        'Could not generate the plan. Please try again.',
+        code: 'MEAL_PLAN_GENERATE_FAILED',
+      );
+  const MealPlanAppError.quotaReached()
+    : super(
+        'You have run out of plan generations this week.',
+        code: 'MEAL_PLAN_QUOTA_REACHED',
       );
 }
