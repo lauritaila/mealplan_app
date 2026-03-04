@@ -4,6 +4,7 @@ import 'package:meal_plan_app/features/grocery_list/domain/entities/pantry_item.
 import 'package:meal_plan_app/features/grocery_list/presentation/providers/provider.dart';
 import 'package:meal_plan_app/features/grocery_list/presentation/widgets/add_item_bottom_sheet.dart';
 import 'package:meal_plan_app/features/grocery_list/presentation/widgets/pantry_item_tile.dart';
+import 'package:intl/intl.dart';
 import 'package:meal_plan_app/l10n/app_localizations.dart';
 
 class PantryScreen extends ConsumerWidget {
@@ -24,7 +25,7 @@ class PantryScreen extends ConsumerWidget {
         surfaceTintColor: Colors.transparent,
       ),
       body: RefreshIndicator(
-        onRefresh: () async => ref.refresh(pantryItemsProvider),
+        onRefresh: () async => await ref.read(pantryItemsProvider.future),
         child: pantryAsync.when(
           loading: () => const Center(child: CircularProgressIndicator()),
           error: (e, _) => Center(
@@ -33,7 +34,7 @@ class PantryScreen extends ConsumerWidget {
               children: [
                 const Icon(Icons.error_outline, size: 48),
                 const SizedBox(height: 12),
-                Text(e.toString(), textAlign: TextAlign.center),
+                Text(l10n.genericError, textAlign: TextAlign.center),
                 const SizedBox(height: 14),
                 FilledButton(
                   onPressed: () => ref.refresh(pantryItemsProvider),
@@ -76,7 +77,7 @@ class PantryScreen extends ConsumerWidget {
                     return PantryItemTile(
                       key: Key('pantry-${item.id}'),
                       item: item,
-                      onEdit: () => _showEditPantryItem(context, ref, item),
+                      onEdit: () => _showEditPantryItem(context, item),
                       onDelete: () => ref
                           .read(pantryActionsProvider.notifier)
                           .deleteItem(item.id),
@@ -113,12 +114,11 @@ class PantryScreen extends ConsumerWidget {
 
   Future<void> _showEditPantryItem(
     BuildContext context,
-    WidgetRef ref,
     PantryItem item,
   ) async {
     await showDialog(
       context: context,
-      builder: (_) => _EditPantryItemDialog(item: item, ref: ref),
+      builder: (_) => _EditPantryItemDialog(item: item),
     );
   }
 }
@@ -179,16 +179,15 @@ class _EmptyPantry extends StatelessWidget {
   }
 }
 
-class _EditPantryItemDialog extends StatefulWidget {
+class _EditPantryItemDialog extends ConsumerStatefulWidget {
   final PantryItem item;
-  final WidgetRef ref;
-  const _EditPantryItemDialog({required this.item, required this.ref});
+  const _EditPantryItemDialog({required this.item});
 
   @override
-  State<_EditPantryItemDialog> createState() => _EditPantryItemDialogState();
+  ConsumerState<_EditPantryItemDialog> createState() => _EditPantryItemDialogState();
 }
 
-class _EditPantryItemDialogState extends State<_EditPantryItemDialog> {
+class _EditPantryItemDialogState extends ConsumerState<_EditPantryItemDialog> {
   late final TextEditingController _quantityCtrl;
   DateTime? _expiryDate;
   bool _loading = false;
@@ -218,10 +217,21 @@ class _EditPantryItemDialogState extends State<_EditPantryItemDialog> {
     final expiresAt = _expiryDate != null
         ? _expiryDate!.toIso8601String().split('T').first
         : null;
-    await widget.ref
-        .read(pantryActionsProvider.notifier)
-        .updateItem(widget.item.id, quantity: qty, expiresAt: expiresAt);
-    if (mounted) Navigator.pop(context);
+    try {
+      await ref
+          .read(pantryActionsProvider.notifier)
+          .updateItem(widget.item.id, quantity: qty, expiresAt: expiresAt);
+      if (mounted) Navigator.pop(context);
+    } catch (e) {
+      if (mounted) {
+        setState(() => _loading = false);
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text(e.toString())),
+        );
+      }
+    } finally {
+      if (mounted) setState(() => _loading = false);
+    }
   }
 
   Future<void> _pickDate() async {
@@ -238,22 +248,8 @@ class _EditPantryItemDialogState extends State<_EditPantryItemDialog> {
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
     final l10n = AppLocalizations.of(context);
-    final months = [
-      'ene',
-      'feb',
-      'mar',
-      'abr',
-      'may',
-      'jun',
-      'jul',
-      'ago',
-      'sep',
-      'oct',
-      'nov',
-      'dic',
-    ];
     final dateLabel = _expiryDate != null
-        ? '${_expiryDate!.day} de ${months[_expiryDate!.month - 1]} de ${_expiryDate!.year}'
+        ? DateFormat.yMMMMd(Localizations.localeOf(context).toString()).format(_expiryDate!)
         : l10n.pantryNoDate;
 
     return AlertDialog(

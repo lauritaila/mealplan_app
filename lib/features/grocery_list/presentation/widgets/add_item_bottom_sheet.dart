@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:intl/intl.dart';
 import 'package:meal_plan_app/features/grocery_list/presentation/providers/provider.dart';
 import 'package:meal_plan_app/l10n/app_localizations.dart';
 
@@ -41,7 +42,7 @@ class _AddItemBottomSheetState extends ConsumerState<AddItemBottomSheet> {
 
     final name = _nameCtrl.text.trim();
     final qty = double.tryParse(_quantityCtrl.text.trim()) ?? 1.0;
-    final unit = _unitCtrl.text.trim().ifEmpty('unidad');
+    final unit = _unitCtrl.text.trim().ifEmpty(l10n.addItemDefaultUnit);
 
     bool ok = false;
     if (_isPantryMode) {
@@ -79,7 +80,7 @@ class _AddItemBottomSheetState extends ConsumerState<AddItemBottomSheet> {
       Navigator.pop(context, true);
     } else {
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Error al agregar el ingrediente')),
+        SnackBar(content: Text(l10n.addItemErrorAdding)),
       );
     }
   }
@@ -91,7 +92,7 @@ class _AddItemBottomSheetState extends ConsumerState<AddItemBottomSheet> {
       firstDate: DateTime.now(),
       lastDate: DateTime.now().add(const Duration(days: 365 * 2)),
     );
-    if (picked != null) setState(() => _expiryDate = picked);
+    if (picked != null && mounted) setState(() => _expiryDate = picked);
   }
 
   @override
@@ -173,7 +174,7 @@ class _AddItemBottomSheetState extends ConsumerState<AddItemBottomSheet> {
                       textCapitalization: TextCapitalization.none,
                       decoration: InputDecoration(
                         labelText: l10n.addItemUnitLabel,
-                        hintText: 'g, kg, ml, pcs…',
+                        hintText: l10n.addItemUnitHint,
                         prefixIcon: const Icon(Icons.scale_outlined),
                       ),
                     ),
@@ -187,7 +188,7 @@ class _AddItemBottomSheetState extends ConsumerState<AddItemBottomSheet> {
                   textCapitalization: TextCapitalization.sentences,
                   decoration: InputDecoration(
                     labelText: l10n.addItemCategoryLabel,
-                    hintText: 'proteína, verdura, lácteo…',
+                    hintText: l10n.addItemCategoryHint,
                     prefixIcon: const Icon(Icons.label_outline),
                   ),
                 ),
@@ -209,8 +210,8 @@ class _AddItemBottomSheetState extends ConsumerState<AddItemBottomSheet> {
                     ),
                     child: Text(
                       _expiryDate != null
-                          ? _formatDate(_expiryDate!)
-                          : 'Sin fecha',
+                          ? _formatDate(_expiryDate!, context)
+                          : l10n.pantryNoDate,
                       style: theme.textTheme.bodyMedium,
                     ),
                   ),
@@ -243,22 +244,8 @@ class _AddItemBottomSheetState extends ConsumerState<AddItemBottomSheet> {
     );
   }
 
-  String _formatDate(DateTime d) {
-    final months = [
-      'ene',
-      'feb',
-      'mar',
-      'abr',
-      'may',
-      'jun',
-      'jul',
-      'ago',
-      'sep',
-      'oct',
-      'nov',
-      'dic',
-    ];
-    return '${d.day} de ${months[d.month - 1]} de ${d.year}';
+  String _formatDate(DateTime d, BuildContext context) {
+    return DateFormat('d MMM y', Localizations.localeOf(context).toString()).format(d);
   }
 }
 

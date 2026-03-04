@@ -31,7 +31,10 @@ class GroceryListsScreen extends ConsumerWidget {
         ],
       ),
       body: RefreshIndicator(
-        onRefresh: () async => ref.refresh(groceryListsProvider),
+        onRefresh: () async {
+          ref.invalidate(groceryListsProvider);
+          await ref.read(groceryListsProvider.future);
+        },
         child: CustomScrollView(
           slivers: [
             // ── Pantry Card (always present) ──────────────────────────────
@@ -69,7 +72,7 @@ class GroceryListsScreen extends ConsumerWidget {
                       const Icon(Icons.error_outline, size: 48),
                       const SizedBox(height: 12),
                       Text(
-                        '${l10n.groceryListsErrorLoading}\n${e.toString()}',
+                        l10n.groceryListsErrorLoading,
                         textAlign: TextAlign.center,
                       ),
                       const SizedBox(height: 14),

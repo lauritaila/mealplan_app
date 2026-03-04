@@ -144,7 +144,7 @@ class _GroceryItemTileState extends ConsumerState<GroceryItemTile>
                     borderRadius: BorderRadius.circular(6),
                   ),
                   child: Text(
-                    'En despensa',
+                    l10n.groceryItemInPantry,
                     style: theme.textTheme.labelSmall?.copyWith(
                       color: theme.colorScheme.onTertiaryContainer,
                       fontWeight: FontWeight.w600,
@@ -156,7 +156,7 @@ class _GroceryItemTileState extends ConsumerState<GroceryItemTile>
           ),
           trailing: IconButton(
             icon: const Icon(Icons.edit_outlined, size: 18),
-            tooltip: 'Editar cantidad',
+            tooltip: l10n.groceryItemEditTooltip,
             onPressed: () => _showEditQuantity(context),
           ),
         ),

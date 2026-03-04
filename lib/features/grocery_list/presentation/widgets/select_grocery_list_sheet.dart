@@ -88,7 +88,7 @@ class _SelectGroceryListSheetState
                   return Padding(
                     padding: const EdgeInsets.symmetric(vertical: 8),
                     child: Text(
-                      'No tienes listas. Crea una nueva.',
+                      AppLocalizations.of(context).selectGroceryListEmpty,
                       style: TextStyle(color: Colors.grey.shade600),
                     ),
                   );
@@ -108,7 +108,7 @@ class _SelectGroceryListSheetState
               },
               loading: () => const Center(child: CircularProgressIndicator()),
               error: (_, __) => Text(
-                'Error al cargar las listas.',
+                AppLocalizations.of(context).groceryListsErrorLoading,
                 style: TextStyle(color: theme.colorScheme.error),
               ),
             ),
@@ -128,7 +128,7 @@ class _SelectGroceryListSheetState
                 controller: _nameController,
                 autofocus: true,
                 decoration: InputDecoration(
-                  labelText: 'Nombre de la lista',
+                  labelText: AppLocalizations.of(context).listNameLabel,
                   errorText: _createError,
                   border: OutlineInputBorder(
                     borderRadius: BorderRadius.circular(12),
@@ -169,14 +169,24 @@ class _SelectGroceryListSheetState
   Future<void> _createAndReturn() async {
     final name = _nameController.text.trim();
     if (name.isEmpty) {
-      setState(() => _createError = 'Escribe un nombre');
+      if (!mounted) return;
+      setState(() => _createError = AppLocalizations.of(context).listNameEmptyError);
       return;
     }
     setState(() => _createError = null);
-    final result = await ref
-        .read(groceryActionsProvider.notifier)
-        .createList(name: name);
-    if (!mounted) return;
-    Navigator.of(context).pop(result);
+    try {
+      final result = await ref
+          .read(groceryActionsProvider.notifier)
+          .createList(name: name);
+      if (!mounted) return;
+      if (result != null) {
+        Navigator.of(context).pop(result);
+      } else {
+        setState(() => _createError = AppLocalizations.of(context).createListErrorCreate);
+      }
+    } catch (_) {
+      if (!mounted) return;
+      setState(() => _createError = AppLocalizations.of(context).createListErrorCreate);
+    }
   }
 }

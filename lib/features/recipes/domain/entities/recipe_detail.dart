@@ -12,6 +12,7 @@ class RecipeDetail {
   final double? proteinGrams;
   final double? carbsGrams;
   final double? fatsGrams;
+  final int? baseServings;
 
   const RecipeDetail({
     required this.id,
@@ -25,5 +26,6 @@ class RecipeDetail {
     this.proteinGrams,
     this.carbsGrams,
     this.fatsGrams,
+    this.baseServings,
   });
 }

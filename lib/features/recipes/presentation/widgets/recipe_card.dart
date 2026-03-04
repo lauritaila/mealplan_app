@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:meal_plan_app/features/shared/widgets/widgets.dart';
+import 'package:meal_plan_app/l10n/app_localizations.dart';
 
 class RecipeCard extends StatelessWidget {
   final String name;
@@ -63,7 +64,7 @@ class RecipeCard extends StatelessWidget {
                   if (onAddToGroceryList != null)
                     IconButton(
                       icon: const Icon(Icons.shopping_cart_outlined),
-                      tooltip: 'Agregar a lista de compras',
+                      tooltip: AppLocalizations.of(context).menuAddToGrocery,
                       onPressed: onAddToGroceryList,
                     ),
                   IconButton(

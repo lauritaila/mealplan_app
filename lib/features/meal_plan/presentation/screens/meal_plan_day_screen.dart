@@ -234,7 +234,7 @@ Future<void> _importRecipeToList(
 }) async {
   if (recipeId <= 0) {
     ScaffoldMessenger.of(context).showSnackBar(
-      const SnackBar(content: Text('Esta entrada no tiene receta asociada')),
+      SnackBar(content: Text(AppLocalizations.of(context).noRecipeAssociated)),
     );
     return;
   }
@@ -266,7 +266,12 @@ Future<void> _confirmComplete(
   required DayMealEntry entry,
   required DateTime selectedDate,
 }) async {
-  if (entry.recipeId <= 0) return;
+  if (entry.recipeId <= 0) {
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(content: Text(l10n.noRecipeAssociated)),
+    );
+    return;
+  }
   final l10n = AppLocalizations.of(context);
   final confirmed = await showDialog<bool>(
     context: context,
@@ -331,8 +336,8 @@ Future<void> _confirmComplete(
       SnackBar(
         content: Text(
           result.missing.isEmpty
-              ? '✅ ¡Listo! ${result.deducted.length} ingredientes descontados.'
-              : '✅ Completado. ${result.missing.length} ingredientes no estaban en la despensa.',
+              ? l10n.mealCompletedSuccess(result.deducted.length)
+              : l10n.mealCompletedMissing(result.missing.length),
         ),
         duration: const Duration(seconds: 4),
       ),

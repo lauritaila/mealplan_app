@@ -99,7 +99,7 @@ class _MealPlanCard extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final theme = Theme.of(context);
     final l10n = AppLocalizations.of(context);
-    final df = DateFormat('d MMM', 'es');
+    final df = DateFormat('d MMM', Localizations.localeOf(context).toString());
     final dateRange =
         '${df.format(plan.startDate)} – ${df.format(plan.endDate)} ${plan.endDate.year}';
 
@@ -150,7 +150,7 @@ class _MealPlanCard extends ConsumerWidget {
                                 ),
                                 const SizedBox(width: 4),
                                 Text(
-                                  'IA',
+                                  l10n.ai,
                                   style: theme.textTheme.labelSmall?.copyWith(
                                     color:
                                         theme.colorScheme.onSecondaryContainer,
@@ -384,7 +384,7 @@ class _ReusePlanSheetState extends State<_ReusePlanSheet> {
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
     final l10n = AppLocalizations.of(context);
-    final df = DateFormat('d MMM yyyy', 'es');
+    final df = DateFormat('d MMM yyyy', Localizations.localeOf(context).toString());
 
     return Padding(
       padding: EdgeInsets.fromLTRB(

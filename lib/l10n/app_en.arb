@@ -158,7 +158,6 @@
   "ingredientsTitle": "Ingredients",
   "noInstructions": "No instructions.",
   "noIngredients": "No ingredients.",
-  "retry": "Retry",
   "noMealsLoggedToday": "No meals logged for today.",
   "weekdayMonShort": "Mon",
   "weekdayTueShort": "Tue",
@@ -400,7 +399,6 @@
   "cancel": "Cancel",
   "save": "Save",
   "create": "Create",
-  "retry": "Retry",
   "error": "Error",
   "@cancel": {
     "description": "Label for cancel button."
@@ -505,6 +503,9 @@
 
   "createListDialogTitle": "New grocery list",
   "createListErrorCreate": "Error creating the list",
+  "listNameLabel": "List name",
+  "listNameHint": "E.g.: Weekly shopping",
+  "listNameEmptyError": "Please enter a name",
 
   "groceryDetailError": "Error",
 
@@ -521,6 +522,13 @@
   "addItemCategoryLabel": "Category (optional)",
   "addItemExpiryLabel": "Expiry date (optional)",
   "addItemErrorAdding": "Error adding ingredient",
+  "addItemDefaultUnit": "unit",
+  "addItemUnitHint": "g, kg, ml, pcs…",
+  "addItemCategoryHint": "protein, vegetable, dairy…",
+  "groceryItemInPantry": "In pantry",
+  "groceryItemEditTooltip": "Edit quantity",
+  "pantryItemExpired": "Expired",
+  "editAction": "Edit",
   "addItemButton": "Add",
 
   "deleteGroceryListDialogTitle": "Delete list",
@@ -528,6 +536,7 @@
   "@deleteGroceryListDialogMessage": { "placeholders": { "name": {} } },
 
   "selectGroceryListNewList": "New list",
+  "selectGroceryListEmpty": "You have no lists. Create a new one.",
 
   "recipeCompleteDialogTitle": "Complete recipe",
   "recipeCompleteDialogMessage": "Mark this recipe as complete and deduct ingredients from your pantry?",
@@ -539,5 +548,28 @@
   "cookingAssistantBack": "Back",
   "cookingAssistantNext": "Next",
   "cookingAssistantComplete": "Complete recipe",
-  "cookingAssistantCompleteAction": "Complete"
+  "cookingAssistantCompleteAction": "Complete",
+  "servingsPickerDialogTitle": "Number of servings",
+  "servingsPickerConfirm": "Confirm",
+  "noRecipeAssociated": "This entry has no recipe associated",
+  "mealCompletedSuccess": "✅ Done! {count} ingredients deducted.",
+  "mealCompletedMissing": "✅ Completed. {count} ingredients were not in the pantry.",
+  "ai": "AI",
+  "pantryCountLabel": "{count} in pantry",
+  "@pantryCountLabel": {
+    "placeholders": { "count": {} }
+  },
+  "groceryListDetailPendingHeader": "Pending",
+  "groceryListDetailCompletedHeader": "Completed",
+  "groceryListDetailEmptyTitle": "Empty list",
+  "groceryListDetailEmptySubtitle": "Tap + to add your first ingredient",
+  "changeDatesTooltip": "Change dates",
+  "saveIngredientsPrompt": "Save ingredients to...",
+  "alsoRemoveGroceryListSubtitle": "Deletes grocery lists linked to this plan",
+  "savePlanToList": "Save plan to list",
+  "importMealPlanSuccess": "Ingredients imported to \"{name}\"",
+  "@importMealPlanSuccess": {
+    "placeholders": { "name": {} }
+  },
+  "importMealPlanFailure": "Could not import plan"
 }

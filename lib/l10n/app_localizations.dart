@@ -2246,6 +2246,24 @@ abstract class AppLocalizations {
   /// **'Error creating the list'**
   String get createListErrorCreate;
 
+  /// No description provided for @listNameLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'List name'**
+  String get listNameLabel;
+
+  /// No description provided for @listNameHint.
+  ///
+  /// In en, this message translates to:
+  /// **'E.g.: Weekly shopping'**
+  String get listNameHint;
+
+  /// No description provided for @listNameEmptyError.
+  ///
+  /// In en, this message translates to:
+  /// **'Please enter a name'**
+  String get listNameEmptyError;
+
   /// No description provided for @groceryDetailError.
   ///
   /// In en, this message translates to:
@@ -2324,6 +2342,48 @@ abstract class AppLocalizations {
   /// **'Error adding ingredient'**
   String get addItemErrorAdding;
 
+  /// No description provided for @addItemDefaultUnit.
+  ///
+  /// In en, this message translates to:
+  /// **'unit'**
+  String get addItemDefaultUnit;
+
+  /// No description provided for @addItemUnitHint.
+  ///
+  /// In en, this message translates to:
+  /// **'g, kg, ml, pcs…'**
+  String get addItemUnitHint;
+
+  /// No description provided for @addItemCategoryHint.
+  ///
+  /// In en, this message translates to:
+  /// **'protein, vegetable, dairy…'**
+  String get addItemCategoryHint;
+
+  /// No description provided for @groceryItemInPantry.
+  ///
+  /// In en, this message translates to:
+  /// **'In pantry'**
+  String get groceryItemInPantry;
+
+  /// No description provided for @groceryItemEditTooltip.
+  ///
+  /// In en, this message translates to:
+  /// **'Edit quantity'**
+  String get groceryItemEditTooltip;
+
+  /// No description provided for @pantryItemExpired.
+  ///
+  /// In en, this message translates to:
+  /// **'Expired'**
+  String get pantryItemExpired;
+
+  /// No description provided for @editAction.
+  ///
+  /// In en, this message translates to:
+  /// **'Edit'**
+  String get editAction;
+
   /// No description provided for @addItemButton.
   ///
   /// In en, this message translates to:
@@ -2347,6 +2407,10 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'New list'**
   String get selectGroceryListNewList;
+
+  /// In en, this message translates to:
+  /// **'You have no lists. Create a new one.'**
+  String get selectGroceryListEmpty;
 
   /// No description provided for @recipeCompleteDialogTitle.
   ///
@@ -2401,6 +2465,74 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Complete'**
   String get cookingAssistantCompleteAction;
+  
+  /// In en, this message translates to:
+  /// **'Number of servings'**
+  String get servingsPickerDialogTitle;
+  
+  /// In en, this message translates to:
+  /// **'Confirm'**
+  String get servingsPickerConfirm;
+
+  /// In en, this message translates to:
+  /// **'This entry has no recipe associated'**
+  String get noRecipeAssociated;
+
+  /// In en, this message translates to:
+  /// **'✅ Done! {count} ingredients deducted.'**
+  String mealCompletedSuccess(Object count);
+
+  /// In en, this message translates to:
+  /// **'✅ Completed. {count} ingredients were not in the pantry.'**
+  String mealCompletedMissing(Object count);
+
+  /// In en, this message translates to:
+  /// **'AI'**
+  String get ai;
+
+  /// In en, this message translates to:
+  /// **'{count} in pantry'**
+  String pantryCountLabel(Object count);
+
+  /// In en, this message translates to:
+  /// **'Pending'**
+  String get groceryListDetailPendingHeader;
+
+  /// In en, this message translates to:
+  /// **'Completed'**
+  String get groceryListDetailCompletedHeader;
+
+  /// In en, this message translates to:
+  /// **'Empty list'**
+  String get groceryListDetailEmptyTitle;
+
+  /// In en, this message translates to:
+  /// **'Tap + to add your first ingredient'**
+  String get groceryListDetailEmptySubtitle;
+
+  /// In en, this message translates to:
+  /// **'Change dates'**
+  String get changeDatesTooltip;
+
+  /// In en, this message translates to:
+  /// **'Save ingredients to...'**
+  String get saveIngredientsPrompt;
+
+  /// In en, this message translates to:
+  /// **'Deletes grocery lists linked to this plan'**
+  String get alsoRemoveGroceryListSubtitle;
+
+  /// In en, this message translates to:
+  /// **'Save plan to list'**
+  String get savePlanToList;
+
+  /// In en, this message translates to:
+  /// **'Ingredients imported to \"{name}\"'**
+  String importMealPlanSuccess(Object name);
+
+  /// In en, this message translates to:
+  /// **'Could not import plan'**
+  String get importMealPlanFailure;
 }
 
 class _AppLocalizationsDelegate

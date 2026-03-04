@@ -64,9 +64,7 @@ class RecipesListScreen extends ConsumerWidget {
                       if (!context.mounted) return;
                       ScaffoldMessenger.of(context).showSnackBar(
                         SnackBar(
-                          content: Text(
-                            'Failed to update favorite. Please try again.',
-                          ),
+                          content: Text(l10n.favoriteUpdateFailed),
                         ),
                       );
                     }
@@ -75,7 +73,7 @@ class RecipesListScreen extends ConsumerWidget {
                     final selected = await showSelectOrCreateGroceryListSheet(
                       context: context,
                       ref: ref,
-                      title: 'Agregar receta a lista',
+                      title: l10n.addRecipeToListTitle,
                     );
                     if (selected == null || !context.mounted) return;
                     final ok = await ref
@@ -86,8 +84,8 @@ class RecipesListScreen extends ConsumerWidget {
                       SnackBar(
                         content: Text(
                           ok
-                              ? 'Receta agregada a "${selected.name}"'
-                              : 'No se pudo agregar la receta',
+                              ? l10n.recipeAddedToList(selected.name)
+                              : l10n.recipeAddFailed,
                         ),
                       ),
                     );

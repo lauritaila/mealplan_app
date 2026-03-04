@@ -119,7 +119,7 @@ class _DateHeader extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     if (date.year == 2000) return const SizedBox.shrink();
-    final df = DateFormat('EEEE, d MMMM', 'es');
+    final df = DateFormat('EEEE, d MMMM', Localizations.localeOf(context).toString());
     return Padding(
       padding: const EdgeInsets.only(bottom: 4),
       child: Text(

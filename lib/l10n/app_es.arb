@@ -158,7 +158,6 @@
   "ingredientsTitle": "Ingredientes",
   "noInstructions": "Sin instrucciones.",
   "noIngredients": "Sin ingredientes.",
-  "cancel": "Cancelar",
   "save": "Guardar",
   "create": "Crear",
   "error": "Error",
@@ -427,7 +426,7 @@
   "@savedIngredientsSuccess": {
     "placeholders": { "name": {} }
   },
-  "savedIngredientsFailed": "No se pudo guardar los ingredientes",
+  "savedIngredientsFailed": "No se pudieron guardar los ingredientes",
   "planReusedSuccess": "¡Plan reutilizado! \"{name}\" con {count} comidas.",
   "@planReusedSuccess": {
     "placeholders": { "name": {}, "count": {} }
@@ -507,6 +506,9 @@
 
   "createListDialogTitle": "Nueva lista de compras",
   "createListErrorCreate": "Error al crear la lista",
+  "listNameLabel": "Nombre de la lista",
+  "listNameHint": "Ej: Compra semanal",
+  "listNameEmptyError": "Por favor ingresa un nombre",
 
   "groceryDetailError": "Error",
 
@@ -523,13 +525,25 @@
   "addItemCategoryLabel": "Categoría (opcional)",
   "addItemExpiryLabel": "Fecha de vencimiento (opcional)",
   "addItemErrorAdding": "Error al agregar el ingrediente",
+  "addItemDefaultUnit": "unidad",
+  "addItemUnitHint": "g, kg, ml, pcs…",
+  "addItemCategoryHint": "proteína, verdura, lácteo…",
+  "groceryItemInPantry": "En despensa",
+  "groceryItemEditTooltip": "Editar cantidad",
+  "pantryItemExpired": "Vencido",
+  "editAction": "Editar",
   "addItemButton": "Agregar",
-
+  "servingsPickerDialogTitle": "Cantidad de porciones",
+  "servingsPickerConfirm": "Confirmar",
+  "noRecipeAssociated": "Esta entrada no tiene receta asociada",
+  "mealCompletedSuccess": "✅ ¡Listo! {count} ingredientes descontados.",
+  "mealCompletedMissing": "✅ Completado. {count} ingredientes no estaban en la despensa.",
   "deleteGroceryListDialogTitle": "Eliminar lista",
   "deleteGroceryListDialogMessage": "¿Eliminar \"{name}\"?",
   "@deleteGroceryListDialogMessage": { "placeholders": { "name": {} } },
 
   "selectGroceryListNewList": "Nueva lista",
+  "selectGroceryListEmpty": "No tienes listas. Crea una nueva.",
 
   "recipeCompleteDialogTitle": "Completar receta",
   "recipeCompleteDialogMessage": "¿Marcar esta receta como completada y descontar los ingredientes de tu despensa?",
@@ -541,5 +555,23 @@
   "cookingAssistantBack": "Atrás",
   "cookingAssistantNext": "Siguiente",
   "cookingAssistantComplete": "Completar receta",
-  "cookingAssistantCompleteAction": "Completar"
+  "cookingAssistantCompleteAction": "Completar",
+  "ai": "IA",
+  "pantryCountLabel": "{count} en despensa",
+  "@pantryCountLabel": {
+    "placeholders": { "count": {} }
+  },
+  "groceryListDetailPendingHeader": "Pendiente",
+  "groceryListDetailCompletedHeader": "Completado",
+  "groceryListDetailEmptyTitle": "Lista vacía",
+  "groceryListDetailEmptySubtitle": "Toca + para agregar el primer ingrediente",
+  "changeDatesTooltip": "Cambiar fechas",
+  "saveIngredientsPrompt": "Guardar ingredientes en...",
+  "alsoRemoveGroceryListSubtitle": "Borra las listas de compras vinculadas a este plan",
+  "savePlanToList": "Guardar plan en lista",
+  "importMealPlanSuccess": "Ingredientes importados a \"{name}\"",
+  "@importMealPlanSuccess": {
+    "placeholders": { "name": {} }
+  },
+  "importMealPlanFailure": "No se pudo importar el plan"
 }

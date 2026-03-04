@@ -44,6 +44,11 @@ class PantryActions extends _$PantryActions {
     String? category,
     String? expiresAt,
   }) async {
+    if ((ingredientId == null || ingredientId <= 0) &&
+        (ingredientName == null || ingredientName.trim().isEmpty)) {
+      print('Warning: Ingredient name or ID is required to add to pantry');
+      return null;
+    }
     state = state.copyWith(
       status: PantryActionStatus.loading,
       clearError: true,

@@ -50,12 +50,12 @@ class _CreateListDialogState extends ConsumerState<CreateListDialog> {
           controller: _controller,
           autofocus: true,
           textCapitalization: TextCapitalization.sentences,
-          decoration: const InputDecoration(
-            labelText: 'Nombre de la lista',
-            hintText: 'Ej: Compra semanal',
+          decoration: InputDecoration(
+            labelText: AppLocalizations.of(context).listNameLabel,
+            hintText: AppLocalizations.of(context).listNameHint,
           ),
           validator: (v) => (v == null || v.trim().isEmpty)
-              ? 'Por favor ingresa un nombre'
+              ? AppLocalizations.of(context).listNameEmptyError
               : null,
           onFieldSubmitted: (_) => _submit(),
         ),

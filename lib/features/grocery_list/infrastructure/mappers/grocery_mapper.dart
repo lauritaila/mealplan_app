@@ -46,13 +46,16 @@ class GroceryListItemMapper {
   }
 }
 
-DateTime _parseDate(dynamic value) {
-  if (value == null) return DateTime.now();
+/// Parses a date from dynamic input.
+/// Returns null if the value is null or malformed.
+DateTime? _parseDate(dynamic value) {
+  if (value == null) return null;
   try {
     if (value is DateTime) return value;
     return DateTime.parse(value.toString());
-  } catch (_) {
-    return DateTime.now();
+  } catch (e) {
+    print('Warning: Error parsing date "$value": $e');
+    return null;
   }
 }
 

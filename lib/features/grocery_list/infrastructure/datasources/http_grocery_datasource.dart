@@ -60,6 +60,7 @@ class HttpGroceryDatasource extends GroceryDatasource {
       if (mealPlanId != null) body['meal_plan_id'] = mealPlanId;
       final response = await _dio.post('/api/grocery-lists', data: body);
       _assertSuccess(response.statusCode ?? 200);
+      if (response.data == null) throw const NetworkAppError.badResponse();
       final data = _toMap(response.data);
       return GroceryListMapper.fromMap(data);
     } on DioException catch (e) {
@@ -76,6 +77,7 @@ class HttpGroceryDatasource extends GroceryDatasource {
     try {
       final response = await _dio.get('/api/grocery-lists/$id');
       _assertSuccess(response.statusCode ?? 200);
+      if (response.data == null) throw const NetworkAppError.badResponse();
       final data = _toMap(response.data);
       return GroceryListDetailMapper.fromMap(data);
     } on DioException catch (e) {
@@ -95,6 +97,7 @@ class HttpGroceryDatasource extends GroceryDatasource {
         data: {'name': name},
       );
       _assertSuccess(response.statusCode ?? 200);
+      if (response.data == null) throw const NetworkAppError.badResponse();
       final data = _toMap(response.data);
       return GroceryListMapper.fromMap(data);
     } on DioException catch (e) {
@@ -141,6 +144,7 @@ class HttpGroceryDatasource extends GroceryDatasource {
         data: body,
       );
       _assertSuccess(response.statusCode ?? 200);
+      if (response.data == null) throw const NetworkAppError.badResponse();
       final data = _toMap(response.data);
       return GroceryListItemMapper.fromMap(data);
     } on DioException catch (e) {

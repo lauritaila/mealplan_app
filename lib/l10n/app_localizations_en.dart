@@ -1184,6 +1184,15 @@ class AppLocalizationsEn extends AppLocalizations {
   String get createListErrorCreate => 'Error creating the list';
 
   @override
+  String get listNameLabel => 'List name';
+
+  @override
+  String get listNameHint => 'E.g.: Weekly shopping';
+
+  @override
+  String get listNameEmptyError => 'Please enter a name';
+
+  @override
   String get groceryDetailError => 'Error';
 
   @override
@@ -1223,6 +1232,27 @@ class AppLocalizationsEn extends AppLocalizations {
   String get addItemErrorAdding => 'Error adding ingredient';
 
   @override
+  String get addItemDefaultUnit => 'unit';
+
+  @override
+  String get addItemUnitHint => 'g, kg, ml, pcs…';
+
+  @override
+  String get addItemCategoryHint => 'protein, vegetable, dairy…';
+
+  @override
+  String get groceryItemInPantry => 'In pantry';
+
+  @override
+  String get groceryItemEditTooltip => 'Edit quantity';
+
+  @override
+  String get pantryItemExpired => 'Expired';
+
+  @override
+  String get editAction => 'Edit';
+
+  @override
   String get addItemButton => 'Add';
 
   @override
@@ -1235,6 +1265,9 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get selectGroceryListNewList => 'New list';
+
+  @override
+  String get selectGroceryListEmpty => 'You have no lists. Create a new one.';
 
   @override
   String get recipeCompleteDialogTitle => 'Complete recipe';
@@ -1267,4 +1300,63 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get cookingAssistantCompleteAction => 'Complete';
+
+  @override
+  String get servingsPickerDialogTitle => 'Number of servings';
+
+  @override
+  String get servingsPickerConfirm => 'Confirm';
+
+  @override
+  String get noRecipeAssociated => 'This entry has no recipe associated';
+
+  @override
+  String mealCompletedSuccess(Object count) {
+    return '✅ Done! $count ingredients deducted.';
+  }
+
+  @override
+  String mealCompletedMissing(Object count) {
+    return '✅ Completed. $count ingredients were not in the pantry.';
+  }
+
+  @override
+  String get ai => 'AI';
+
+  @override
+  String pantryCountLabel(Object count) {
+    return '$count in pantry';
+  }
+
+  @override
+  String get groceryListDetailPendingHeader => 'Pending';
+
+  @override
+  String get groceryListDetailCompletedHeader => 'Completed';
+
+  @override
+  String get groceryListDetailEmptyTitle => 'Empty list';
+
+  @override
+  String get groceryListDetailEmptySubtitle => 'Tap + to add your first ingredient';
+
+  @override
+  String get changeDatesTooltip => 'Change dates';
+
+  @override
+  String get saveIngredientsPrompt => 'Save ingredients to...';
+
+  @override
+  String get alsoRemoveGroceryListSubtitle => 'Deletes grocery lists linked to this plan';
+
+  @override
+  String get savePlanToList => 'Save plan to list';
+
+  @override
+  String importMealPlanSuccess(Object name) {
+    return 'Ingredients imported to "$name"';
+  }
+
+  @override
+  String get importMealPlanFailure => 'Could not import plan';
 }

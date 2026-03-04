@@ -211,9 +211,15 @@ class _CookingAssistantScreenState
     );
 
     try {
-      // Hardcode servings to 1 since recipe details endpoint 
-      // does not currently expose base servings directly on the entity 
-      int baseServings = 1;
+      final recipeAsync = ref.read(recipeDetailProvider(widget.recipeId));
+      final recipe = recipeAsync.valueOrNull;
+      int? baseServings = recipe?.baseServings;
+
+      if (baseServings == null) {
+        baseServings = await _showServingsDialog(context);
+      }
+
+      if (baseServings == null || !context.mounted) return;
 
       final notifier = ref.read(mealPlanEntryActionsProvider.notifier);
       final result = await notifier.bulkDeduct(
@@ -232,7 +238,10 @@ class _CookingAssistantScreenState
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
             content: Text(
-              '¡Receta completada! $successCount ingredientes descontados. ${missingCount > 0 ? '$missingCount no encontrados.' : ''}',
+              AppLocalizations.of(context).recipeCompletedSuccess(
+                successCount.toString(),
+                missingCount > 0 ? AppLocalizations.of(context).recipeCompletedMissingNote(missingCount.toString()) : '',
+              ),
             ),
           ),
         );
@@ -242,7 +251,7 @@ class _CookingAssistantScreenState
           SnackBar(
             content: Text(
               ref.read(mealPlanEntryActionsProvider).errorMessage ??
-                  'Error al completar la receta',
+                  AppLocalizations.of(context).genericError,
             ),
           ),
         );
@@ -252,7 +261,7 @@ class _CookingAssistantScreenState
         Navigator.of(context).pop(); // dismiss loading
         ScaffoldMessenger.of(
           context,
-        ).showSnackBar(SnackBar(content: Text(e.toString())));
+        ).showSnackBar(SnackBar(content: Text(AppLocalizations.of(context).genericError)));
       }
     }
   }
@@ -267,6 +276,60 @@ class _CookingAssistantScreenState
       Colors.teal.shade50,
     ];
     return palette[index % palette.length];
+  }
+
+  Future<int?> _showServingsDialog(BuildContext context) async {
+    final l10n = AppLocalizations.of(context);
+    int servings = 1;
+
+    return showDialog<int?>(
+      context: context,
+      builder: (ctx) => AlertDialog(
+        title: Text(l10n.servingsPickerDialogTitle),
+        content: StatefulBuilder(
+          builder: (context, setLocalState) => Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  IconButton(
+                    onPressed: servings > 1
+                        ? () => setLocalState(() => servings--)
+                        : null,
+                    icon: const Icon(Icons.remove_circle_outline),
+                  ),
+                  Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 20),
+                    child: Text(
+                      servings.toString(),
+                      style: const TextStyle(
+                        fontSize: 24,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                  ),
+                  IconButton(
+                    onPressed: () => setLocalState(() => servings++),
+                    icon: const Icon(Icons.add_circle_outline),
+                  ),
+                ],
+              ),
+            ],
+          ),
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.of(ctx).pop(),
+            child: Text(l10n.cancel),
+          ),
+          FilledButton(
+            onPressed: () => Navigator.of(ctx).pop(servings),
+            child: Text(l10n.servingsPickerConfirm),
+          ),
+        ],
+      ),
+    );
   }
 }
 

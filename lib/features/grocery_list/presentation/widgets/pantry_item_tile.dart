@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
 import 'package:meal_plan_app/features/grocery_list/domain/entities/pantry_item.dart';
 import 'package:meal_plan_app/l10n/app_localizations.dart';
 
@@ -17,12 +18,13 @@ class PantryItemTile extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
+    final now = DateTime.now();
     final isExpired =
-        item.expiresAt != null && item.expiresAt!.isBefore(DateTime.now());
+        item.expiresAt != null && item.expiresAt!.isBefore(now);
     final expiringSoon =
         item.expiresAt != null &&
         !isExpired &&
-        item.expiresAt!.difference(DateTime.now()).inDays <= 3;
+        item.expiresAt!.difference(now).inDays <= 3;
 
     Color chipColor = theme.colorScheme.primaryContainer;
     Color chipTextColor = theme.colorScheme.onPrimaryContainer;
@@ -118,7 +120,9 @@ class PantryItemTile extends StatelessWidget {
                   borderRadius: BorderRadius.circular(8),
                 ),
                 child: Text(
-                  isExpired ? 'Vencido' : _formatDate(item.expiresAt!),
+                  isExpired
+                      ? AppLocalizations.of(context).pantryItemExpired
+                      : _formatDate(context, item.expiresAt!),
                   style: theme.textTheme.labelSmall?.copyWith(
                     color: chipTextColor,
                     fontWeight: FontWeight.w600,
@@ -128,7 +132,7 @@ class PantryItemTile extends StatelessWidget {
             const SizedBox(width: 4),
             IconButton(
               icon: const Icon(Icons.edit_outlined, size: 18),
-              tooltip: 'Editar',
+              tooltip: AppLocalizations.of(context).editAction,
               onPressed: onEdit,
             ),
           ],
@@ -141,21 +145,8 @@ class PantryItemTile extends StatelessWidget {
     return q == q.roundToDouble() ? q.toInt().toString() : q.toStringAsFixed(1);
   }
 
-  String _formatDate(DateTime date) {
-    final months = [
-      'ene',
-      'feb',
-      'mar',
-      'abr',
-      'may',
-      'jun',
-      'jul',
-      'ago',
-      'sep',
-      'oct',
-      'nov',
-      'dic',
-    ];
-    return '${date.day} ${months[date.month - 1]}';
+  String _formatDate(BuildContext context, DateTime date) {
+    return DateFormat('d MMM', Localizations.localeOf(context).toString())
+        .format(date);
   }
 }

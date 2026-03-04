@@ -208,13 +208,17 @@ class RecipeDetailScreen extends ConsumerWidget {
                       );
 
                       try {
-                        // Hardcode servings to 1 since recipe details endpoint
-                        // does not currently expose base servings directly on the entity
-                        final int baseServings = 1;
+                        int? servings = recipe.baseServings;
+                        
+                        if (servings == null) {
+                          servings = await _showServingsDialog(context);
+                        }
+
+                        if (servings == null || !context.mounted) return;
 
                         final result = await ref
                             .read(mealPlanEntryActionsProvider.notifier)
-                            .bulkDeduct(recipeId, baseServings, entryId: entryId);
+                            .bulkDeduct(recipeId, servings, entryId: entryId);
 
                         if (context.mounted) {
                           Navigator.of(context).pop(); // dismiss loading
@@ -250,7 +254,7 @@ class RecipeDetailScreen extends ConsumerWidget {
                           Navigator.of(context).pop(); // dismiss loading
                           ScaffoldMessenger.of(
                             context,
-                          ).showSnackBar(SnackBar(content: Text(e.toString())));
+                          ).showSnackBar(SnackBar(content: Text(l10n.genericError)));
                         }
                       }
                     },
@@ -325,5 +329,59 @@ class RecipeDetailScreen extends ConsumerWidget {
       safeUnit,
       safeName,
     ].where((part) => part.isNotEmpty).join(' ');
+  }
+
+  Future<int?> _showServingsDialog(BuildContext context) async {
+    final l10n = AppLocalizations.of(context);
+    int servings = 1;
+
+    return showDialog<int?>(
+      context: context,
+      builder: (ctx) => AlertDialog(
+        title: Text(l10n.servingsPickerDialogTitle),
+        content: StatefulBuilder(
+          builder: (context, setLocalState) => Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  IconButton(
+                    onPressed: servings > 1
+                        ? () => setLocalState(() => servings--)
+                        : null,
+                    icon: const Icon(Icons.remove_circle_outline),
+                  ),
+                  Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 20),
+                    child: Text(
+                      servings.toString(),
+                      style: const TextStyle(
+                        fontSize: 24,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                  ),
+                  IconButton(
+                    onPressed: () => setLocalState(() => servings++),
+                    icon: const Icon(Icons.add_circle_outline),
+                  ),
+                ],
+              ),
+            ],
+          ),
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.of(ctx).pop(),
+            child: Text(l10n.cancel),
+          ),
+          FilledButton(
+            onPressed: () => Navigator.of(ctx).pop(servings),
+            child: Text(l10n.servingsPickerConfirm),
+          ),
+        ],
+      ),
+    );
   }
 }

@@ -90,12 +90,12 @@ class _DetailMealPlanScreenState extends ConsumerState<DetailMealPlanScreen> {
                                 Icons.edit_calendar_outlined,
                                 size: 20,
                               ),
-                              tooltip: 'Cambiar fechas',
+                              tooltip: l10n.changeDatesTooltip,
                               onPressed: () => _showEditDatesPicker(
                                 context,
                                 plan.startDate,
                                 plan.endDate,
-                                plan.id,
+                                plan!.id,
                               ),
                             ),
                         ],
@@ -165,7 +165,7 @@ class _DetailMealPlanScreenState extends ConsumerState<DetailMealPlanScreen> {
                       final selected = await showSelectOrCreateGroceryListSheet(
                         context: context,
                         ref: ref,
-                        title: 'Guardar ingredientes en...',
+                        title: l10n.saveIngredientsPrompt,
                       );
 
                       if (selected != null && context.mounted) {
@@ -173,7 +173,7 @@ class _DetailMealPlanScreenState extends ConsumerState<DetailMealPlanScreen> {
                             .read(groceryActionsProvider.notifier)
                             .importMealPlan(
                               selected.id,
-                              widget.generatedPlan!.plan.id,
+                              plan!.id,
                             );
 
                         if (context.mounted) {
@@ -181,8 +181,8 @@ class _DetailMealPlanScreenState extends ConsumerState<DetailMealPlanScreen> {
                             SnackBar(
                               content: Text(
                                 ok
-                                    ? 'Ingredientes guardados en "${selected.name}"'
-                                    : 'No se pudo guardar los ingredientes',
+                                    ? l10n.savedIngredientsSuccess(selected.name)
+                                    : l10n.savedIngredientsFailed,
                               ),
                             ),
                           );
@@ -663,10 +663,11 @@ class _DetailMealPlanScreenState extends ConsumerState<DetailMealPlanScreen> {
 
   Future<void> _importToGroceryList(BuildContext context, int planId) async {
     final messenger = ScaffoldMessenger.of(context);
+    final l10n = AppLocalizations.of(context);
     final selected = await showSelectOrCreateGroceryListSheet(
       context: context,
       ref: ref,
-      title: 'Guardar plan en lista',
+      title: l10n.savePlanToList,
     );
     if (selected == null || !mounted) return;
     final ok = await ref
@@ -677,8 +678,8 @@ class _DetailMealPlanScreenState extends ConsumerState<DetailMealPlanScreen> {
       SnackBar(
         content: Text(
           ok
-              ? 'Ingredientes importados a "${selected.name}"'
-              : 'No se pudo importar el plan',
+              ? l10n.importMealPlanSuccess(selected.name)
+              : l10n.importMealPlanFailure,
         ),
       ),
     );
@@ -1250,10 +1251,10 @@ class _RegenerateEntrySheetState extends State<_RegenerateEntrySheet> {
               contentPadding: EdgeInsets.zero,
               value: _usePantry,
               onChanged: (v) => setState(() => _usePantry = v ?? false),
-              title: const Text('Usar ingredientes de mi despensa'),
-              subtitle: const Text(
-                'La IA priorizará ingredientes que ya tienes',
-                style: TextStyle(fontSize: 12),
+              title: Text(l10n.usePantryLabel),
+              subtitle: Text(
+                l10n.usePantrySubtitle,
+                style: const TextStyle(fontSize: 12),
               ),
               controlAffinity: ListTileControlAffinity.leading,
             ),
@@ -1424,10 +1425,10 @@ class _DeletePlanSheetState extends State<_DeletePlanSheet> {
               value: _removeShoppingList,
               onChanged: (v) =>
                   setState(() => _removeShoppingList = v ?? false),
-              title: const Text('También eliminar la lista de la compra'),
-              subtitle: const Text(
-                'Borra las listas de compras vinculadas a este plan',
-                style: TextStyle(fontSize: 12),
+              title: Text(l10n.alsoRemoveGroceryList),
+              subtitle: Text(
+                l10n.alsoRemoveGroceryListSubtitle,
+                style: const TextStyle(fontSize: 12),
               ),
               controlAffinity: ListTileControlAffinity.leading,
             ),

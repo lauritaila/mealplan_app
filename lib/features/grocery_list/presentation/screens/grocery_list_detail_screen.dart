@@ -27,7 +27,7 @@ class GroceryListDetailScreen extends ConsumerWidget {
             children: [
               const Icon(Icons.error_outline, size: 48),
               const SizedBox(height: 12),
-              Text(e.toString(), textAlign: TextAlign.center),
+              Text(AppLocalizations.of(context).genericError, textAlign: TextAlign.center),
               const SizedBox(height: 12),
               FilledButton(
                 onPressed: () => ref.refresh(groceryListDetailProvider(listId)),
@@ -61,7 +61,7 @@ class GroceryListDetailScreen extends ConsumerWidget {
                       color: theme.colorScheme.onTertiaryContainer,
                     ),
                     label: Text(
-                      '$pantryCount en despensa',
+                      AppLocalizations.of(context).pantryCountLabel(pantryCount),
                       style: theme.textTheme.labelSmall?.copyWith(
                         color: theme.colorScheme.onTertiaryContainer,
                         fontWeight: FontWeight.w600,
@@ -77,7 +77,15 @@ class GroceryListDetailScreen extends ConsumerWidget {
             onRefresh: () async =>
                 ref.refresh(groceryListDetailProvider(listId)),
             child: detail.items.isEmpty
-                ? _EmptyState(listId: listId)
+                ? CustomScrollView(
+                    physics: const AlwaysScrollableScrollPhysics(),
+                    slivers: [
+                      SliverFillRemaining(
+                        hasScrollBody: false,
+                        child: _EmptyState(listId: listId),
+                      ),
+                    ],
+                  )
                 : ListView(
                     padding: const EdgeInsets.symmetric(
                       horizontal: 16,
@@ -87,7 +95,7 @@ class GroceryListDetailScreen extends ConsumerWidget {
                       // ── Unchecked items ──────────────────────────────────
                       if (uncheckedItems.isNotEmpty) ...[
                         _SectionHeader(
-                          label: 'Pendiente',
+                          label: AppLocalizations.of(context).groceryListDetailPendingHeader,
                           count: uncheckedItems.length,
                         ),
                         ...uncheckedItems.map(
@@ -106,7 +114,7 @@ class GroceryListDetailScreen extends ConsumerWidget {
                       // ── Checked items ────────────────────────────────────
                       if (checkedItems.isNotEmpty) ...[
                         _SectionHeader(
-                          label: 'Completado',
+                          label: AppLocalizations.of(context).groceryListDetailCompletedHeader,
                           count: checkedItems.length,
                         ),
                         ...checkedItems.map(
@@ -127,7 +135,7 @@ class GroceryListDetailScreen extends ConsumerWidget {
           ),
           floatingActionButton: FloatingActionButton(
             heroTag: 'grocery-detail-fab',
-            tooltip: 'Agregar ingrediente',
+            tooltip: AppLocalizations.of(context).addItemTitleGrocery,
             onPressed: () => _showAddItem(context),
             child: const Icon(Icons.add),
           ),
@@ -195,7 +203,7 @@ class _EmptyState extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final theme = Theme.of(context);
+    final l10n = AppLocalizations.of(context);
     return Center(
       child: Column(
         mainAxisSize: MainAxisSize.min,
@@ -207,14 +215,14 @@ class _EmptyState extends StatelessWidget {
           ),
           const SizedBox(height: 16),
           Text(
-            'Lista vacía',
+            l10n.groceryListDetailEmptyTitle,
             style: theme.textTheme.titleMedium?.copyWith(
               color: theme.colorScheme.onSurfaceVariant,
             ),
           ),
           const SizedBox(height: 8),
           Text(
-            'Toca + para agregar el primer ingrediente',
+            l10n.groceryListDetailEmptySubtitle,
             style: theme.textTheme.bodySmall?.copyWith(
               color: theme.colorScheme.onSurfaceVariant,
             ),

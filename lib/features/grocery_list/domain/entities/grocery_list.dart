@@ -2,13 +2,13 @@ class GroceryList {
   final int id;
   final String name;
   final int? mealPlanId;
-  final DateTime createdAt;
+  final DateTime? createdAt;
 
   const GroceryList({
     required this.id,
     required this.name,
     this.mealPlanId,
-    required this.createdAt,
+    this.createdAt,
   });
 }
 
@@ -52,14 +52,14 @@ class GroceryListDetail {
   final int id;
   final String name;
   final int? mealPlanId;
-  final DateTime createdAt;
+  final DateTime? createdAt;
   final List<GroceryListItem> items;
 
   const GroceryListDetail({
     required this.id,
     required this.name,
     this.mealPlanId,
-    required this.createdAt,
+    this.createdAt,
     required this.items,
   });
 
