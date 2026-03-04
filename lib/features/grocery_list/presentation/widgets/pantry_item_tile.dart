@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:meal_plan_app/features/grocery_list/domain/entities/pantry_item.dart';
+import 'package:meal_plan_app/l10n/app_localizations.dart';
 
 class PantryItemTile extends StatelessWidget {
   final PantryItem item;
@@ -49,16 +50,16 @@ class PantryItemTile extends StatelessWidget {
         return await showDialog<bool>(
           context: context,
           builder: (ctx) => AlertDialog(
-            title: const Text('Eliminar de la despensa'),
-            content: Text('¿Eliminar "${item.ingredientName}"?'),
+            title: Text(AppLocalizations.of(context).pantryDeleteDialogTitle),
+            content: Text(AppLocalizations.of(context).pantryDeleteDialogMessage(item.ingredientName)),
             actions: [
               TextButton(
                 onPressed: () => Navigator.pop(ctx, false),
-                child: const Text('Cancelar'),
+                child: Text(AppLocalizations.of(context).cancel),
               ),
               FilledButton(
                 onPressed: () => Navigator.pop(ctx, true),
-                child: const Text('Eliminar'),
+                child: Text(AppLocalizations.of(context).deleteAction),
               ),
             ],
           ),

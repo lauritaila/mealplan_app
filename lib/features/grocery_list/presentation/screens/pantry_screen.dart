@@ -4,6 +4,7 @@ import 'package:meal_plan_app/features/grocery_list/domain/entities/pantry_item.
 import 'package:meal_plan_app/features/grocery_list/presentation/providers/provider.dart';
 import 'package:meal_plan_app/features/grocery_list/presentation/widgets/add_item_bottom_sheet.dart';
 import 'package:meal_plan_app/features/grocery_list/presentation/widgets/pantry_item_tile.dart';
+import 'package:meal_plan_app/l10n/app_localizations.dart';
 
 class PantryScreen extends ConsumerWidget {
   const PantryScreen({super.key});
@@ -12,11 +13,12 @@ class PantryScreen extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final pantryAsync = ref.watch(pantryItemsProvider);
     final theme = Theme.of(context);
+    final l10n = AppLocalizations.of(context);
 
     return Scaffold(
       backgroundColor: theme.colorScheme.surface,
       appBar: AppBar(
-        title: const Text('Mi despensa'),
+        title: Text(l10n.pantryTitle),
         centerTitle: false,
         backgroundColor: theme.colorScheme.surface,
         surfaceTintColor: Colors.transparent,
@@ -35,7 +37,7 @@ class PantryScreen extends ConsumerWidget {
                 const SizedBox(height: 14),
                 FilledButton(
                   onPressed: () => ref.refresh(pantryItemsProvider),
-                  child: const Text('Reintentar'),
+                  child: Text(l10n.retry),
                 ),
               ],
             ),
@@ -50,7 +52,7 @@ class PantryScreen extends ConsumerWidget {
             for (final item in items) {
               final cat = (item.category?.isNotEmpty == true)
                   ? item.category!
-                  : 'Otros';
+                  : l10n.pantryOtherCategory;
               grouped.putIfAbsent(cat, () => []).add(item);
             }
             final categories = grouped.keys.toList()..sort();
@@ -90,7 +92,7 @@ class PantryScreen extends ConsumerWidget {
       ),
       floatingActionButton: FloatingActionButton(
         heroTag: 'pantry-fab',
-        tooltip: 'Agregar a la despensa',
+        tooltip: l10n.pantryAddTooltip,
         onPressed: () => _showAddItem(context),
         child: const Icon(Icons.add),
       ),
@@ -128,6 +130,7 @@ class _CategoryHeader extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
+    final l10n = AppLocalizations.of(context);
     return Padding(
       padding: const EdgeInsets.fromLTRB(4, 16, 4, 6),
       child: Text(
@@ -146,6 +149,7 @@ class _EmptyPantry extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
+    final l10n = AppLocalizations.of(context);
     return Center(
       child: Column(
         mainAxisSize: MainAxisSize.min,
@@ -157,14 +161,14 @@ class _EmptyPantry extends StatelessWidget {
           ),
           const SizedBox(height: 16),
           Text(
-            'La despensa está vacía',
+            l10n.pantryEmptyTitle,
             style: theme.textTheme.titleMedium?.copyWith(
               color: theme.colorScheme.onSurfaceVariant,
             ),
           ),
           const SizedBox(height: 8),
           Text(
-            'Agrega ingredientes que ya tienes en casa',
+            l10n.pantryEmptySubtitle,
             style: theme.textTheme.bodySmall?.copyWith(
               color: theme.colorScheme.onSurfaceVariant,
             ),
@@ -233,6 +237,7 @@ class _EditPantryItemDialogState extends State<_EditPantryItemDialog> {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
+    final l10n = AppLocalizations.of(context);
     final months = [
       'ene',
       'feb',
@@ -249,24 +254,24 @@ class _EditPantryItemDialogState extends State<_EditPantryItemDialog> {
     ];
     final dateLabel = _expiryDate != null
         ? '${_expiryDate!.day} de ${months[_expiryDate!.month - 1]} de ${_expiryDate!.year}'
-        : 'Sin fecha';
+        : l10n.pantryNoDate;
 
     return AlertDialog(
-      title: Text('Editar ${widget.item.ingredientName}'),
+      title: Text(l10n.pantryEditTitle(widget.item.ingredientName)),
       content: Column(
         mainAxisSize: MainAxisSize.min,
         children: [
           TextField(
             controller: _quantityCtrl,
             keyboardType: const TextInputType.numberWithOptions(decimal: true),
-            decoration: const InputDecoration(labelText: 'Cantidad'),
+            decoration: InputDecoration(labelText: l10n.pantryQuantityLabel),
           ),
           const SizedBox(height: 12),
           InkWell(
             onTap: _pickDate,
             child: InputDecorator(
               decoration: InputDecoration(
-                labelText: 'Vence',
+                labelText: l10n.pantryExpiryLabel,
                 suffixIcon: _expiryDate != null
                     ? IconButton(
                         icon: const Icon(Icons.clear, size: 18),
@@ -282,7 +287,7 @@ class _EditPantryItemDialogState extends State<_EditPantryItemDialog> {
       actions: [
         TextButton(
           onPressed: () => Navigator.pop(context),
-          child: const Text('Cancelar'),
+          child: Text(l10n.cancel),
         ),
         FilledButton(
           onPressed: _loading ? null : _save,
@@ -292,7 +297,7 @@ class _EditPantryItemDialogState extends State<_EditPantryItemDialog> {
                   height: 18,
                   child: CircularProgressIndicator(strokeWidth: 2),
                 )
-              : const Text('Guardar'),
+              : Text(l10n.save),
         ),
       ],
     );

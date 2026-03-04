@@ -141,7 +141,7 @@ class _CookingAssistantScreenState
                             curve: Curves.easeInOut,
                           );
                         },
-                        child: const Text('Atrás'),
+                        child: Text(AppLocalizations.of(context).cookingAssistantBack),
                       ),
                     const Spacer(),
                     if (_currentIndex < steps.length - 1)
@@ -152,13 +152,13 @@ class _CookingAssistantScreenState
                             curve: Curves.easeInOut,
                           );
                         },
-                        child: const Text('Siguiente'),
+                        child: Text(AppLocalizations.of(context).cookingAssistantNext),
                       )
                     else
                       FilledButton.icon(
                         icon: const Icon(Icons.check_circle_outline),
                         onPressed: () => _completeRecipe(context),
-                        label: const Text('Completar receta'),
+                        label: Text(AppLocalizations.of(context).cookingAssistantComplete),
                         style: FilledButton.styleFrom(
                           backgroundColor: Colors.green,
                         ),
@@ -185,18 +185,18 @@ class _CookingAssistantScreenState
     final confirmed = await showDialog<bool>(
       context: context,
       builder: (ctx) => AlertDialog(
-        title: const Text('Completar receta'),
-        content: const Text(
-          '¿Marcar esta receta como completada y descontar los ingredientes de tu despensa?',
+        title: Text(AppLocalizations.of(context).recipeCompleteDialogTitle),
+        content: Text(
+          AppLocalizations.of(context).recipeCompleteDialogMessage,
         ),
         actions: [
           TextButton(
             onPressed: () => Navigator.of(ctx).pop(false),
-            child: const Text('Cancelar'),
+            child: Text(AppLocalizations.of(context).cancel),
           ),
           FilledButton(
             onPressed: () => Navigator.of(ctx).pop(true),
-            child: const Text('Completar'),
+            child: Text(AppLocalizations.of(context).cookingAssistantCompleteAction),
           ),
         ],
       ),

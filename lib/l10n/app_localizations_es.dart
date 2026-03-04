@@ -954,10 +954,324 @@ class AppLocalizationsEs extends AppLocalizations {
   String get cancel => 'Cancelar';
 
   @override
+  String get save => 'Guardar';
+
+  @override
+  String get create => 'Crear';
+
+  @override
+  String get error => 'Error';
+
+  @override
   String get errorLoadingConfiguration =>
       'Error al cargar la configuración. Inténtalo de nuevo.';
 
   @override
   String get errorEmailConfirmationMismatch =>
       'El correo no coincide con tu cuenta.';
+
+  @override
+  String get myPlansTitle => 'Mis planes';
+
+  @override
+  String get newPlan => 'Nuevo plan';
+
+  @override
+  String get noSavedPlans => 'No tienes planes guardados';
+
+  @override
+  String get createFirstPlan => 'Crea tu primer plan de comidas.';
+
+  @override
+  String get menuViewEntries => 'Ver entradas';
+
+  @override
+  String get menuSaveIngredients => 'Guardar ingredientes';
+
+  @override
+  String get menuReusePlan => 'Reutilizar plan';
+
+  @override
+  String get saveIngredientsSheetTitle => 'Guardar ingredientes del plan';
+
+  @override
+  String savedIngredientsSuccess(Object name) {
+    return 'Ingredientes guardados en \"$name\"';
+  }
+
+  @override
+  String get savedIngredientsFailed => 'No se pudo guardar los ingredientes';
+
+  @override
+  String planReusedSuccess(Object name, Object count) {
+    return '¡Plan reutilizado! \"$name\" con $count comidas.';
+  }
+
+  @override
+  String get planReusedView => 'Ver';
+
+  @override
+  String get planReusedFailed => 'No se pudo reutilizar el plan';
+
+  @override
+  String get deletePlanDialogTitle => '¿Eliminar plan?';
+
+  @override
+  String get deletePlanDialogMessage => 'Esta acción no se puede deshacer.';
+
+  @override
+  String get deletePlanAlsoRemoveGrocery =>
+      'Eliminar también de la lista de la compra';
+
+  @override
+  String get planDeletedSuccess => 'Plan eliminado';
+
+  @override
+  String get planDeleteFailed => 'No se pudo eliminar el plan';
+
+  @override
+  String get reusePlanSheetTitle => 'Reutilizar plan';
+
+  @override
+  String get reusePlanStartDateLabel => 'Fecha de inicio (requerida)';
+
+  @override
+  String get reusePlanSelectDate => 'Seleccionar fecha';
+
+  @override
+  String get reusePlanNameLabel => 'Nombre del nuevo plan (opcional)';
+
+  @override
+  String get reusePlanNameHint => 'Ej: Semana del 17 de marzo';
+
+  @override
+  String get noEntriesInPlan => 'No hay entradas en este plan.';
+
+  @override
+  String get planEntriesTitle => 'Entradas del plan';
+
+  @override
+  String get menuViewRecipe => 'Ver receta';
+
+  @override
+  String get menuAddToGrocery => 'Agregar a lista de compras';
+
+  @override
+  String get menuMarkComplete => 'Marcar como completada';
+
+  @override
+  String get addRecipeToListTitle => 'Agregar receta a lista';
+
+  @override
+  String recipeAddedToList(Object name) {
+    return 'Receta agregada a \"$name\"';
+  }
+
+  @override
+  String get recipeAddFailed => 'No se pudo agregar la receta';
+
+  @override
+  String get markCompleteDialogTitle => 'Marcar como completada';
+
+  @override
+  String markCompleteQuestion(Object name) {
+    return '¿Completaste \"$name\"?';
+  }
+
+  @override
+  String get markCompleteDeductInfo =>
+      'Los ingredientes de esta receta se descontarán automáticamente de tu despensa.';
+
+  @override
+  String get completeAction => 'Completar';
+
+  @override
+  String allIngredientsDeducted(Object count) {
+    return '✅ ¡Listo! $count ingredientes descontados.';
+  }
+
+  @override
+  String someIngredientsMissing(Object count) {
+    return '✅ Completado. $count ingredientes no estaban en tu despensa.';
+  }
+
+  @override
+  String get alsoRemoveFromGrocery =>
+      'Eliminar también de la lista de la compra';
+
+  @override
+  String get noRecipeForEntry => 'Esta entrada no tiene receta asociada';
+
+  @override
+  String get datesUpdatedSuccess => 'Fechas actualizadas correctamente';
+
+  @override
+  String get saveToGroceryList => 'Guardar en lista de compras';
+
+  @override
+  String get usePantryIngredientsLabel => 'Usar ingredientes de mi despensa';
+
+  @override
+  String get alsoRemoveGroceryList => 'También eliminar la lista de la compra';
+
+  @override
+  String get markCompleteRecipeButton => 'Marcar como completada';
+
+  @override
+  String get completeRecipeButton => 'Completar receta';
+
+  @override
+  String get aiLabel => 'IA';
+
+  @override
+  String get pantryTitle => 'Mi despensa';
+
+  @override
+  String get pantryEmptyTitle => 'La despensa está vacía';
+
+  @override
+  String get pantryEmptySubtitle => 'Agrega ingredientes que ya tienes en casa';
+
+  @override
+  String get pantryAddTooltip => 'Agregar a la despensa';
+
+  @override
+  String get pantryOtherCategory => 'Otros';
+
+  @override
+  String get pantryNoDate => 'Sin fecha';
+
+  @override
+  String pantryEditTitle(Object name) {
+    return 'Editar $name';
+  }
+
+  @override
+  String get pantryQuantityLabel => 'Cantidad';
+
+  @override
+  String get pantryExpiryLabel => 'Vence';
+
+  @override
+  String get pantryDeleteDialogTitle => 'Eliminar de la despensa';
+
+  @override
+  String pantryDeleteDialogMessage(Object name) {
+    return '¿Eliminar \"$name\"?';
+  }
+
+  @override
+  String get groceryListsTitle => 'Mis listas';
+
+  @override
+  String get groceryListsSectionHeader => 'Listas de compras';
+
+  @override
+  String get groceryListsEmptyTitle => 'No hay listas aún';
+
+  @override
+  String get groceryListsEmptySubtitle => 'Crea una nueva lista con el botón +';
+
+  @override
+  String get groceryListsNewListLabel => 'Nueva lista';
+
+  @override
+  String get groceryListsErrorLoading => 'Error al cargar listas';
+
+  @override
+  String get pantryCardTitle => 'Mi despensa';
+
+  @override
+  String get pantryCardSubtitle => 'Ingredientes que ya tienes en casa';
+
+  @override
+  String get createListDialogTitle => 'Nueva lista de compras';
+
+  @override
+  String get createListErrorCreate => 'Error al crear la lista';
+
+  @override
+  String get groceryDetailError => 'Error';
+
+  @override
+  String get editQuantityDialogTitle => 'Editar cantidad';
+
+  @override
+  String get addItemTitlePantry => 'Agregar a la despensa';
+
+  @override
+  String get addItemTitleGrocery => 'Agregar ingrediente';
+
+  @override
+  String get addItemIngredientNameLabel => 'Nombre del ingrediente';
+
+  @override
+  String get addItemIngredientNameRequired => 'Ingresa el nombre';
+
+  @override
+  String get addItemQuantityLabel => 'Cantidad';
+
+  @override
+  String get addItemQuantityRequired => 'Requerido';
+
+  @override
+  String get addItemQuantityInvalid => 'Número inválido';
+
+  @override
+  String get addItemUnitLabel => 'Unidad';
+
+  @override
+  String get addItemCategoryLabel => 'Categoría (opcional)';
+
+  @override
+  String get addItemExpiryLabel => 'Fecha de vencimiento (opcional)';
+
+  @override
+  String get addItemErrorAdding => 'Error al agregar el ingrediente';
+
+  @override
+  String get addItemButton => 'Agregar';
+
+  @override
+  String get deleteGroceryListDialogTitle => 'Eliminar lista';
+
+  @override
+  String deleteGroceryListDialogMessage(Object name) {
+    return '¿Eliminar \"$name\"?';
+  }
+
+  @override
+  String get selectGroceryListNewList => 'Nueva lista';
+
+  @override
+  String get recipeCompleteDialogTitle => 'Completar receta';
+
+  @override
+  String get recipeCompleteDialogMessage =>
+      '¿Marcar esta receta como completada y descontar los ingredientes de tu despensa?';
+
+  @override
+  String recipeCompletedSuccess(Object success, Object missing) {
+    return '¡Receta completada! $success ingredientes descontados. $missing';
+  }
+
+  @override
+  String recipeCompletedMissingNote(Object count) {
+    return '$count no encontrados.';
+  }
+
+  @override
+  String get markAsCompleteLabel => 'Marcar como completada';
+
+  @override
+  String get cookingAssistantBack => 'Atrás';
+
+  @override
+  String get cookingAssistantNext => 'Siguiente';
+
+  @override
+  String get cookingAssistantComplete => 'Completar receta';
+
+  @override
+  String get cookingAssistantCompleteAction => 'Completar';
 }

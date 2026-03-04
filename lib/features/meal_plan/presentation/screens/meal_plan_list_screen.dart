@@ -6,6 +6,7 @@ import 'package:meal_plan_app/features/grocery_list/presentation/providers/groce
 import 'package:meal_plan_app/features/grocery_list/presentation/widgets/select_grocery_list_sheet.dart';
 import 'package:meal_plan_app/features/meal_plan/domain/domain.dart';
 import 'package:meal_plan_app/features/meal_plan/presentation/providers/provider.dart';
+import 'package:meal_plan_app/l10n/app_localizations.dart';
 
 class MealPlanListScreen extends ConsumerWidget {
   const MealPlanListScreen({super.key});
@@ -13,10 +14,11 @@ class MealPlanListScreen extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final plansAsync = ref.watch(mealPlansProvider);
+    final l10n = AppLocalizations.of(context);
 
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Mis planes'),
+        title: Text(l10n.myPlansTitle),
         actions: [
           IconButton(
             icon: const Icon(Icons.refresh),
@@ -27,7 +29,7 @@ class MealPlanListScreen extends ConsumerWidget {
       floatingActionButton: FloatingActionButton.extended(
         onPressed: () => context.push('/meal-plan/new'),
         icon: const Icon(Icons.add),
-        label: const Text('Nuevo plan'),
+        label: Text(l10n.newPlan),
       ),
       body: plansAsync.when(
         loading: () => const Center(child: CircularProgressIndicator()),
@@ -41,7 +43,7 @@ class MealPlanListScreen extends ConsumerWidget {
               const SizedBox(height: 12),
               FilledButton(
                 onPressed: () => ref.invalidate(mealPlansProvider),
-                child: const Text('Reintentar'),
+                child: Text(l10n.retry),
               ),
             ],
           ),
@@ -59,16 +61,16 @@ class MealPlanListScreen extends ConsumerWidget {
                   ),
                   const SizedBox(height: 16),
                   Text(
-                    'No tienes planes guardados',
+                    l10n.noSavedPlans,
                     style: Theme.of(context).textTheme.titleMedium,
                   ),
                   const SizedBox(height: 8),
-                  const Text('Crea tu primer plan de comidas.'),
+                  Text(l10n.createFirstPlan),
                   const SizedBox(height: 24),
                   FilledButton.icon(
                     onPressed: () => context.push('/meal-plan/new'),
                     icon: const Icon(Icons.add),
-                    label: const Text('Nuevo plan'),
+                    label: Text(l10n.newPlan),
                   ),
                 ],
               ),
@@ -96,6 +98,7 @@ class _MealPlanCard extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final theme = Theme.of(context);
+    final l10n = AppLocalizations.of(context);
     final df = DateFormat('d MMM', 'es');
     final dateRange =
         '${df.format(plan.startDate)} – ${df.format(plan.endDate)} ${plan.endDate.year}';
@@ -172,37 +175,37 @@ class _MealPlanCard extends ConsumerWidget {
                 icon: const Icon(Icons.more_vert),
                 onSelected: (value) => _onMenuAction(context, ref, value),
                 itemBuilder: (_) => [
-                  const PopupMenuItem(
+                  PopupMenuItem(
                     value: 'view',
                     child: ListTile(
-                      leading: Icon(Icons.calendar_view_week_outlined),
-                      title: Text('Ver entradas'),
+                      leading: const Icon(Icons.calendar_view_week_outlined),
+                      title: Text(l10n.menuViewEntries),
                       contentPadding: EdgeInsets.zero,
                     ),
                   ),
-                  const PopupMenuItem(
+                  PopupMenuItem(
                     value: 'import',
                     child: ListTile(
-                      leading: Icon(Icons.shopping_cart_outlined),
-                      title: Text('Guardar ingredientes'),
+                      leading: const Icon(Icons.shopping_cart_outlined),
+                      title: Text(l10n.menuSaveIngredients),
                       contentPadding: EdgeInsets.zero,
                     ),
                   ),
-                  const PopupMenuItem(
+                  PopupMenuItem(
                     value: 'reuse',
                     child: ListTile(
-                      leading: Icon(Icons.replay_outlined),
-                      title: Text('Reutilizar plan'),
+                      leading: const Icon(Icons.replay_outlined),
+                      title: Text(l10n.menuReusePlan),
                       contentPadding: EdgeInsets.zero,
                     ),
                   ),
-                  const PopupMenuItem(
+                  PopupMenuItem(
                     value: 'delete',
                     child: ListTile(
-                      leading: Icon(Icons.delete_outline, color: Colors.red),
+                      leading: const Icon(Icons.delete_outline, color: Colors.red),
                       title: Text(
-                        'Eliminar',
-                        style: TextStyle(color: Colors.red),
+                        l10n.deleteAction,
+                        style: const TextStyle(color: Colors.red),
                       ),
                       contentPadding: EdgeInsets.zero,
                     ),
@@ -221,24 +224,25 @@ class _MealPlanCard extends ConsumerWidget {
     WidgetRef ref,
     String value,
   ) async {
+    final l10n = AppLocalizations.of(context);
     switch (value) {
       case 'view':
         context.push('/meal-plan/${plan.id}');
       case 'import':
-        await _importToList(context, ref);
+        await _importToList(context, ref, l10n);
       case 'reuse':
-        await _showReusePlanSheet(context, ref);
+        await _showReusePlanSheet(context, ref, l10n);
       case 'delete':
-        await _showDeletePlanDialog(context, ref);
+        await _showDeletePlanDialog(context, ref, l10n);
     }
   }
 
-  Future<void> _importToList(BuildContext context, WidgetRef ref) async {
+  Future<void> _importToList(BuildContext context, WidgetRef ref, AppLocalizations l10n) async {
     final messenger = ScaffoldMessenger.of(context);
     final selected = await showSelectOrCreateGroceryListSheet(
       context: context,
       ref: ref,
-      title: 'Guardar ingredientes del plan',
+      title: l10n.saveIngredientsSheetTitle,
     );
     if (selected == null) return;
     final ok = await ref
@@ -247,15 +251,15 @@ class _MealPlanCard extends ConsumerWidget {
     messenger.showSnackBar(
       SnackBar(
         content: Text(
-          ok
-              ? 'Ingredientes guardados en "${selected.name}"'
-              : 'No se pudo guardar los ingredientes',
+            ok
+              ? l10n.savedIngredientsSuccess(selected.name)
+              : l10n.savedIngredientsFailed,
         ),
       ),
     );
   }
 
-  Future<void> _showReusePlanSheet(BuildContext context, WidgetRef ref) async {
+  Future<void> _showReusePlanSheet(BuildContext context, WidgetRef ref, AppLocalizations l10n) async {
     final result =
         await showModalBottomSheet<({String startDate, String? name})>(
           context: context,
@@ -278,17 +282,17 @@ class _MealPlanCard extends ConsumerWidget {
       messenger.showSnackBar(
         SnackBar(
           content: Text(
-            '¡Plan reutilizado! "${response.newPlanName}" con ${response.entriesCloned} comidas.',
+              l10n.planReusedSuccess(response.newPlanName, response.entriesCloned),
           ),
           action: SnackBarAction(
-            label: 'Ver',
+            label: l10n.planReusedView,
             onPressed: () => context.push('/meal-plan/${response.newPlanId}'),
           ),
         ),
       );
     } else {
       messenger.showSnackBar(
-        const SnackBar(content: Text('No se pudo reutilizar el plan')),
+        SnackBar(content: Text(l10n.planReusedFailed)),
       );
     }
   }
@@ -296,25 +300,26 @@ class _MealPlanCard extends ConsumerWidget {
   Future<void> _showDeletePlanDialog(
     BuildContext context,
     WidgetRef ref,
+    AppLocalizations l10n,
   ) async {
     bool removeShoppingList = false;
     final confirmed = await showDialog<bool>(
       context: context,
       builder: (ctx) => StatefulBuilder(
         builder: (ctx, setLocalState) => AlertDialog(
-          title: const Text('¿Eliminar plan?'),
+          title: Text(l10n.deletePlanDialogTitle),
           content: Column(
             mainAxisSize: MainAxisSize.min,
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              const Text('Esta acción no se puede deshacer.'),
+              Text(l10n.deletePlanDialogMessage),
               const SizedBox(height: 12),
               CheckboxListTile(
                 contentPadding: EdgeInsets.zero,
                 value: removeShoppingList,
                 onChanged: (v) =>
                     setLocalState(() => removeShoppingList = v ?? false),
-                title: const Text('Eliminar también de la lista de la compra'),
+                title: Text(l10n.deletePlanAlsoRemoveGrocery),
                 controlAffinity: ListTileControlAffinity.leading,
               ),
             ],
@@ -322,12 +327,12 @@ class _MealPlanCard extends ConsumerWidget {
           actions: [
             TextButton(
               onPressed: () => Navigator.of(ctx).pop(false),
-              child: const Text('Cancelar'),
+              child: Text(l10n.cancel),
             ),
             FilledButton(
               style: FilledButton.styleFrom(backgroundColor: Colors.red),
               onPressed: () => Navigator.of(ctx).pop(true),
-              child: const Text('Eliminar'),
+              child: Text(l10n.deleteAction),
             ),
           ],
         ),
@@ -343,11 +348,11 @@ class _MealPlanCard extends ConsumerWidget {
     if (state.status == MealPlanEntryActionStatus.success) {
       ref.invalidate(mealPlansProvider);
       ref.read(mealPlanEntryActionsProvider.notifier).reset();
-      messenger.showSnackBar(const SnackBar(content: Text('Plan eliminado')));
+      messenger.showSnackBar(SnackBar(content: Text(l10n.planDeletedSuccess)));
     } else {
       messenger.showSnackBar(
         SnackBar(
-          content: Text(state.errorMessage ?? 'No se pudo eliminar el plan'),
+          content: Text(state.errorMessage ?? l10n.planDeleteFailed),
         ),
       );
       ref.read(mealPlanEntryActionsProvider.notifier).reset();
@@ -378,6 +383,7 @@ class _ReusePlanSheetState extends State<_ReusePlanSheet> {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
+    final l10n = AppLocalizations.of(context);
     final df = DateFormat('d MMM yyyy', 'es');
 
     return Padding(
@@ -395,7 +401,7 @@ class _ReusePlanSheetState extends State<_ReusePlanSheet> {
             children: [
               Expanded(
                 child: Text(
-                  'Reutilizar plan',
+                  l10n.reusePlanSheetTitle,
                   style: theme.textTheme.titleLarge,
                 ),
               ),
@@ -414,7 +420,7 @@ class _ReusePlanSheetState extends State<_ReusePlanSheet> {
           ),
           const SizedBox(height: 20),
           Text(
-            'Fecha de inicio (requerida)',
+            l10n.reusePlanStartDateLabel,
             style: theme.textTheme.labelLarge,
           ),
           const SizedBox(height: 8),
@@ -431,24 +437,24 @@ class _ReusePlanSheetState extends State<_ReusePlanSheet> {
             icon: const Icon(Icons.calendar_today_outlined),
             label: Text(
               _selectedDate == null
-                  ? 'Seleccionar fecha'
+                  ? l10n.reusePlanSelectDate
                   : df.format(_selectedDate!),
             ),
           ),
           const SizedBox(height: 16),
           TextField(
             controller: _nameController,
-            decoration: const InputDecoration(
-              labelText: 'Nombre del nuevo plan (opcional)',
-              hintText: 'Ej: Semana del 17 de marzo',
-              border: OutlineInputBorder(),
+            decoration: InputDecoration(
+              labelText: l10n.reusePlanNameLabel,
+              hintText: l10n.reusePlanNameHint,
+              border: const OutlineInputBorder(),
             ),
           ),
           const SizedBox(height: 24),
           FilledButton.icon(
             onPressed: _selectedDate == null ? null : _onConfirm,
             icon: const Icon(Icons.replay_outlined),
-            label: const Text('Reutilizar'),
+            label: Text(l10n.menuReusePlan),
           ),
         ],
       ),

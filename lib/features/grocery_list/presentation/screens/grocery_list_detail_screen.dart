@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:meal_plan_app/features/grocery_list/presentation/providers/provider.dart';
 import 'package:meal_plan_app/features/grocery_list/presentation/widgets/add_item_bottom_sheet.dart';
 import 'package:meal_plan_app/features/grocery_list/presentation/widgets/grocery_item_tile.dart';
+import 'package:meal_plan_app/l10n/app_localizations.dart';
 
 class GroceryListDetailScreen extends ConsumerWidget {
   final int listId;
@@ -19,7 +20,7 @@ class GroceryListDetailScreen extends ConsumerWidget {
         body: const Center(child: CircularProgressIndicator()),
       ),
       error: (e, _) => Scaffold(
-        appBar: AppBar(title: const Text('Error')),
+        appBar: AppBar(title: Text(AppLocalizations.of(context).error)),
         body: Center(
           child: Column(
             mainAxisSize: MainAxisSize.min,
@@ -30,7 +31,7 @@ class GroceryListDetailScreen extends ConsumerWidget {
               const SizedBox(height: 12),
               FilledButton(
                 onPressed: () => ref.refresh(groceryListDetailProvider(listId)),
-                child: const Text('Reintentar'),
+                child: Text(AppLocalizations.of(context).retry),
               ),
             ],
           ),

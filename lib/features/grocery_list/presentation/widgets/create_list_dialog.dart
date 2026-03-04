@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:meal_plan_app/features/grocery_list/domain/entities/grocery_list.dart';
 import 'package:meal_plan_app/features/grocery_list/presentation/providers/provider.dart';
+import 'package:meal_plan_app/l10n/app_localizations.dart';
 
 class CreateListDialog extends ConsumerStatefulWidget {
   const CreateListDialog({super.key});
@@ -34,7 +35,7 @@ class _CreateListDialogState extends ConsumerState<CreateListDialog> {
     } else {
       ScaffoldMessenger.of(
         context,
-      ).showSnackBar(const SnackBar(content: Text('Error al crear la lista')));
+      ).showSnackBar(SnackBar(content: Text(AppLocalizations.of(context).createListErrorCreate)));
     }
   }
 
@@ -42,7 +43,7 @@ class _CreateListDialogState extends ConsumerState<CreateListDialog> {
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
     return AlertDialog(
-      title: const Text('Nueva lista de compras'),
+      title: Text(AppLocalizations.of(context).createListDialogTitle),
       content: Form(
         key: _formKey,
         child: TextFormField(
@@ -62,7 +63,7 @@ class _CreateListDialogState extends ConsumerState<CreateListDialog> {
       actions: [
         TextButton(
           onPressed: _loading ? null : () => Navigator.of(context).pop(),
-          child: const Text('Cancelar'),
+          child: Text(AppLocalizations.of(context).cancel),
         ),
         FilledButton(
           onPressed: _loading ? null : _submit,
@@ -72,7 +73,7 @@ class _CreateListDialogState extends ConsumerState<CreateListDialog> {
                   height: 18,
                   child: CircularProgressIndicator(strokeWidth: 2),
                 )
-              : const Text('Crear'),
+              : Text(AppLocalizations.of(context).create),
         ),
       ],
     );

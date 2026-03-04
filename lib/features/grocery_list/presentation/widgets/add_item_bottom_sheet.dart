@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:meal_plan_app/features/grocery_list/presentation/providers/provider.dart';
+import 'package:meal_plan_app/l10n/app_localizations.dart';
 
 /// Bottom sheet to add an item to a grocery list or the pantry.
 ///
@@ -96,6 +97,7 @@ class _AddItemBottomSheetState extends ConsumerState<AddItemBottomSheet> {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
+    final l10n = AppLocalizations.of(context);
     return Padding(
       padding: EdgeInsets.only(
         bottom: MediaQuery.of(context).viewInsets.bottom,
@@ -121,7 +123,7 @@ class _AddItemBottomSheetState extends ConsumerState<AddItemBottomSheet> {
                 ),
               ),
               Text(
-                _isPantryMode ? 'Agregar a la despensa' : 'Agregar ingrediente',
+                _isPantryMode ? l10n.addItemTitlePantry : l10n.addItemTitleGrocery,
                 style: theme.textTheme.titleLarge?.copyWith(
                   fontWeight: FontWeight.bold,
                 ),
@@ -130,12 +132,12 @@ class _AddItemBottomSheetState extends ConsumerState<AddItemBottomSheet> {
               TextFormField(
                 controller: _nameCtrl,
                 textCapitalization: TextCapitalization.sentences,
-                decoration: const InputDecoration(
-                  labelText: 'Nombre del ingrediente',
-                  prefixIcon: Icon(Icons.restaurant_outlined),
+                decoration: InputDecoration(
+                  labelText: l10n.addItemIngredientNameLabel,
+                  prefixIcon: const Icon(Icons.restaurant_outlined),
                 ),
                 validator: (v) => (v == null || v.trim().isEmpty)
-                    ? 'Ingresa el nombre'
+                    ? l10n.addItemIngredientNameRequired
                     : null,
               ),
               const SizedBox(height: 14),
@@ -148,16 +150,16 @@ class _AddItemBottomSheetState extends ConsumerState<AddItemBottomSheet> {
                       keyboardType: const TextInputType.numberWithOptions(
                         decimal: true,
                       ),
-                      decoration: const InputDecoration(
-                        labelText: 'Cantidad',
-                        prefixIcon: Icon(Icons.numbers_outlined),
+                      decoration: InputDecoration(
+                        labelText: l10n.addItemQuantityLabel,
+                        prefixIcon: const Icon(Icons.numbers_outlined),
                       ),
                       validator: (v) {
                         if (v == null || v.trim().isEmpty) {
-                          return 'Requerido';
+                          return l10n.addItemQuantityRequired;
                         }
                         if (double.tryParse(v.trim()) == null) {
-                          return 'Número inválido';
+                          return l10n.addItemQuantityInvalid;
                         }
                         return null;
                       },
@@ -169,10 +171,10 @@ class _AddItemBottomSheetState extends ConsumerState<AddItemBottomSheet> {
                     child: TextFormField(
                       controller: _unitCtrl,
                       textCapitalization: TextCapitalization.none,
-                      decoration: const InputDecoration(
-                        labelText: 'Unidad',
+                      decoration: InputDecoration(
+                        labelText: l10n.addItemUnitLabel,
                         hintText: 'g, kg, ml, pcs…',
-                        prefixIcon: Icon(Icons.scale_outlined),
+                        prefixIcon: const Icon(Icons.scale_outlined),
                       ),
                     ),
                   ),
@@ -183,10 +185,10 @@ class _AddItemBottomSheetState extends ConsumerState<AddItemBottomSheet> {
                 TextFormField(
                   controller: _categoryCtrl,
                   textCapitalization: TextCapitalization.sentences,
-                  decoration: const InputDecoration(
-                    labelText: 'Categoría (opcional)',
+                  decoration: InputDecoration(
+                    labelText: l10n.addItemCategoryLabel,
                     hintText: 'proteína, verdura, lácteo…',
-                    prefixIcon: Icon(Icons.label_outline),
+                    prefixIcon: const Icon(Icons.label_outline),
                   ),
                 ),
                 const SizedBox(height: 14),
@@ -195,7 +197,7 @@ class _AddItemBottomSheetState extends ConsumerState<AddItemBottomSheet> {
                   borderRadius: BorderRadius.circular(12),
                   child: InputDecorator(
                     decoration: InputDecoration(
-                      labelText: 'Fecha de vencimiento (opcional)',
+                      labelText: l10n.addItemExpiryLabel,
                       prefixIcon: const Icon(Icons.calendar_today_outlined),
                       suffixIcon: _expiryDate != null
                           ? IconButton(
@@ -231,7 +233,7 @@ class _AddItemBottomSheetState extends ConsumerState<AddItemBottomSheet> {
                           height: 20,
                           child: CircularProgressIndicator(strokeWidth: 2.5),
                         )
-                      : const Text('Agregar', style: TextStyle(fontSize: 16)),
+                      : Text(l10n.addItemButton, style: const TextStyle(fontSize: 16)),
                 ),
               ),
             ],

@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:meal_plan_app/features/grocery_list/domain/entities/grocery_list.dart';
 import 'package:meal_plan_app/features/grocery_list/presentation/providers/provider.dart';
+import 'package:meal_plan_app/l10n/app_localizations.dart';
 
 class GroceryItemTile extends ConsumerStatefulWidget {
   final GroceryListItem item;
@@ -210,24 +211,24 @@ class _EditQuantityDialogState extends State<_EditQuantityDialog> {
   @override
   Widget build(BuildContext context) {
     return AlertDialog(
-      title: const Text('Editar cantidad'),
+      title: Text(AppLocalizations.of(context).editQuantityDialogTitle),
       content: TextField(
         controller: _ctrl,
         autofocus: true,
         keyboardType: const TextInputType.numberWithOptions(decimal: true),
-        decoration: const InputDecoration(labelText: 'Cantidad'),
+        decoration: InputDecoration(labelText: AppLocalizations.of(context).addItemQuantityLabel),
       ),
       actions: [
         TextButton(
           onPressed: () => Navigator.pop(context),
-          child: const Text('Cancelar'),
+          child: Text(AppLocalizations.of(context).cancel),
         ),
         FilledButton(
           onPressed: () {
             final val = double.tryParse(_ctrl.text.trim());
             if (val != null && val > 0) Navigator.pop(context, val);
           },
-          child: const Text('Guardar'),
+          child: Text(AppLocalizations.of(context).save),
         ),
       ],
     );

@@ -33,7 +33,7 @@ class MealPlanEntriesScreen extends ConsumerWidget {
 
     return Scaffold(
       appBar: AppBar(
-        title: Text(planName ?? 'Entradas del plan'),
+        title: Text(planName ?? l10n.planEntriesTitle),
         actions: [
           IconButton(
             icon: const Icon(Icons.refresh),
@@ -63,7 +63,7 @@ class MealPlanEntriesScreen extends ConsumerWidget {
         ),
         data: (entries) {
           if (entries.isEmpty) {
-            return const Center(child: Text('No hay entradas en este plan.'));
+            return Center(child: Text(l10n.noEntriesInPlan));
           }
 
           // Group entries by date
@@ -230,48 +230,51 @@ class _PlanEntryCard extends ConsumerWidget {
                 enabled: !isUpdating,
                 icon: const Icon(Icons.more_vert),
                 onSelected: (value) => _onMenuAction(context, ref, value),
-                itemBuilder: (_) => [
-                  if (entry.recipeId > 0)
-                    const PopupMenuItem(
-                      value: 'view_recipe',
-                      child: ListTile(
-                        leading: Icon(Icons.receipt_long_outlined),
-                        title: Text('Ver receta'),
-                        contentPadding: EdgeInsets.zero,
-                      ),
-                    ),
-                  const PopupMenuItem(
-                    value: 'import_recipe',
-                    child: ListTile(
-                      leading: Icon(Icons.shopping_cart_outlined),
-                      title: Text('Agregar a lista de compras'),
-                      contentPadding: EdgeInsets.zero,
-                    ),
-                  ),
-                  if (!isCompleted)
-                    const PopupMenuItem(
-                      value: 'complete',
-                      child: ListTile(
-                        leading: Icon(
-                          Icons.check_circle_outline,
-                          color: Colors.green,
+                itemBuilder: (ctx) {
+                  final l10n = AppLocalizations.of(ctx);
+                  return [
+                    if (entry.recipeId > 0)
+                      PopupMenuItem(
+                        value: 'view_recipe',
+                        child: ListTile(
+                          leading: const Icon(Icons.receipt_long_outlined),
+                          title: Text(l10n.menuViewRecipe),
+                          contentPadding: EdgeInsets.zero,
                         ),
-                        title: Text('Marcar como completada'),
+                      ),
+                    PopupMenuItem(
+                      value: 'import_recipe',
+                      child: ListTile(
+                        leading: const Icon(Icons.shopping_cart_outlined),
+                        title: Text(l10n.menuAddToGrocery),
                         contentPadding: EdgeInsets.zero,
                       ),
                     ),
-                  const PopupMenuItem(
-                    value: 'delete',
-                    child: ListTile(
-                      leading: Icon(Icons.delete_outline, color: Colors.red),
-                      title: Text(
-                        'Eliminar',
-                        style: TextStyle(color: Colors.red),
+                    if (!isCompleted)
+                      PopupMenuItem(
+                        value: 'complete',
+                        child: ListTile(
+                          leading: const Icon(
+                            Icons.check_circle_outline,
+                            color: Colors.green,
+                          ),
+                          title: Text(l10n.menuMarkComplete),
+                          contentPadding: EdgeInsets.zero,
+                        ),
                       ),
-                      contentPadding: EdgeInsets.zero,
+                    PopupMenuItem(
+                      value: 'delete',
+                      child: ListTile(
+                        leading: const Icon(Icons.delete_outline, color: Colors.red),
+                        title: Text(
+                          l10n.deleteAction,
+                          style: const TextStyle(color: Colors.red),
+                        ),
+                        contentPadding: EdgeInsets.zero,
+                      ),
                     ),
-                  ),
-                ],
+                  ];
+                },
               ),
             ],
           ),
@@ -304,10 +307,11 @@ class _PlanEntryCard extends ConsumerWidget {
     required int recipeId,
   }) async {
     final messenger = ScaffoldMessenger.of(context);
+    final l10n = AppLocalizations.of(context);
     final selected = await showSelectOrCreateGroceryListSheet(
       context: context,
       ref: ref,
-      title: 'Agregar receta a lista',
+      title: l10n.addRecipeToListTitle,
     );
     if (selected == null) return;
     final ok = await ref
@@ -316,9 +320,9 @@ class _PlanEntryCard extends ConsumerWidget {
     messenger.showSnackBar(
       SnackBar(
         content: Text(
-          ok
-              ? 'Receta agregada a "${selected.name}"'
-              : 'No se pudo agregar la receta',
+            ok
+              ? l10n.recipeAddedToList(selected.name)
+              : l10n.recipeAddFailed,
         ),
       ),
     );
@@ -329,12 +333,12 @@ class _PlanEntryCard extends ConsumerWidget {
     final confirmed = await showDialog<bool>(
       context: context,
       builder: (ctx) => AlertDialog(
-        title: const Text('Marcar como completada'),
+          title: Text(l10n.markCompleteDialogTitle),
         content: Column(
           mainAxisSize: MainAxisSize.min,
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Text('¿Completaste "${entry.name}"?'),
+            Text(l10n.markCompleteQuestion(entry.name)),
             const SizedBox(height: 12),
             Container(
               padding: const EdgeInsets.all(12),
@@ -347,9 +351,9 @@ class _PlanEntryCard extends ConsumerWidget {
                 children: [
                   const Icon(Icons.info_outline, color: Colors.amber, size: 18),
                   const SizedBox(width: 8),
-                  const Expanded(
-                    child: Text(
-                      'Los ingredientes de esta receta se descontarán automáticamente de tu despensa.',
+                  Expanded(
+                      child: Text(
+                        l10n.markCompleteDeductInfo,
                       style: TextStyle(fontSize: 12),
                     ),
                   ),
@@ -366,7 +370,7 @@ class _PlanEntryCard extends ConsumerWidget {
           FilledButton.icon(
             onPressed: () => Navigator.of(ctx).pop(true),
             icon: const Icon(Icons.check_circle_outline),
-            label: const Text('Completar'),
+            label: Text(l10n.completeAction),
             style: FilledButton.styleFrom(backgroundColor: Colors.green),
           ),
         ],
@@ -388,9 +392,9 @@ class _PlanEntryCard extends ConsumerWidget {
       messenger.showSnackBar(
         SnackBar(
           content: Text(
-            result.missing.isEmpty
-                ? '✅ ¡Listo! ${result.deducted.length} ingredientes descontados.'
-                : '✅ Completado. ${result.missing.length} ingredientes no estaban en tu despensa.',
+                result.missing.isEmpty
+                ? l10n.allIngredientsDeducted(result.deducted.length)
+                : l10n.someIngredientsMissing(result.missing.length),
           ),
           duration: const Duration(seconds: 4),
         ),
@@ -417,7 +421,7 @@ class _PlanEntryCard extends ConsumerWidget {
                 value: removeShoppingList,
                 onChanged: (v) =>
                     setLocalState(() => removeShoppingList = v ?? false),
-                title: const Text('Eliminar también de la lista de la compra'),
+                title: Text(l10n.alsoRemoveFromGrocery),
                 controlAffinity: ListTileControlAffinity.leading,
               ),
             ],

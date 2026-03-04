@@ -158,6 +158,10 @@
   "ingredientsTitle": "Ingredientes",
   "noInstructions": "Sin instrucciones.",
   "noIngredients": "Sin ingredientes.",
+  "cancel": "Cancelar",
+  "save": "Guardar",
+  "create": "Crear",
+  "error": "Error",
   "retry": "Reintentar",
   "noMealsLoggedToday": "No hay comidas registradas para hoy.",
   "weekdayMonShort": "Lun",
@@ -410,5 +414,132 @@
   "errorEmailConfirmationMismatch": "El correo no coincide con tu cuenta.",
   "@errorEmailConfirmationMismatch": {
     "description": "Se muestra cuando el correo ingresado para confirmar no coincide con el del usuario."
-  }
+  },
+  "myPlansTitle": "Mis planes",
+  "newPlan": "Nuevo plan",
+  "noSavedPlans": "No tienes planes guardados",
+  "createFirstPlan": "Crea tu primer plan de comidas.",
+  "menuViewEntries": "Ver entradas",
+  "menuSaveIngredients": "Guardar ingredientes",
+  "menuReusePlan": "Reutilizar plan",
+  "saveIngredientsSheetTitle": "Guardar ingredientes del plan",
+  "savedIngredientsSuccess": "Ingredientes guardados en \"{name}\"",
+  "@savedIngredientsSuccess": {
+    "placeholders": { "name": {} }
+  },
+  "savedIngredientsFailed": "No se pudo guardar los ingredientes",
+  "planReusedSuccess": "¡Plan reutilizado! \"{name}\" con {count} comidas.",
+  "@planReusedSuccess": {
+    "placeholders": { "name": {}, "count": {} }
+  },
+  "planReusedView": "Ver",
+  "planReusedFailed": "No se pudo reutilizar el plan",
+  "deletePlanDialogTitle": "¿Eliminar plan?",
+  "deletePlanDialogMessage": "Esta acción no se puede deshacer.",
+  "deletePlanAlsoRemoveGrocery": "Eliminar también de la lista de la compra",
+  "planDeletedSuccess": "Plan eliminado",
+  "planDeleteFailed": "No se pudo eliminar el plan",
+  "reusePlanSheetTitle": "Reutilizar plan",
+  "reusePlanStartDateLabel": "Fecha de inicio (requerida)",
+  "reusePlanSelectDate": "Seleccionar fecha",
+  "reusePlanNameLabel": "Nombre del nuevo plan (opcional)",
+  "reusePlanNameHint": "Ej: Semana del 17 de marzo",
+  "noEntriesInPlan": "No hay entradas en este plan.",
+  "planEntriesTitle": "Entradas del plan",
+  "menuViewRecipe": "Ver receta",
+  "menuAddToGrocery": "Agregar a lista de compras",
+  "menuMarkComplete": "Marcar como completada",
+  "addRecipeToListTitle": "Agregar receta a lista",
+  "recipeAddedToList": "Receta agregada a \"{name}\"",
+  "@recipeAddedToList": {
+    "placeholders": { "name": {} }
+  },
+  "recipeAddFailed": "No se pudo agregar la receta",
+  "markCompleteDialogTitle": "Marcar como completada",
+  "markCompleteQuestion": "¿Completaste \"{name}\"?",
+  "@markCompleteQuestion": {
+    "placeholders": { "name": {} }
+  },
+  "markCompleteDeductInfo": "Los ingredientes de esta receta se descontarán automáticamente de tu despensa.",
+  "completeAction": "Completar",
+  "allIngredientsDeducted": "✅ ¡Listo! {count} ingredientes descontados.",
+  "@allIngredientsDeducted": {
+    "placeholders": { "count": {} }
+  },
+  "someIngredientsMissing": "✅ Completado. {count} ingredientes no estaban en tu despensa.",
+  "@someIngredientsMissing": {
+    "placeholders": { "count": {} }
+  },
+  "alsoRemoveFromGrocery": "Eliminar también de la lista de la compra",
+  "noRecipeForEntry": "Esta entrada no tiene receta asociada",
+  "datesUpdatedSuccess": "Fechas actualizadas correctamente",
+  "saveToGroceryList": "Guardar en lista de compras",
+  "usePantryIngredientsLabel": "Usar ingredientes de mi despensa",
+  "alsoRemoveGroceryList": "También eliminar la lista de la compra",
+  "markCompleteRecipeButton": "Marcar como completada",
+  "completeRecipeButton": "Completar receta",
+  "aiLabel": "IA",
+
+  "pantryTitle": "Mi despensa",
+  "pantryEmptyTitle": "La despensa está vacía",
+  "pantryEmptySubtitle": "Agrega ingredientes que ya tienes en casa",
+  "pantryAddTooltip": "Agregar a la despensa",
+  "pantryOtherCategory": "Otros",
+  "pantryNoDate": "Sin fecha",
+
+  "pantryEditTitle": "Editar {name}",
+  "@pantryEditTitle": { "placeholders": { "name": {} } },
+  "pantryQuantityLabel": "Cantidad",
+  "pantryExpiryLabel": "Vence",
+
+  "pantryDeleteDialogTitle": "Eliminar de la despensa",
+  "pantryDeleteDialogMessage": "¿Eliminar \"{name}\"?",
+  "@pantryDeleteDialogMessage": { "placeholders": { "name": {} } },
+
+  "groceryListsTitle": "Mis listas",
+  "groceryListsSectionHeader": "Listas de compras",
+  "groceryListsEmptyTitle": "No hay listas aún",
+  "groceryListsEmptySubtitle": "Crea una nueva lista con el botón +",
+  "groceryListsNewListLabel": "Nueva lista",
+  "groceryListsErrorLoading": "Error al cargar listas",
+  "pantryCardTitle": "Mi despensa",
+  "pantryCardSubtitle": "Ingredientes que ya tienes en casa",
+
+  "createListDialogTitle": "Nueva lista de compras",
+  "createListErrorCreate": "Error al crear la lista",
+
+  "groceryDetailError": "Error",
+
+  "editQuantityDialogTitle": "Editar cantidad",
+
+  "addItemTitlePantry": "Agregar a la despensa",
+  "addItemTitleGrocery": "Agregar ingrediente",
+  "addItemIngredientNameLabel": "Nombre del ingrediente",
+  "addItemIngredientNameRequired": "Ingresa el nombre",
+  "addItemQuantityLabel": "Cantidad",
+  "addItemQuantityRequired": "Requerido",
+  "addItemQuantityInvalid": "Número inválido",
+  "addItemUnitLabel": "Unidad",
+  "addItemCategoryLabel": "Categoría (opcional)",
+  "addItemExpiryLabel": "Fecha de vencimiento (opcional)",
+  "addItemErrorAdding": "Error al agregar el ingrediente",
+  "addItemButton": "Agregar",
+
+  "deleteGroceryListDialogTitle": "Eliminar lista",
+  "deleteGroceryListDialogMessage": "¿Eliminar \"{name}\"?",
+  "@deleteGroceryListDialogMessage": { "placeholders": { "name": {} } },
+
+  "selectGroceryListNewList": "Nueva lista",
+
+  "recipeCompleteDialogTitle": "Completar receta",
+  "recipeCompleteDialogMessage": "¿Marcar esta receta como completada y descontar los ingredientes de tu despensa?",
+  "recipeCompletedSuccess": "¡Receta completada! {success} ingredientes descontados. {missing}",
+  "@recipeCompletedSuccess": { "placeholders": { "success": {}, "missing": {} } },
+  "recipeCompletedMissingNote": "{count} no encontrados.",
+  "@recipeCompletedMissingNote": { "placeholders": { "count": {} } },
+  "markAsCompleteLabel": "Marcar como completada",
+  "cookingAssistantBack": "Atrás",
+  "cookingAssistantNext": "Siguiente",
+  "cookingAssistantComplete": "Completar receta",
+  "cookingAssistantCompleteAction": "Completar"
 }

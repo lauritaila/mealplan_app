@@ -238,10 +238,11 @@ Future<void> _importRecipeToList(
     );
     return;
   }
+  final l10n = AppLocalizations.of(context);
   final selected = await showSelectOrCreateGroceryListSheet(
     context: context,
     ref: ref,
-    title: 'Agregar receta a lista',
+    title: l10n.addRecipeToListTitle,
   );
   if (selected == null || !context.mounted) return;
   final ok = await ref
@@ -252,8 +253,8 @@ Future<void> _importRecipeToList(
     SnackBar(
       content: Text(
         ok
-            ? 'Receta agregada a "${selected.name}"'
-            : 'No se pudo agregar la receta',
+            ? l10n.recipeAddedToList(selected.name)
+            : l10n.recipeAddFailed,
       ),
     ),
   );
@@ -270,12 +271,12 @@ Future<void> _confirmComplete(
   final confirmed = await showDialog<bool>(
     context: context,
     builder: (ctx) => AlertDialog(
-      title: const Text('Marcar como completada'),
+      title: Text(l10n.markCompleteDialogTitle),
       content: Column(
         mainAxisSize: MainAxisSize.min,
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Text('¿Completaste "${entry.name}"?'),
+          Text(l10n.markCompleteQuestion(entry.name)),
           const SizedBox(height: 12),
           Container(
             padding: const EdgeInsets.all(12),
@@ -284,14 +285,14 @@ Future<void> _confirmComplete(
               borderRadius: BorderRadius.circular(8),
               border: Border.all(color: Colors.amber),
             ),
-            child: const Row(
+            child: Row(
               children: [
-                Icon(Icons.info_outline, color: Colors.amber, size: 18),
-                SizedBox(width: 8),
+                const Icon(Icons.info_outline, color: Colors.amber, size: 18),
+                const SizedBox(width: 8),
                 Expanded(
                   child: Text(
-                    'Los ingredientes de esta receta se descontarán automáticamente de tu despensa.',
-                    style: TextStyle(fontSize: 12),
+                    l10n.markCompleteDeductInfo,
+                    style: const TextStyle(fontSize: 12),
                   ),
                 ),
               ],
@@ -307,7 +308,7 @@ Future<void> _confirmComplete(
         FilledButton.icon(
           onPressed: () => Navigator.of(ctx).pop(true),
           icon: const Icon(Icons.check_circle_outline),
-          label: const Text('Completar'),
+          label: Text(l10n.completeAction),
           style: FilledButton.styleFrom(backgroundColor: Colors.green),
         ),
       ],
@@ -362,7 +363,7 @@ Future<void> _confirmDeleteEntry(
               value: removeShoppingList,
               onChanged: (v) =>
                   setLocalState(() => removeShoppingList = v ?? false),
-              title: const Text('Eliminar también de la lista de la compra'),
+              title: Text(AppLocalizations.of(ctx).alsoRemoveFromGrocery),
               controlAffinity: ListTileControlAffinity.leading,
             ),
           ],
@@ -604,7 +605,7 @@ class _MealEntryCard extends StatelessWidget {
                       value: 'import_recipe',
                       child: ListTile(
                         leading: Icon(Icons.shopping_cart_outlined),
-                        title: const Text('Agregar a lista de compras'),
+                        title: Text(l10n.menuAddToGrocery),
                         contentPadding: EdgeInsets.zero,
                       ),
                     ),

@@ -181,9 +181,9 @@ class RecipeDetailScreen extends ConsumerWidget {
                       final confirmed = await showDialog<bool>(
                         context: context,
                         builder: (ctx) => AlertDialog(
-                          title: const Text('Completar receta'),
-                          content: const Text(
-                            '¿Marcar esta receta como completada y descontar los ingredientes de tu despensa?',
+                          title: Text(l10n.recipeCompleteDialogTitle),
+                          content: Text(
+                            l10n.recipeCompleteDialogMessage,
                           ),
                           actions: [
                             TextButton(
@@ -192,7 +192,7 @@ class RecipeDetailScreen extends ConsumerWidget {
                             ),
                             FilledButton(
                               onPressed: () => Navigator.of(ctx).pop(true),
-                              child: const Text('Completar'),
+                              child: Text(l10n.cookingAssistantCompleteAction),
                             ),
                           ],
                         ),
@@ -225,9 +225,12 @@ class RecipeDetailScreen extends ConsumerWidget {
 
                             ScaffoldMessenger.of(context).showSnackBar(
                               SnackBar(
-                                content: Text(
-                                  '¡Receta completada! $successCount ingredientes descontados. ${missingCount > 0 ? '$missingCount no encontrados.' : ''}',
-                                ),
+                                    content: Text(
+                                      l10n.recipeCompletedSuccess(
+                                        successCount.toString(),
+                                        missingCount > 0 ? l10n.recipeCompletedMissingNote(missingCount.toString()) : '',
+                                      ),
+                                    ),
                               ),
                             );
                             context.pop(); // Go back to meal plan
@@ -252,7 +255,7 @@ class RecipeDetailScreen extends ConsumerWidget {
                       }
                     },
                     icon: const Icon(Icons.check_circle_outline),
-                    label: const Text('Marcar como completada'),
+                    label: Text(l10n.markAsCompleteLabel),
                     style: OutlinedButton.styleFrom(
                       foregroundColor: Colors.green,
                       side: const BorderSide(color: Colors.green),

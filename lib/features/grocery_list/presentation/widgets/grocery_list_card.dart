@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:meal_plan_app/features/grocery_list/domain/entities/grocery_list.dart';
+import 'package:meal_plan_app/l10n/app_localizations.dart';
 
 class GroceryListCard extends StatelessWidget {
   final GroceryList list;
@@ -32,16 +33,16 @@ class GroceryListCard extends StatelessWidget {
         return await showDialog<bool>(
           context: context,
           builder: (ctx) => AlertDialog(
-            title: const Text('Eliminar lista'),
-            content: Text('¿Eliminar "${list.name}"?'),
+            title: Text(AppLocalizations.of(context).deleteGroceryListDialogTitle),
+            content: Text(AppLocalizations.of(context).deleteGroceryListDialogMessage(list.name)),
             actions: [
               TextButton(
                 onPressed: () => Navigator.pop(ctx, false),
-                child: const Text('Cancelar'),
+                child: Text(AppLocalizations.of(context).cancel),
               ),
               FilledButton(
                 onPressed: () => Navigator.pop(ctx, true),
-                child: const Text('Eliminar'),
+                child: Text(AppLocalizations.of(context).deleteAction),
               ),
             ],
           ),

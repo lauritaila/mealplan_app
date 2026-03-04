@@ -4,6 +4,7 @@ import 'package:go_router/go_router.dart';
 import 'package:meal_plan_app/features/grocery_list/presentation/providers/provider.dart';
 import 'package:meal_plan_app/features/grocery_list/presentation/widgets/create_list_dialog.dart';
 import 'package:meal_plan_app/features/grocery_list/presentation/widgets/grocery_list_card.dart';
+import 'package:meal_plan_app/l10n/app_localizations.dart';
 
 class GroceryListsScreen extends ConsumerWidget {
   const GroceryListsScreen({super.key});
@@ -12,18 +13,19 @@ class GroceryListsScreen extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final listsAsync = ref.watch(groceryListsProvider);
     final theme = Theme.of(context);
+    final l10n = AppLocalizations.of(context);
 
     return Scaffold(
       backgroundColor: theme.colorScheme.surface,
       appBar: AppBar(
-        title: const Text('Mis listas'),
+        title: Text(l10n.groceryListsTitle),
         centerTitle: false,
         backgroundColor: theme.colorScheme.surface,
         surfaceTintColor: Colors.transparent,
         actions: [
           IconButton(
             icon: const Icon(Icons.add),
-            tooltip: 'Nueva lista',
+            tooltip: l10n.groceryListsNewListLabel,
             onPressed: () => _showCreateDialog(context, ref),
           ),
         ],
@@ -45,7 +47,7 @@ class GroceryListsScreen extends ConsumerWidget {
               child: Padding(
                 padding: const EdgeInsets.fromLTRB(20, 20, 20, 8),
                 child: Text(
-                  'Listas de compras',
+                  l10n.groceryListsSectionHeader,
                   style: theme.textTheme.titleMedium?.copyWith(
                     fontWeight: FontWeight.w700,
                     color: theme.colorScheme.onSurfaceVariant,
@@ -67,13 +69,13 @@ class GroceryListsScreen extends ConsumerWidget {
                       const Icon(Icons.error_outline, size: 48),
                       const SizedBox(height: 12),
                       Text(
-                        'Error al cargar listas\n${e.toString()}',
+                        '${l10n.groceryListsErrorLoading}\n${e.toString()}',
                         textAlign: TextAlign.center,
                       ),
                       const SizedBox(height: 14),
                       FilledButton(
                         onPressed: () => ref.refresh(groceryListsProvider),
-                        child: const Text('Reintentar'),
+                        child: Text(l10n.retry),
                       ),
                     ],
                   ),
@@ -93,14 +95,14 @@ class GroceryListsScreen extends ConsumerWidget {
                           ),
                           const SizedBox(height: 16),
                           Text(
-                            'No hay listas aún',
+                            l10n.groceryListsEmptyTitle,
                             style: theme.textTheme.titleMedium?.copyWith(
                               color: theme.colorScheme.onSurfaceVariant,
                             ),
                           ),
                           const SizedBox(height: 8),
                           Text(
-                            'Crea una nueva lista con el botón +',
+                            l10n.groceryListsEmptySubtitle,
                             style: theme.textTheme.bodySmall?.copyWith(
                               color: theme.colorScheme.onSurfaceVariant,
                             ),
@@ -140,7 +142,7 @@ class GroceryListsScreen extends ConsumerWidget {
         heroTag: 'grocery-lists-fab',
         onPressed: () => _showCreateDialog(context, ref),
         icon: const Icon(Icons.add),
-        label: const Text('Nueva lista'),
+        label: Text(l10n.groceryListsNewListLabel),
       ),
     );
   }
@@ -158,6 +160,7 @@ class _PantryCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
+    final l10n = AppLocalizations.of(context);
     return Card(
       elevation: 0,
       shape: RoundedRectangleBorder(
@@ -194,7 +197,7 @@ class _PantryCard extends StatelessWidget {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(
-                      'Mi despensa',
+                      l10n.pantryCardTitle,
                       style: theme.textTheme.titleMedium?.copyWith(
                         fontWeight: FontWeight.bold,
                         color: theme.colorScheme.onSurface,
@@ -202,7 +205,7 @@ class _PantryCard extends StatelessWidget {
                     ),
                     const SizedBox(height: 3),
                     Text(
-                      'Ingredientes que ya tienes en casa',
+                      l10n.pantryCardSubtitle,
                       style: theme.textTheme.bodySmall?.copyWith(
                         color: theme.colorScheme.onSurfaceVariant,
                       ),

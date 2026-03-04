@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:meal_plan_app/features/grocery_list/domain/entities/entities.dart';
 import 'package:meal_plan_app/features/grocery_list/presentation/providers/grocery_actions_provider.dart';
 import 'package:meal_plan_app/features/grocery_list/presentation/providers/grocery_lists_provider.dart';
+import 'package:meal_plan_app/l10n/app_localizations.dart';
 
 /// Shows a bottom sheet for selecting an existing grocery list or creating a
 /// new one on the fly. Returns the chosen [GroceryList], or null if dismissed.
@@ -119,7 +120,7 @@ class _SelectGroceryListSheetState
               ListTile(
                 contentPadding: EdgeInsets.zero,
                 leading: const Icon(Icons.add),
-                title: const Text('Nueva lista'),
+                title: Text(AppLocalizations.of(context).selectGroceryListNewList),
                 onTap: () => setState(() => _creating = true),
               )
             else ...[
@@ -145,14 +146,14 @@ class _SelectGroceryListSheetState
                         _createError = null;
                         _nameController.clear();
                       }),
-                      child: const Text('Cancelar'),
+                      child: Text(AppLocalizations.of(context).cancel),
                     ),
                   ),
                   const SizedBox(width: 12),
                   Expanded(
                     child: FilledButton(
                       onPressed: _createAndReturn,
-                      child: const Text('Crear'),
+                      child: Text(AppLocalizations.of(context).create),
                     ),
                   ),
                 ],

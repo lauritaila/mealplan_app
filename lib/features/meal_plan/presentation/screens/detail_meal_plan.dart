@@ -156,7 +156,7 @@ class _DetailMealPlanScreenState extends ConsumerState<DetailMealPlanScreen> {
                         ? null
                         : () => _importToGroceryList(context, plan!.id),
                     icon: const Icon(Icons.shopping_cart_outlined),
-                    label: const Text('Guardar en lista de compras'),
+                    label: Text(l10n.saveToGroceryList),
                   ),
                   const SizedBox(height: 8),
                   ElevatedButton(
@@ -388,6 +388,7 @@ class _DetailMealPlanScreenState extends ConsumerState<DetailMealPlanScreen> {
 
     if (pickedDate == null || !context.mounted) return;
 
+    final l10n = AppLocalizations.of(context);
     final diff = endDate.difference(startDate);
     final newEndDate = pickedDate.add(diff);
 
@@ -458,7 +459,7 @@ class _DetailMealPlanScreenState extends ConsumerState<DetailMealPlanScreen> {
     ref.read(mealPlanEntryActionsProvider.notifier).reset();
 
     ScaffoldMessenger.of(context).showSnackBar(
-      const SnackBar(content: Text('Fechas actualizadas correctamente')),
+      SnackBar(content: Text(l10n.datesUpdatedSuccess)),
     );
   }
 
