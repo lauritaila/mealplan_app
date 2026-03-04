@@ -13,6 +13,7 @@ class DayMealEntry {
   final double? fatsGrams;
   final double? carbsGrams;
   final double? proteinGrams;
+  final DateTime? mealDate;
 
   const DayMealEntry({
     required this.entryId,
@@ -29,6 +30,7 @@ class DayMealEntry {
     this.fatsGrams,
     this.carbsGrams,
     this.proteinGrams,
+    this.mealDate,
   });
 }
 

@@ -137,6 +137,8 @@
   "mealTypeDinnerSubtitle": "Light and nutritious",
   "notesOptionalTitle": "Notes (optional)",
   "notesHint": "E.g.: Lactose-free, more proteins...",
+  "usePantryLabel": "Use pantry ingredients",
+  "usePantrySubtitle": "AI will prioritize recipes with what you already have",
   "mealsOfDayTitle": "Meals of the day",
   "skipMealAction": "Skip meal",
   "unskipMealAction": "Unskip meal",

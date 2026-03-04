@@ -10,4 +10,3 @@ Future<PreferencesConfiguration> preferencesConfiguration(Ref ref) async {
   final repository = ref.watch(preferencesRepositoryProvider);
   return repository.fetchPreferencesConfiguration();
 }
-

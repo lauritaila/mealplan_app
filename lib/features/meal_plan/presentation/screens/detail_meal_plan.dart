@@ -3,6 +3,8 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:meal_plan_app/features/auth/domain/entities/user.dart';
 import 'package:meal_plan_app/features/auth/presentation/provider/provider.dart';
+import 'package:meal_plan_app/features/grocery_list/presentation/providers/grocery_actions_provider.dart';
+import 'package:meal_plan_app/features/grocery_list/presentation/widgets/select_grocery_list_sheet.dart';
 import 'package:meal_plan_app/features/meal_plan/domain/domain.dart';
 import 'package:meal_plan_app/features/meal_plan/presentation/providers/provider.dart';
 import 'package:meal_plan_app/features/meal_plan/presentation/widgets/swap_recipe_sheet.dart';
@@ -74,9 +76,29 @@ class _DetailMealPlanScreenState extends ConsumerState<DetailMealPlanScreen> {
                         ),
                       ),
                       const SizedBox(height: 6),
-                      Text(
-                        '${_formatDate(plan.startDate)} - ${_formatDate(plan.endDate)}',
-                        style: TextStyle(color: Colors.grey.shade700),
+                      Row(
+                        children: [
+                          Expanded(
+                            child: Text(
+                              '${_formatDate(plan.startDate)} - ${_formatDate(plan.endDate)}',
+                              style: TextStyle(color: Colors.grey.shade700),
+                            ),
+                          ),
+                          if (!isLoading)
+                            IconButton(
+                              icon: const Icon(
+                                Icons.edit_calendar_outlined,
+                                size: 20,
+                              ),
+                              tooltip: 'Cambiar fechas',
+                              onPressed: () => _showEditDatesPicker(
+                                context,
+                                plan.startDate,
+                                plan.endDate,
+                                plan.id,
+                              ),
+                            ),
+                        ],
                       ),
                       const SizedBox(height: 16),
                       const _DragDropHint(),
@@ -125,17 +147,62 @@ class _DetailMealPlanScreenState extends ConsumerState<DetailMealPlanScreen> {
           ? null
           : SafeArea(
               minimum: const EdgeInsets.all(16),
-              child: ElevatedButton(
-                onPressed: () {
-                  context.go('/home');
-                },
-                style: ElevatedButton.styleFrom(
-                  padding: const EdgeInsets.symmetric(vertical: 16),
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(14),
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                crossAxisAlignment: CrossAxisAlignment.stretch,
+                children: [
+                  FilledButton.icon(
+                    onPressed: isLoading
+                        ? null
+                        : () => _importToGroceryList(context, plan!.id),
+                    icon: const Icon(Icons.shopping_cart_outlined),
+                    label: const Text('Guardar en lista de compras'),
                   ),
-                ),
-                child: Text(l10n.done),
+                  const SizedBox(height: 8),
+                  ElevatedButton(
+                    onPressed: () async {
+                      // 1. Mostrar modal de lista de compra
+                      final selected = await showSelectOrCreateGroceryListSheet(
+                        context: context,
+                        ref: ref,
+                        title: 'Guardar ingredientes en...',
+                      );
+
+                      if (selected != null && context.mounted) {
+                        final ok = await ref
+                            .read(groceryActionsProvider.notifier)
+                            .importMealPlan(
+                              selected.id,
+                              widget.generatedPlan!.plan.id,
+                            );
+
+                        if (context.mounted) {
+                          ScaffoldMessenger.of(context).showSnackBar(
+                            SnackBar(
+                              content: Text(
+                                ok
+                                    ? 'Ingredientes guardados en "${selected.name}"'
+                                    : 'No se pudo guardar los ingredientes',
+                              ),
+                            ),
+                          );
+                        }
+                      }
+
+                      // 2. Navegar al home (pase lo que pase, tras la selección o si cancela)
+                      if (context.mounted) {
+                        context.go('/home');
+                      }
+                    },
+                    style: ElevatedButton.styleFrom(
+                      padding: const EdgeInsets.symmetric(vertical: 16),
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(14),
+                      ),
+                    ),
+                    child: Text(l10n.done),
+                  ),
+                ],
               ),
             ),
     );
@@ -303,6 +370,96 @@ class _DetailMealPlanScreenState extends ConsumerState<DetailMealPlanScreen> {
 
     if (pickedDate == null || !context.mounted) return;
     await _moveEntry(context, meal, oldDate, pickedDate);
+  }
+
+  Future<void> _showEditDatesPicker(
+    BuildContext context,
+    DateTime startDate,
+    DateTime endDate,
+    int planId,
+  ) async {
+    final pickedDate = await showDatePicker(
+      context: context,
+      initialDate: startDate,
+      firstDate: DateTime(2000, 1, 1),
+      lastDate: DateTime(2100, 12, 31),
+      helpText: 'Selecciona nueva fecha de inicio',
+    );
+
+    if (pickedDate == null || !context.mounted) return;
+
+    final diff = endDate.difference(startDate);
+    final newEndDate = pickedDate.add(diff);
+
+    final String startDateStr =
+        '${pickedDate.year}-${pickedDate.month.toString().padLeft(2, '0')}-${pickedDate.day.toString().padLeft(2, '0')}';
+    final String endDateStr =
+        '${newEndDate.year}-${newEndDate.month.toString().padLeft(2, '0')}-${newEndDate.day.toString().padLeft(2, '0')}';
+
+    final result = await ref
+        .read(mealPlanEntryActionsProvider.notifier)
+        .updateMealPlanDates(planId, startDateStr, endDateStr);
+
+    if (result == null) {
+      if (!context.mounted) return;
+      final state = ref.read(mealPlanEntryActionsProvider);
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text(
+            state.errorMessage ?? AppLocalizations.of(context).genericError,
+          ),
+        ),
+      );
+      ref.read(mealPlanEntryActionsProvider.notifier).reset();
+      return;
+    }
+
+    if (!context.mounted) return;
+
+    // Shift entries locally
+    final shiftedDays = result.shiftedDays;
+    final updatedDays = <DailyMeals>[];
+    for (final day in _plan!.plan.dailyMeals) {
+      final shiftedDate = day.date.add(Duration(days: shiftedDays));
+      final shiftedMeals = day.meals.map((m) {
+        return MealEntry(
+          entryId: m.entryId,
+          mealType: m.mealType,
+          name: m.name,
+          recipe: m.recipe,
+          description: m.description,
+          servings: m.servings,
+          calories: m.calories,
+          proteinGrams: m.proteinGrams,
+          carbsGrams: m.carbsGrams,
+          fatsGrams: m.fatsGrams,
+          categories: m.categories,
+          status: m.status,
+        );
+      }).toList();
+      updatedDays.add(DailyMeals(date: shiftedDate, meals: shiftedMeals));
+    }
+
+    updatedDays.sort((a, b) => a.date.compareTo(b.date));
+
+    setState(() {
+      _plan = MealPlanResponse(
+        plan: MealPlan(
+          id: _plan!.plan.id,
+          planName: _plan!.plan.planName,
+          startDate: pickedDate,
+          endDate: newEndDate,
+          dailyMeals: updatedDays,
+        ),
+        meta: _plan!.meta,
+      );
+    });
+
+    ref.read(mealPlanEntryActionsProvider.notifier).reset();
+
+    ScaffoldMessenger.of(context).showSnackBar(
+      const SnackBar(content: Text('Fechas actualizadas correctamente')),
+    );
   }
 
   void _toggleMealExpansion(int entryId) {
@@ -501,6 +658,29 @@ class _DetailMealPlanScreenState extends ConsumerState<DetailMealPlanScreen> {
       );
     });
     ref.read(mealPlanEntryActionsProvider.notifier).reset();
+  }
+
+  Future<void> _importToGroceryList(BuildContext context, int planId) async {
+    final messenger = ScaffoldMessenger.of(context);
+    final selected = await showSelectOrCreateGroceryListSheet(
+      context: context,
+      ref: ref,
+      title: 'Guardar plan en lista',
+    );
+    if (selected == null || !mounted) return;
+    final ok = await ref
+        .read(groceryActionsProvider.notifier)
+        .importMealPlan(selected.id, planId);
+    if (!mounted) return;
+    messenger.showSnackBar(
+      SnackBar(
+        content: Text(
+          ok
+              ? 'Ingredientes importados a "${selected.name}"'
+              : 'No se pudo importar el plan',
+        ),
+      ),
+    );
   }
 
   Future<void> _showDeletePlanSheet(BuildContext context, int planId) async {
@@ -974,6 +1154,7 @@ class _RegenerateEntrySheetState extends State<_RegenerateEntrySheet> {
   final _descController = TextEditingController();
   int? _selectedMaxTime;
   bool _isLoading = false;
+  bool _usePantry = false;
   String? _error;
 
   @override
@@ -1063,6 +1244,18 @@ class _RegenerateEntrySheetState extends State<_RegenerateEntrySheet> {
                 }).toList(),
               ),
             ],
+            const SizedBox(height: 8),
+            CheckboxListTile(
+              contentPadding: EdgeInsets.zero,
+              value: _usePantry,
+              onChanged: (v) => setState(() => _usePantry = v ?? false),
+              title: const Text('Usar ingredientes de mi despensa'),
+              subtitle: const Text(
+                'La IA priorizará ingredientes que ya tienes',
+                style: TextStyle(fontSize: 12),
+              ),
+              controlAffinity: ListTileControlAffinity.leading,
+            ),
             if (_error != null) ...[
               const SizedBox(height: 12),
               Text(_error!, style: const TextStyle(color: Colors.red)),
@@ -1100,6 +1293,7 @@ class _RegenerateEntrySheetState extends State<_RegenerateEntrySheet> {
           : _descController.text.trim(),
       mealTypes: [widget.mealType],
       maxTotalTimeMinutes: _selectedMaxTime,
+      usePantry: _usePantry ? true : null,
     );
 
     final updated = await widget.actionsNotifier.changeRecipe(
@@ -1140,6 +1334,7 @@ class _DeletePlanSheet extends StatefulWidget {
 class _DeletePlanSheetState extends State<_DeletePlanSheet> {
   final _reasonController = TextEditingController();
   bool _isLoading = false;
+  bool _removeShoppingList = false;
   String? _error;
 
   @override
@@ -1222,6 +1417,19 @@ class _DeletePlanSheetState extends State<_DeletePlanSheet> {
                 ),
               ),
             ),
+            const SizedBox(height: 12),
+            CheckboxListTile(
+              contentPadding: EdgeInsets.zero,
+              value: _removeShoppingList,
+              onChanged: (v) =>
+                  setState(() => _removeShoppingList = v ?? false),
+              title: const Text('También eliminar la lista de la compra'),
+              subtitle: const Text(
+                'Borra las listas de compras vinculadas a este plan',
+                style: TextStyle(fontSize: 12),
+              ),
+              controlAffinity: ListTileControlAffinity.leading,
+            ),
             if (_error != null) ...[
               const SizedBox(height: 12),
               Text(_error!, style: const TextStyle(color: Colors.red)),
@@ -1264,6 +1472,7 @@ class _DeletePlanSheetState extends State<_DeletePlanSheet> {
       deleteDescription: _reasonController.text.trim().isEmpty
           ? null
           : _reasonController.text.trim(),
+      removeShoppingList: _removeShoppingList,
     );
 
     // Inspect notifier state to determine outcome

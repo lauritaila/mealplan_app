@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:meal_plan_app/features/auth/presentation/provider/provider.dart';
+import 'package:meal_plan_app/features/meal_plan/presentation/providers/provider.dart';
 import 'package:meal_plan_app/features/recipes/presentation/providers/providers.dart';
 import 'package:meal_plan_app/features/recipes/presentation/utils/ingredient_substitute_flow.dart';
 import 'package:meal_plan_app/features/shared/widgets/widgets.dart';
@@ -9,8 +10,9 @@ import 'package:meal_plan_app/l10n/app_localizations.dart';
 
 class RecipeDetailScreen extends ConsumerWidget {
   final int recipeId;
+  final int? entryId;
 
-  const RecipeDetailScreen({super.key, required this.recipeId});
+  const RecipeDetailScreen({super.key, required this.recipeId, this.entryId});
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -161,11 +163,102 @@ class RecipeDetailScreen extends ConsumerWidget {
 
                 FilledButton.icon(
                   onPressed: () {
-                    context.push('/recipes/$recipeId/assistant');
+                    if (entryId != null) {
+                      context.push(
+                        '/recipes/$recipeId/assistant?entryId=$entryId',
+                      );
+                    } else {
+                      context.push('/recipes/$recipeId/assistant');
+                    }
                   },
                   icon: const Icon(Icons.play_circle_fill),
                   label: Text(l10n.openCookingAssistant),
                 ),
+                if (entryId != null) ...[
+                  const SizedBox(height: 12),
+                  OutlinedButton.icon(
+                    onPressed: () async {
+                      final confirmed = await showDialog<bool>(
+                        context: context,
+                        builder: (ctx) => AlertDialog(
+                          title: const Text('Completar receta'),
+                          content: const Text(
+                            '¿Marcar esta receta como completada y descontar los ingredientes de tu despensa?',
+                          ),
+                          actions: [
+                            TextButton(
+                              onPressed: () => Navigator.of(ctx).pop(false),
+                              child: Text(l10n.cancel),
+                            ),
+                            FilledButton(
+                              onPressed: () => Navigator.of(ctx).pop(true),
+                              child: const Text('Completar'),
+                            ),
+                          ],
+                        ),
+                      );
+
+                      if (confirmed != true || !context.mounted) return;
+
+                      showDialog(
+                        context: context,
+                        barrierDismissible: false,
+                        builder: (ctx) =>
+                            const Center(child: CircularProgressIndicator()),
+                      );
+
+                      try {
+                        // Hardcode servings to 1 since recipe details endpoint
+                        // does not currently expose base servings directly on the entity
+                        final int baseServings = 1;
+
+                        final result = await ref
+                            .read(mealPlanEntryActionsProvider.notifier)
+                            .bulkDeduct(recipeId, baseServings, entryId: entryId);
+
+                        if (context.mounted) {
+                          Navigator.of(context).pop(); // dismiss loading
+
+                          if (result != null) {
+                            final successCount = result.deducted.length;
+                            final missingCount = result.missing.length;
+
+                            ScaffoldMessenger.of(context).showSnackBar(
+                              SnackBar(
+                                content: Text(
+                                  '¡Receta completada! $successCount ingredientes descontados. ${missingCount > 0 ? '$missingCount no encontrados.' : ''}',
+                                ),
+                              ),
+                            );
+                            context.pop(); // Go back to meal plan
+                          } else {
+                            ScaffoldMessenger.of(context).showSnackBar(
+                              SnackBar(
+                                content: Text(
+                                  ref.read(mealPlanEntryActionsProvider).errorMessage ??
+                                      l10n.genericError,
+                                ),
+                              ),
+                            );
+                          }
+                        }
+                      } catch (e) {
+                        if (context.mounted) {
+                          Navigator.of(context).pop(); // dismiss loading
+                          ScaffoldMessenger.of(
+                            context,
+                          ).showSnackBar(SnackBar(content: Text(e.toString())));
+                        }
+                      }
+                    },
+                    icon: const Icon(Icons.check_circle_outline),
+                    label: const Text('Marcar como completada'),
+                    style: OutlinedButton.styleFrom(
+                      foregroundColor: Colors.green,
+                      side: const BorderSide(color: Colors.green),
+                    ),
+                  ),
+                ],
                 const SizedBox(height: 24),
 
                 // Instructions Section

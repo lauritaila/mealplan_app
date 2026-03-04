@@ -79,9 +79,7 @@ class PreferencesSupabaseDatasourceImpl implements PreferencesDatasource {
   }
 
   @override
-  Future<void> saveUserPreference(
-    UserPreferences userPreference,
-  ) async {
+  Future<void> saveUserPreference(UserPreferences userPreference) async {
     try {
       String? authUserId = _supabaseClient.auth.currentUser?.id;
       if (authUserId == null) {
@@ -125,4 +123,3 @@ class PreferencesSupabaseDatasourceImpl implements PreferencesDatasource {
     }
   }
 }
-

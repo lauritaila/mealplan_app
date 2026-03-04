@@ -29,8 +29,11 @@ class MealPlanRepositoryImpl extends MealPlanRepository {
   }
 
   @override
-  Future<void> deleteMealPlanEntry(int entryId) {
-    return datasource.deleteMealPlanEntry(entryId);
+  Future<void> deleteMealPlanEntry(int entryId, {bool? removeShoppingList}) {
+    return datasource.deleteMealPlanEntry(
+      entryId,
+      removeShoppingList: removeShoppingList,
+    );
   }
 
   @override
@@ -42,10 +45,15 @@ class MealPlanRepositoryImpl extends MealPlanRepository {
   }
 
   @override
-  Future<void> deleteMealPlan(int mealPlanId, {String? deleteDescription}) {
+  Future<void> deleteMealPlan(
+    int mealPlanId, {
+    String? deleteDescription,
+    bool? removeShoppingList,
+  }) {
     return datasource.deleteMealPlan(
       mealPlanId,
       deleteDescription: deleteDescription,
+      removeShoppingList: removeShoppingList,
     );
   }
 
@@ -57,5 +65,46 @@ class MealPlanRepositoryImpl extends MealPlanRepository {
   @override
   Future<DayMealEntry> swapMealPlanRecipe(int entryId, int recipeId) {
     return datasource.swapMealPlanRecipe(entryId, recipeId);
+  }
+
+  @override
+  Future<List<MealPlanSummary>> getMealPlans() {
+    return datasource.getMealPlans();
+  }
+
+  @override
+  Future<List<DayMealEntry>> getMealPlanEntries(int planId) {
+    return datasource.getMealPlanEntries(planId);
+  }
+
+  @override
+  Future<UpdateMealPlanDatesResponse> updateMealPlanDates(
+    int planId,
+    String startDate,
+    String endDate,
+  ) {
+    return datasource.updateMealPlanDates(planId, startDate, endDate);
+  }
+
+  @override
+  Future<ReuseMealPlanResponse> reuseMealPlan(
+    int planId,
+    String startDate, {
+    String? name,
+  }) {
+    return datasource.reuseMealPlan(planId, startDate, name: name);
+  }
+
+  @override
+  Future<BulkDeductResult> bulkDeductFromPantry(
+    int recipeId,
+    int servings, {
+    int? entryId,
+  }) {
+    return datasource.bulkDeductFromPantry(
+      recipeId,
+      servings,
+      entryId: entryId,
+    );
   }
 }

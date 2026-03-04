@@ -84,6 +84,7 @@ class MealPlanGenerator extends _$MealPlanGenerator {
     required int numberOfDays,
     required int quantityOfPeople,
     required List<String> mealTypes,
+    required bool usePantry,
   }) async {
     state = state.copyWith(
       status: MealPlanGeneratorStatus.loading,
@@ -108,11 +109,32 @@ class MealPlanGenerator extends _$MealPlanGenerator {
         }
       }
 
+      final mealPlansState = ref.read(mealPlansProvider);
+      DateTime startDate = DateTime.now();
+
+      if (mealPlansState.hasValue &&
+          mealPlansState.value != null &&
+          mealPlansState.value!.isNotEmpty) {
+        DateTime latestEndDate = mealPlansState.value!
+            .map((p) => p.endDate)
+            .reduce((a, b) => a.isAfter(b) ? a : b);
+        if (latestEndDate.isAfter(
+          startDate.subtract(const Duration(days: 1)),
+        )) {
+          startDate = latestEndDate.add(const Duration(days: 1));
+        }
+      }
+
+      final startDateStr =
+          '${startDate.year.toString().padLeft(4, '0')}-${startDate.month.toString().padLeft(2, '0')}-${startDate.day.toString().padLeft(2, '0')}';
+
       final request = NewMealPlanRequest(
         numberOfDays: numberOfDays,
         quantityOfPeople: quantityOfPeople,
         description: description.isEmpty ? null : description,
         mealTypes: mealTypes.isEmpty ? null : mealTypes,
+        startDate: startDateStr,
+        usePantry: usePantry,
       );
 
       final mealPlanRepo = ref.read(mealPlanRepositoryProvider);

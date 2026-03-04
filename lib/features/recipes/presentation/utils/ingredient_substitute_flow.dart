@@ -41,9 +41,9 @@ Future<void> showIngredientSubstituteFlow({
   if (selected == null) return;
 
   if (ingredient.id == null) {
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(content: Text(l10n.substituteMissingIngredientId)),
-    );
+    ScaffoldMessenger.of(
+      context,
+    ).showSnackBar(SnackBar(content: Text(l10n.substituteMissingIngredientId)));
     return;
   }
 
@@ -116,8 +116,8 @@ Future<void> showIngredientSubstituteFlow({
     final errorText = e is AppError
         ? localizeAppError(l10n, e)
         : l10n.genericError;
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(content: Text(errorText)),
-    );
+    ScaffoldMessenger.of(
+      context,
+    ).showSnackBar(SnackBar(content: Text(errorText)));
   }
 }

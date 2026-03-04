@@ -302,6 +302,13 @@ class AppLocalizationsEn extends AppLocalizations {
   String get notesHint => 'E.g.: Lactose-free, more proteins...';
 
   @override
+  String get usePantryLabel => 'Use pantry ingredients';
+
+  @override
+  String get usePantrySubtitle =>
+      'AI will prioritize recipes with what you already have';
+
+  @override
   String get mealsOfDayTitle => 'Meals of the day';
 
   @override

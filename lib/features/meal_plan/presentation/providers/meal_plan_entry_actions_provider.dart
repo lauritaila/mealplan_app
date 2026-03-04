@@ -40,7 +40,10 @@ class MealPlanEntryActions extends _$MealPlanEntryActions {
     return const MealPlanEntryActionState();
   }
 
-  Future<void> deleteEntry(int entryId) async {
+  Future<void> deleteEntry(
+    int entryId, {
+    bool removeShoppingList = false,
+  }) async {
     state = state.copyWith(
       status: MealPlanEntryActionStatus.loading,
       clearError: true,
@@ -48,7 +51,10 @@ class MealPlanEntryActions extends _$MealPlanEntryActions {
     );
     try {
       final repo = ref.read(mealPlanRepositoryProvider);
-      await repo.deleteMealPlanEntry(entryId);
+      await repo.deleteMealPlanEntry(
+        entryId,
+        removeShoppingList: removeShoppingList,
+      );
       state = state.copyWith(status: MealPlanEntryActionStatus.success);
     } on AppError catch (e) {
       state = state.copyWith(
@@ -95,7 +101,11 @@ class MealPlanEntryActions extends _$MealPlanEntryActions {
     }
   }
 
-  Future<void> deletePlan(int mealPlanId, {String? deleteDescription}) async {
+  Future<void> deletePlan(
+    int mealPlanId, {
+    String? deleteDescription,
+    bool removeShoppingList = false,
+  }) async {
     state = state.copyWith(
       status: MealPlanEntryActionStatus.loading,
       clearError: true,
@@ -106,6 +116,7 @@ class MealPlanEntryActions extends _$MealPlanEntryActions {
       await repo.deleteMealPlan(
         mealPlanId,
         deleteDescription: deleteDescription,
+        removeShoppingList: removeShoppingList,
       );
       state = state.copyWith(status: MealPlanEntryActionStatus.success);
     } on AppError catch (e) {
@@ -162,6 +173,100 @@ class MealPlanEntryActions extends _$MealPlanEntryActions {
         updatedEntry: updated,
       );
       return updated;
+    } on AppError catch (e) {
+      state = state.copyWith(
+        status: MealPlanEntryActionStatus.error,
+        errorMessage: e.message,
+      );
+      return null;
+    } catch (e) {
+      state = state.copyWith(
+        status: MealPlanEntryActionStatus.error,
+        errorMessage: e.toString(),
+      );
+      return null;
+    }
+  }
+
+  Future<ReuseMealPlanResponse?> reusePlan(
+    int planId,
+    String startDate, {
+    String? name,
+  }) async {
+    state = state.copyWith(
+      status: MealPlanEntryActionStatus.loading,
+      clearError: true,
+      clearEntry: true,
+    );
+    try {
+      final repo = ref.read(mealPlanRepositoryProvider);
+      final result = await repo.reuseMealPlan(planId, startDate, name: name);
+      state = state.copyWith(status: MealPlanEntryActionStatus.success);
+      return result;
+    } on AppError catch (e) {
+      state = state.copyWith(
+        status: MealPlanEntryActionStatus.error,
+        errorMessage: e.message,
+      );
+      return null;
+    } catch (e) {
+      state = state.copyWith(
+        status: MealPlanEntryActionStatus.error,
+        errorMessage: e.toString(),
+      );
+      return null;
+    }
+  }
+
+  Future<UpdateMealPlanDatesResponse?> updateMealPlanDates(
+    int planId,
+    String startDate,
+    String endDate,
+  ) async {
+    state = state.copyWith(
+      status: MealPlanEntryActionStatus.loading,
+      clearError: true,
+      clearEntry: true,
+    );
+    try {
+      final repo = ref.read(mealPlanRepositoryProvider);
+      final result = await repo.updateMealPlanDates(planId, startDate, endDate);
+      state = state.copyWith(status: MealPlanEntryActionStatus.success);
+      return result;
+    } on AppError catch (e) {
+      state = state.copyWith(
+        status: MealPlanEntryActionStatus.error,
+        errorMessage: e.message,
+      );
+      return null;
+    } catch (e) {
+      state = state.copyWith(
+        status: MealPlanEntryActionStatus.error,
+        errorMessage: e.toString(),
+      );
+      return null;
+    }
+  }
+
+  Future<BulkDeductResult?> bulkDeduct(
+    int recipeId,
+    int servings, {
+    int? entryId,
+  }) async {
+    state = state.copyWith(
+      status: MealPlanEntryActionStatus.loading,
+      clearError: true,
+      clearEntry: true,
+    );
+    try {
+      final repo = ref.read(mealPlanRepositoryProvider);
+      final result = await repo.bulkDeductFromPantry(
+        recipeId,
+        servings,
+        entryId: entryId,
+      );
+      state = state.copyWith(status: MealPlanEntryActionStatus.success);
+      return result;
     } on AppError catch (e) {
       state = state.copyWith(
         status: MealPlanEntryActionStatus.error,

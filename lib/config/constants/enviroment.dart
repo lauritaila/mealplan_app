@@ -9,6 +9,5 @@ class Enviroment {
   static String webClientId =
       dotenv.env['WEB_CLIENT_ID'] ?? 'No configure the WEB_CLIENT_ID';
   static String apiBaseUrl =
-      dotenv.env['API_BASE_URL'] ??
-      'No configure the API_BASE_URL';
+      dotenv.env['API_BASE_URL'] ?? 'No configure the API_BASE_URL';
 }

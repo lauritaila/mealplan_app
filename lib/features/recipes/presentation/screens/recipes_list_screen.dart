@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:meal_plan_app/features/auth/presentation/provider/provider.dart';
+import 'package:meal_plan_app/features/grocery_list/presentation/providers/grocery_actions_provider.dart';
+import 'package:meal_plan_app/features/grocery_list/presentation/widgets/select_grocery_list_sheet.dart';
 import 'package:meal_plan_app/features/recipes/presentation/providers/providers.dart';
 import 'package:meal_plan_app/features/recipes/presentation/widgets/recipe_card.dart';
 import 'package:meal_plan_app/l10n/app_localizations.dart';
@@ -67,8 +69,28 @@ class RecipesListScreen extends ConsumerWidget {
                           ),
                         ),
                       );
-                      // Optionally revert optimistic UI changes here if needed
                     }
+                  },
+                  onAddToGroceryList: () async {
+                    final selected = await showSelectOrCreateGroceryListSheet(
+                      context: context,
+                      ref: ref,
+                      title: 'Agregar receta a lista',
+                    );
+                    if (selected == null || !context.mounted) return;
+                    final ok = await ref
+                        .read(groceryActionsProvider.notifier)
+                        .importRecipe(selected.id, recipe.id);
+                    if (!context.mounted) return;
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      SnackBar(
+                        content: Text(
+                          ok
+                              ? 'Receta agregada a "${selected.name}"'
+                              : 'No se pudo agregar la receta',
+                        ),
+                      ),
+                    );
                   },
                 );
               },

@@ -602,6 +602,18 @@ abstract class AppLocalizations {
   /// **'E.g.: Lactose-free, more proteins...'**
   String get notesHint;
 
+  /// No description provided for @usePantryLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Use pantry ingredients'**
+  String get usePantryLabel;
+
+  /// No description provided for @usePantrySubtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'AI will prioritize recipes with what you already have'**
+  String get usePantrySubtitle;
+
   /// No description provided for @mealsOfDayTitle.
   ///
   /// In en, this message translates to:

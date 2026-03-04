@@ -12,6 +12,7 @@ class RecipeCard extends StatelessWidget {
   final bool hideNutritionValues;
   final VoidCallback onTap;
   final VoidCallback onFavoriteTap;
+  final VoidCallback? onAddToGroceryList;
 
   const RecipeCard({
     super.key,
@@ -25,6 +26,7 @@ class RecipeCard extends StatelessWidget {
     this.hideNutritionValues = false,
     required this.onTap,
     required this.onFavoriteTap,
+    this.onAddToGroceryList,
   });
 
   @override
@@ -58,6 +60,12 @@ class RecipeCard extends StatelessWidget {
                       ),
                     ),
                   ),
+                  if (onAddToGroceryList != null)
+                    IconButton(
+                      icon: const Icon(Icons.shopping_cart_outlined),
+                      tooltip: 'Agregar a lista de compras',
+                      onPressed: onAddToGroceryList,
+                    ),
                   IconButton(
                     icon: Icon(
                       isFavorite ? Icons.favorite : Icons.favorite_border,

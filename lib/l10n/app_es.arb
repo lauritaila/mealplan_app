@@ -137,6 +137,8 @@
   "mealTypeDinnerSubtitle": "Ligero y nutritivo",
   "notesOptionalTitle": "Notas (opcional)",
   "notesHint": "Ej.: Sin lactosa, más proteínas...",
+  "usePantryLabel": "Usar ingredientes de la despensa",
+  "usePantrySubtitle": "La IA priorizará recetas con lo que ya tienes",
   "mealsOfDayTitle": "Comidas del día",
   "skipMealAction": "Saltar comida",
   "unskipMealAction": "Quitar salto",
