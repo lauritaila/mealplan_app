@@ -90,7 +90,7 @@ class GroceryListCard extends StatelessWidget {
                       ),
                       const SizedBox(height: 2),
                       Text(
-                        _formatDate(list.createdAt, context),
+                        _formatDate(list.createdAt ?? DateTime.now(), context),
                         style: theme.textTheme.bodySmall?.copyWith(
                           color: theme.colorScheme.onSurfaceVariant,
                         ),

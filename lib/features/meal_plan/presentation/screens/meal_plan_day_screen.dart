@@ -266,13 +266,13 @@ Future<void> _confirmComplete(
   required DayMealEntry entry,
   required DateTime selectedDate,
 }) async {
+  final l10n = AppLocalizations.of(context);
   if (entry.recipeId <= 0) {
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(content: Text(l10n.noRecipeAssociated)),
     );
     return;
   }
-  final l10n = AppLocalizations.of(context);
   final confirmed = await showDialog<bool>(
     context: context,
     builder: (ctx) => AlertDialog(

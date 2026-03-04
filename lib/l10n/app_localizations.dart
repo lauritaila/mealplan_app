@@ -728,12 +728,6 @@ abstract class AppLocalizations {
   /// **'No ingredients.'**
   String get noIngredients;
 
-  /// No description provided for @retry.
-  ///
-  /// In en, this message translates to:
-  /// **'Retry'**
-  String get retry;
-
   /// No description provided for @noMealsLoggedToday.
   ///
   /// In en, this message translates to:
@@ -913,6 +907,18 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'An error occurred: {error}'**
   String errorOccurred(Object error);
+
+  /// No description provided for @retry.
+  ///
+  /// In en, this message translates to:
+  /// **'Retry'**
+  String get retry;
+
+  /// No description provided for @error.
+  ///
+  /// In en, this message translates to:
+  /// **'Error'**
+  String get error;
 
   /// No description provided for @login.
   ///
@@ -1826,12 +1832,6 @@ abstract class AppLocalizations {
   /// **'Create'**
   String get create;
 
-  /// No description provided for @error.
-  ///
-  /// In en, this message translates to:
-  /// **'Error'**
-  String get error;
-
   /// Shown when configuration fails to load.
   ///
   /// In en, this message translates to:
@@ -2408,6 +2408,8 @@ abstract class AppLocalizations {
   /// **'New list'**
   String get selectGroceryListNewList;
 
+  /// No description provided for @selectGroceryListEmpty.
+  ///
   /// In en, this message translates to:
   /// **'You have no lists. Create a new one.'**
   String get selectGroceryListEmpty;
@@ -2465,74 +2467,222 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Complete'**
   String get cookingAssistantCompleteAction;
-  
+
+  /// No description provided for @servingsPickerDialogTitle.
+  ///
   /// In en, this message translates to:
   /// **'Number of servings'**
   String get servingsPickerDialogTitle;
-  
+
+  /// No description provided for @servingsPickerConfirm.
+  ///
   /// In en, this message translates to:
   /// **'Confirm'**
   String get servingsPickerConfirm;
 
+  /// No description provided for @noRecipeAssociated.
+  ///
   /// In en, this message translates to:
   /// **'This entry has no recipe associated'**
   String get noRecipeAssociated;
 
+  /// No description provided for @mealCompletedSuccess.
+  ///
   /// In en, this message translates to:
   /// **'✅ Done! {count} ingredients deducted.'**
   String mealCompletedSuccess(Object count);
 
+  /// No description provided for @mealCompletedMissing.
+  ///
   /// In en, this message translates to:
   /// **'✅ Completed. {count} ingredients were not in the pantry.'**
   String mealCompletedMissing(Object count);
 
+  /// No description provided for @ai.
+  ///
   /// In en, this message translates to:
   /// **'AI'**
   String get ai;
 
+  /// No description provided for @pantryCountLabel.
+  ///
   /// In en, this message translates to:
   /// **'{count} in pantry'**
   String pantryCountLabel(Object count);
 
+  /// No description provided for @groceryListDetailPendingHeader.
+  ///
   /// In en, this message translates to:
   /// **'Pending'**
   String get groceryListDetailPendingHeader;
 
+  /// No description provided for @groceryListDetailCompletedHeader.
+  ///
   /// In en, this message translates to:
   /// **'Completed'**
   String get groceryListDetailCompletedHeader;
 
+  /// No description provided for @groceryListDetailEmptyTitle.
+  ///
   /// In en, this message translates to:
   /// **'Empty list'**
   String get groceryListDetailEmptyTitle;
 
+  /// No description provided for @groceryListDetailEmptySubtitle.
+  ///
   /// In en, this message translates to:
   /// **'Tap + to add your first ingredient'**
   String get groceryListDetailEmptySubtitle;
 
+  /// No description provided for @changeDatesTooltip.
+  ///
   /// In en, this message translates to:
   /// **'Change dates'**
   String get changeDatesTooltip;
 
+  /// No description provided for @saveIngredientsPrompt.
+  ///
   /// In en, this message translates to:
   /// **'Save ingredients to...'**
   String get saveIngredientsPrompt;
 
+  /// No description provided for @alsoRemoveGroceryListSubtitle.
+  ///
   /// In en, this message translates to:
   /// **'Deletes grocery lists linked to this plan'**
   String get alsoRemoveGroceryListSubtitle;
 
+  /// No description provided for @savePlanToList.
+  ///
   /// In en, this message translates to:
   /// **'Save plan to list'**
   String get savePlanToList;
 
+  /// No description provided for @importMealPlanSuccess.
+  ///
   /// In en, this message translates to:
   /// **'Ingredients imported to \"{name}\"'**
   String importMealPlanSuccess(Object name);
 
+  /// No description provided for @importMealPlanFailure.
+  ///
   /// In en, this message translates to:
   /// **'Could not import plan'**
   String get importMealPlanFailure;
+
+  /// No description provided for @nutritionFilterDaily.
+  ///
+  /// In en, this message translates to:
+  /// **'Daily'**
+  String get nutritionFilterDaily;
+
+  /// No description provided for @nutritionFilterWeekly.
+  ///
+  /// In en, this message translates to:
+  /// **'Weekly'**
+  String get nutritionFilterWeekly;
+
+  /// No description provided for @nutritionFilterMonthly.
+  ///
+  /// In en, this message translates to:
+  /// **'Monthly'**
+  String get nutritionFilterMonthly;
+
+  /// No description provided for @nutritionErrorLoading.
+  ///
+  /// In en, this message translates to:
+  /// **'Could not load the information.'**
+  String get nutritionErrorLoading;
+
+  /// No description provided for @consistencyRingTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Consistency Ring'**
+  String get consistencyRingTitle;
+
+  /// No description provided for @consistencyRingTooltip.
+  ///
+  /// In en, this message translates to:
+  /// **'Measures your weekly progress.\nIncreases as you complete meals from your plan.'**
+  String get consistencyRingTooltip;
+
+  /// No description provided for @consistencyRingSubtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Reflects how well you follow and complete your meal plan'**
+  String get consistencyRingSubtitle;
+
+  /// No description provided for @consistencyMessageHigh.
+  ///
+  /// In en, this message translates to:
+  /// **'You have a {score}% consistency! Keep it up.'**
+  String consistencyMessageHigh(Object score);
+
+  /// No description provided for @consistencyMessageMedium.
+  ///
+  /// In en, this message translates to:
+  /// **'You\'re on the right track! Keep logging your meals.'**
+  String get consistencyMessageMedium;
+
+  /// No description provided for @consistencyMessageLow.
+  ///
+  /// In en, this message translates to:
+  /// **'Every little choice counts! Try sticking closer to your plan.'**
+  String get consistencyMessageLow;
+
+  /// No description provided for @weeklyActivityTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Activity'**
+  String get weeklyActivityTitle;
+
+  /// No description provided for @weeklyAveragesTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Averages'**
+  String get weeklyAveragesTitle;
+
+  /// No description provided for @achievementsTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Achievements & Habits'**
+  String get achievementsTitle;
+
+  /// No description provided for @achievementStreakTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Weekly Streak'**
+  String get achievementStreakTitle;
+
+  /// No description provided for @achievementStreakDesc.
+  ///
+  /// In en, this message translates to:
+  /// **'3 days in a row following your plan!'**
+  String get achievementStreakDesc;
+
+  /// No description provided for @achievementWasteTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Zero Waste'**
+  String get achievementWasteTitle;
+
+  /// No description provided for @achievementWasteDesc.
+  ///
+  /// In en, this message translates to:
+  /// **'You bought exactly what you needed.'**
+  String get achievementWasteDesc;
+
+  /// No description provided for @achievementVarietyTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Variety Hunter'**
+  String get achievementVarietyTitle;
+
+  /// No description provided for @achievementVarietyDesc.
+  ///
+  /// In en, this message translates to:
+  /// **'You ate 4 different sources of protein.'**
+  String get achievementVarietyDesc;
 }
 
 class _AppLocalizationsDelegate

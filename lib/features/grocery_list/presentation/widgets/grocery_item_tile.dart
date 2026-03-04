@@ -65,6 +65,7 @@ class _GroceryItemTileState extends ConsumerState<GroceryItemTile>
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
+    final l10n = AppLocalizations.of(context);
     final coveredByPantry = widget.item.isCoveredByPantry;
 
     return Dismissible(

@@ -573,5 +573,25 @@
   "@importMealPlanSuccess": {
     "placeholders": { "name": {} }
   },
-  "importMealPlanFailure": "No se pudo importar el plan"
+  "importMealPlanFailure": "No se pudo importar el plan",
+  "nutritionFilterDaily": "Diario",
+  "nutritionFilterWeekly": "Semanal",
+  "nutritionFilterMonthly": "Mensual",
+  "nutritionErrorLoading": "No se pudo cargar la información.",
+  "consistencyRingTitle": "Anillo de Consistencia",
+  "consistencyRingTooltip": "Mide tu progreso semanal.\nSube al completar las comidas de tu plan.",
+  "consistencyRingSubtitle": "Refleja qué tanto sigues y completas tu plan de comidas",
+  "consistencyMessageHigh": "¡Llevas un {score}% de consistencia! Sigue así.",
+  "@consistencyMessageHigh": { "placeholders": { "score": {} } },
+  "consistencyMessageMedium": "¡Vas por buen camino! Sigue registrando tus comidas.",
+  "consistencyMessageLow": "¡Cada pequeña elección suma! Intenta apegarte más a tu plan.",
+  "weeklyActivityTitle": "Actividad",
+  "weeklyAveragesTitle": "Promedios",
+  "achievementsTitle": "Logros y Hábitos",
+  "achievementStreakTitle": "Racha de la semana",
+  "achievementStreakDesc": "¡3 días seguidos cumpliendo tu plan!",
+  "achievementWasteTitle": "Cero Desperdicio",
+  "achievementWasteDesc": "Compraste exacto lo que necesitabas.",
+  "achievementVarietyTitle": "Cazador de Variedad",
+  "achievementVarietyDesc": "Comiste 4 fuentes distintas de proteína."
 }

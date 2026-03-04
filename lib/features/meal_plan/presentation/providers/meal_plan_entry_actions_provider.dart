@@ -1,6 +1,7 @@
 import 'package:meal_plan_app/config/errors/app_errors.dart';
 import 'package:meal_plan_app/features/meal_plan/domain/domain.dart';
 import 'package:meal_plan_app/features/meal_plan/presentation/providers/provider.dart';
+import 'package:meal_plan_app/features/nutrition/presentation/providers/nutrition_provider.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 
 part 'meal_plan_entry_actions_provider.g.dart';
@@ -266,6 +267,7 @@ class MealPlanEntryActions extends _$MealPlanEntryActions {
         entryId: entryId,
       );
       state = state.copyWith(status: MealPlanEntryActionStatus.success);
+      ref.invalidate(nutritionSummaryProvider);
       return result;
     } on AppError catch (e) {
       state = state.copyWith(

@@ -11,6 +11,7 @@ import 'package:meal_plan_app/features/shared/screens/main_layout.dart';
 import 'package:meal_plan_app/features/shared/shared.dart';
 
 import 'package:meal_plan_app/features/grocery_list/grocery_list.dart';
+import 'package:meal_plan_app/features/nutrition/presentation/screens/nutrition_screen.dart';
 
 import '../../features/meal_plan/meal_plan.dart';
 import 'package:meal_plan_app/features/meal_plan/domain/domain.dart';
@@ -195,9 +196,7 @@ final appRouterProvider = Provider<GoRouter>((ref) {
           ),
           GoRoute(
             path: '/nutrition',
-            builder: (context, state) => const Scaffold(
-              body: Center(child: Text('Nutrition Screen Placeholder')),
-            ),
+            builder: (context, state) => const NutritionScreen(),
           ),
           GoRoute(
             path: '/profile',

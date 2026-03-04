@@ -204,6 +204,14 @@
       "error": {}
     }
   },
+  "retry": "Retry",
+  "error": "Error",
+  "errorOccurred": "An error occurred: {error}",
+  "@errorOccurred": {
+    "placeholders": {
+      "error": {}
+    }
+  },
   "login": "Login",
   "register": "Register",
   "signUp": "Sign Up",
@@ -571,5 +579,25 @@
   "@importMealPlanSuccess": {
     "placeholders": { "name": {} }
   },
-  "importMealPlanFailure": "Could not import plan"
+  "importMealPlanFailure": "Could not import plan",
+  "nutritionFilterDaily": "Daily",
+  "nutritionFilterWeekly": "Weekly",
+  "nutritionFilterMonthly": "Monthly",
+  "nutritionErrorLoading": "Could not load the information.",
+  "consistencyRingTitle": "Consistency Ring",
+  "consistencyRingTooltip": "Measures your weekly progress.\nIncreases as you complete meals from your plan.",
+  "consistencyRingSubtitle": "Reflects how well you follow and complete your meal plan",
+  "consistencyMessageHigh": "You have a {score}% consistency! Keep it up.",
+  "@consistencyMessageHigh": { "placeholders": { "score": {} } },
+  "consistencyMessageMedium": "You're on the right track! Keep logging your meals.",
+  "consistencyMessageLow": "Every little choice counts! Try sticking closer to your plan.",
+  "weeklyActivityTitle": "Activity",
+  "weeklyAveragesTitle": "Averages",
+  "achievementsTitle": "Achievements & Habits",
+  "achievementStreakTitle": "Weekly Streak",
+  "achievementStreakDesc": "3 days in a row following your plan!",
+  "achievementWasteTitle": "Zero Waste",
+  "achievementWasteDesc": "You bought exactly what you needed.",
+  "achievementVarietyTitle": "Variety Hunter",
+  "achievementVarietyDesc": "You ate 4 different sources of protein."
 }

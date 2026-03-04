@@ -370,9 +370,6 @@ class AppLocalizationsEs extends AppLocalizations {
   String get noIngredients => 'Sin ingredientes.';
 
   @override
-  String get retry => 'Reintentar';
-
-  @override
   String get noMealsLoggedToday => 'No hay comidas registradas para hoy.';
 
   @override
@@ -471,6 +468,12 @@ class AppLocalizationsEs extends AppLocalizations {
   String errorOccurred(Object error) {
     return 'Ocurrió un error: $error';
   }
+
+  @override
+  String get retry => 'Reintentar';
+
+  @override
+  String get error => 'Error';
 
   @override
   String get login => 'Iniciar sesión';
@@ -960,9 +963,6 @@ class AppLocalizationsEs extends AppLocalizations {
   String get create => 'Crear';
 
   @override
-  String get error => 'Error';
-
-  @override
   String get errorLoadingConfiguration =>
       'Error al cargar la configuración. Inténtalo de nuevo.';
 
@@ -1000,7 +1000,8 @@ class AppLocalizationsEs extends AppLocalizations {
   }
 
   @override
-  String get savedIngredientsFailed => 'No se pudieron guardar los ingredientes';
+  String get savedIngredientsFailed =>
+      'No se pudieron guardar los ingredientes';
 
   @override
   String planReusedSuccess(Object name, Object count) {
@@ -1345,7 +1346,8 @@ class AppLocalizationsEs extends AppLocalizations {
   String get groceryListDetailEmptyTitle => 'Lista vacía';
 
   @override
-  String get groceryListDetailEmptySubtitle => 'Toca + para agregar el primer ingrediente';
+  String get groceryListDetailEmptySubtitle =>
+      'Toca + para agregar el primer ingrediente';
 
   @override
   String get changeDatesTooltip => 'Cambiar fechas';
@@ -1354,16 +1356,81 @@ class AppLocalizationsEs extends AppLocalizations {
   String get saveIngredientsPrompt => 'Guardar ingredientes en...';
 
   @override
-  String get alsoRemoveGroceryListSubtitle => 'Borra las listas de compras vinculadas a este plan';
+  String get alsoRemoveGroceryListSubtitle =>
+      'Borra las listas de compras vinculadas a este plan';
 
   @override
   String get savePlanToList => 'Guardar plan en lista';
 
   @override
   String importMealPlanSuccess(Object name) {
-    return 'Ingredientes importados a "$name"';
+    return 'Ingredientes importados a \"$name\"';
   }
 
   @override
   String get importMealPlanFailure => 'No se pudo importar el plan';
+
+  @override
+  String get nutritionFilterDaily => 'Diario';
+
+  @override
+  String get nutritionFilterWeekly => 'Semanal';
+
+  @override
+  String get nutritionFilterMonthly => 'Mensual';
+
+  @override
+  String get nutritionErrorLoading => 'No se pudo cargar la información.';
+
+  @override
+  String get consistencyRingTitle => 'Anillo de Consistencia';
+
+  @override
+  String get consistencyRingTooltip =>
+      'Mide tu progreso semanal.\nSube al completar las comidas de tu plan.';
+
+  @override
+  String get consistencyRingSubtitle =>
+      'Refleja qué tanto sigues y completas tu plan de comidas';
+
+  @override
+  String consistencyMessageHigh(Object score) {
+    return '¡Llevas un $score% de consistencia! Sigue así.';
+  }
+
+  @override
+  String get consistencyMessageMedium =>
+      '¡Vas por buen camino! Sigue registrando tus comidas.';
+
+  @override
+  String get consistencyMessageLow =>
+      '¡Cada pequeña elección suma! Intenta apegarte más a tu plan.';
+
+  @override
+  String get weeklyActivityTitle => 'Actividad';
+
+  @override
+  String get weeklyAveragesTitle => 'Promedios';
+
+  @override
+  String get achievementsTitle => 'Logros y Hábitos';
+
+  @override
+  String get achievementStreakTitle => 'Racha de la semana';
+
+  @override
+  String get achievementStreakDesc => '¡3 días seguidos cumpliendo tu plan!';
+
+  @override
+  String get achievementWasteTitle => 'Cero Desperdicio';
+
+  @override
+  String get achievementWasteDesc => 'Compraste exacto lo que necesitabas.';
+
+  @override
+  String get achievementVarietyTitle => 'Cazador de Variedad';
+
+  @override
+  String get achievementVarietyDesc =>
+      'Comiste 4 fuentes distintas de proteína.';
 }

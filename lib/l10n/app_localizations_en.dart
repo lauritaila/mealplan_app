@@ -367,9 +367,6 @@ class AppLocalizationsEn extends AppLocalizations {
   String get noIngredients => 'No ingredients.';
 
   @override
-  String get retry => 'Retry';
-
-  @override
   String get noMealsLoggedToday => 'No meals logged for today.';
 
   @override
@@ -468,6 +465,12 @@ class AppLocalizationsEn extends AppLocalizations {
   String errorOccurred(Object error) {
     return 'An error occurred: $error';
   }
+
+  @override
+  String get retry => 'Retry';
+
+  @override
+  String get error => 'Error';
 
   @override
   String get login => 'Login';
@@ -955,9 +958,6 @@ class AppLocalizationsEn extends AppLocalizations {
   String get create => 'Create';
 
   @override
-  String get error => 'Error';
-
-  @override
   String get errorLoadingConfiguration =>
       'Error loading configuration. Please try again.';
 
@@ -1338,7 +1338,8 @@ class AppLocalizationsEn extends AppLocalizations {
   String get groceryListDetailEmptyTitle => 'Empty list';
 
   @override
-  String get groceryListDetailEmptySubtitle => 'Tap + to add your first ingredient';
+  String get groceryListDetailEmptySubtitle =>
+      'Tap + to add your first ingredient';
 
   @override
   String get changeDatesTooltip => 'Change dates';
@@ -1347,16 +1348,81 @@ class AppLocalizationsEn extends AppLocalizations {
   String get saveIngredientsPrompt => 'Save ingredients to...';
 
   @override
-  String get alsoRemoveGroceryListSubtitle => 'Deletes grocery lists linked to this plan';
+  String get alsoRemoveGroceryListSubtitle =>
+      'Deletes grocery lists linked to this plan';
 
   @override
   String get savePlanToList => 'Save plan to list';
 
   @override
   String importMealPlanSuccess(Object name) {
-    return 'Ingredients imported to "$name"';
+    return 'Ingredients imported to \"$name\"';
   }
 
   @override
   String get importMealPlanFailure => 'Could not import plan';
+
+  @override
+  String get nutritionFilterDaily => 'Daily';
+
+  @override
+  String get nutritionFilterWeekly => 'Weekly';
+
+  @override
+  String get nutritionFilterMonthly => 'Monthly';
+
+  @override
+  String get nutritionErrorLoading => 'Could not load the information.';
+
+  @override
+  String get consistencyRingTitle => 'Consistency Ring';
+
+  @override
+  String get consistencyRingTooltip =>
+      'Measures your weekly progress.\nIncreases as you complete meals from your plan.';
+
+  @override
+  String get consistencyRingSubtitle =>
+      'Reflects how well you follow and complete your meal plan';
+
+  @override
+  String consistencyMessageHigh(Object score) {
+    return 'You have a $score% consistency! Keep it up.';
+  }
+
+  @override
+  String get consistencyMessageMedium =>
+      'You\'re on the right track! Keep logging your meals.';
+
+  @override
+  String get consistencyMessageLow =>
+      'Every little choice counts! Try sticking closer to your plan.';
+
+  @override
+  String get weeklyActivityTitle => 'Activity';
+
+  @override
+  String get weeklyAveragesTitle => 'Averages';
+
+  @override
+  String get achievementsTitle => 'Achievements & Habits';
+
+  @override
+  String get achievementStreakTitle => 'Weekly Streak';
+
+  @override
+  String get achievementStreakDesc => '3 days in a row following your plan!';
+
+  @override
+  String get achievementWasteTitle => 'Zero Waste';
+
+  @override
+  String get achievementWasteDesc => 'You bought exactly what you needed.';
+
+  @override
+  String get achievementVarietyTitle => 'Variety Hunter';
+
+  @override
+  String get achievementVarietyDesc =>
+      'You ate 4 different sources of protein.';
 }
