@@ -5,13 +5,13 @@ class AppTheme {
   static ThemeData lightTheme() {
     return ThemeData(
       colorScheme: ColorScheme.fromSeed(
-        seedColor: Color.fromARGB(255, 39, 105, 38),
+        seedColor: const Color(0xFF5F7D5E),
         brightness: Brightness.light,
       ),
       useMaterial3: true,
-      scaffoldBackgroundColor: Color.fromARGB(255, 224, 234, 224),
+      scaffoldBackgroundColor: const Color(0xFFF7F9F7),
       appBarTheme: AppBarTheme(
-        backgroundColor: Color.fromARGB(255, 224, 234, 224),
+        backgroundColor: const Color(0xFFF7F9F7),
         elevation: 0,
       ),
       // textTheme: GoogleFonts.sourceSans3TextTheme(),

@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:io';
 import 'package:meal_plan_app/features/auth/presentation/provider/provider.dart';
 import 'package:meal_plan_app/features/profile/presentation/providers/profile_repository_provider.dart';
 import 'package:logging/logging.dart';
@@ -57,9 +58,20 @@ class Auth extends _$Auth {
         _pendingGraceWelcome = true;
       }
 
+      String? langCode = user.configurations?['language'] as String?;
+      if (langCode == null || langCode.isEmpty) {
+        try {
+          final platformLang = Platform.localeName.split('_')[0];
+          await ref.read(profileRepositoryProvider).updateLanguage(platformLang);
+          langCode = platformLang;
+        } catch (e) {
+          _logger.warning('Failed to set initial language via Google sign in: $e');
+        }
+      }
+
       await ref
           .read(appLocaleProvider.notifier)
-          .syncFromRemote(user.configurations?['language'] as String?);
+          .syncFromRemote(langCode);
       state = AuthenticatedAuthState(
         user,
         showGraceWelcome: _pendingGraceWelcome,
@@ -148,9 +160,21 @@ class Auth extends _$Auth {
       }
 
       _pendingGracePeriodEmail = null;
+
+      String? langCode = userProfile.configurations?['language'] as String?;
+      if (langCode == null || langCode.isEmpty) {
+        try {
+          final platformLang = Platform.localeName.split('_')[0];
+          await ref.read(profileRepositoryProvider).updateLanguage(platformLang);
+          langCode = platformLang;
+        } catch (e) {
+          _logger.warning('Failed to set initial language via OTP verify: $e');
+        }
+      }
+
       await ref
           .read(appLocaleProvider.notifier)
-          .syncFromRemote(userProfile.configurations?['language'] as String?);
+          .syncFromRemote(langCode);
       state = AuthenticatedAuthState(
         userProfile,
         showGraceWelcome: _pendingGraceWelcome,

@@ -41,7 +41,6 @@ class RecipeDetailMapper {
       proteinGrams: _toDouble(data['protein_grams']),
       carbsGrams: _toDouble(data['carbs_grams']),
       fatsGrams: _toDouble(data['fats_grams']),
-      baseServings: _toInt(data['base_servings'] ?? data['servings']),
     );
   }
 
@@ -82,7 +81,6 @@ class RecipeDetailMapper {
       'protein_grams': entity.proteinGrams,
       'carbs_grams': entity.carbsGrams,
       'fats_grams': entity.fatsGrams,
-      'base_servings': entity.baseServings,
     };
   }
 

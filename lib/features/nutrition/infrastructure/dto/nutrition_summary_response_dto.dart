@@ -1,14 +1,20 @@
 class NutritionSummaryResponseDto {
+  final DailyTotalDto? todaySummary;
   final List<DailyTotalDto> dailyTotals;
   final WeeklyAverageDto weeklyAverage;
 
   NutritionSummaryResponseDto({
+    this.todaySummary,
     required this.dailyTotals,
     required this.weeklyAverage,
   });
 
   factory NutritionSummaryResponseDto.fromJson(Map<String, dynamic> json) {
     return NutritionSummaryResponseDto(
+      todaySummary: json['today_summary'] != null
+          ? DailyTotalDto.fromJson(
+              json['today_summary'] as Map<String, dynamic>)
+          : null,
       dailyTotals:
           (json['daily_totals'] as List<dynamic>?)
               ?.map((e) => DailyTotalDto.fromJson(e as Map<String, dynamic>))
@@ -22,6 +28,7 @@ class NutritionSummaryResponseDto {
 
   Map<String, dynamic> toJson() {
     return {
+      if (todaySummary != null) 'today_summary': todaySummary!.toJson(),
       'daily_totals': dailyTotals.map((e) => e.toJson()).toList(),
       'weekly_average': weeklyAverage.toJson(),
     };

@@ -21,6 +21,10 @@ class MealPlanListScreen extends ConsumerWidget {
         title: Text(l10n.myPlansTitle),
         actions: [
           IconButton(
+            icon: const Icon(Icons.today),
+            onPressed: () => context.push('/meal-plan/current'),
+          ),
+          IconButton(
             icon: const Icon(Icons.refresh),
             onPressed: () => ref.invalidate(mealPlansProvider),
           ),

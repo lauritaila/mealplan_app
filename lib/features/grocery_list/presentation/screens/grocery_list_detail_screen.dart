@@ -20,7 +20,7 @@ class GroceryListDetailScreen extends ConsumerWidget {
         body: const Center(child: CircularProgressIndicator()),
       ),
       error: (e, _) => Scaffold(
-        appBar: AppBar(title: Text(AppLocalizations.of(context).error)),
+        appBar: AppBar(title: Text(AppLocalizations.of(context).errorTitle)),
         body: Center(
           child: Column(
             mainAxisSize: MainAxisSize.min,

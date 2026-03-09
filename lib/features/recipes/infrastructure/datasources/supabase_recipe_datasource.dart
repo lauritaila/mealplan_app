@@ -420,10 +420,10 @@ class SupabaseRecipeDatasource extends RecipeDatasource {
           );
         }).toList();
 
-        final toolsNeededRaw = (itemMap['tools_needed'] as List?) ?? const [];
-        final toolsNeeded = toolsNeededRaw
-            .map((tool) => tool.toString())
-            .toList();
+        final toolsNeededRaw =
+            (itemMap['tools_needed'] as List?) ?? const [];
+        final toolsNeeded =
+            toolsNeededRaw.map((tool) => tool.toString()).toList();
 
         return CookingAssistantStep(
           stepNumber: _toInt(itemMap['step_number']) ?? 0,

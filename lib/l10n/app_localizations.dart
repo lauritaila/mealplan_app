@@ -602,18 +602,6 @@ abstract class AppLocalizations {
   /// **'E.g.: Lactose-free, more proteins...'**
   String get notesHint;
 
-  /// No description provided for @usePantryLabel.
-  ///
-  /// In en, this message translates to:
-  /// **'Use pantry ingredients'**
-  String get usePantryLabel;
-
-  /// No description provided for @usePantrySubtitle.
-  ///
-  /// In en, this message translates to:
-  /// **'AI will prioritize recipes with what you already have'**
-  String get usePantrySubtitle;
-
   /// No description provided for @mealsOfDayTitle.
   ///
   /// In en, this message translates to:
@@ -727,6 +715,12 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'No ingredients.'**
   String get noIngredients;
+
+  /// No description provided for @retry.
+  ///
+  /// In en, this message translates to:
+  /// **'Retry'**
+  String get retry;
 
   /// No description provided for @noMealsLoggedToday.
   ///
@@ -907,18 +901,6 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'An error occurred: {error}'**
   String errorOccurred(Object error);
-
-  /// No description provided for @retry.
-  ///
-  /// In en, this message translates to:
-  /// **'Retry'**
-  String get retry;
-
-  /// No description provided for @error.
-  ///
-  /// In en, this message translates to:
-  /// **'Error'**
-  String get error;
 
   /// No description provided for @login.
   ///
@@ -1820,18 +1802,6 @@ abstract class AppLocalizations {
   /// **'Cancel'**
   String get cancel;
 
-  /// No description provided for @save.
-  ///
-  /// In en, this message translates to:
-  /// **'Save'**
-  String get save;
-
-  /// No description provided for @create.
-  ///
-  /// In en, this message translates to:
-  /// **'Create'**
-  String get create;
-
   /// Shown when configuration fails to load.
   ///
   /// In en, this message translates to:
@@ -1844,155 +1814,125 @@ abstract class AppLocalizations {
   /// **'The email does not match your account.'**
   String get errorEmailConfirmationMismatch;
 
-  /// No description provided for @myPlansTitle.
+  /// No description provided for @homeTodayPlanReady.
   ///
   /// In en, this message translates to:
-  /// **'My plans'**
-  String get myPlansTitle;
+  /// **'Your plan for today is ready'**
+  String get homeTodayPlanReady;
 
-  /// No description provided for @newPlan.
+  /// No description provided for @homeWeekLabel.
   ///
   /// In en, this message translates to:
-  /// **'New plan'**
-  String get newPlan;
+  /// **'WEEK'**
+  String get homeWeekLabel;
 
-  /// No description provided for @noSavedPlans.
+  /// No description provided for @homeViewRecipeShort.
   ///
   /// In en, this message translates to:
-  /// **'You have no saved plans'**
-  String get noSavedPlans;
+  /// **'View Recipe'**
+  String get homeViewRecipeShort;
 
-  /// No description provided for @createFirstPlan.
+  /// No description provided for @homeFavoritesAction.
   ///
   /// In en, this message translates to:
-  /// **'Create your first meal plan.'**
-  String get createFirstPlan;
+  /// **'Favorites'**
+  String get homeFavoritesAction;
 
-  /// No description provided for @menuViewEntries.
+  /// No description provided for @homeEatOutAction.
   ///
   /// In en, this message translates to:
-  /// **'View entries'**
-  String get menuViewEntries;
+  /// **'Eat Out'**
+  String get homeEatOutAction;
 
-  /// No description provided for @menuSaveIngredients.
+  /// No description provided for @homeSkipMealQuestion.
   ///
   /// In en, this message translates to:
-  /// **'Save ingredients'**
-  String get menuSaveIngredients;
+  /// **'Which meal will you eat out?'**
+  String get homeSkipMealQuestion;
 
-  /// No description provided for @menuReusePlan.
+  /// No description provided for @homeSkipMealDescription.
   ///
   /// In en, this message translates to:
-  /// **'Reuse plan'**
-  String get menuReusePlan;
+  /// **'Select the meals you won\'t prepare at home to adjust your macros for the day.'**
+  String get homeSkipMealDescription;
 
-  /// No description provided for @saveIngredientsSheetTitle.
+  /// No description provided for @homeConfirmAction.
   ///
   /// In en, this message translates to:
-  /// **'Save plan ingredients'**
-  String get saveIngredientsSheetTitle;
+  /// **'Confirm'**
+  String get homeConfirmAction;
 
-  /// No description provided for @savedIngredientsSuccess.
+  /// No description provided for @homeSkippingMeal.
   ///
   /// In en, this message translates to:
-  /// **'Ingredients saved to \"{name}\"'**
-  String savedIngredientsSuccess(Object name);
+  /// **'Skipped {mealName}...'**
+  String homeSkippingMeal(Object mealName);
 
-  /// No description provided for @savedIngredientsFailed.
+  /// No description provided for @usePantryLabel.
   ///
   /// In en, this message translates to:
-  /// **'Could not save ingredients'**
-  String get savedIngredientsFailed;
+  /// **'Use pantry ingredients'**
+  String get usePantryLabel;
 
-  /// No description provided for @planReusedSuccess.
+  /// No description provided for @usePantrySubtitle.
   ///
   /// In en, this message translates to:
-  /// **'Plan reused! \"{name}\" with {count} meals.'**
-  String planReusedSuccess(Object name, Object count);
+  /// **'Prioritize recipes with ingredients you already have.'**
+  String get usePantrySubtitle;
 
-  /// No description provided for @planReusedView.
+  /// No description provided for @consistencyRingTitle.
   ///
   /// In en, this message translates to:
-  /// **'View'**
-  String get planReusedView;
+  /// **'Consistency'**
+  String get consistencyRingTitle;
 
-  /// No description provided for @planReusedFailed.
+  /// No description provided for @consistencyRingTooltip.
   ///
   /// In en, this message translates to:
-  /// **'Could not reuse plan'**
-  String get planReusedFailed;
+  /// **'Your consistency score is based on how close you were to your nutritional goals over the last 7 days.'**
+  String get consistencyRingTooltip;
 
-  /// No description provided for @deletePlanDialogTitle.
+  /// No description provided for @consistencyRingSubtitle.
   ///
   /// In en, this message translates to:
-  /// **'Delete plan?'**
-  String get deletePlanDialogTitle;
+  /// **'Based on your last 7 days'**
+  String get consistencyRingSubtitle;
 
-  /// No description provided for @deletePlanDialogMessage.
+  /// No description provided for @consistencyMessageHigh.
   ///
   /// In en, this message translates to:
-  /// **'This action cannot be undone.'**
-  String get deletePlanDialogMessage;
+  /// **'Excellent! You have a {score}% consistency.'**
+  String consistencyMessageHigh(Object score);
 
-  /// No description provided for @deletePlanAlsoRemoveGrocery.
+  /// No description provided for @consistencyMessageMedium.
   ///
   /// In en, this message translates to:
-  /// **'Also remove from grocery list'**
-  String get deletePlanAlsoRemoveGrocery;
+  /// **'Good job! You\'re above 50%.'**
+  String get consistencyMessageMedium;
 
-  /// No description provided for @planDeletedSuccess.
+  /// No description provided for @consistencyMessageLow.
   ///
   /// In en, this message translates to:
-  /// **'Plan deleted'**
-  String get planDeletedSuccess;
+  /// **'Come on! You can improve your consistency.'**
+  String get consistencyMessageLow;
 
-  /// No description provided for @planDeleteFailed.
+  /// No description provided for @menuAddToGrocery.
   ///
   /// In en, this message translates to:
-  /// **'Could not delete plan'**
-  String get planDeleteFailed;
-
-  /// No description provided for @reusePlanSheetTitle.
-  ///
-  /// In en, this message translates to:
-  /// **'Reuse plan'**
-  String get reusePlanSheetTitle;
-
-  /// No description provided for @reusePlanStartDateLabel.
-  ///
-  /// In en, this message translates to:
-  /// **'Start date (required)'**
-  String get reusePlanStartDateLabel;
-
-  /// No description provided for @reusePlanSelectDate.
-  ///
-  /// In en, this message translates to:
-  /// **'Select date'**
-  String get reusePlanSelectDate;
-
-  /// No description provided for @reusePlanNameLabel.
-  ///
-  /// In en, this message translates to:
-  /// **'New plan name (optional)'**
-  String get reusePlanNameLabel;
-
-  /// No description provided for @reusePlanNameHint.
-  ///
-  /// In en, this message translates to:
-  /// **'E.g.: Week of March 17'**
-  String get reusePlanNameHint;
-
-  /// No description provided for @noEntriesInPlan.
-  ///
-  /// In en, this message translates to:
-  /// **'No entries in this plan.'**
-  String get noEntriesInPlan;
+  /// **'Add to list'**
+  String get menuAddToGrocery;
 
   /// No description provided for @planEntriesTitle.
   ///
   /// In en, this message translates to:
-  /// **'Plan entries'**
+  /// **'Plan meals'**
   String get planEntriesTitle;
+
+  /// No description provided for @noEntriesInPlan.
+  ///
+  /// In en, this message translates to:
+  /// **'No meals in this plan.'**
+  String get noEntriesInPlan;
 
   /// No description provided for @menuViewRecipe.
   ///
@@ -2000,52 +1940,46 @@ abstract class AppLocalizations {
   /// **'View recipe'**
   String get menuViewRecipe;
 
-  /// No description provided for @menuAddToGrocery.
-  ///
-  /// In en, this message translates to:
-  /// **'Add to grocery list'**
-  String get menuAddToGrocery;
-
   /// No description provided for @menuMarkComplete.
   ///
   /// In en, this message translates to:
-  /// **'Mark as complete'**
+  /// **'Mark as completed'**
   String get menuMarkComplete;
 
   /// No description provided for @addRecipeToListTitle.
   ///
   /// In en, this message translates to:
-  /// **'Add recipe to list'**
+  /// **'Add ingredients to list'**
   String get addRecipeToListTitle;
 
   /// No description provided for @recipeAddedToList.
   ///
   /// In en, this message translates to:
-  /// **'Recipe added to \"{name}\"'**
-  String recipeAddedToList(Object name);
+  /// **'Added to {listName}'**
+  String recipeAddedToList(Object listName);
 
   /// No description provided for @recipeAddFailed.
   ///
   /// In en, this message translates to:
-  /// **'Could not add recipe'**
+  /// **'Failed to add to list'**
   String get recipeAddFailed;
 
   /// No description provided for @markCompleteDialogTitle.
   ///
   /// In en, this message translates to:
-  /// **'Mark as complete'**
+  /// **'Mark as completed'**
   String get markCompleteDialogTitle;
 
   /// No description provided for @markCompleteQuestion.
   ///
   /// In en, this message translates to:
-  /// **'Did you complete \"{name}\"?'**
-  String markCompleteQuestion(Object name);
+  /// **'Did you prepare {recipeName}?'**
+  String markCompleteQuestion(Object recipeName);
 
   /// No description provided for @markCompleteDeductInfo.
   ///
   /// In en, this message translates to:
-  /// **'This recipe\'s ingredients will be automatically deducted from your pantry.'**
+  /// **'Marking as completed will deduct ingredients from your pantry.'**
   String get markCompleteDeductInfo;
 
   /// No description provided for @completeAction.
@@ -2057,13 +1991,13 @@ abstract class AppLocalizations {
   /// No description provided for @allIngredientsDeducted.
   ///
   /// In en, this message translates to:
-  /// **'✅ Done! {count} ingredients deducted.'**
+  /// **'{count} ingredients deducted'**
   String allIngredientsDeducted(Object count);
 
   /// No description provided for @someIngredientsMissing.
   ///
   /// In en, this message translates to:
-  /// **'✅ Completed. {count} ingredients were not in your pantry.'**
+  /// **'{count} ingredients missing in pantry'**
   String someIngredientsMissing(Object count);
 
   /// No description provided for @alsoRemoveFromGrocery.
@@ -2072,503 +2006,59 @@ abstract class AppLocalizations {
   /// **'Also remove from grocery list'**
   String get alsoRemoveFromGrocery;
 
-  /// No description provided for @noRecipeForEntry.
+  /// No description provided for @weeklyAveragesTitle.
   ///
   /// In en, this message translates to:
-  /// **'This entry has no associated recipe'**
-  String get noRecipeForEntry;
+  /// **'Weekly Averages'**
+  String get weeklyAveragesTitle;
 
-  /// No description provided for @datesUpdatedSuccess.
+  /// No description provided for @weeklyActivityTitle.
   ///
   /// In en, this message translates to:
-  /// **'Dates updated successfully'**
-  String get datesUpdatedSuccess;
+  /// **'Weekly Activity'**
+  String get weeklyActivityTitle;
 
-  /// No description provided for @saveToGroceryList.
+  /// No description provided for @achievementsTitle.
   ///
   /// In en, this message translates to:
-  /// **'Save to grocery list'**
-  String get saveToGroceryList;
+  /// **'Achievements'**
+  String get achievementsTitle;
 
-  /// No description provided for @usePantryIngredientsLabel.
+  /// No description provided for @achievementStreakTitle.
   ///
   /// In en, this message translates to:
-  /// **'Use my pantry ingredients'**
-  String get usePantryIngredientsLabel;
+  /// **'Gold Streak'**
+  String get achievementStreakTitle;
 
-  /// No description provided for @alsoRemoveGroceryList.
+  /// No description provided for @achievementStreakDesc.
   ///
   /// In en, this message translates to:
-  /// **'Also remove grocery list'**
-  String get alsoRemoveGroceryList;
+  /// **'You\'ve completed your meals 5 days in a row.'**
+  String get achievementStreakDesc;
 
-  /// No description provided for @markCompleteRecipeButton.
+  /// No description provided for @achievementWasteTitle.
   ///
   /// In en, this message translates to:
-  /// **'Mark as complete'**
-  String get markCompleteRecipeButton;
+  /// **'Zero Waste'**
+  String get achievementWasteTitle;
 
-  /// No description provided for @completeRecipeButton.
+  /// No description provided for @achievementWasteDesc.
   ///
   /// In en, this message translates to:
-  /// **'Complete recipe'**
-  String get completeRecipeButton;
+  /// **'You\'ve used all ingredients from your list.'**
+  String get achievementWasteDesc;
 
-  /// No description provided for @aiLabel.
+  /// No description provided for @achievementVarietyTitle.
   ///
   /// In en, this message translates to:
-  /// **'AI'**
-  String get aiLabel;
+  /// **'Culinary Explorer'**
+  String get achievementVarietyTitle;
 
-  /// No description provided for @pantryTitle.
+  /// No description provided for @achievementVarietyDesc.
   ///
   /// In en, this message translates to:
-  /// **'My pantry'**
-  String get pantryTitle;
-
-  /// No description provided for @pantryEmptyTitle.
-  ///
-  /// In en, this message translates to:
-  /// **'Your pantry is empty'**
-  String get pantryEmptyTitle;
-
-  /// No description provided for @pantryEmptySubtitle.
-  ///
-  /// In en, this message translates to:
-  /// **'Add ingredients you already have at home'**
-  String get pantryEmptySubtitle;
-
-  /// No description provided for @pantryAddTooltip.
-  ///
-  /// In en, this message translates to:
-  /// **'Add to pantry'**
-  String get pantryAddTooltip;
-
-  /// No description provided for @pantryOtherCategory.
-  ///
-  /// In en, this message translates to:
-  /// **'Other'**
-  String get pantryOtherCategory;
-
-  /// No description provided for @pantryNoDate.
-  ///
-  /// In en, this message translates to:
-  /// **'No date'**
-  String get pantryNoDate;
-
-  /// No description provided for @pantryEditTitle.
-  ///
-  /// In en, this message translates to:
-  /// **'Edit {name}'**
-  String pantryEditTitle(Object name);
-
-  /// No description provided for @pantryQuantityLabel.
-  ///
-  /// In en, this message translates to:
-  /// **'Quantity'**
-  String get pantryQuantityLabel;
-
-  /// No description provided for @pantryExpiryLabel.
-  ///
-  /// In en, this message translates to:
-  /// **'Expires'**
-  String get pantryExpiryLabel;
-
-  /// No description provided for @pantryDeleteDialogTitle.
-  ///
-  /// In en, this message translates to:
-  /// **'Remove from pantry'**
-  String get pantryDeleteDialogTitle;
-
-  /// No description provided for @pantryDeleteDialogMessage.
-  ///
-  /// In en, this message translates to:
-  /// **'Delete \"{name}\"?'**
-  String pantryDeleteDialogMessage(Object name);
-
-  /// No description provided for @groceryListsTitle.
-  ///
-  /// In en, this message translates to:
-  /// **'My lists'**
-  String get groceryListsTitle;
-
-  /// No description provided for @groceryListsSectionHeader.
-  ///
-  /// In en, this message translates to:
-  /// **'Grocery lists'**
-  String get groceryListsSectionHeader;
-
-  /// No description provided for @groceryListsEmptyTitle.
-  ///
-  /// In en, this message translates to:
-  /// **'No lists yet'**
-  String get groceryListsEmptyTitle;
-
-  /// No description provided for @groceryListsEmptySubtitle.
-  ///
-  /// In en, this message translates to:
-  /// **'Create a new list with the + button'**
-  String get groceryListsEmptySubtitle;
-
-  /// No description provided for @groceryListsNewListLabel.
-  ///
-  /// In en, this message translates to:
-  /// **'New list'**
-  String get groceryListsNewListLabel;
-
-  /// No description provided for @groceryListsErrorLoading.
-  ///
-  /// In en, this message translates to:
-  /// **'Error loading lists'**
-  String get groceryListsErrorLoading;
-
-  /// No description provided for @pantryCardTitle.
-  ///
-  /// In en, this message translates to:
-  /// **'My pantry'**
-  String get pantryCardTitle;
-
-  /// No description provided for @pantryCardSubtitle.
-  ///
-  /// In en, this message translates to:
-  /// **'Ingredients you already have at home'**
-  String get pantryCardSubtitle;
-
-  /// No description provided for @createListDialogTitle.
-  ///
-  /// In en, this message translates to:
-  /// **'New grocery list'**
-  String get createListDialogTitle;
-
-  /// No description provided for @createListErrorCreate.
-  ///
-  /// In en, this message translates to:
-  /// **'Error creating the list'**
-  String get createListErrorCreate;
-
-  /// No description provided for @listNameLabel.
-  ///
-  /// In en, this message translates to:
-  /// **'List name'**
-  String get listNameLabel;
-
-  /// No description provided for @listNameHint.
-  ///
-  /// In en, this message translates to:
-  /// **'E.g.: Weekly shopping'**
-  String get listNameHint;
-
-  /// No description provided for @listNameEmptyError.
-  ///
-  /// In en, this message translates to:
-  /// **'Please enter a name'**
-  String get listNameEmptyError;
-
-  /// No description provided for @groceryDetailError.
-  ///
-  /// In en, this message translates to:
-  /// **'Error'**
-  String get groceryDetailError;
-
-  /// No description provided for @editQuantityDialogTitle.
-  ///
-  /// In en, this message translates to:
-  /// **'Edit quantity'**
-  String get editQuantityDialogTitle;
-
-  /// No description provided for @addItemTitlePantry.
-  ///
-  /// In en, this message translates to:
-  /// **'Add to pantry'**
-  String get addItemTitlePantry;
-
-  /// No description provided for @addItemTitleGrocery.
-  ///
-  /// In en, this message translates to:
-  /// **'Add ingredient'**
-  String get addItemTitleGrocery;
-
-  /// No description provided for @addItemIngredientNameLabel.
-  ///
-  /// In en, this message translates to:
-  /// **'Ingredient name'**
-  String get addItemIngredientNameLabel;
-
-  /// No description provided for @addItemIngredientNameRequired.
-  ///
-  /// In en, this message translates to:
-  /// **'Enter the name'**
-  String get addItemIngredientNameRequired;
-
-  /// No description provided for @addItemQuantityLabel.
-  ///
-  /// In en, this message translates to:
-  /// **'Quantity'**
-  String get addItemQuantityLabel;
-
-  /// No description provided for @addItemQuantityRequired.
-  ///
-  /// In en, this message translates to:
-  /// **'Required'**
-  String get addItemQuantityRequired;
-
-  /// No description provided for @addItemQuantityInvalid.
-  ///
-  /// In en, this message translates to:
-  /// **'Invalid number'**
-  String get addItemQuantityInvalid;
-
-  /// No description provided for @addItemUnitLabel.
-  ///
-  /// In en, this message translates to:
-  /// **'Unit'**
-  String get addItemUnitLabel;
-
-  /// No description provided for @addItemCategoryLabel.
-  ///
-  /// In en, this message translates to:
-  /// **'Category (optional)'**
-  String get addItemCategoryLabel;
-
-  /// No description provided for @addItemExpiryLabel.
-  ///
-  /// In en, this message translates to:
-  /// **'Expiry date (optional)'**
-  String get addItemExpiryLabel;
-
-  /// No description provided for @addItemErrorAdding.
-  ///
-  /// In en, this message translates to:
-  /// **'Error adding ingredient'**
-  String get addItemErrorAdding;
-
-  /// No description provided for @addItemDefaultUnit.
-  ///
-  /// In en, this message translates to:
-  /// **'unit'**
-  String get addItemDefaultUnit;
-
-  /// No description provided for @addItemUnitHint.
-  ///
-  /// In en, this message translates to:
-  /// **'g, kg, ml, pcs…'**
-  String get addItemUnitHint;
-
-  /// No description provided for @addItemCategoryHint.
-  ///
-  /// In en, this message translates to:
-  /// **'protein, vegetable, dairy…'**
-  String get addItemCategoryHint;
-
-  /// No description provided for @groceryItemInPantry.
-  ///
-  /// In en, this message translates to:
-  /// **'In pantry'**
-  String get groceryItemInPantry;
-
-  /// No description provided for @groceryItemEditTooltip.
-  ///
-  /// In en, this message translates to:
-  /// **'Edit quantity'**
-  String get groceryItemEditTooltip;
-
-  /// No description provided for @pantryItemExpired.
-  ///
-  /// In en, this message translates to:
-  /// **'Expired'**
-  String get pantryItemExpired;
-
-  /// No description provided for @editAction.
-  ///
-  /// In en, this message translates to:
-  /// **'Edit'**
-  String get editAction;
-
-  /// No description provided for @addItemButton.
-  ///
-  /// In en, this message translates to:
-  /// **'Add'**
-  String get addItemButton;
-
-  /// No description provided for @deleteGroceryListDialogTitle.
-  ///
-  /// In en, this message translates to:
-  /// **'Delete list'**
-  String get deleteGroceryListDialogTitle;
-
-  /// No description provided for @deleteGroceryListDialogMessage.
-  ///
-  /// In en, this message translates to:
-  /// **'Delete \"{name}\"?'**
-  String deleteGroceryListDialogMessage(Object name);
-
-  /// No description provided for @selectGroceryListNewList.
-  ///
-  /// In en, this message translates to:
-  /// **'New list'**
-  String get selectGroceryListNewList;
-
-  /// No description provided for @selectGroceryListEmpty.
-  ///
-  /// In en, this message translates to:
-  /// **'You have no lists. Create a new one.'**
-  String get selectGroceryListEmpty;
-
-  /// No description provided for @recipeCompleteDialogTitle.
-  ///
-  /// In en, this message translates to:
-  /// **'Complete recipe'**
-  String get recipeCompleteDialogTitle;
-
-  /// No description provided for @recipeCompleteDialogMessage.
-  ///
-  /// In en, this message translates to:
-  /// **'Mark this recipe as complete and deduct ingredients from your pantry?'**
-  String get recipeCompleteDialogMessage;
-
-  /// No description provided for @recipeCompletedSuccess.
-  ///
-  /// In en, this message translates to:
-  /// **'Recipe complete! {success} ingredients deducted. {missing}'**
-  String recipeCompletedSuccess(Object success, Object missing);
-
-  /// No description provided for @recipeCompletedMissingNote.
-  ///
-  /// In en, this message translates to:
-  /// **'{count} not found.'**
-  String recipeCompletedMissingNote(Object count);
-
-  /// No description provided for @markAsCompleteLabel.
-  ///
-  /// In en, this message translates to:
-  /// **'Mark as complete'**
-  String get markAsCompleteLabel;
-
-  /// No description provided for @cookingAssistantBack.
-  ///
-  /// In en, this message translates to:
-  /// **'Back'**
-  String get cookingAssistantBack;
-
-  /// No description provided for @cookingAssistantNext.
-  ///
-  /// In en, this message translates to:
-  /// **'Next'**
-  String get cookingAssistantNext;
-
-  /// No description provided for @cookingAssistantComplete.
-  ///
-  /// In en, this message translates to:
-  /// **'Complete recipe'**
-  String get cookingAssistantComplete;
-
-  /// No description provided for @cookingAssistantCompleteAction.
-  ///
-  /// In en, this message translates to:
-  /// **'Complete'**
-  String get cookingAssistantCompleteAction;
-
-  /// No description provided for @servingsPickerDialogTitle.
-  ///
-  /// In en, this message translates to:
-  /// **'Number of servings'**
-  String get servingsPickerDialogTitle;
-
-  /// No description provided for @servingsPickerConfirm.
-  ///
-  /// In en, this message translates to:
-  /// **'Confirm'**
-  String get servingsPickerConfirm;
-
-  /// No description provided for @noRecipeAssociated.
-  ///
-  /// In en, this message translates to:
-  /// **'This entry has no recipe associated'**
-  String get noRecipeAssociated;
-
-  /// No description provided for @mealCompletedSuccess.
-  ///
-  /// In en, this message translates to:
-  /// **'✅ Done! {count} ingredients deducted.'**
-  String mealCompletedSuccess(Object count);
-
-  /// No description provided for @mealCompletedMissing.
-  ///
-  /// In en, this message translates to:
-  /// **'✅ Completed. {count} ingredients were not in the pantry.'**
-  String mealCompletedMissing(Object count);
-
-  /// No description provided for @ai.
-  ///
-  /// In en, this message translates to:
-  /// **'AI'**
-  String get ai;
-
-  /// No description provided for @pantryCountLabel.
-  ///
-  /// In en, this message translates to:
-  /// **'{count} in pantry'**
-  String pantryCountLabel(Object count);
-
-  /// No description provided for @groceryListDetailPendingHeader.
-  ///
-  /// In en, this message translates to:
-  /// **'Pending'**
-  String get groceryListDetailPendingHeader;
-
-  /// No description provided for @groceryListDetailCompletedHeader.
-  ///
-  /// In en, this message translates to:
-  /// **'Completed'**
-  String get groceryListDetailCompletedHeader;
-
-  /// No description provided for @groceryListDetailEmptyTitle.
-  ///
-  /// In en, this message translates to:
-  /// **'Empty list'**
-  String get groceryListDetailEmptyTitle;
-
-  /// No description provided for @groceryListDetailEmptySubtitle.
-  ///
-  /// In en, this message translates to:
-  /// **'Tap + to add your first ingredient'**
-  String get groceryListDetailEmptySubtitle;
-
-  /// No description provided for @changeDatesTooltip.
-  ///
-  /// In en, this message translates to:
-  /// **'Change dates'**
-  String get changeDatesTooltip;
-
-  /// No description provided for @saveIngredientsPrompt.
-  ///
-  /// In en, this message translates to:
-  /// **'Save ingredients to...'**
-  String get saveIngredientsPrompt;
-
-  /// No description provided for @alsoRemoveGroceryListSubtitle.
-  ///
-  /// In en, this message translates to:
-  /// **'Deletes grocery lists linked to this plan'**
-  String get alsoRemoveGroceryListSubtitle;
-
-  /// No description provided for @savePlanToList.
-  ///
-  /// In en, this message translates to:
-  /// **'Save plan to list'**
-  String get savePlanToList;
-
-  /// No description provided for @importMealPlanSuccess.
-  ///
-  /// In en, this message translates to:
-  /// **'Ingredients imported to \"{name}\"'**
-  String importMealPlanSuccess(Object name);
-
-  /// No description provided for @importMealPlanFailure.
-  ///
-  /// In en, this message translates to:
-  /// **'Could not import plan'**
-  String get importMealPlanFailure;
+  /// **'You\'ve tried 10 different recipes this month.'**
+  String get achievementVarietyDesc;
 
   /// No description provided for @nutritionFilterDaily.
   ///
@@ -2591,98 +2081,554 @@ abstract class AppLocalizations {
   /// No description provided for @nutritionErrorLoading.
   ///
   /// In en, this message translates to:
-  /// **'Could not load the information.'**
+  /// **'Error loading nutrition data'**
   String get nutritionErrorLoading;
 
-  /// No description provided for @consistencyRingTitle.
+  /// No description provided for @deleteGroceryListDialogTitle.
   ///
   /// In en, this message translates to:
-  /// **'Consistency Ring'**
-  String get consistencyRingTitle;
+  /// **'Delete grocery list'**
+  String get deleteGroceryListDialogTitle;
 
-  /// No description provided for @consistencyRingTooltip.
+  /// No description provided for @deleteGroceryListDialogMessage.
   ///
   /// In en, this message translates to:
-  /// **'Measures your weekly progress.\nIncreases as you complete meals from your plan.'**
-  String get consistencyRingTooltip;
+  /// **'Are you sure you want to delete the list \"{name}\"?'**
+  String deleteGroceryListDialogMessage(Object name);
 
-  /// No description provided for @consistencyRingSubtitle.
+  /// No description provided for @myPlansTitle.
   ///
   /// In en, this message translates to:
-  /// **'Reflects how well you follow and complete your meal plan'**
-  String get consistencyRingSubtitle;
+  /// **'My Plans'**
+  String get myPlansTitle;
 
-  /// No description provided for @consistencyMessageHigh.
+  /// No description provided for @newPlan.
   ///
   /// In en, this message translates to:
-  /// **'You have a {score}% consistency! Keep it up.'**
-  String consistencyMessageHigh(Object score);
+  /// **'New Plan'**
+  String get newPlan;
 
-  /// No description provided for @consistencyMessageMedium.
+  /// No description provided for @noSavedPlans.
   ///
   /// In en, this message translates to:
-  /// **'You\'re on the right track! Keep logging your meals.'**
-  String get consistencyMessageMedium;
+  /// **'No saved plans'**
+  String get noSavedPlans;
 
-  /// No description provided for @consistencyMessageLow.
+  /// No description provided for @createFirstPlan.
   ///
   /// In en, this message translates to:
-  /// **'Every little choice counts! Try sticking closer to your plan.'**
-  String get consistencyMessageLow;
+  /// **'Create your first plan'**
+  String get createFirstPlan;
 
-  /// No description provided for @weeklyActivityTitle.
+  /// No description provided for @ai.
   ///
   /// In en, this message translates to:
-  /// **'Activity'**
-  String get weeklyActivityTitle;
+  /// **'AI'**
+  String get ai;
 
-  /// No description provided for @weeklyAveragesTitle.
+  /// No description provided for @menuViewEntries.
   ///
   /// In en, this message translates to:
-  /// **'Averages'**
-  String get weeklyAveragesTitle;
+  /// **'View entries'**
+  String get menuViewEntries;
 
-  /// No description provided for @achievementsTitle.
+  /// No description provided for @menuSaveIngredients.
   ///
   /// In en, this message translates to:
-  /// **'Achievements & Habits'**
-  String get achievementsTitle;
+  /// **'Save ingredients'**
+  String get menuSaveIngredients;
 
-  /// No description provided for @achievementStreakTitle.
+  /// No description provided for @menuReusePlan.
   ///
   /// In en, this message translates to:
-  /// **'Weekly Streak'**
-  String get achievementStreakTitle;
+  /// **'Reuse plan'**
+  String get menuReusePlan;
 
-  /// No description provided for @achievementStreakDesc.
+  /// No description provided for @saveIngredientsSheetTitle.
   ///
   /// In en, this message translates to:
-  /// **'3 days in a row following your plan!'**
-  String get achievementStreakDesc;
+  /// **'Save Ingredients'**
+  String get saveIngredientsSheetTitle;
 
-  /// No description provided for @achievementWasteTitle.
+  /// No description provided for @savedIngredientsSuccess.
   ///
   /// In en, this message translates to:
-  /// **'Zero Waste'**
-  String get achievementWasteTitle;
+  /// **'Ingredients saved to {listName}'**
+  String savedIngredientsSuccess(Object listName);
 
-  /// No description provided for @achievementWasteDesc.
+  /// No description provided for @savedIngredientsFailed.
   ///
   /// In en, this message translates to:
-  /// **'You bought exactly what you needed.'**
-  String get achievementWasteDesc;
+  /// **'Failed to save ingredients'**
+  String get savedIngredientsFailed;
 
-  /// No description provided for @achievementVarietyTitle.
+  /// No description provided for @planReusedSuccess.
   ///
   /// In en, this message translates to:
-  /// **'Variety Hunter'**
-  String get achievementVarietyTitle;
+  /// **'Plan reused as {planName} with {count} entries'**
+  String planReusedSuccess(Object planName, Object count);
 
-  /// No description provided for @achievementVarietyDesc.
+  /// No description provided for @planReusedView.
   ///
   /// In en, this message translates to:
-  /// **'You ate 4 different sources of protein.'**
-  String get achievementVarietyDesc;
+  /// **'View'**
+  String get planReusedView;
+
+  /// No description provided for @planReusedFailed.
+  ///
+  /// In en, this message translates to:
+  /// **'Failed to reuse plan'**
+  String get planReusedFailed;
+
+  /// No description provided for @deletePlanDialogTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Delete plan'**
+  String get deletePlanDialogTitle;
+
+  /// No description provided for @deletePlanDialogMessage.
+  ///
+  /// In en, this message translates to:
+  /// **'Are you sure you want to delete this plan?'**
+  String get deletePlanDialogMessage;
+
+  /// No description provided for @deletePlanAlsoRemoveGrocery.
+  ///
+  /// In en, this message translates to:
+  /// **'Also remove from grocery list'**
+  String get deletePlanAlsoRemoveGrocery;
+
+  /// No description provided for @planDeletedSuccess.
+  ///
+  /// In en, this message translates to:
+  /// **'Plan deleted successfully'**
+  String get planDeletedSuccess;
+
+  /// No description provided for @planDeleteFailed.
+  ///
+  /// In en, this message translates to:
+  /// **'Failed to delete plan'**
+  String get planDeleteFailed;
+
+  /// No description provided for @reusePlanSheetTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Reuse Plan'**
+  String get reusePlanSheetTitle;
+
+  /// No description provided for @reusePlanStartDateLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Start Date'**
+  String get reusePlanStartDateLabel;
+
+  /// No description provided for @reusePlanSelectDate.
+  ///
+  /// In en, this message translates to:
+  /// **'Select Date'**
+  String get reusePlanSelectDate;
+
+  /// No description provided for @reusePlanNameLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Plan Name'**
+  String get reusePlanNameLabel;
+
+  /// No description provided for @reusePlanNameHint.
+  ///
+  /// In en, this message translates to:
+  /// **'E.g. Next week\'s plan'**
+  String get reusePlanNameHint;
+
+  /// No description provided for @groceryListsTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Grocery Lists'**
+  String get groceryListsTitle;
+
+  /// No description provided for @groceryListsNewListLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'New List'**
+  String get groceryListsNewListLabel;
+
+  /// No description provided for @groceryListsSectionHeader.
+  ///
+  /// In en, this message translates to:
+  /// **'Your Lists'**
+  String get groceryListsSectionHeader;
+
+  /// No description provided for @groceryListsErrorLoading.
+  ///
+  /// In en, this message translates to:
+  /// **'Error loading lists'**
+  String get groceryListsErrorLoading;
+
+  /// No description provided for @groceryListsEmptyTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'No lists yet'**
+  String get groceryListsEmptyTitle;
+
+  /// No description provided for @groceryListsEmptySubtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Create a new list to start saving your ingredients.'**
+  String get groceryListsEmptySubtitle;
+
+  /// No description provided for @pantryCardTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Pantry'**
+  String get pantryCardTitle;
+
+  /// No description provided for @pantryCardSubtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Manage your pantry items'**
+  String get pantryCardSubtitle;
+
+  /// No description provided for @pantryCountLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'{count} items'**
+  String pantryCountLabel(Object count);
+
+  /// No description provided for @groceryListDetailPendingHeader.
+  ///
+  /// In en, this message translates to:
+  /// **'Pending'**
+  String get groceryListDetailPendingHeader;
+
+  /// No description provided for @groceryListDetailCompletedHeader.
+  ///
+  /// In en, this message translates to:
+  /// **'Completed'**
+  String get groceryListDetailCompletedHeader;
+
+  /// No description provided for @addItemTitleGrocery.
+  ///
+  /// In en, this message translates to:
+  /// **'Add Item'**
+  String get addItemTitleGrocery;
+
+  /// No description provided for @groceryListDetailEmptyTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'This list is empty'**
+  String get groceryListDetailEmptyTitle;
+
+  /// No description provided for @groceryListDetailEmptySubtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Add items manually or from your meal plans.'**
+  String get groceryListDetailEmptySubtitle;
+
+  /// No description provided for @pantryTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Pantry'**
+  String get pantryTitle;
+
+  /// No description provided for @pantryOtherCategory.
+  ///
+  /// In en, this message translates to:
+  /// **'Other'**
+  String get pantryOtherCategory;
+
+  /// No description provided for @pantryAddTooltip.
+  ///
+  /// In en, this message translates to:
+  /// **'Add item'**
+  String get pantryAddTooltip;
+
+  /// No description provided for @pantryEmptyTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Pantry is empty'**
+  String get pantryEmptyTitle;
+
+  /// No description provided for @pantryEmptySubtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Add items to your pantry.'**
+  String get pantryEmptySubtitle;
+
+  /// No description provided for @pantryNoDate.
+  ///
+  /// In en, this message translates to:
+  /// **'No expiration date'**
+  String get pantryNoDate;
+
+  /// No description provided for @pantryEditTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Edit {itemName}'**
+  String pantryEditTitle(Object itemName);
+
+  /// No description provided for @pantryQuantityLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Quantity'**
+  String get pantryQuantityLabel;
+
+  /// No description provided for @pantryExpiryLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Expiration Date'**
+  String get pantryExpiryLabel;
+
+  /// No description provided for @save.
+  ///
+  /// In en, this message translates to:
+  /// **'Save'**
+  String get save;
+
+  /// No description provided for @changeDatesTooltip.
+  ///
+  /// In en, this message translates to:
+  /// **'Change dates'**
+  String get changeDatesTooltip;
+
+  /// No description provided for @saveToGroceryList.
+  ///
+  /// In en, this message translates to:
+  /// **'Save to List'**
+  String get saveToGroceryList;
+
+  /// No description provided for @saveIngredientsPrompt.
+  ///
+  /// In en, this message translates to:
+  /// **'Select a list'**
+  String get saveIngredientsPrompt;
+
+  /// No description provided for @datesUpdatedSuccess.
+  ///
+  /// In en, this message translates to:
+  /// **'Dates updated successfully'**
+  String get datesUpdatedSuccess;
+
+  /// No description provided for @savePlanToList.
+  ///
+  /// In en, this message translates to:
+  /// **'Save Plan to List'**
+  String get savePlanToList;
+
+  /// No description provided for @importMealPlanSuccess.
+  ///
+  /// In en, this message translates to:
+  /// **'Importेड meal plan to {listName}'**
+  String importMealPlanSuccess(Object listName);
+
+  /// No description provided for @importMealPlanFailure.
+  ///
+  /// In en, this message translates to:
+  /// **'Failed to import meal plan'**
+  String get importMealPlanFailure;
+
+  /// No description provided for @alsoRemoveGroceryList.
+  ///
+  /// In en, this message translates to:
+  /// **'Remove from grocery list'**
+  String get alsoRemoveGroceryList;
+
+  /// No description provided for @alsoRemoveGroceryListSubtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Related ingredients will be removed'**
+  String get alsoRemoveGroceryListSubtitle;
+
+  /// No description provided for @noRecipeAssociated.
+  ///
+  /// In en, this message translates to:
+  /// **'No recipe associated'**
+  String get noRecipeAssociated;
+
+  /// No description provided for @mealCompletedSuccess.
+  ///
+  /// In en, this message translates to:
+  /// **'{count} meals completed'**
+  String mealCompletedSuccess(Object count);
+
+  /// No description provided for @mealCompletedMissing.
+  ///
+  /// In en, this message translates to:
+  /// **'{count} missing'**
+  String mealCompletedMissing(Object count);
+
+  /// No description provided for @selectGroceryListEmpty.
+  ///
+  /// In en, this message translates to:
+  /// **'No grocery lists found'**
+  String get selectGroceryListEmpty;
+
+  /// No description provided for @selectGroceryListNewList.
+  ///
+  /// In en, this message translates to:
+  /// **'Create New List'**
+  String get selectGroceryListNewList;
+
+  /// No description provided for @listNameLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'List Name'**
+  String get listNameLabel;
+
+  /// No description provided for @create.
+  ///
+  /// In en, this message translates to:
+  /// **'Create'**
+  String get create;
+
+  /// No description provided for @listNameEmptyError.
+  ///
+  /// In en, this message translates to:
+  /// **'List name cannot be empty'**
+  String get listNameEmptyError;
+
+  /// No description provided for @createListErrorCreate.
+  ///
+  /// In en, this message translates to:
+  /// **'Failed to create list'**
+  String get createListErrorCreate;
+
+  /// No description provided for @createListDialogTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Create List'**
+  String get createListDialogTitle;
+
+  /// No description provided for @listNameHint.
+  ///
+  /// In en, this message translates to:
+  /// **'E.g. Weekly Groceries'**
+  String get listNameHint;
+
+  /// No description provided for @addItemDefaultUnit.
+  ///
+  /// In en, this message translates to:
+  /// **'units'**
+  String get addItemDefaultUnit;
+
+  /// No description provided for @addItemErrorAdding.
+  ///
+  /// In en, this message translates to:
+  /// **'Failed to add item'**
+  String get addItemErrorAdding;
+
+  /// No description provided for @addItemTitlePantry.
+  ///
+  /// In en, this message translates to:
+  /// **'Add to Pantry'**
+  String get addItemTitlePantry;
+
+  /// No description provided for @addItemIngredientNameLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Ingredient Name'**
+  String get addItemIngredientNameLabel;
+
+  /// No description provided for @addItemIngredientNameRequired.
+  ///
+  /// In en, this message translates to:
+  /// **'Required'**
+  String get addItemIngredientNameRequired;
+
+  /// No description provided for @addItemQuantityLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Quantity'**
+  String get addItemQuantityLabel;
+
+  /// No description provided for @addItemQuantityRequired.
+  ///
+  /// In en, this message translates to:
+  /// **'Required'**
+  String get addItemQuantityRequired;
+
+  /// No description provided for @addItemQuantityInvalid.
+  ///
+  /// In en, this message translates to:
+  /// **'Invalid quantity'**
+  String get addItemQuantityInvalid;
+
+  /// No description provided for @addItemUnitLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Unit'**
+  String get addItemUnitLabel;
+
+  /// No description provided for @addItemUnitHint.
+  ///
+  /// In en, this message translates to:
+  /// **'E.g. kg, lbs'**
+  String get addItemUnitHint;
+
+  /// No description provided for @addItemCategoryLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Category'**
+  String get addItemCategoryLabel;
+
+  /// No description provided for @addItemCategoryHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Select category'**
+  String get addItemCategoryHint;
+
+  /// No description provided for @addItemExpiryLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Expiration'**
+  String get addItemExpiryLabel;
+
+  /// No description provided for @addItemButton.
+  ///
+  /// In en, this message translates to:
+  /// **'Add'**
+  String get addItemButton;
+
+  /// No description provided for @groceryItemInPantry.
+  ///
+  /// In en, this message translates to:
+  /// **'In pantry'**
+  String get groceryItemInPantry;
+
+  /// No description provided for @groceryItemEditTooltip.
+  ///
+  /// In en, this message translates to:
+  /// **'Edit item'**
+  String get groceryItemEditTooltip;
+
+  /// No description provided for @editQuantityDialogTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Edit Quantity'**
+  String get editQuantityDialogTitle;
+
+  /// No description provided for @pantryItemExpired.
+  ///
+  /// In en, this message translates to:
+  /// **'Expired'**
+  String get pantryItemExpired;
+
+  /// No description provided for @editAction.
+  ///
+  /// In en, this message translates to:
+  /// **'Edit'**
+  String get editAction;
+
+  /// No description provided for @pantryDeleteDialogTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Delete Item'**
+  String get pantryDeleteDialogTitle;
+
+  /// No description provided for @pantryDeleteDialogMessage.
+  ///
+  /// In en, this message translates to:
+  /// **'Are you sure you want to delete {itemName}?'**
+  String pantryDeleteDialogMessage(Object itemName);
 }
 
 class _AppLocalizationsDelegate

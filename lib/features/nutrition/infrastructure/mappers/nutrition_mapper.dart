@@ -13,6 +13,9 @@ class NutritionMapper {
     dailyTotals.sort((a, b) => a.date.compareTo(b.date));
 
     return NutritionSummary(
+      todaySummary: dto.todaySummary != null
+          ? _dailyTotalDtoToEntity(dto.todaySummary!)
+          : null,
       dailyTotals: dailyTotals,
       weeklyAverage: _weeklyAverageDtoToEntity(dto.weeklyAverage),
     );
