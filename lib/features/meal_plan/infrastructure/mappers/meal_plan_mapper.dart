@@ -2,20 +2,41 @@ import 'package:meal_plan_app/features/meal_plan/domain/entities/meal_plan.dart'
 
 class MealPlanResponseMapper {
   static MealPlanResponse fromMap(Map<String, dynamic> data) {
-    final planMap = Map<String, dynamic>.from(data['plan'] ?? {});
-    final metaMap = Map<String, dynamic>.from(data['meta'] ?? {});
+    final planMap = _toMap(data['plan']);
+    final metaMap = _toMap(data['meta']);
 
     final dailyMeals = (planMap['daily_meals'] as List? ?? []).map((day) {
-      final dayMap = Map<String, dynamic>.from(day as Map);
+      final dayMap = _toMap(day);
       final meals = (dayMap['meals'] as List? ?? []).map((meal) {
-        final mealMap = Map<String, dynamic>.from(meal as Map);
-        final recipeMap = Map<String, dynamic>.from(mealMap['recipe'] ?? {});
+        final mealMap = _toMap(meal);
+        final recipeMap = _toMap(mealMap['recipe']);
         return MealEntry(
+          entryId: _toInt(mealMap['id'] ?? mealMap['entry_id']) ?? 0,
           mealType: (mealMap['meal_type'] ?? '') as String,
+          name: (recipeMap['name'] ?? mealMap['name'] ?? '') as String,
+          description: recipeMap['description'] as String?,
+          servings: _toInt(
+            mealMap['servings_planned'] ??
+                recipeMap['servings'] ??
+                mealMap['servings'],
+          ),
+          calories: _toDouble(recipeMap['calories'] ?? mealMap['calories']),
+          proteinGrams: _toDouble(
+            recipeMap['protein_grams'] ?? recipeMap['proteinGrams'],
+          ),
+          carbsGrams: _toDouble(
+            recipeMap['carbs_grams'] ?? recipeMap['carbsGrams'],
+          ),
+          fatsGrams: _toDouble(
+            recipeMap['fats_grams'] ?? recipeMap['fatsGrams'],
+          ),
+          categories: _toStringList(recipeMap['categories']),
           recipe: Recipe(
+            id: _toInt(recipeMap['id']),
             name: (recipeMap['name'] ?? '') as String,
             description: (recipeMap['description'] ?? '') as String,
             instructions: (recipeMap['instructions'] ?? '') as String,
+            isFavorite: _toBool(recipeMap['is_favorite']),
             prepTimeMinutes: _toInt(recipeMap['prep_time_minutes']),
             cookTimeMinutes: _toInt(recipeMap['cook_time_minutes']),
             servings: _toInt(recipeMap['servings']),
@@ -26,9 +47,7 @@ class MealPlanResponseMapper {
             ingredients: (recipeMap['ingredients'] as List? ?? []).map((
               ingredient,
             ) {
-              final ingredientMap = Map<String, dynamic>.from(
-                ingredient as Map,
-              );
+              final ingredientMap = _toMap(ingredient);
               return Ingredient(
                 name: (ingredientMap['name'] ?? '') as String,
                 quantity: _toDouble(ingredientMap['quantity']) ?? 0,
@@ -44,6 +63,7 @@ class MealPlanResponseMapper {
     }).toList();
 
     final plan = MealPlan(
+      id: _toInt(planMap['id']) ?? 0,
       planName: (planMap['plan_name'] ?? '') as String,
       startDate: _parseDate(planMap['start_date']),
       endDate: _parseDate(planMap['end_date']),
@@ -56,11 +76,14 @@ class MealPlanResponseMapper {
           (metaMap['preferencesFound'] ?? metaMap['preferences_found'] ?? false)
               as bool,
       recipesProvided:
-          (metaMap['recipesProvided'] ?? metaMap['recipes_provided'] ?? 0)
-              as int,
+          _toInt(metaMap['recipesProvided'] ?? metaMap['recipes_provided']) ??
+          0,
       subscription: (metaMap['subscription'] ?? '') as String,
       subscriptionPlan:
           (metaMap['subscriptionPlan'] ?? metaMap['subscription_plan'] ?? '')
+              as String,
+      persistenceStatus:
+          (metaMap['persistenceStatus'] ?? metaMap['persistence_status'] ?? '')
               as String,
     );
 
@@ -80,12 +103,15 @@ class MealPlanResponseMapper {
                 'meals': day.meals
                     .map(
                       (meal) => {
+                        'entry_id': meal.entryId,
                         'meal_type': meal.mealType,
                         'recipe': {
+                          'id': meal.recipe.id,
                           'name': meal.recipe.name,
                           'description': meal.recipe.description,
                           'instructions': meal.recipe.instructions,
                           'prep_time_minutes': meal.recipe.prepTimeMinutes,
+                          'is_favorite': meal.recipe.isFavorite,
                           'cook_time_minutes': meal.recipe.cookTimeMinutes,
                           'servings': meal.recipe.servings,
                           'calories': meal.recipe.calories,
@@ -116,6 +142,7 @@ class MealPlanResponseMapper {
         'recipesProvided': response.meta.recipesProvided,
         'subscription': response.meta.subscription,
         'subscriptionPlan': response.meta.subscriptionPlan,
+        'persistenceStatus': response.meta.persistenceStatus,
       },
     };
   }
@@ -144,6 +171,36 @@ class MealPlanResponseMapper {
     return double.tryParse(value.toString());
   }
 
+  static bool _toBool(dynamic value) {
+    if (value == null) return false;
+    if (value is bool) return value;
+    if (value is num) return value != 0;
+    final s = value.toString().trim().toLowerCase();
+    if (s == '1' || s == 'true' || s == 'yes') return true;
+    return false;
+  }
+
+  static Map<String, dynamic> _toMap(dynamic value) {
+    if (value == null) return <String, dynamic>{};
+    if (value is Map<String, dynamic>) return value;
+    if (value is Map) {
+      try {
+        return Map<String, dynamic>.from(value);
+      } catch (_) {
+        return <String, dynamic>{};
+      }
+    }
+    return <String, dynamic>{};
+  }
+
   static String _dateOnly(DateTime date) =>
       date.toIso8601String().split('T').first;
+
+  static List<String> _toStringList(dynamic value) {
+    if (value is! List) return const [];
+    return value
+        .map((item) => item?.toString().trim() ?? '')
+        .where((item) => item.isNotEmpty)
+        .toList();
+  }
 }

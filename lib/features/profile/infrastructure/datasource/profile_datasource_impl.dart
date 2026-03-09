@@ -8,31 +8,26 @@ class ProfileDatasourceImpl implements ProfileDatasource {
   ProfileDatasourceImpl(this._supabaseClient);
 
   bool _isInvalidOrExpiredOtp(AuthException exception) {
-    final normalizedStatus = exception.statusCode?.toString().toLowerCase();
-    if (normalizedStatus == null) return false;
-
-    return normalizedStatus == '400' ||
-        normalizedStatus == '401' ||
-        normalizedStatus == '422' ||
-        normalizedStatus == 'invalid_otp' ||
-        normalizedStatus == 'otp_expired';
+    final code = exception.code?.toLowerCase();
+    final status = exception.statusCode?.toString();
+    return code == 'invalid_otp' ||
+        code == 'otp_expired' ||
+        status == '400' ||
+        status == '401' ||
+        status == '422';
   }
 
   bool _isDuplicateEmailError(AuthException exception) {
-    final normalizedStatus = exception.statusCode?.toString().toLowerCase();
-    if (normalizedStatus == null) return false;
-
-    // Supabase auth usually reports duplicate/conflict email with 409/422.
-    return normalizedStatus == '409' ||
-        normalizedStatus == '422' ||
-        normalizedStatus == 'email_exists' ||
-        normalizedStatus == 'user_already_exists';
+    final code = exception.code?.toLowerCase();
+    final status = exception.statusCode?.toString();
+    return code == 'email_exists' ||
+        code == 'user_already_exists' ||
+        status == '409' ||
+        status == '422';
   }
 
   @override
-  Future<Map<String, dynamic>> updateLanguage(
-    String langCode,
-  ) async {
+  Future<Map<String, dynamic>> updateLanguage(String langCode) async {
     try {
       // Llamamos al RPC pasándole el nombre de la llave y el valor
       final response = await _supabaseClient.rpc(

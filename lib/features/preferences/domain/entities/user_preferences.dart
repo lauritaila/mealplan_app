@@ -29,4 +29,3 @@ class UserPreferences {
     this.updatedAt,
   });
 }
-

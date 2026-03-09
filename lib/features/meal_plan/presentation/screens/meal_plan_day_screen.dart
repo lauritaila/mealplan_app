@@ -1,8 +1,15 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:go_router/go_router.dart';
 import 'package:meal_plan_app/config/errors/app_errors.dart';
+import 'package:meal_plan_app/features/auth/domain/entities/user.dart';
+import 'package:meal_plan_app/features/auth/presentation/provider/provider.dart';
+import 'package:meal_plan_app/features/grocery_list/presentation/providers/grocery_actions_provider.dart';
+import 'package:meal_plan_app/features/grocery_list/presentation/widgets/select_grocery_list_sheet.dart';
 import 'package:meal_plan_app/features/meal_plan/domain/domain.dart';
 import 'package:meal_plan_app/features/meal_plan/presentation/providers/provider.dart';
+import 'package:meal_plan_app/features/shared/widgets/widgets.dart';
+import 'package:meal_plan_app/features/meal_plan/presentation/widgets/swap_recipe_sheet.dart';
 import 'package:meal_plan_app/features/shared/utils/app_error_localizations.dart';
 import 'package:meal_plan_app/l10n/app_localizations.dart';
 
@@ -13,12 +20,26 @@ class MealPlanDayScreen extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final selectedDate = ref.watch(selectedMealPlanDayProvider);
     final entriesAsync = ref.watch(mealPlanDayEntriesProvider(selectedDate));
+    final statusUpdateState = ref.watch(dayMealEntryStatusUpdateProvider);
+    final actionsState = ref.watch(mealPlanEntryActionsProvider);
+    final authState = ref.watch(authProvider);
     final l10n = AppLocalizations.of(context);
+    final hideNutritionValues =
+        authState is AuthenticatedAuthState &&
+        authState.user.configurations?['hideNutritionValues'] == true;
+    final userPermissions = authState is AuthenticatedAuthState
+        ? authState.user.permissions?.permissions
+        : null;
 
     return Scaffold(
       appBar: AppBar(
         title: Text(l10n.mealsOfDayTitle),
         actions: [
+          IconButton(
+            icon: const Icon(Icons.history),
+            tooltip: l10n.mealPlanHistory,
+            onPressed: () => context.push('/meal-plan/history'),
+          ),
           IconButton(
             icon: const Icon(Icons.refresh),
             onPressed: () =>
@@ -49,26 +70,25 @@ class MealPlanDayScreen extends ConsumerWidget {
                     children: [
                       _DaySelector(
                         selectedDate: selectedDate,
-                        onSelect: (date) =>
-                            ref
-                                    .read(selectedMealPlanDayProvider.notifier)
-                                    .state =
-                                date,
-                        onPrevious: () =>
-                            ref
-                                .read(selectedMealPlanDayProvider.notifier)
-                                .state = selectedDate.subtract(
-                              const Duration(days: 1),
-                            ),
-                        onNext: () =>
-                            ref
-                                .read(selectedMealPlanDayProvider.notifier)
-                                .state = selectedDate.add(
-                              const Duration(days: 1),
-                            ),
+                        onSelect: (date) => ref
+                            .read(selectedMealPlanDayProvider.notifier)
+                            .setDate(date),
+                        onPrevious: () => ref
+                            .read(selectedMealPlanDayProvider.notifier)
+                            .previousDay(),
+                        onNext: () => ref
+                            .read(selectedMealPlanDayProvider.notifier)
+                            .nextDay(),
                       ),
-                      const SizedBox(height: 12),
-                      _TotalsSummaryCard(summary: totals),
+                      if (!hideNutritionValues) ...[
+                        const SizedBox(height: 12),
+                        NutritionSummaryCard(
+                          protein: totals.protein,
+                          fats: totals.fats,
+                          carbs: totals.carbs,
+                          calories: totals.calories,
+                        ),
+                      ],
                     ],
                   ),
                 ),
@@ -90,27 +110,27 @@ class MealPlanDayScreen extends ConsumerWidget {
                     children: [
                       _DaySelector(
                         selectedDate: selectedDate,
-                        onSelect: (date) =>
-                            ref
-                                    .read(selectedMealPlanDayProvider.notifier)
-                                    .state =
-                                date,
-                        onPrevious: () =>
-                            ref
-                                .read(selectedMealPlanDayProvider.notifier)
-                                .state = selectedDate.subtract(
-                              const Duration(days: 1),
-                            ),
-                        onNext: () =>
-                            ref
-                                .read(selectedMealPlanDayProvider.notifier)
-                                .state = selectedDate.add(
-                              const Duration(days: 1),
-                            ),
+                        onSelect: (date) => ref
+                            .read(selectedMealPlanDayProvider.notifier)
+                            .setDate(date),
+                        onPrevious: () => ref
+                            .read(selectedMealPlanDayProvider.notifier)
+                            .previousDay(),
+                        onNext: () => ref
+                            .read(selectedMealPlanDayProvider.notifier)
+                            .nextDay(),
                       ),
-                      const SizedBox(height: 12),
-                      _TotalsSummaryCard(summary: totals),
-                      const SizedBox(height: 16),
+                      if (!hideNutritionValues) ...[
+                        const SizedBox(height: 12),
+                        NutritionSummaryCard(
+                          protein: totals.protein,
+                          fats: totals.fats,
+                          carbs: totals.carbs,
+                          calories: totals.calories,
+                        ),
+                        const SizedBox(height: 16),
+                      ] else
+                        const SizedBox(height: 8),
                     ],
                   );
                 }
@@ -118,7 +138,83 @@ class MealPlanDayScreen extends ConsumerWidget {
                 final entry = entries[index - 1];
                 return Padding(
                   padding: const EdgeInsets.only(bottom: 12),
-                  child: _MealEntryCard(entry: entry),
+                  child: _MealEntryCard(
+                    entry: entry,
+                    hideNutritionValues: hideNutritionValues,
+                    isUpdating:
+                        statusUpdateState.status ==
+                            DayMealEntryStatusUpdateStatus.loading ||
+                        actionsState.status ==
+                            MealPlanEntryActionStatus.loading,
+                    onOpenRecipe: entry.recipeId > 0
+                        ? () => context.push(
+                              '/recipes/${entry.recipeId}?entryId=${entry.entryId}',
+                            )
+                        : null,
+                    onImportRecipeToList: () => _importRecipeToList(
+                      context,
+                      ref,
+                      recipeId: entry.recipeId,
+                    ),
+                    onCompleteEntry: () => _confirmComplete(
+                      context,
+                      ref,
+                      entry: entry,
+                      selectedDate: selectedDate,
+                    ),
+                    onToggleSkipped: () async {
+                      final wasSkipped = _isSkippedStatus(entry.status);
+                      await ref
+                          .read(dayMealEntryStatusUpdateProvider.notifier)
+                          .toggleSkipped(entry, selectedDate);
+                      final updateState = ref.read(
+                        dayMealEntryStatusUpdateProvider,
+                      );
+
+                      if (!context.mounted) return;
+
+                      if (updateState.status ==
+                              DayMealEntryStatusUpdateStatus.success &&
+                          !wasSkipped) {
+                        await _showSkippedMealDialog(context);
+                      } else if (updateState.status ==
+                          DayMealEntryStatusUpdateStatus.error) {
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          SnackBar(
+                            content: Text(
+                              updateState.errorMessage ?? l10n.genericError,
+                            ),
+                          ),
+                        );
+                      }
+                    },
+                    onDeleteEntry: () => _confirmDeleteEntry(
+                      context,
+                      ref,
+                      entry.entryId,
+                      selectedDate,
+                    ),
+                    onRegenerateEntry: () => _showRegenerateSheet(
+                      context,
+                      ref,
+                      entryId: entry.entryId,
+                      mealType: entry.mealType ?? '',
+                      selectedDate: selectedDate,
+                      userPermissions: userPermissions,
+                    ),
+                    onSwapRecipe: () => _swapRecipe(
+                      context,
+                      ref,
+                      entryId: entry.entryId,
+                      selectedDate: selectedDate,
+                    ),
+                    onChangeDate: () => _changeEntryDate(
+                      context,
+                      ref,
+                      entryId: entry.entryId,
+                      selectedDate: selectedDate,
+                    ),
+                  ),
                 );
               },
               itemCount: entries.length + 1,
@@ -130,128 +226,572 @@ class MealPlanDayScreen extends ConsumerWidget {
   }
 }
 
+// Helper functions at widget scope
+Future<void> _importRecipeToList(
+  BuildContext context,
+  WidgetRef ref, {
+  required int recipeId,
+}) async {
+  if (recipeId <= 0) {
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(content: Text(AppLocalizations.of(context).noRecipeAssociated)),
+    );
+    return;
+  }
+  final l10n = AppLocalizations.of(context);
+  final selected = await showSelectOrCreateGroceryListSheet(
+    context: context,
+    title: l10n.addRecipeToListTitle,
+  );
+  if (selected == null || !context.mounted) return;
+  final ok = await ref
+      .read(groceryActionsProvider.notifier)
+      .importRecipe(selected.id, recipeId);
+  if (!context.mounted) return;
+  ScaffoldMessenger.of(context).showSnackBar(
+    SnackBar(
+      content: Text(
+        ok
+            ? l10n.recipeAddedToList(selected.name)
+            : l10n.recipeAddFailed,
+      ),
+    ),
+  );
+}
+
+Future<void> _confirmComplete(
+  BuildContext context,
+  WidgetRef ref, {
+  required DayMealEntry entry,
+  required DateTime selectedDate,
+}) async {
+  final l10n = AppLocalizations.of(context);
+  if (entry.recipeId <= 0) {
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(content: Text(l10n.noRecipeAssociated)),
+    );
+    return;
+  }
+  final confirmed = await showDialog<bool>(
+    context: context,
+    builder: (ctx) => AlertDialog(
+      title: Text(l10n.markCompleteDialogTitle),
+      content: Column(
+        mainAxisSize: MainAxisSize.min,
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Text(l10n.markCompleteQuestion(entry.name)),
+          const SizedBox(height: 12),
+          Container(
+            padding: const EdgeInsets.all(12),
+            decoration: BoxDecoration(
+              color: Colors.amber.withAlpha(30),
+              borderRadius: BorderRadius.circular(8),
+              border: Border.all(color: Colors.amber),
+            ),
+            child: Row(
+              children: [
+                const Icon(Icons.info_outline, color: Colors.amber, size: 18),
+                const SizedBox(width: 8),
+                Expanded(
+                  child: Text(
+                    l10n.markCompleteDeductInfo,
+                    style: const TextStyle(fontSize: 12),
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ],
+      ),
+      actions: [
+        TextButton(
+          onPressed: () => Navigator.of(ctx).pop(false),
+          child: Text(l10n.cancel),
+        ),
+        FilledButton.icon(
+          onPressed: () => Navigator.of(ctx).pop(true),
+          icon: const Icon(Icons.check_circle_outline),
+          label: Text(l10n.completeAction),
+          style: FilledButton.styleFrom(backgroundColor: Colors.green),
+        ),
+      ],
+    ),
+  );
+  if (confirmed != true || !context.mounted) return;
+  final messenger = ScaffoldMessenger.of(context);
+  final result = await ref
+      .read(mealPlanEntryActionsProvider.notifier)
+      .bulkDeduct(
+        entry.recipeId,
+        entry.servings ?? 1,
+        entryId: entry.entryId,
+      );
+  if (!context.mounted) return;
+
+  if (result != null) {
+    ref.invalidate(mealPlanDayEntriesProvider(selectedDate));
+    ref.read(mealPlanEntryActionsProvider.notifier).reset();
+    messenger.showSnackBar(
+      SnackBar(
+        content: Text(
+          result.missing.isEmpty
+              ? l10n.mealCompletedSuccess(result.deducted.length)
+              : l10n.mealCompletedMissing(result.missing.length),
+        ),
+        duration: const Duration(seconds: 4),
+      ),
+    );
+  } else {
+    messenger.showSnackBar(
+      SnackBar(content: Text(l10n.mealCompletedError)),
+    );
+  }
+}
+
+Future<void> _confirmDeleteEntry(
+  BuildContext context,
+  WidgetRef ref,
+  int entryId,
+  DateTime selectedDate,
+) async {
+  bool removeShoppingList = false;
+  final confirmed = await showDialog<bool>(
+    context: context,
+    builder: (ctx) => StatefulBuilder(
+      builder: (ctx, setLocalState) => AlertDialog(
+        title: Text(AppLocalizations.of(ctx).deleteMealDialogTitle),
+        content: Column(
+          mainAxisSize: MainAxisSize.min,
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text(AppLocalizations.of(ctx).deleteMealDialogMessage),
+            const SizedBox(height: 12),
+            CheckboxListTile(
+              contentPadding: EdgeInsets.zero,
+              value: removeShoppingList,
+              onChanged: (v) =>
+                  setLocalState(() => removeShoppingList = v ?? false),
+              title: Text(AppLocalizations.of(ctx).alsoRemoveFromGrocery),
+              controlAffinity: ListTileControlAffinity.leading,
+            ),
+          ],
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.of(ctx).pop(false),
+            child: Text(AppLocalizations.of(ctx).cancel),
+          ),
+          FilledButton(
+            onPressed: () => Navigator.of(ctx).pop(true),
+            child: Text(AppLocalizations.of(ctx).deleteAction),
+          ),
+        ],
+      ),
+    ),
+  );
+  if (confirmed != true || !context.mounted) return;
+
+  await ref
+      .read(mealPlanEntryActionsProvider.notifier)
+      .deleteEntry(entryId, removeShoppingList: removeShoppingList);
+
+  if (!context.mounted) return;
+  final state = ref.read(mealPlanEntryActionsProvider);
+  if (state.status == MealPlanEntryActionStatus.success) {
+    ref.invalidate(mealPlanDayEntriesProvider(selectedDate));
+    ref.read(mealPlanEntryActionsProvider.notifier).reset();
+  } else if (state.status == MealPlanEntryActionStatus.error) {
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        content: Text(
+          state.errorMessage ?? AppLocalizations.of(context).genericDeleteError,
+        ),
+      ),
+    );
+    ref.read(mealPlanEntryActionsProvider.notifier).reset();
+  }
+}
+
+Future<void> _swapRecipe(
+  BuildContext context,
+  WidgetRef ref, {
+  required int entryId,
+  required DateTime selectedDate,
+}) async {
+  final selectedRecipeId = await showModalBottomSheet<int?>(
+    context: context,
+    isScrollControlled: true,
+    useSafeArea: true,
+    shape: const RoundedRectangleBorder(
+      borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
+    ),
+    builder: (_) => const SwapRecipeSheet(),
+  );
+
+  if (selectedRecipeId == null || !context.mounted) return;
+
+  final notifier = ref.read(mealPlanEntryActionsProvider.notifier);
+  final updated = await notifier.swapRecipe(entryId, selectedRecipeId);
+
+  if (updated == null) {
+    if (!context.mounted) return;
+    final state = ref.read(mealPlanEntryActionsProvider);
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        content: Text(
+          state.errorMessage ?? AppLocalizations.of(context).genericError,
+        ),
+      ),
+    );
+    notifier.reset();
+    return;
+  }
+
+  if (!context.mounted) return;
+  ref.invalidate(mealPlanDayEntriesProvider(selectedDate));
+  notifier.reset();
+}
+
+Future<void> _changeEntryDate(
+  BuildContext context,
+  WidgetRef ref, {
+  required int entryId,
+  required DateTime selectedDate,
+}) async {
+  final pickedDate = await showDatePicker(
+    context: context,
+    initialDate: selectedDate,
+    firstDate: DateTime(2000, 1, 1),
+    lastDate: DateTime(2100, 12, 31),
+  );
+
+  if (pickedDate == null || !context.mounted) return;
+  final normalizedDate = DateTime(
+    pickedDate.year,
+    pickedDate.month,
+    pickedDate.day,
+  );
+
+  if (_isSameDate(normalizedDate, selectedDate)) return;
+
+  final notifier = ref.read(mealPlanEntryActionsProvider.notifier);
+  await notifier.moveEntryToDate(entryId, normalizedDate);
+
+  if (!context.mounted) return;
+  final state = ref.read(mealPlanEntryActionsProvider);
+  if (state.status == MealPlanEntryActionStatus.success) {
+    ref.invalidate(mealPlanDayEntriesProvider(selectedDate));
+    notifier.reset();
+  } else if (state.status == MealPlanEntryActionStatus.error) {
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        content: Text(
+          state.errorMessage ?? AppLocalizations.of(context).genericMoveError,
+        ),
+      ),
+    );
+    notifier.reset();
+  }
+}
+
+Future<void> _showRegenerateSheet(
+  BuildContext context,
+  WidgetRef ref, {
+  required int entryId,
+  required String mealType,
+  required DateTime selectedDate,
+  required PermissionDetails? userPermissions,
+}) async {
+  final notifier = ref.read(mealPlanEntryActionsProvider.notifier);
+  final updated = await showModalBottomSheet<DayMealEntry?>(
+    context: context,
+    isScrollControlled: true,
+    useSafeArea: true,
+    shape: const RoundedRectangleBorder(
+      borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
+    ),
+    builder: (_) => _RegenerateDayEntrySheet(
+      entryId: entryId,
+      mealType: mealType,
+      userPermissions: userPermissions,
+      actionsNotifier: notifier,
+    ),
+  );
+
+  if (updated == null || !context.mounted) return;
+  ref.invalidate(mealPlanDayEntriesProvider(selectedDate));
+  ref.read(mealPlanEntryActionsProvider.notifier).reset();
+}
+
 class _MealEntryCard extends StatelessWidget {
   final DayMealEntry entry;
+  final bool hideNutritionValues;
+  final bool isUpdating;
+  final VoidCallback? onOpenRecipe;
+  final VoidCallback onImportRecipeToList;
+  final VoidCallback onCompleteEntry;
+  final Future<void> Function() onToggleSkipped;
+  final VoidCallback onDeleteEntry;
+  final VoidCallback onRegenerateEntry;
+  final VoidCallback onSwapRecipe;
+  final VoidCallback onChangeDate;
 
-  const _MealEntryCard({required this.entry});
+  const _MealEntryCard({
+    required this.entry,
+    required this.hideNutritionValues,
+    required this.isUpdating,
+    required this.onToggleSkipped,
+    required this.onImportRecipeToList,
+    required this.onCompleteEntry,
+    required this.onDeleteEntry,
+    required this.onRegenerateEntry,
+    required this.onSwapRecipe,
+    required this.onChangeDate,
+    this.onOpenRecipe,
+  });
 
   @override
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context);
+    final isSkipped = _isSkippedStatus(entry.status);
+    final bottomInset = MediaQuery.of(context).padding.bottom;
     return Card(
       elevation: 0.5,
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(14)),
-      child: ExpansionTile(
-        leading: _MealTypeAvatar(mealType: entry.mealType),
-        tilePadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-        childrenPadding: const EdgeInsets.fromLTRB(16, 0, 16, 16),
-        title: Text(
-          entry.name,
-          style: const TextStyle(fontSize: 16, fontWeight: FontWeight.w700),
-        ),
-        subtitle: Column(
+      child: Padding(
+        padding: const EdgeInsets.fromLTRB(16, 14, 16, 14),
+        child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            if (entry.mealType != null && entry.mealType!.isNotEmpty)
-              Padding(
-                padding: const EdgeInsets.only(top: 4),
-                child: Text(
-                  _formatMealType(l10n, entry.mealType),
-                  style: Theme.of(context).textTheme.labelSmall?.copyWith(
-                    color: Theme.of(context).colorScheme.primary,
+            Row(
+              children: [
+                _MealTypeAvatar(mealType: entry.mealType),
+                const SizedBox(width: 12),
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        entry.name,
+                        style: const TextStyle(
+                          fontSize: 16,
+                          fontWeight: FontWeight.w700,
+                        ),
+                      ),
+                      if (entry.mealType != null && entry.mealType!.isNotEmpty)
+                        Padding(
+                          padding: const EdgeInsets.only(top: 4),
+                          child: Text(
+                            _formatMealType(l10n, entry.mealType),
+                            style: Theme.of(context).textTheme.labelSmall
+                                ?.copyWith(
+                                  color: Theme.of(context).colorScheme.primary,
+                                ),
+                          ),
+                        ),
+                    ],
                   ),
                 ),
-              ),
-            // const SizedBox(height: 6),
-            // Text(
-            //   entry.description,
-            //   maxLines: 2,
-            //   overflow: TextOverflow.ellipsis,
-            //   style: Theme.of(context).textTheme.bodySmall,
-            // ),
+                if (isSkipped)
+                  Chip(
+                    label: Text(l10n.mealSkippedLabel),
+                    visualDensity: VisualDensity.compact,
+                  ),
+                PopupMenuButton<String>(
+                  enabled: !isUpdating,
+                  icon: const Icon(Icons.more_vert),
+                  onSelected: (value) {
+                    if (value == 'delete') onDeleteEntry();
+                    if (value == 'regenerate') onRegenerateEntry();
+                    if (value == 'swap') onSwapRecipe();
+                    if (value == 'change_date') onChangeDate();
+                    if (value == 'import_recipe') onImportRecipeToList();
+                    if (value == 'skip') onToggleSkipped();
+                  },
+                  itemBuilder: (_) => [
+                    PopupMenuItem(
+                      value: 'import_recipe',
+                      child: ListTile(
+                        leading: Icon(Icons.shopping_cart_outlined),
+                        title: Text(l10n.menuAddToGrocery),
+                        contentPadding: EdgeInsets.zero,
+                      ),
+                    ),
+                    PopupMenuItem(
+                      value: 'skip',
+                      child: ListTile(
+                        leading: Icon(
+                          isSkipped
+                              ? Icons.replay_circle_filled
+                              : Icons.do_not_disturb_on,
+                        ),
+                        title: Text(
+                          isSkipped
+                              ? l10n.unskipMealAction
+                              : l10n.skipMealAction,
+                        ),
+                        contentPadding: EdgeInsets.zero,
+                      ),
+                    ),
+                    PopupMenuItem(
+                      value: 'change_date',
+                      child: ListTile(
+                        leading: Icon(Icons.calendar_month_outlined),
+                        title: Text(l10n.changeMealDateAction),
+                        contentPadding: EdgeInsets.zero,
+                      ),
+                    ),
+                    PopupMenuItem(
+                      value: 'swap',
+                      child: ListTile(
+                        leading: Icon(Icons.favorite_border),
+                        title: Text(l10n.swapFavoriteAction),
+                        contentPadding: EdgeInsets.zero,
+                      ),
+                    ),
+                    PopupMenuItem(
+                      value: 'regenerate',
+                      child: ListTile(
+                        leading: Icon(Icons.refresh),
+                        title: Text(l10n.regenerateRecipeAction),
+                        contentPadding: EdgeInsets.zero,
+                      ),
+                    ),
+                    PopupMenuItem(
+                      value: 'delete',
+                      child: ListTile(
+                        leading: Icon(Icons.delete_outline, color: Colors.red),
+                        title: Text(
+                          l10n.deleteAction,
+                          style: TextStyle(color: Colors.red),
+                        ),
+                        contentPadding: EdgeInsets.zero,
+                      ),
+                    ),
+                    if (bottomInset > 0)
+                      PopupMenuItem(
+                        enabled: false,
+                        height: bottomInset,
+                        padding: EdgeInsets.zero,
+                        child: SizedBox(height: bottomInset),
+                      ),
+                  ],
+                ),
+              ],
+            ),
             const SizedBox(height: 10),
             Wrap(
               spacing: 8,
               runSpacing: 8,
               children: [
                 _MetricChip(
-                  label: l10n.metricCalories,
-                  value: _formatDouble(entry.calories),
-                ),
-                _MetricChip(
                   label: l10n.metricServings,
                   value: _formatInt(entry.servings),
                 ),
-                _MetricChip(
-                  label: l10n.metricFat,
-                  value: _formatDouble(
-                    entry.fatsGrams,
-                    decimals: 1,
-                    suffix: 'g',
+                if (!hideNutritionValues)
+                  _MetricChip(
+                    label: l10n.metricCalories,
+                    value: _formatDouble(entry.calories),
+                  ),
+                if (!hideNutritionValues)
+                  _MetricChip(
+                    label: l10n.metricFat,
+                    value: _formatDouble(
+                      entry.fatsGrams,
+                      decimals: 1,
+                      suffix: 'g',
+                    ),
+                  ),
+                if (!hideNutritionValues)
+                  _MetricChip(
+                    label: l10n.metricCarbs,
+                    value: _formatDouble(
+                      entry.carbsGrams,
+                      decimals: 1,
+                      suffix: 'g',
+                    ),
+                  ),
+              ],
+            ),
+            if (entry.categories.isNotEmpty) ...[
+              const SizedBox(height: 10),
+              Text(
+                l10n.categoriesTitle,
+                style: Theme.of(context).textTheme.labelMedium,
+              ),
+              const SizedBox(height: 6),
+              Wrap(
+                spacing: 8,
+                runSpacing: 8,
+                children: entry.categories
+                    .map((category) => _CategoryChip(label: category))
+                    .toList(),
+              ),
+            ],
+            const SizedBox(height: 12),
+            Row(
+              children: [
+                Expanded(
+                  child: OutlinedButton.icon(
+                    onPressed: onOpenRecipe,
+                    icon: const Icon(Icons.open_in_new),
+                    label: Text(l10n.viewRecipeDetails),
                   ),
                 ),
-                _MetricChip(
-                  label: l10n.metricCarbs,
-                  value: _formatDouble(
-                    entry.carbsGrams,
-                    decimals: 1,
-                    suffix: 'g',
-                  ),
+                const SizedBox(width: 10),
+                Builder(
+                  builder: (context) {
+                    final isCompleted = entry.status?.toLowerCase() == 'completed';
+                    return Expanded(
+                      child: FilledButton.tonalIcon(
+                        onPressed: (isUpdating || isCompleted)
+                            ? null
+                            : onCompleteEntry,
+                        icon: Icon(
+                          isCompleted
+                              ? Icons.check_circle
+                              : Icons.check_circle_outline,
+                          color: isCompleted
+                              ? Colors.green
+                              : null,
+                        ),
+                        label: Text(
+                          isCompleted
+                              ? l10n.mealCompletedLabel
+                              : l10n.completeRecipeLabel,
+                        ),
+                      ),
+                    );
+                  }
                 ),
               ],
             ),
+            if (isUpdating) ...[
+              const SizedBox(height: 8),
+              const LinearProgressIndicator(minHeight: 2),
+            ],
           ],
         ),
-        children: [
-          Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Text(
-                l10n.descriptionTitle,
-                style: Theme.of(context).textTheme.titleSmall,
-              ),
-              const SizedBox(height: 6),
-              Text(
-                entry.description,
-                style: Theme.of(context).textTheme.bodyMedium,
-              ),
-              const SizedBox(height: 12),
-              Text(
-                l10n.instructionsTitle,
-                style: Theme.of(context).textTheme.titleSmall,
-              ),
-              const SizedBox(height: 6),
-              Text(
-                entry.instructions.isEmpty
-                    ? l10n.noInstructions
-                    : entry.instructions,
-                style: Theme.of(context).textTheme.bodyMedium,
-              ),
-              const SizedBox(height: 12),
-              Text(
-                l10n.ingredientsTitle,
-                style: Theme.of(context).textTheme.titleSmall,
-              ),
-              const SizedBox(height: 6),
-              if (entry.ingredients.isEmpty)
-                Text(
-                  l10n.noIngredients,
-                  style: Theme.of(context).textTheme.bodyMedium,
-                )
-              else
-                ...entry.ingredients.map(
-                  (ingredient) => Padding(
-                    padding: const EdgeInsets.only(bottom: 4),
-                    child: Text(
-                      '• ${_formatIngredient(ingredient)}',
-                      style: Theme.of(context).textTheme.bodyMedium,
-                    ),
-                  ),
-                ),
-            ],
-          ),
-        ],
       ),
+    );
+  }
+}
+
+class _CategoryChip extends StatelessWidget {
+  final String label;
+
+  const _CategoryChip({required this.label});
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
+      decoration: BoxDecoration(
+        color: Theme.of(context).colorScheme.secondaryContainer,
+        borderRadius: BorderRadius.circular(12),
+      ),
+      child: Text(label, style: Theme.of(context).textTheme.bodySmall),
     );
   }
 }
@@ -292,82 +832,14 @@ class _TotalsSummary {
   });
 
   factory _TotalsSummary.fromEntries(List<DayMealEntry> entries) {
+    final activeEntries = entries.where(
+      (entry) => !_isSkippedStatus(entry.status),
+    );
     return _TotalsSummary(
-      protein: _sumNullable(entries.map((entry) => entry.proteinGrams)),
-      fats: _sumNullable(entries.map((entry) => entry.fatsGrams)),
-      carbs: _sumNullable(entries.map((entry) => entry.carbsGrams)),
-      calories: _sumNullable(entries.map((entry) => entry.calories)),
-    );
-  }
-}
-
-class _TotalsSummaryCard extends StatelessWidget {
-  final _TotalsSummary summary;
-
-  const _TotalsSummaryCard({required this.summary});
-
-  @override
-  Widget build(BuildContext context) {
-    final colorScheme = Theme.of(context).colorScheme;
-    final l10n = AppLocalizations.of(context);
-    return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
-      decoration: BoxDecoration(
-        color: colorScheme.primaryContainer,
-        borderRadius: BorderRadius.circular(18),
-      ),
-      child: Row(
-        children: [
-          Expanded(
-            child: _TotalMetric(
-              label: l10n.metricProtein,
-              value: _formatDouble(summary.protein, suffix: 'g'),
-            ),
-          ),
-          Expanded(
-            child: _TotalMetric(
-              label: l10n.metricFat,
-              value: _formatDouble(summary.fats, suffix: 'g'),
-            ),
-          ),
-          Expanded(
-            child: _TotalMetric(
-              label: l10n.metricCarbs,
-              value: _formatDouble(summary.carbs, suffix: 'g'),
-            ),
-          ),
-          Expanded(
-            child: _TotalMetric(
-              label: l10n.metricKcal,
-              value: _formatDouble(summary.calories),
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-}
-
-class _TotalMetric extends StatelessWidget {
-  final String label;
-  final String value;
-
-  const _TotalMetric({required this.label, required this.value});
-
-  @override
-  Widget build(BuildContext context) {
-    return Column(
-      mainAxisSize: MainAxisSize.min,
-      children: [
-        Text(
-          value,
-          style: Theme.of(
-            context,
-          ).textTheme.titleSmall?.copyWith(fontWeight: FontWeight.w700),
-        ),
-        const SizedBox(height: 4),
-        Text(label, style: Theme.of(context).textTheme.labelSmall),
-      ],
+      protein: _sumNullable(activeEntries.map((entry) => entry.proteinGrams)),
+      fats: _sumNullable(activeEntries.map((entry) => entry.fatsGrams)),
+      carbs: _sumNullable(activeEntries.map((entry) => entry.carbsGrams)),
+      calories: _sumNullable(activeEntries.map((entry) => entry.calories)),
     );
   }
 }
@@ -556,18 +1028,33 @@ String _formatInt(int? value) {
   return value.toString();
 }
 
-String _formatIngredient(DayMealIngredient ingredient) {
-  final quantity = ingredient.quantity;
-  final unit = ingredient.unit ?? '';
-  final quantityText = quantity == null ? '' : quantity.toString();
-  final unitText = unit.isEmpty ? '' : ' $unit';
-  final prefix = (quantityText + unitText).trim();
-  if (prefix.isEmpty) return ingredient.name;
-  return '$prefix ${ingredient.name}'.trim();
-}
-
 bool _isSameDate(DateTime a, DateTime b) {
   return a.year == b.year && a.month == b.month && a.day == b.day;
+}
+
+bool _isSkippedStatus(String? status) {
+  if (status == null) return false;
+  final value = status.trim().toLowerCase();
+  return value == 'skipped' || value == 'skiped';
+}
+
+Future<void> _showSkippedMealDialog(BuildContext context) async {
+  final l10n = AppLocalizations.of(context);
+  await showDialog<void>(
+    context: context,
+    builder: (dialogContext) {
+      return AlertDialog(
+        title: Text(l10n.skipMealDialogTitle),
+        content: Text(l10n.skipMealDialogMessage),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.of(dialogContext).pop(),
+            child: Text(l10n.done),
+          ),
+        ],
+      );
+    },
+  );
 }
 
 String _weekdayLabel(AppLocalizations l10n, DateTime date) {
@@ -646,5 +1133,188 @@ String _formatMealType(AppLocalizations l10n, String? mealType) {
       return l10n.mealTypeSnack;
     default:
       return mealType;
+  }
+}
+
+// ---------------------------------------------------------------------------
+// _RegenerateDayEntrySheet
+// ---------------------------------------------------------------------------
+class _RegenerateDayEntrySheet extends StatefulWidget {
+  final int entryId;
+  final String mealType;
+  final PermissionDetails? userPermissions;
+  final MealPlanEntryActions actionsNotifier;
+
+  const _RegenerateDayEntrySheet({
+    required this.entryId,
+    required this.mealType,
+    required this.userPermissions,
+    required this.actionsNotifier,
+  });
+
+  @override
+  State<_RegenerateDayEntrySheet> createState() =>
+      _RegenerateDayEntrySheetState();
+}
+
+class _RegenerateDayEntrySheetState extends State<_RegenerateDayEntrySheet> {
+  final _descController = TextEditingController();
+  int? _selectedMaxTime;
+  bool _isLoading = false;
+  bool _usePantry = false;
+  String? _error;
+
+  @override
+  void initState() {
+    super.initState();
+    final times = widget.userPermissions?.mealPlanTime;
+    if (times != null && times.isNotEmpty) {
+      _selectedMaxTime = times.last;
+    }
+  }
+
+  @override
+  void dispose() {
+    _descController.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final times = widget.userPermissions?.mealPlanTime ?? const [];
+    final l10n = AppLocalizations.of(context);
+
+    return Padding(
+      padding: EdgeInsets.only(
+        bottom:
+            MediaQuery.of(context).viewInsets.bottom +
+            MediaQuery.of(context).padding.bottom,
+        left: 20,
+        right: 20,
+        top: 20,
+      ),
+      child: SingleChildScrollView(
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.stretch,
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Center(
+              child: Container(
+                width: 40,
+                height: 4,
+                decoration: BoxDecoration(
+                  color: Colors.grey.shade300,
+                  borderRadius: BorderRadius.circular(2),
+                ),
+              ),
+            ),
+            const SizedBox(height: 16),
+            Text(
+              l10n.regenerateRecipeAction,
+              style: TextStyle(fontSize: 18, fontWeight: FontWeight.w700),
+            ),
+            const SizedBox(height: 4),
+            Text(
+              l10n.regenerateSheetSubtitle,
+              style: TextStyle(color: Colors.grey.shade600, fontSize: 13),
+            ),
+            const SizedBox(height: 16),
+            TextField(
+              controller: _descController,
+              maxLines: 3,
+              decoration: InputDecoration(
+                labelText: l10n.regenerateSheetNotesLabel,
+                hintText: l10n.regenerateSheetNotesHint,
+                border: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(12),
+                ),
+              ),
+            ),
+            if (times.isNotEmpty) ...[
+              const SizedBox(height: 16),
+              Text(
+                l10n.regenerateSheetMaxPrepTimeLabel,
+                style: TextStyle(fontWeight: FontWeight.w600),
+              ),
+              const SizedBox(height: 8),
+              Wrap(
+                spacing: 8,
+                runSpacing: 8,
+                children: times.map((t) {
+                  final isSelected = _selectedMaxTime == t;
+                  return ChoiceChip(
+                    label: Text(l10n.minutesShortWithPlaceholder('$t')),
+                    selected: isSelected,
+                    onSelected: (_) => setState(() => _selectedMaxTime = t),
+                  );
+                }).toList(),
+              ),
+            ],
+            const SizedBox(height: 8),
+            CheckboxListTile(
+              contentPadding: EdgeInsets.zero,
+              value: _usePantry,
+              onChanged: (v) => setState(() => _usePantry = v ?? false),
+              title: Text(l10n.usePantryTitle),
+              subtitle: Text(
+                l10n.usePantrySubtitle,
+                style: const TextStyle(fontSize: 12),
+              ),
+              controlAffinity: ListTileControlAffinity.leading,
+            ),
+            if (_error != null) ...[
+              const SizedBox(height: 12),
+              Text(_error!, style: const TextStyle(color: Colors.red)),
+            ],
+            const SizedBox(height: 20),
+            FilledButton(
+              onPressed: _isLoading ? null : _submit,
+              child: _isLoading
+                  ? const SizedBox(
+                      height: 20,
+                      width: 20,
+                      child: CircularProgressIndicator(
+                        strokeWidth: 2,
+                        color: Colors.white,
+                      ),
+                    )
+                  : Text(l10n.regenerateSheetButton),
+            ),
+            const SizedBox(height: 16),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Future<void> _submit() async {
+    setState(() {
+      _isLoading = true;
+      _error = null;
+    });
+
+    final request = ChangeMealPlanRecipeRequest(
+      description: _descController.text.trim().isEmpty
+          ? null
+          : _descController.text.trim(),
+      mealTypes: [widget.mealType],
+      maxTotalTimeMinutes: _selectedMaxTime,
+      usePantry: _usePantry ? true : null,
+    );
+
+    final updated = await widget.actionsNotifier.changeRecipe(
+      widget.entryId,
+      request,
+    );
+
+    if (!mounted) return;
+    if (updated != null) {
+      Navigator.of(context).pop(updated);
+    } else {
+      setState(() {
+        _isLoading = false;
+        _error = AppLocalizations.of(context).genericRegenerateError;
+      });
+    }
   }
 }

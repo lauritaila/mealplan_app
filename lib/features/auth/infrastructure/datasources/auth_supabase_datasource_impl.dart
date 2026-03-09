@@ -263,14 +263,27 @@ class AuthSupabaseDatasourceImpl implements AuthDatasource {
     final session = await _ensureSession();
     final supabaseUser = _supabaseClient.auth.currentUser;
     if (supabaseUser == null || supabaseUser.email == null) {
+      _logger.warning(
+        'getAuthenticatedUserProfile unauthorized: missing current user/email',
+      );
       throw const PermissionAppError.unauthorized();
     }
     if (session == null || session.accessToken.isEmpty) {
+      _logger.warning(
+        'getAuthenticatedUserProfile unauthorized: missing or empty access token',
+      );
       throw const PermissionAppError.unauthorized();
     }
 
+    _logger.info(
+      'getAuthenticatedUserProfile start for userId=${supabaseUser.id}',
+    );
+
     try {
       if (_userApiBaseUrl.startsWith('No configure')) {
+        _logger.warning(
+          'getAuthenticatedUserProfile missing API_BASE_URL, using local fallback',
+        );
         throw const ConfigAppError.missing('API_BASE_URL');
       }
 
@@ -314,33 +327,69 @@ class AuthSupabaseDatasourceImpl implements AuthDatasource {
         'permissions': data['permissions'],
       };
 
+      _logger.info(
+        'getAuthenticatedUserProfile success via API for userId=${supabaseUser.id}',
+      );
+
       return UserMapper.fromJson(adjustedProfileData);
     } on DioException catch (e) {
       if (e.type == DioExceptionType.connectionTimeout ||
           e.type == DioExceptionType.sendTimeout ||
           e.type == DioExceptionType.receiveTimeout) {
+        _logger.warning(
+          'getAuthenticatedUserProfile timeout, falling back to Supabase table profile',
+          e,
+        );
         return _loadUserProfile(supabaseUser.id, supabaseUser.email);
       }
 
       if (e.type == DioExceptionType.badResponse) {
         final status = e.response?.statusCode ?? -1;
+        _logger.warning(
+          'getAuthenticatedUserProfile API badResponse status=$status',
+          e,
+        );
         if (status == 401 || status == 403) {
           _throwByStatus(status);
         }
+        _logger.info(
+          'getAuthenticatedUserProfile falling back after badResponse status=$status',
+        );
         return _loadUserProfile(supabaseUser.id, supabaseUser.email);
       }
 
       if (e.type == DioExceptionType.connectionError) {
+        _logger.warning(
+          'getAuthenticatedUserProfile connection error, falling back to Supabase table profile',
+          e,
+        );
         return _loadUserProfile(supabaseUser.id, supabaseUser.email);
       }
 
+      _logger.warning(
+        'getAuthenticatedUserProfile DioException (${e.type}), falling back to Supabase table profile',
+        e,
+      );
       return _loadUserProfile(supabaseUser.id, supabaseUser.email);
     } on AppError catch (e) {
       if (e is PermissionAppError || e is AuthAppError) {
+        _logger.severe(
+          'getAuthenticatedUserProfile rethrowing auth/permission error: ${e.code}',
+          e,
+        );
         rethrow;
       }
+      _logger.warning(
+        'getAuthenticatedUserProfile AppError (${e.code}), falling back to Supabase table profile',
+        e,
+      );
       return _loadUserProfile(supabaseUser.id, supabaseUser.email);
-    } catch (_) {
+    } catch (e, st) {
+      _logger.severe(
+        'getAuthenticatedUserProfile unexpected error, falling back to Supabase table profile',
+        e,
+        st,
+      );
       return _loadUserProfile(supabaseUser.id, supabaseUser.email);
     }
   }

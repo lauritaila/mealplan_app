@@ -305,6 +305,28 @@ class AppLocalizationsEn extends AppLocalizations {
   String get mealsOfDayTitle => 'Meals of the day';
 
   @override
+  String get skipMealAction => 'Skip meal';
+
+  @override
+  String get unskipMealAction => 'Unskip meal';
+
+  @override
+  String get mealSkippedLabel => 'Skipped';
+
+  @override
+  String get skipMealDialogTitle => 'Meal skipped';
+
+  @override
+  String get skipMealDialogMessage =>
+      'It\'s okay to skip a meal sometimes. You can continue with your plan whenever you\'re ready.';
+
+  @override
+  String get viewRecipeDetails => 'View recipe';
+
+  @override
+  String get categoriesTitle => 'Categories';
+
+  @override
   String get metricCalories => 'Cal';
 
   @override
@@ -411,6 +433,28 @@ class AppLocalizationsEn extends AppLocalizations {
   String get goToHome => 'Go to Home';
 
   @override
+  String get recipesTitle => 'Recipes';
+
+  @override
+  String get favoriteRecipesTitle => 'Favorite Recipes';
+
+  @override
+  String get favoriteUpdateFailed =>
+      'Failed to update favorite. Please try again.';
+
+  @override
+  String get favoritesTooltip => 'Favorites';
+
+  @override
+  String get noRecipesAvailable => 'No recipes available';
+
+  @override
+  String get noFavoriteRecipes => 'You don\'t have favorite recipes';
+
+  @override
+  String get recipeDetailTitle => 'Recipe Detail';
+
+  @override
   String get errorTitle => 'Error';
 
   @override
@@ -472,6 +516,10 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get preferencesSaved => 'Preferences saved successfully';
+
+  @override
+  String get errorSavePreferencesRollbackFailed =>
+      'Failed to save preferences and rollback also failed. The app may be in an inconsistent state.';
 
   @override
   String get unknownError => 'An unknown error occurred';
@@ -701,9 +749,6 @@ class AppLocalizationsEn extends AppLocalizations {
   String get mealPlanTitle => 'Meal Plan';
 
   @override
-  String get recipesTitle => 'Recipes';
-
-  @override
   String get groceryTitle => 'Grocery';
 
   @override
@@ -722,6 +767,178 @@ class AppLocalizationsEn extends AppLocalizations {
   String get emailPlaceholder => 'email@example.com';
 
   @override
+  String get deletePlanTooltip => 'Delete plan';
+
+  @override
+  String get deleteMealDialogTitle => 'Delete this meal?';
+
+  @override
+  String get deleteMealDialogMessage =>
+      'This recipe will be removed from the plan. This action cannot be undone.';
+
+  @override
+  String get deleteAction => 'Delete';
+
+  @override
+  String get changeMealDateAction => 'Change meal date';
+
+  @override
+  String get swapFavoriteAction => 'Swap with favorite';
+
+  @override
+  String get regenerateRecipeAction => 'Regenerate recipe';
+
+  @override
+  String get genericMoveError => 'Couldn\'t move the meal. Please try again.';
+
+  @override
+  String get genericDeleteError => 'Couldn\'t delete. Please try again.';
+
+  @override
+  String get genericRegenerateError =>
+      'Couldn\'t regenerate the recipe. Please try again.';
+
+  @override
+  String get dragDropHint =>
+      'Long press a recipe to drag it to another day or use the menu to change date.';
+
+  @override
+  String get dragDropTooltip =>
+      'Tip: you can move meals by dragging between days or from the “Change meal date” menu.';
+
+  @override
+  String get emptyDayDropText => 'Drop a meal here';
+
+  @override
+  String get viewDetailsLabel => 'View details';
+
+  @override
+  String get hideDetailsLabel => 'Hide details';
+
+  @override
+  String get regenerateSheetSubtitle =>
+      'Tell us what to change or leave it blank so AI can choose.';
+
+  @override
+  String get regenerateSheetNotesLabel => 'Description (optional)';
+
+  @override
+  String get regenerateSheetNotesHint =>
+      'E.g.: Something lighter, gluten-free...';
+
+  @override
+  String get regenerateSheetMaxPrepTimeLabel => 'Maximum prep time';
+
+  @override
+  String get regenerateSheetButton => 'Regenerate';
+
+  @override
+  String get deletePlanSheetTitle => 'Delete meal plan';
+
+  @override
+  String get deletePlanSheetWarning =>
+      'Deleting this plan still counts toward your meal plan generation limit. This action cannot be undone.';
+
+  @override
+  String get deletePlanSheetReasonLabel =>
+      'Why are you deleting the plan? (optional)';
+
+  @override
+  String get deletePlanSheetReasonHint => 'E.g.: I didn\'t like the recipes...';
+
+  @override
+  String get deletePlanSheetConfirmAction => 'Yes, delete plan';
+
+  @override
+  String minutesShortWithPlaceholder(Object minutes) {
+    return '$minutes min';
+  }
+
+  @override
+  String ingredientSubstitutesTitle(Object ingredient) {
+    return 'Substitutes for $ingredient';
+  }
+
+  @override
+  String get ingredientSubstitutesTooltip => 'Find substitutes';
+
+  @override
+  String get loadingSubstitutes => 'Loading substitutes...';
+
+  @override
+  String get noSubstitutesAvailable => 'No substitutes available.';
+
+  @override
+  String substituteDetails(Object ratio, Object reason, Object category) {
+    return 'Ratio: $ratio | $reason | $category';
+  }
+
+  @override
+  String get substituteConfirmTitle => 'Confirm substitute';
+
+  @override
+  String get substituteConfirmMessage =>
+      'Changing an ingredient can significantly change the flavor.';
+
+  @override
+  String get substituteConfirmNutritionWarning =>
+      'This change can also affect the recipe\'s nutrition values.';
+
+  @override
+  String get applySubstituteAction => 'Apply substitute';
+
+  @override
+  String get applyingSubstitute => 'Applying substitute...';
+
+  @override
+  String get substituteMissingIngredientId =>
+      'Substitute cannot be applied for this ingredient.';
+
+  @override
+  String get openCookingAssistant => 'Open cooking assistant';
+
+  @override
+  String get cookingAssistantTitle => 'Cooking assistant';
+
+  @override
+  String get cookingAssistantDisclaimer =>
+      'Times are estimates and can change.';
+
+  @override
+  String cookingAssistantStepLabel(Object step) {
+    return 'Step $step';
+  }
+
+  @override
+  String get cookingAssistantIngredientsTitle => 'Ingredients in this step';
+
+  @override
+  String get cookingAssistantToolsTitle => 'Tools needed';
+
+  @override
+  String get noCookingSteps => 'No cooking steps available.';
+
+  @override
+  String get noToolsNeeded => 'No tools listed.';
+
+  @override
+  String estimatedTimeLabel(Object time) {
+    return 'Estimated time: $time';
+  }
+
+  @override
+  String get startTimer => 'Start';
+
+  @override
+  String get pauseTimer => 'Pause';
+
+  @override
+  String get resetTimer => 'Reset';
+
+  @override
+  String get noTimerAvailable => 'No timer available for this step.';
+
+  @override
   String get cancel => 'Cancel';
 
   @override
@@ -731,4 +948,499 @@ class AppLocalizationsEn extends AppLocalizations {
   @override
   String get errorEmailConfirmationMismatch =>
       'The email does not match your account.';
+
+  @override
+  String get homeTodayPlanReady => 'Your plan for today is ready';
+
+  @override
+  String get homeWeekLabel => 'WEEK';
+
+  @override
+  String get homeViewRecipeShort => 'View Recipe';
+
+  @override
+  String get homeFavoritesAction => 'Favorites';
+
+  @override
+  String get homeEatOutAction => 'Eat Out';
+
+  @override
+  String get homeSkipMealQuestion => 'Which meal will you eat out?';
+
+  @override
+  String get homeSkipMealDescription =>
+      'Select the meals you won\'t prepare at home to adjust your macros for the day.';
+
+  @override
+  String get homeConfirmAction => 'Confirm';
+
+  @override
+  String homeSkippingMeal(Object mealName) {
+    return 'Skipped $mealName...';
+  }
+
+  @override
+  String get usePantryLabel => 'Use pantry ingredients';
+
+  @override
+  String get usePantrySubtitle =>
+      'AI will prioritize ingredients you already have';
+
+  @override
+  String get consistencyRingTitle => 'Consistency';
+
+  @override
+  String get consistencyRingTooltip =>
+      'Your consistency score is based on how close you were to your nutritional goals over the last 7 days.';
+
+  @override
+  String get consistencyRingSubtitle => 'Based on your last 7 days';
+
+  @override
+  String consistencyMessageHigh(Object score) {
+    return 'Excellent! You have a $score% consistency.';
+  }
+
+  @override
+  String get consistencyMessageMedium => 'Good job! You\'re above 50%.';
+
+  @override
+  String get consistencyMessageLow =>
+      'Come on! You can improve your consistency.';
+
+  @override
+  String get menuAddToGrocery => 'Add to list';
+
+  @override
+  String get planEntriesTitle => 'Plan meals';
+
+  @override
+  String get noEntriesInPlan => 'No meals in this plan.';
+
+  @override
+  String get menuViewRecipe => 'View recipe';
+
+  @override
+  String get menuMarkComplete => 'Mark as completed';
+
+  @override
+  String get addRecipeToListTitle => 'Add ingredients to list';
+
+  @override
+  String recipeAddedToList(Object listName) {
+    return 'Added to $listName';
+  }
+
+  @override
+  String get recipeAddFailed => 'Failed to add to list';
+
+  @override
+  String get markCompleteDialogTitle => 'Mark as completed';
+
+  @override
+  String markCompleteQuestion(Object recipeName) {
+    return 'Did you prepare $recipeName?';
+  }
+
+  @override
+  String get markCompleteDeductInfo =>
+      'Marking as completed will deduct ingredients from your pantry.';
+
+  @override
+  String get completeAction => 'Complete';
+
+  @override
+  String allIngredientsDeducted(Object count) {
+    return '$count ingredients deducted';
+  }
+
+  @override
+  String someIngredientsMissing(Object count) {
+    return '$count ingredients missing in pantry';
+  }
+
+  @override
+  String get alsoRemoveFromGrocery => 'Also remove from grocery list';
+
+  @override
+  String get weeklyAveragesTitle => 'Weekly Averages';
+
+  @override
+  String get weeklyActivityTitle => 'Weekly Activity';
+
+  @override
+  String get achievementsTitle => 'Achievements';
+
+  @override
+  String get achievementStreakTitle => 'Gold Streak';
+
+  @override
+  String get achievementStreakDesc =>
+      'You\'ve completed your meals 5 days in a row.';
+
+  @override
+  String get achievementWasteTitle => 'Zero Waste';
+
+  @override
+  String get achievementWasteDesc =>
+      'You\'ve used all ingredients from your list.';
+
+  @override
+  String get achievementVarietyTitle => 'Culinary Explorer';
+
+  @override
+  String get achievementVarietyDesc =>
+      'You\'ve tried 10 different recipes this month.';
+
+  @override
+  String get nutritionFilterDaily => 'Daily';
+
+  @override
+  String get nutritionFilterWeekly => 'Weekly';
+
+  @override
+  String get nutritionFilterMonthly => 'Monthly';
+
+  @override
+  String get nutritionErrorLoading => 'Error loading nutrition data';
+
+  @override
+  String get deleteGroceryListDialogTitle => 'Delete grocery list';
+
+  @override
+  String deleteGroceryListDialogMessage(Object name) {
+    return 'Are you sure you want to delete the list \"$name\"?';
+  }
+
+  @override
+  String get myPlansTitle => 'My Plans';
+
+  @override
+  String get newPlan => 'New Plan';
+
+  @override
+  String get noSavedPlans => 'No saved plans';
+
+  @override
+  String get createFirstPlan => 'Create your first plan';
+
+  @override
+  String get ai => 'AI';
+
+  @override
+  String get menuViewEntries => 'View entries';
+
+  @override
+  String get menuSaveIngredients => 'Save ingredients';
+
+  @override
+  String get menuReusePlan => 'Reuse plan';
+
+  @override
+  String get saveIngredientsSheetTitle => 'Save Ingredients';
+
+  @override
+  String savedIngredientsSuccess(Object listName) {
+    return 'Ingredients saved to $listName';
+  }
+
+  @override
+  String get savedIngredientsFailed => 'Failed to save ingredients';
+
+  @override
+  String planReusedSuccess(Object planName, Object count) {
+    return 'Plan reused as $planName with $count entries';
+  }
+
+  @override
+  String get planReusedView => 'View';
+
+  @override
+  String get planReusedFailed => 'Failed to reuse plan';
+
+  @override
+  String get deletePlanDialogTitle => 'Delete plan';
+
+  @override
+  String get deletePlanDialogMessage =>
+      'Are you sure you want to delete this plan?';
+
+  @override
+  String get deletePlanAlsoRemoveGrocery => 'Also remove from grocery list';
+
+  @override
+  String get planDeletedSuccess => 'Plan deleted successfully';
+
+  @override
+  String get planDeleteFailed => 'Failed to delete plan';
+
+  @override
+  String get reusePlanSheetTitle => 'Reuse Plan';
+
+  @override
+  String get reusePlanStartDateLabel => 'Start Date';
+
+  @override
+  String get reusePlanSelectDate => 'Select Date';
+
+  @override
+  String get reusePlanNameLabel => 'Plan Name';
+
+  @override
+  String get reusePlanNameHint => 'E.g. Next week\'s plan';
+
+  @override
+  String get groceryListsTitle => 'Grocery Lists';
+
+  @override
+  String get groceryListsNewListLabel => 'New List';
+
+  @override
+  String get groceryListsSectionHeader => 'Your Lists';
+
+  @override
+  String get groceryListsErrorLoading => 'Error loading lists';
+
+  @override
+  String get groceryListsEmptyTitle => 'No lists yet';
+
+  @override
+  String get groceryListsEmptySubtitle =>
+      'Create a new list to start saving your ingredients.';
+
+  @override
+  String get pantryCardTitle => 'Pantry';
+
+  @override
+  String get pantryCardSubtitle => 'Manage your pantry items';
+
+  @override
+  String pantryCountLabel(Object count) {
+    return '$count items';
+  }
+
+  @override
+  String get groceryListDetailPendingHeader => 'Pending';
+
+  @override
+  String get groceryListDetailCompletedHeader => 'Completed';
+
+  @override
+  String get addItemTitleGrocery => 'Add Item';
+
+  @override
+  String get groceryListDetailEmptyTitle => 'This list is empty';
+
+  @override
+  String get groceryListDetailEmptySubtitle =>
+      'Add items manually or from your meal plans.';
+
+  @override
+  String get pantryTitle => 'Pantry';
+
+  @override
+  String get pantryOtherCategory => 'Other';
+
+  @override
+  String get pantryAddTooltip => 'Add item';
+
+  @override
+  String get pantryEmptyTitle => 'Pantry is empty';
+
+  @override
+  String get pantryEmptySubtitle => 'Add items to your pantry.';
+
+  @override
+  String get pantryNoDate => 'No expiration date';
+
+  @override
+  String pantryEditTitle(Object itemName) {
+    return 'Edit $itemName';
+  }
+
+  @override
+  String get pantryQuantityLabel => 'Quantity';
+
+  @override
+  String get pantryExpiryLabel => 'Expiration Date';
+
+  @override
+  String get save => 'Save';
+
+  @override
+  String get changeDatesTooltip => 'Change dates';
+
+  @override
+  String get saveToGroceryList => 'Save to List';
+
+  @override
+  String get saveIngredientsPrompt => 'Select a list';
+
+  @override
+  String get datesUpdatedSuccess => 'Dates updated successfully';
+
+  @override
+  String get savePlanToList => 'Save Plan to List';
+
+  @override
+  String importMealPlanSuccess(Object listName) {
+    return 'Imported meal plan to $listName';
+  }
+
+  @override
+  String get importMealPlanFailure => 'Failed to import meal plan';
+
+  @override
+  String get alsoRemoveGroceryList => 'Remove from grocery list';
+
+  @override
+  String get alsoRemoveGroceryListSubtitle =>
+      'Related ingredients will be removed';
+
+  @override
+  String get noRecipeAssociated => 'No recipe associated';
+
+  @override
+  String mealCompletedSuccess(Object count) {
+    return '$count meals completed';
+  }
+
+  @override
+  String mealCompletedMissing(Object count) {
+    return '$count missing';
+  }
+
+  @override
+  String get selectGroceryListEmpty => 'No grocery lists found';
+
+  @override
+  String get selectGroceryListNewList => 'Create New List';
+
+  @override
+  String get listNameLabel => 'List Name';
+
+  @override
+  String get create => 'Create';
+
+  @override
+  String get listNameEmptyError => 'List name cannot be empty';
+
+  @override
+  String get createListErrorCreate => 'Failed to create list';
+
+  @override
+  String get createListDialogTitle => 'Create List';
+
+  @override
+  String get listNameHint => 'E.g. Weekly Groceries';
+
+  @override
+  String get addItemDefaultUnit => 'units';
+
+  @override
+  String get addItemErrorAdding => 'Failed to add item';
+
+  @override
+  String get addItemTitlePantry => 'Add to Pantry';
+
+  @override
+  String get addItemIngredientNameLabel => 'Ingredient Name';
+
+  @override
+  String get addItemIngredientNameRequired => 'Required';
+
+  @override
+  String get addItemQuantityLabel => 'Quantity';
+
+  @override
+  String get addItemQuantityRequired => 'Required';
+
+  @override
+  String get addItemQuantityInvalid => 'Invalid quantity';
+
+  @override
+  String get addItemUnitLabel => 'Unit';
+
+  @override
+  String get addItemUnitHint => 'E.g. kg, lbs';
+
+  @override
+  String get addItemCategoryLabel => 'Category';
+
+  @override
+  String get addItemCategoryHint => 'Select category';
+
+  @override
+  String get addItemExpiryLabel => 'Expiration';
+
+  @override
+  String get addItemButton => 'Add';
+
+  @override
+  String get groceryItemInPantry => 'In pantry';
+
+  @override
+  String get groceryItemEditTooltip => 'Edit item';
+
+  @override
+  String get editQuantityDialogTitle => 'Edit Quantity';
+
+  @override
+  String get pantryItemExpired => 'Expired';
+
+  @override
+  String get editAction => 'Edit';
+
+  @override
+  String get pantryDeleteDialogTitle => 'Delete Item';
+
+  @override
+  String pantryDeleteDialogMessage(Object itemName) {
+    return 'Are you sure you want to delete $itemName?';
+  }
+
+  @override
+  String get back => 'Back';
+
+  @override
+  String get next => 'Next';
+
+  @override
+  String get complete_recipe => 'Complete Recipe';
+
+  @override
+  String get bulkDeductUnknownError => 'Failed to deduct ingredients';
+
+  @override
+  String get selectNewStartDate => 'Select new start date';
+
+  @override
+  String get saveIngredientsDialogContent =>
+      'Do you want to save the ingredients to a shopping list?';
+
+  @override
+  String get yes => 'Yes';
+
+  @override
+  String get no => 'No';
+
+  @override
+  String get mealPlanHistory => 'My plans';
+
+  @override
+  String get usePantryTitle => 'Use pantry ingredients';
+
+  @override
+  String get mealCompletedError => 'Failed to mark meal as completed';
+
+  @override
+  String greeting(Object name) {
+    return 'Hi, $name';
+  }
+
+  @override
+  String get mealCompletedLabel => 'Completed';
+
+  @override
+  String get completeRecipeLabel => 'Complete recipe';
 }

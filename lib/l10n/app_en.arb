@@ -138,6 +138,13 @@
   "notesOptionalTitle": "Notes (optional)",
   "notesHint": "E.g.: Lactose-free, more proteins...",
   "mealsOfDayTitle": "Meals of the day",
+  "skipMealAction": "Skip meal",
+  "unskipMealAction": "Unskip meal",
+  "mealSkippedLabel": "Skipped",
+  "skipMealDialogTitle": "Meal skipped",
+  "skipMealDialogMessage": "It's okay to skip a meal sometimes. You can continue with your plan whenever you're ready.",
+  "viewRecipeDetails": "View recipe",
+  "categoriesTitle": "Categories",
   "metricCalories": "Cal",
   "metricServings": "Servings",
   "metricFat": "Fat",
@@ -182,6 +189,13 @@
   "freePlanLimitedGenerations": "Your free plan has limited meal plan generations.",
   "goPremiumKeepGenerating": "Go premium to keep generating meal plans.",
   "goToHome": "Go to Home",
+  "recipesTitle": "Recipes",
+  "favoriteRecipesTitle": "Favorite Recipes",
+  "favoriteUpdateFailed": "Failed to update favorite. Please try again.",
+  "favoritesTooltip": "Favorites",
+  "noRecipesAvailable": "No recipes available",
+  "noFavoriteRecipes": "You don't have favorite recipes",
+  "recipeDetailTitle": "Recipe Detail",
   "errorTitle": "Error",
   "errorOccurred": "An error occurred: {error}",
   "@errorOccurred": {
@@ -207,6 +221,7 @@
   "otpVerifySignIn": "Verify & Sign In",
   "otpSentSnack": "Verification code sent!",
   "preferencesSaved": "Preferences saved successfully",
+  "errorSavePreferencesRollbackFailed": "Failed to save preferences and rollback also failed. The app may be in an inconsistent state.",
   "unknownError": "An unknown error occurred",
   "wizardPrevious": "Previous",
   "wizardNext": "Next",
@@ -288,7 +303,6 @@
   "profileNoIncludes": "No benefits listed yet.",
   "profileSavePreferences": "Save preferences",
   "mealPlanTitle": "Meal Plan",
-  "recipesTitle": "Recipes",
   "groceryTitle": "Grocery",
   "nutritionTitle": "Nutrition",
   "profileFarewell": "We're sorry to see you go. We'll keep your kitchen and playlists for 30 days in case you decide to return. After that, we'll clear the table forever.",
@@ -304,6 +318,83 @@
   "@emailPlaceholder": {
     "description": "Placeholder for email input field."
   },
+  "deletePlanTooltip": "Delete plan",
+  "deleteMealDialogTitle": "Delete this meal?",
+  "deleteMealDialogMessage": "This recipe will be removed from the plan. This action cannot be undone.",
+  "deleteAction": "Delete",
+  "changeMealDateAction": "Change meal date",
+  "swapFavoriteAction": "Swap with favorite",
+  "regenerateRecipeAction": "Regenerate recipe",
+  "genericMoveError": "Couldn't move the meal. Please try again.",
+  "genericDeleteError": "Couldn't delete. Please try again.",
+  "genericRegenerateError": "Couldn't regenerate the recipe. Please try again.",
+  "dragDropHint": "Long press a recipe to drag it to another day or use the menu to change date.",
+  "dragDropTooltip": "Tip: you can move meals by dragging between days or from the “Change meal date” menu.",
+  "emptyDayDropText": "Drop a meal here",
+  "viewDetailsLabel": "View details",
+  "hideDetailsLabel": "Hide details",
+  "regenerateSheetSubtitle": "Tell us what to change or leave it blank so AI can choose.",
+  "regenerateSheetNotesLabel": "Description (optional)",
+  "regenerateSheetNotesHint": "E.g.: Something lighter, gluten-free...",
+  "regenerateSheetMaxPrepTimeLabel": "Maximum prep time",
+  "regenerateSheetButton": "Regenerate",
+  "deletePlanSheetTitle": "Delete meal plan",
+  "deletePlanSheetWarning": "Deleting this plan still counts toward your meal plan generation limit. This action cannot be undone.",
+  "deletePlanSheetReasonLabel": "Why are you deleting the plan? (optional)",
+  "deletePlanSheetReasonHint": "E.g.: I didn't like the recipes...",
+  "deletePlanSheetConfirmAction": "Yes, delete plan",
+  "minutesShortWithPlaceholder": "{minutes} min",
+  "@minutesShortWithPlaceholder": {
+    "placeholders": {
+      "minutes": {}
+    }
+  },
+  "ingredientSubstitutesTitle": "Substitutes for {ingredient}",
+  "@ingredientSubstitutesTitle": {
+    "placeholders": {
+      "ingredient": {}
+    }
+  },
+  "ingredientSubstitutesTooltip": "Find substitutes",
+  "loadingSubstitutes": "Loading substitutes...",
+  "noSubstitutesAvailable": "No substitutes available.",
+  "substituteDetails": "Ratio: {ratio} | {reason} | {category}",
+  "@substituteDetails": {
+    "placeholders": {
+      "ratio": {},
+      "reason": {},
+      "category": {}
+    }
+  },
+  "substituteConfirmTitle": "Confirm substitute",
+  "substituteConfirmMessage": "Changing an ingredient can significantly change the flavor.",
+  "substituteConfirmNutritionWarning": "This change can also affect the recipe's nutrition values.",
+  "applySubstituteAction": "Apply substitute",
+  "applyingSubstitute": "Applying substitute...",
+  "substituteMissingIngredientId": "Substitute cannot be applied for this ingredient.",
+  "openCookingAssistant": "Open cooking assistant",
+  "cookingAssistantTitle": "Cooking assistant",
+  "cookingAssistantDisclaimer": "Times are estimates and can change.",
+  "cookingAssistantStepLabel": "Step {step}",
+  "@cookingAssistantStepLabel": {
+    "placeholders": {
+      "step": {}
+    }
+  },
+  "cookingAssistantIngredientsTitle": "Ingredients in this step",
+  "cookingAssistantToolsTitle": "Tools needed",
+  "noCookingSteps": "No cooking steps available.",
+  "noToolsNeeded": "No tools listed.",
+  "estimatedTimeLabel": "Estimated time: {time}",
+  "@estimatedTimeLabel": {
+    "placeholders": {
+      "time": {}
+    }
+  },
+  "startTimer": "Start",
+  "pauseTimer": "Pause",
+  "resetTimer": "Reset",
+  "noTimerAvailable": "No timer available for this step.",
   "cancel": "Cancel",
   "@cancel": {
     "description": "Label for cancel button."
@@ -315,5 +406,238 @@
   "errorEmailConfirmationMismatch": "The email does not match your account.",
   "@errorEmailConfirmationMismatch": {
     "description": "Shown when the email entered for confirmation does not match the user's email."
-  }
+  },
+  "homeTodayPlanReady": "Your plan for today is ready",
+  "homeWeekLabel": "WEEK",
+  "homeViewRecipeShort": "View Recipe",
+  "homeFavoritesAction": "Favorites",
+  "homeEatOutAction": "Eat Out",
+  "homeSkipMealQuestion": "Which meal will you eat out?",
+  "homeSkipMealDescription": "Select the meals you won't prepare at home to adjust your macros for the day.",
+  "homeConfirmAction": "Confirm",
+  "homeSkippingMeal": "Skipped {mealName}...",
+  "@homeSkippingMeal": {
+    "placeholders": {
+      "mealName": {}
+    }
+  },
+  "usePantryLabel": "Use pantry ingredients",
+  "usePantrySubtitle": "Prioritize recipes with ingredients you already have.",
+  "consistencyRingTitle": "Consistency",
+  "consistencyRingTooltip": "Your consistency score is based on how close you were to your nutritional goals over the last 7 days.",
+  "consistencyRingSubtitle": "Based on your last 7 days",
+  "consistencyMessageHigh": "Excellent! You have a {score}% consistency.",
+  "@consistencyMessageHigh": {
+    "placeholders": {
+      "score": {}
+    }
+  },
+  "consistencyMessageMedium": "Good job! You're above 50%.",
+  "consistencyMessageLow": "Come on! You can improve your consistency.",
+  "menuAddToGrocery": "Add to list",
+  "planEntriesTitle": "Plan meals",
+  "noEntriesInPlan": "No meals in this plan.",
+  "menuViewRecipe": "View recipe",
+  "menuMarkComplete": "Mark as completed",
+  "addRecipeToListTitle": "Add ingredients to list",
+  "recipeAddedToList": "Added to {listName}",
+  "@recipeAddedToList": {
+    "placeholders": {
+      "listName": {}
+    }
+  },
+  "recipeAddFailed": "Failed to add to list",
+  "markCompleteDialogTitle": "Mark as completed",
+  "markCompleteQuestion": "Did you prepare {recipeName}?",
+  "@markCompleteQuestion": {
+    "placeholders": {
+      "recipeName": {}
+    }
+  },
+  "markCompleteDeductInfo": "Marking as completed will deduct ingredients from your pantry.",
+  "completeAction": "Complete",
+  "allIngredientsDeducted": "{count} ingredients deducted",
+  "@allIngredientsDeducted": {
+    "placeholders": {
+      "count": {}
+    }
+  },
+  "someIngredientsMissing": "{count} ingredients missing in pantry",
+  "@someIngredientsMissing": {
+    "placeholders": {
+      "count": {}
+    }
+  },
+  "alsoRemoveFromGrocery": "Also remove from grocery list",
+  "weeklyAveragesTitle": "Weekly Averages",
+  "weeklyActivityTitle": "Weekly Activity",
+  "achievementsTitle": "Achievements",
+  "achievementStreakTitle": "Gold Streak",
+  "achievementStreakDesc": "You've completed your meals 5 days in a row.",
+  "achievementWasteTitle": "Zero Waste",
+  "achievementWasteDesc": "You've used all ingredients from your list.",
+  "achievementVarietyTitle": "Culinary Explorer",
+  "achievementVarietyDesc": "You've tried 10 different recipes this month.",
+
+  "nutritionFilterDaily": "Daily",
+  "nutritionFilterWeekly": "Weekly",
+  "nutritionFilterMonthly": "Monthly",
+  "nutritionErrorLoading": "Error loading nutrition data",
+  "deleteGroceryListDialogTitle": "Delete grocery list",
+  "deleteGroceryListDialogMessage": "Are you sure you want to delete the list \"{name}\"?",
+  "@deleteGroceryListDialogMessage": {
+    "placeholders": {
+      "name": {}
+    }
+  },
+  "myPlansTitle": "My Plans",
+  "newPlan": "New Plan",
+  "noSavedPlans": "No saved plans",
+  "createFirstPlan": "Create your first plan",
+  "ai": "AI",
+  "menuViewEntries": "View entries",
+  "menuSaveIngredients": "Save ingredients",
+  "menuReusePlan": "Reuse plan",
+  "saveIngredientsSheetTitle": "Save Ingredients",
+  "savedIngredientsSuccess": "Ingredients saved to {listName}",
+  "@savedIngredientsSuccess": {
+    "placeholders": {
+      "listName": {}
+    }
+  },
+  "savedIngredientsFailed": "Failed to save ingredients",
+  "planReusedSuccess": "Plan reused as {planName} with {count} entries",
+  "@planReusedSuccess": {
+    "placeholders": {
+      "planName": {},
+      "count": {}
+    }
+  },
+  "planReusedView": "View",
+  "planReusedFailed": "Failed to reuse plan",
+  "deletePlanDialogTitle": "Delete plan",
+  "deletePlanDialogMessage": "Are you sure you want to delete this plan?",
+  "deletePlanAlsoRemoveGrocery": "Also remove from grocery list",
+  "planDeletedSuccess": "Plan deleted successfully",
+  "planDeleteFailed": "Failed to delete plan",
+  "reusePlanSheetTitle": "Reuse Plan",
+  "reusePlanStartDateLabel": "Start Date",
+  "reusePlanSelectDate": "Select Date",
+  "reusePlanNameLabel": "Plan Name",
+  "reusePlanNameHint": "E.g. Next week's plan",
+  "groceryListsTitle": "Grocery Lists",
+  "groceryListsNewListLabel": "New List",
+  "groceryListsSectionHeader": "Your Lists",
+  "groceryListsErrorLoading": "Error loading lists",
+  "groceryListsEmptyTitle": "No lists yet",
+  "groceryListsEmptySubtitle": "Create a new list to start saving your ingredients.",
+  "pantryCardTitle": "Pantry",
+  "pantryCardSubtitle": "Manage your pantry items",
+  "pantryCountLabel": "{count} items",
+  "@pantryCountLabel": {
+    "placeholders": {
+      "count": {}
+    }
+  },
+  "groceryListDetailPendingHeader": "Pending",
+  "groceryListDetailCompletedHeader": "Completed",
+  "addItemTitleGrocery": "Add Item",
+  "groceryListDetailEmptyTitle": "This list is empty",
+  "groceryListDetailEmptySubtitle": "Add items manually or from your meal plans.",
+  "pantryTitle": "Pantry",
+  "pantryOtherCategory": "Other",
+  "pantryAddTooltip": "Add item",
+  "pantryEmptyTitle": "Pantry is empty",
+  "pantryEmptySubtitle": "Add items to your pantry.",
+  "pantryNoDate": "No expiration date",
+  "pantryEditTitle": "Edit {itemName}",
+  "@pantryEditTitle": {
+    "placeholders": {
+      "itemName": {}
+    }
+  },
+  "pantryQuantityLabel": "Quantity",
+  "pantryExpiryLabel": "Expiration Date",
+  "save": "Save",
+  "changeDatesTooltip": "Change dates",
+  "saveToGroceryList": "Save to List",
+  "saveIngredientsPrompt": "Select a list",
+  "datesUpdatedSuccess": "Dates updated successfully",
+  "savePlanToList": "Save Plan to List",
+  "importMealPlanSuccess": "Imported meal plan to {listName}",
+  "@importMealPlanSuccess": {
+    "placeholders": {
+      "listName": {}
+    }
+  },
+  "importMealPlanFailure": "Failed to import meal plan",
+  "alsoRemoveGroceryList": "Remove from grocery list",
+  "alsoRemoveGroceryListSubtitle": "Related ingredients will be removed",
+  "noRecipeAssociated": "No recipe associated",
+  "mealCompletedSuccess": "{count} meals completed",
+  "@mealCompletedSuccess": {
+    "placeholders": {
+      "count": {}
+    }
+  },
+  "mealCompletedMissing": "{count} missing",
+  "@mealCompletedMissing": {
+    "placeholders": {
+      "count": {}
+    }
+  },
+  "selectGroceryListEmpty": "No grocery lists found",
+  "selectGroceryListNewList": "Create New List",
+  "listNameLabel": "List Name",
+  "create": "Create",
+  "listNameEmptyError": "List name cannot be empty",
+  "createListErrorCreate": "Failed to create list",
+  "createListDialogTitle": "Create List",
+  "listNameHint": "E.g. Weekly Groceries",
+  "addItemDefaultUnit": "units",
+  "addItemErrorAdding": "Failed to add item",
+  "addItemTitlePantry": "Add to Pantry",
+  "addItemIngredientNameLabel": "Ingredient Name",
+  "addItemIngredientNameRequired": "Required",
+  "addItemQuantityLabel": "Quantity",
+  "addItemQuantityRequired": "Required",
+  "addItemQuantityInvalid": "Invalid quantity",
+  "addItemUnitLabel": "Unit",
+  "addItemUnitHint": "E.g. kg, lbs",
+  "addItemCategoryLabel": "Category",
+  "addItemCategoryHint": "Select category",
+  "addItemExpiryLabel": "Expiration",
+  "addItemButton": "Add",
+  "groceryItemInPantry": "In pantry",
+  "groceryItemEditTooltip": "Edit item",
+  "editQuantityDialogTitle": "Edit Quantity",
+  "pantryItemExpired": "Expired",
+  "editAction": "Edit",
+  "pantryDeleteDialogTitle": "Delete Item",
+  "pantryDeleteDialogMessage": "Are you sure you want to delete {itemName}?",
+  "@pantryDeleteDialogMessage": {
+    "placeholders": {
+      "itemName": {}
+    }
+  },
+  "back": "Back",
+  "next": "Next",
+  "complete_recipe": "Complete Recipe",
+  "bulkDeductUnknownError": "Failed to deduct ingredients",
+  "selectNewStartDate": "Select new start date",
+  "saveIngredientsDialogContent": "Do you want to save the ingredients to a shopping list?",
+  "yes": "Yes",
+  "no": "No",
+  "mealPlanHistory": "My plans",
+  "usePantryTitle": "Use pantry ingredients",
+  "usePantrySubtitle": "AI will prioritize ingredients you already have",
+  "mealCompletedError": "Failed to mark meal as completed",
+  "greeting": "Hi, {name}",
+  "@greeting": {
+    "placeholders": {
+      "name": {}
+    }
+  },
+  "mealCompletedLabel": "Completed",
+  "completeRecipeLabel": "Complete recipe"
 }

@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:meal_plan_app/features/meal_plan/presentation/providers/provider.dart';
 import 'package:meal_plan_app/l10n/app_localizations.dart';
+import 'package:meal_plan_app/features/profile/presentation/providers/preferences_details_provider.dart';
 
 class NewMealPlanScreen extends ConsumerStatefulWidget {
   const NewMealPlanScreen({super.key});
@@ -13,9 +14,27 @@ class NewMealPlanScreen extends ConsumerStatefulWidget {
 
 class _NewMealPlanScreenState extends ConsumerState<NewMealPlanScreen> {
   final _descriptionController = TextEditingController();
-  final Set<String> _selectedMealTypes = {'breakfast', 'lunch', 'dinner'};
+  final Set<String> _selectedMealTypes = {
+    'breakfast',
+    'lunch',
+    'dinner',
+    'snack',
+  };
   int _selectedDays = 5;
   int _peopleCount = 2;
+  bool _usePantry = true;
+
+  @override
+  void initState() {
+    super.initState();
+    Future.microtask(() {
+      final preferences = ref.read(preferencesDetailsProvider);
+      final prefCount = preferences.householdSize;
+      setState(() {
+        _peopleCount = prefCount > 0 ? prefCount : 2;
+      });
+    });
+  }
 
   @override
   void dispose() {
@@ -32,7 +51,9 @@ class _NewMealPlanScreenState extends ConsumerState<NewMealPlanScreen> {
       _selectedDays = availableDurations.contains(5)
           ? 5
           : availableDurations.first;
-      _peopleCount = 2;
+      final preferences = ref.read(preferencesDetailsProvider);
+      final prefCount = preferences.householdSize;
+      _peopleCount = prefCount > 0 ? prefCount : 2;
       if (showMealTypeSelection) {
         _selectedMealTypes
           ..clear()
@@ -43,6 +64,7 @@ class _NewMealPlanScreenState extends ConsumerState<NewMealPlanScreen> {
           ..add(availableMealTypes.first);
       }
       _descriptionController.clear();
+      _usePantry = true;
     });
     ref.read(mealPlanGeneratorProvider.notifier).reset();
   }
@@ -77,17 +99,22 @@ class _NewMealPlanScreenState extends ConsumerState<NewMealPlanScreen> {
 
     return Scaffold(
       appBar: AppBar(
-        title: Text(l10n.newPlanTitle),
+        title: Text(l10n.newPlanTitle, style: const TextStyle(fontWeight: FontWeight.w700, fontSize: 18, color: Color(0xFF002140))),
+        centerTitle: true,
+        backgroundColor: Colors.white,
+        elevation: 0,
+        iconTheme: const IconThemeData(color: Color(0xFF002140)),
         actions: [
           TextButton(
             onPressed: _resetForm,
             child: Text(
               l10n.clear,
-              style: TextStyle(color: Theme.of(context).colorScheme.primary),
+              style: const TextStyle(color: Color(0xFF4C6B4F), fontWeight: FontWeight.w600, fontSize: 16),
             ),
           ),
         ],
       ),
+      backgroundColor: Colors.white,
       body: SafeArea(
         child: Stack(
           children: [
@@ -96,20 +123,25 @@ class _NewMealPlanScreenState extends ConsumerState<NewMealPlanScreen> {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  const SizedBox(height: 4),
+                  const SizedBox(height: 12),
                   Text(
                     l10n.configurePlanTitle,
                     style: const TextStyle(
-                      fontSize: 22,
-                      fontWeight: FontWeight.w700,
+                      fontSize: 26,
+                      fontWeight: FontWeight.w800,
+                      color: Color(0xFF002140),
+                      letterSpacing: -0.5,
                     ),
                   ),
-                  const SizedBox(height: 4),
+                  const SizedBox(height: 8),
                   Text(
                     l10n.configurePlanSubtitle,
-                    style: Theme.of(context).textTheme.bodySmall,
+                    style: TextStyle(
+                      fontSize: 15,
+                      color: Colors.blueGrey.shade400,
+                    ),
                   ),
-                  const SizedBox(height: 20),
+                  const SizedBox(height: 24),
                   _Section(
                     title: l10n.durationTitle,
                     child: Wrap(
@@ -128,77 +160,72 @@ class _NewMealPlanScreenState extends ConsumerState<NewMealPlanScreen> {
                   ),
                   _Section(
                     title: l10n.dinersTitle,
-                    child: Row(
-                      children: [
-                        _IconCircleButton(
-                          icon: Icons.remove,
-                          onTap: () => setState(
-                            () => _peopleCount = (_peopleCount > 1)
-                                ? _peopleCount - 1
-                                : 1,
+                    child: Container(
+                      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
+                      decoration: BoxDecoration(
+                        color: const Color(0xFFF8FAFB),
+                        borderRadius: BorderRadius.circular(20),
+                      ),
+                      child: Row(
+                        children: [
+                          _IconCircleButton(
+                            icon: Icons.remove,
+                            onTap: () => setState(
+                              () => _peopleCount = (_peopleCount > 1)
+                                  ? _peopleCount - 1
+                                  : 1,
+                            ),
                           ),
-                        ),
-                        Expanded(
-                          child: Center(
-                            child: Text(
-                              l10n.peopleCount(_peopleCount),
-                              style: const TextStyle(
-                                fontSize: 18,
-                                fontWeight: FontWeight.w600,
+                          Expanded(
+                            child: Center(
+                              child: Text(
+                                l10n.peopleCount(_peopleCount),
+                                style: const TextStyle(
+                                  fontSize: 18,
+                                  fontWeight: FontWeight.w700,
+                                  color: Color(0xFF002140),
+                                ),
                               ),
                             ),
                           ),
-                        ),
-                        _IconCircleButton(
-                          icon: Icons.add,
-                          onTap: () => setState(() => _peopleCount += 1),
-                        ),
-                      ],
+                          _IconCircleButton(
+                            icon: Icons.add,
+                            onTap: () => setState(() => _peopleCount += 1),
+                          ),
+                        ],
+                      ),
                     ),
                   ),
                   if (showMealTypeSelection)
                     _Section(
                       title: l10n.mealTypesTitle,
-                      child: Column(
+                      child: Wrap(
+                        spacing: 12,
+                        runSpacing: 12,
                         children: [
                           if (availableMealTypes.contains('breakfast'))
-                            _MealTypeTile(
-                              title: l10n.mealTypeBreakfast,
-                              subtitle: l10n.mealTypeBreakfastSubtitle,
-                              selected: _selectedMealTypes.contains(
-                                'breakfast',
-                              ),
+                            _MealTypePill(
+                              label: l10n.mealTypeBreakfast,
+                              selected: _selectedMealTypes.contains('breakfast'),
                               onTap: () => _toggleMealType('breakfast'),
                             ),
-                          if (availableMealTypes.contains('breakfast') &&
-                              availableMealTypes.contains('lunch'))
-                            const SizedBox(height: 10),
                           if (availableMealTypes.contains('lunch'))
-                            _MealTypeTile(
-                              title: l10n.mealTypeLunch,
-                              subtitle: l10n.mealTypeLunchSubtitle,
+                            _MealTypePill(
+                              label: l10n.mealTypeLunch,
                               selected: _selectedMealTypes.contains('lunch'),
                               onTap: () => _toggleMealType('lunch'),
                             ),
-                          if (availableMealTypes.contains('lunch') &&
-                              availableMealTypes.contains('snack'))
-                            const SizedBox(height: 10),
-                          if (availableMealTypes.contains('snack'))
-                            _MealTypeTile(
-                              title: l10n.mealTypeSnack,
-                              subtitle: l10n.mealTypeSnackSubtitle,
-                              selected: _selectedMealTypes.contains('snack'),
-                              onTap: () => _toggleMealType('snack'),
-                            ),
-                          if (availableMealTypes.contains('snack') &&
-                              availableMealTypes.contains('dinner'))
-                            const SizedBox(height: 10),
                           if (availableMealTypes.contains('dinner'))
-                            _MealTypeTile(
-                              title: l10n.mealTypeDinner,
-                              subtitle: l10n.mealTypeDinnerSubtitle,
+                            _MealTypePill(
+                              label: l10n.mealTypeDinner,
                               selected: _selectedMealTypes.contains('dinner'),
                               onTap: () => _toggleMealType('dinner'),
+                            ),
+                          if (availableMealTypes.contains('snack'))
+                            _MealTypePill(
+                              label: l10n.mealTypeSnack,
+                              selected: _selectedMealTypes.contains('snack'),
+                              onTap: () => _toggleMealType('snack'),
                             ),
                         ],
                       ),
@@ -208,9 +235,57 @@ class _NewMealPlanScreenState extends ConsumerState<NewMealPlanScreen> {
                     child: TextField(
                       controller: _descriptionController,
                       maxLines: 4,
+                      style: const TextStyle(fontSize: 15, color: Color(0xFF002140)),
                       decoration: InputDecoration(
-                        border: const OutlineInputBorder(),
+                        filled: true,
+                        fillColor: const Color(0xFFF8FAFB),
+                        border: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(16),
+                          borderSide: BorderSide.none,
+                        ),
                         hintText: l10n.notesHint,
+                        hintStyle: TextStyle(color: Colors.blueGrey.shade300, fontSize: 15),
+                      ),
+                    ),
+                  ),
+                  const SizedBox(height: 8),
+                  _Section(
+                    title: '',
+                    child: Container(
+                      padding: const EdgeInsets.all(20),
+                      decoration: BoxDecoration(
+                        color: const Color(0xFFF8FAFB),
+                        borderRadius: BorderRadius.circular(16),
+                      ),
+                      child: Row(
+                        children: [
+                          Expanded(
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Text(
+                                  l10n.usePantryLabel,
+                                  style: const TextStyle(fontWeight: FontWeight.w700, fontSize: 15, color: Color(0xFF002140)),
+                                ),
+                                const SizedBox(height: 4),
+                                Text(
+                                  l10n.usePantrySubtitle,
+                                  style: TextStyle(color: Colors.blueGrey.shade400, fontSize: 13),
+                                ),
+                              ],
+                            ),
+                          ),
+                          Switch(
+                            value: _usePantry,
+                            onChanged: (val) {
+                              setState(() {
+                                _usePantry = val;
+                              });
+                            },
+                            activeThumbColor: Colors.white,
+                            activeTrackColor: const Color(0xFF4C6B4F),
+                          ),
+                        ],
                       ),
                     ),
                   ),
@@ -220,10 +295,13 @@ class _NewMealPlanScreenState extends ConsumerState<NewMealPlanScreen> {
                     child: ElevatedButton(
                       onPressed: isLoading ? null : _onGenerate,
                       style: ElevatedButton.styleFrom(
-                        padding: const EdgeInsets.symmetric(vertical: 16),
+                        backgroundColor: const Color(0xFF4C6B4F),
+                        foregroundColor: Colors.white,
+                        padding: const EdgeInsets.symmetric(vertical: 18),
                         shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(14),
+                          borderRadius: BorderRadius.circular(16),
                         ),
+                        elevation: 0,
                       ),
                       child: isLoading
                           ? SizedBox(
@@ -260,13 +338,15 @@ class _NewMealPlanScreenState extends ConsumerState<NewMealPlanScreen> {
   }
 
   void _onGenerate() {
+    final peopleCount = _peopleCount;
     context.push(
       '/meal-plan/loading',
       extra: {
         'description': _descriptionController.text.trim(),
         'numberOfDays': _selectedDays,
-        'quantityOfPeople': _peopleCount,
+        'quantityOfPeople': peopleCount,
         'mealTypes': _selectedMealTypes.toList(),
+        'usePantry': _usePantry,
       },
     );
   }
@@ -280,16 +360,23 @@ class _Section extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    if (title.isEmpty) return Padding(padding: const EdgeInsets.symmetric(vertical: 10), child: child);
+
     return Padding(
-      padding: const EdgeInsets.symmetric(vertical: 10),
+      padding: const EdgeInsets.symmetric(vertical: 12),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Text(
-            title,
-            style: const TextStyle(fontSize: 16, fontWeight: FontWeight.w700),
+            title.toUpperCase(),
+            style: TextStyle(
+              fontSize: 13,
+              fontWeight: FontWeight.w800,
+              color: Colors.blueGrey.shade300,
+              letterSpacing: 0.5,
+            ),
           ),
-          const SizedBox(height: 8),
+          const SizedBox(height: 16),
           child,
         ],
       ),
@@ -310,38 +397,25 @@ class _PillOption extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final colorScheme = Theme.of(context).colorScheme;
-    final theme = Theme.of(context);
-
     return GestureDetector(
       onTap: onTap,
       child: AnimatedContainer(
         duration: const Duration(milliseconds: 150),
-        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+        padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
         decoration: BoxDecoration(
-          color: selected
-              ? colorScheme.primaryContainer.withValues(alpha: 0.12)
-              : theme.colorScheme.surface,
+          color: selected ? const Color(0xFFE8F0E8) : Colors.white,
           border: Border.all(
-            color: selected ? colorScheme.primary : theme.dividerColor,
-            width: 1.3,
+            color: selected ? const Color(0xFF4C6B4F) : const Color(0xFFE8EEF2),
+            width: selected ? 1.5 : 1.0,
           ),
           borderRadius: BorderRadius.circular(14),
-          boxShadow: [
-            BoxShadow(
-              color: Colors.black.withValues(alpha: 0.03),
-              offset: const Offset(0, 6),
-              blurRadius: 12,
-            ),
-          ],
         ),
         child: Text(
           label,
           style: TextStyle(
             fontWeight: FontWeight.w600,
-            color: selected
-                ? colorScheme.primary
-                : theme.textTheme.bodyLarge?.color ?? Colors.black87,
+            fontSize: 15,
+            color: const Color(0xFF002140),
           ),
         ),
       ),
@@ -357,96 +431,62 @@ class _IconCircleButton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final theme = Theme.of(context);
     return InkWell(
       onTap: onTap,
       borderRadius: BorderRadius.circular(24),
       child: Container(
-        width: 44,
-        height: 44,
+        width: 40,
+        height: 40,
         decoration: BoxDecoration(
           shape: BoxShape.circle,
-          border: Border.all(color: theme.dividerColor, width: 1.2),
-          color: theme.colorScheme.surface,
+          color: Colors.white,
+          boxShadow: [
+            BoxShadow(
+              color: const Color.fromRGBO(0, 0, 0, 0.04),
+              blurRadius: 6,
+              offset: const Offset(0, 2),
+            )
+          ]
         ),
-        child: Icon(icon, size: 20, color: theme.iconTheme.color),
+        child: Icon(icon, size: 22, color: const Color(0xFF002140)),
       ),
     );
   }
 }
 
-class _MealTypeTile extends StatelessWidget {
-  final String title;
-  final String subtitle;
+class _MealTypePill extends StatelessWidget {
+  final String label;
   final bool selected;
   final VoidCallback onTap;
 
-  const _MealTypeTile({
-    required this.title,
-    required this.subtitle,
+  const _MealTypePill({
+    required this.label,
     required this.selected,
     required this.onTap,
   });
 
   @override
   Widget build(BuildContext context) {
-    final colorScheme = Theme.of(context).colorScheme;
-    final theme = Theme.of(context);
-
     return GestureDetector(
       onTap: onTap,
-      child: Container(
-        padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 14),
+      child: AnimatedContainer(
+        duration: const Duration(milliseconds: 150),
+        padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
         decoration: BoxDecoration(
-          borderRadius: BorderRadius.circular(14),
+          color: selected ? const Color(0xFF4C6B4F) : Colors.white,
           border: Border.all(
-            color: selected ? colorScheme.primary : theme.dividerColor,
-            width: 1.2,
+            color: selected ? const Color(0xFF4C6B4F) : const Color(0xFFE8EEF2),
+            width: 1.0,
           ),
-          color: selected
-              ? colorScheme.primaryContainer.withValues(alpha: 0.08)
-              : theme.colorScheme.surface,
-          boxShadow: [
-            BoxShadow(
-              color: Colors.black.withValues(alpha: 0.03),
-              offset: const Offset(0, 6),
-              blurRadius: 12,
-            ),
-          ],
+          borderRadius: BorderRadius.circular(18),
         ),
-        child: Row(
-          children: [
-            Icon(
-              selected ? Icons.check_circle : Icons.radio_button_unchecked,
-              color: selected ? colorScheme.primary : theme.disabledColor,
-              size: 24,
-            ),
-            const SizedBox(width: 12),
-            Expanded(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(
-                    title,
-                    style: const TextStyle(
-                      fontSize: 16,
-                      fontWeight: FontWeight.w700,
-                    ),
-                  ),
-                  const SizedBox(height: 2),
-                  Text(
-                    subtitle,
-                    style: TextStyle(color: theme.textTheme.bodyMedium?.color),
-                  ),
-                ],
-              ),
-            ),
-            Icon(
-              Icons.arrow_forward_ios,
-              size: 16,
-              color: theme.iconTheme.color?.withValues(alpha: 0.6),
-            ),
-          ],
+        child: Text(
+          label,
+          style: TextStyle(
+            fontWeight: selected ? FontWeight.w600 : FontWeight.w500,
+            fontSize: 14,
+            color: selected ? Colors.white : const Color(0xFF002140),
+          ),
         ),
       ),
     );

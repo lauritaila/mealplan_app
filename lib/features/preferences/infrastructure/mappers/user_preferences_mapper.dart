@@ -5,7 +5,8 @@ class UserPreferencesMapper {
     return UserPreferences(
       id: map['id'] as int?,
       userId: map['user_id'] as String,
-      dietaryRestrictions: (map['dietary_restrictions'] as List?)?.cast<String>(),
+      dietaryRestrictions: (map['dietary_restrictions'] as List?)
+          ?.cast<String>(),
       allergies: (map['allergies'] as List?)?.cast<String>(),
       preferredCuisines: (map['preferred_cuisines'] as List?)?.cast<String>(),
       healthGoals: (map['health_goals'] as List?)?.cast<String>(),
@@ -16,10 +17,12 @@ class UserPreferencesMapper {
       householdSize: map['household_size'] is int
           ? map['household_size'] as int
           : (map['household_size'] as num?)?.toInt(),
-      createdAt:
-          map['created_at'] != null ? DateTime.parse(map['created_at']) : null,
-      updatedAt:
-          map['updated_at'] != null ? DateTime.parse(map['updated_at']) : null,
+      createdAt: map['created_at'] != null
+          ? DateTime.tryParse(map['created_at'])
+          : null,
+      updatedAt: map['updated_at'] != null
+          ? DateTime.tryParse(map['updated_at'])
+          : null,
     );
   }
 
@@ -41,4 +44,3 @@ class UserPreferencesMapper {
     };
   }
 }
-

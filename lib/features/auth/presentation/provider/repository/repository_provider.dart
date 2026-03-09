@@ -1,5 +1,3 @@
-
-
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:meal_plan_app/features/auth/infrastructure/infrastructure.dart';
 import 'package:meal_plan_app/core/supabase/supabase_provider.dart';

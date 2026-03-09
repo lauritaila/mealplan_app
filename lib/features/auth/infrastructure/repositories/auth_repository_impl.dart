@@ -36,7 +36,7 @@ class AuthRepositoryImpl implements AuthRepository {
         return resp;
       } catch (e) {
         if (e is AppError) rethrow;
-        throw AuthAppError('Failed to load profile: ${e.toString()}');
+        throw AuthAppError('Failed to load profile');
       }
     }
     throw AuthAppError('User not authenticated', code: 'not_authenticated');

@@ -2,3 +2,8 @@ export 'meal_plan.dart';
 export 'new_meal_plan_request.dart';
 export 'day_meal_entry.dart';
 export 'meal_plan_generation_status.dart';
+export 'change_meal_plan_recipe_request.dart';
+export 'meal_plan_summary.dart';
+export 'reuse_meal_plan_response.dart';
+export 'bulk_deduct_result.dart';
+export 'update_meal_plan_dates_response.dart';
