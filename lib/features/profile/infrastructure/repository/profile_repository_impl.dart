@@ -7,14 +7,14 @@ class ProfileRepositoryImpl implements ProfileRepository {
 
   @override
   Future<Map<String, dynamic>> updateLanguage(String langCode) {
-    return _datasource.updateLanguage( langCode);
+    return _datasource.updateLanguage(langCode);
   }
 
   @override
   Future<Map<String, dynamic>> updateHideNutritionValues(
     bool hideNutritionValues,
   ) {
-    return _datasource.updateHideNutritionValues( hideNutritionValues);
+    return _datasource.updateHideNutritionValues(hideNutritionValues);
   }
 
   @override

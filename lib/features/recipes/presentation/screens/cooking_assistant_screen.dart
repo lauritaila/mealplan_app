@@ -2,7 +2,9 @@ import 'dart:async';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:go_router/go_router.dart';
 import 'package:meal_plan_app/features/auth/presentation/provider/provider.dart';
+import 'package:meal_plan_app/features/meal_plan/presentation/providers/provider.dart';
 import 'package:meal_plan_app/features/recipes/domain/domain.dart';
 import 'package:meal_plan_app/features/recipes/presentation/providers/providers.dart';
 import 'package:meal_plan_app/features/recipes/presentation/utils/ingredient_substitute_flow.dart';
@@ -10,8 +12,13 @@ import 'package:meal_plan_app/l10n/app_localizations.dart';
 
 class CookingAssistantScreen extends ConsumerStatefulWidget {
   final int recipeId;
+  final int? entryId;
 
-  const CookingAssistantScreen({super.key, required this.recipeId});
+  const CookingAssistantScreen({
+    super.key,
+    required this.recipeId,
+    this.entryId,
+  });
 
   @override
   ConsumerState<CookingAssistantScreen> createState() =>
@@ -33,16 +40,16 @@ class _CookingAssistantScreenState
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context);
     final theme = Theme.of(context);
-    final stepsAsync = ref.watch(cookingAssistantStepsProvider(widget.recipeId));
+    final stepsAsync = ref.watch(
+      cookingAssistantStepsProvider(widget.recipeId),
+    );
     final authState = ref.watch(authProvider);
     final hideNutritionValues =
         authState is AuthenticatedAuthState &&
         authState.user.configurations?['hideNutritionValues'] == true;
 
     return Scaffold(
-      appBar: AppBar(
-        title: Text(l10n.cookingAssistantTitle),
-      ),
+      appBar: AppBar(title: Text(l10n.cookingAssistantTitle)),
       body: stepsAsync.when(
         loading: () => const Center(child: CircularProgressIndicator()),
         error: (error, _) => Center(
@@ -120,11 +127,143 @@ class _CookingAssistantScreenState
                   },
                 ),
               ),
+              const Divider(height: 1),
+              Padding(
+                padding: const EdgeInsets.all(16),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.end,
+                  children: [
+                    if (_currentIndex > 0)
+                      TextButton(
+                        onPressed: () {
+                          _pageController.previousPage(
+                            duration: const Duration(milliseconds: 300),
+                            curve: Curves.easeInOut,
+                          );
+                        },
+                        child: Text(AppLocalizations.of(context).cookingAssistantBack),
+                      ),
+                    const Spacer(),
+                    if (_currentIndex < steps.length - 1)
+                      FilledButton(
+                        onPressed: () {
+                          _pageController.nextPage(
+                            duration: const Duration(milliseconds: 300),
+                            curve: Curves.easeInOut,
+                          );
+                        },
+                        child: Text(AppLocalizations.of(context).cookingAssistantNext),
+                      )
+                    else
+                      FilledButton.icon(
+                        icon: const Icon(Icons.check_circle_outline),
+                        onPressed: () => _completeRecipe(context),
+                        label: Text(AppLocalizations.of(context).cookingAssistantComplete),
+                        style: FilledButton.styleFrom(
+                          backgroundColor: Colors.green,
+                        ),
+                      ),
+                  ],
+                ),
+              ),
             ],
           );
         },
       ),
     );
+  }
+
+  Future<void> _completeRecipe(BuildContext context) async {
+    if (widget.entryId == null) {
+      // If no entry, simply close
+      if (context.mounted) {
+        context.pop();
+      }
+      return;
+    }
+
+    final confirmed = await showDialog<bool>(
+      context: context,
+      builder: (ctx) => AlertDialog(
+        title: Text(AppLocalizations.of(context).recipeCompleteDialogTitle),
+        content: Text(
+          AppLocalizations.of(context).recipeCompleteDialogMessage,
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.of(ctx).pop(false),
+            child: Text(AppLocalizations.of(context).cancel),
+          ),
+          FilledButton(
+            onPressed: () => Navigator.of(ctx).pop(true),
+            child: Text(AppLocalizations.of(context).cookingAssistantCompleteAction),
+          ),
+        ],
+      ),
+    );
+
+    if (confirmed != true || !context.mounted) return;
+
+    showDialog(
+      context: context,
+      barrierDismissible: false,
+      builder: (ctx) => const Center(child: CircularProgressIndicator()),
+    );
+
+    try {
+      final recipeAsync = ref.read(recipeDetailProvider(widget.recipeId));
+      final recipe = recipeAsync.valueOrNull;
+      int? baseServings = recipe?.baseServings;
+
+      if (baseServings == null) {
+        baseServings = await _showServingsDialog(context);
+      }
+
+      if (baseServings == null || !context.mounted) return;
+
+      final notifier = ref.read(mealPlanEntryActionsProvider.notifier);
+      final result = await notifier.bulkDeduct(
+        widget.recipeId,
+        baseServings,
+        entryId: widget.entryId,
+      );
+
+      if (!context.mounted) return;
+      Navigator.of(context).pop(); // dismiss loading
+
+      if (result != null) {
+        final successCount = result.deducted.length;
+        final missingCount = result.missing.length;
+                            
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text(
+              AppLocalizations.of(context).recipeCompletedSuccess(
+                successCount.toString(),
+                missingCount > 0 ? AppLocalizations.of(context).recipeCompletedMissingNote(missingCount.toString()) : '',
+              ),
+            ),
+          ),
+        );
+        context.pop(); // Go back
+      } else {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text(
+              ref.read(mealPlanEntryActionsProvider).errorMessage ??
+                  AppLocalizations.of(context).genericError,
+            ),
+          ),
+        );
+      }
+    } catch (e) {
+      if (context.mounted) {
+        Navigator.of(context).pop(); // dismiss loading
+        ScaffoldMessenger.of(
+          context,
+        ).showSnackBar(SnackBar(content: Text(AppLocalizations.of(context).genericError)));
+      }
+    }
   }
 
   Color _pastelColor(int index) {
@@ -137,6 +276,60 @@ class _CookingAssistantScreenState
       Colors.teal.shade50,
     ];
     return palette[index % palette.length];
+  }
+
+  Future<int?> _showServingsDialog(BuildContext context) async {
+    final l10n = AppLocalizations.of(context);
+    int servings = 1;
+
+    return showDialog<int?>(
+      context: context,
+      builder: (ctx) => AlertDialog(
+        title: Text(l10n.servingsPickerDialogTitle),
+        content: StatefulBuilder(
+          builder: (context, setLocalState) => Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  IconButton(
+                    onPressed: servings > 1
+                        ? () => setLocalState(() => servings--)
+                        : null,
+                    icon: const Icon(Icons.remove_circle_outline),
+                  ),
+                  Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 20),
+                    child: Text(
+                      servings.toString(),
+                      style: const TextStyle(
+                        fontSize: 24,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                  ),
+                  IconButton(
+                    onPressed: () => setLocalState(() => servings++),
+                    icon: const Icon(Icons.add_circle_outline),
+                  ),
+                ],
+              ),
+            ],
+          ),
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.of(ctx).pop(),
+            child: Text(l10n.cancel),
+          ),
+          FilledButton(
+            onPressed: () => Navigator.of(ctx).pop(servings),
+            child: Text(l10n.servingsPickerConfirm),
+          ),
+        ],
+      ),
+    );
   }
 }
 
@@ -256,9 +449,9 @@ class _AssistantStepCard extends StatelessWidget {
       quantityText = quantity == quantity.roundToDouble()
           ? quantity.toInt().toString()
           : quantity
-              .toStringAsFixed(2)
-              .replaceFirst(RegExp(r'0+$'), '')
-              .replaceFirst(RegExp(r'\.$'), '');
+                .toStringAsFixed(2)
+                .replaceFirst(RegExp(r'0+$'), '')
+                .replaceFirst(RegExp(r'\.$'), '');
     }
 
     return [
@@ -355,10 +548,7 @@ class _StepTimerState extends State<StepTimer> {
     final theme = Theme.of(context);
 
     if (widget.seconds <= 0) {
-      return Text(
-        l10n.noTimerAvailable,
-        style: theme.textTheme.bodyMedium,
-      );
+      return Text(l10n.noTimerAvailable, style: theme.textTheme.bodyMedium);
     }
 
     return Card(
@@ -374,14 +564,9 @@ class _StepTimerState extends State<StepTimer> {
             ),
             TextButton(
               onPressed: _toggleTimer,
-              child: Text(
-                _running ? l10n.pauseTimer : l10n.startTimer,
-              ),
+              child: Text(_running ? l10n.pauseTimer : l10n.startTimer),
             ),
-            TextButton(
-              onPressed: _resetTimer,
-              child: Text(l10n.resetTimer),
-            ),
+            TextButton(onPressed: _resetTimer, child: Text(l10n.resetTimer)),
           ],
         ),
       ),

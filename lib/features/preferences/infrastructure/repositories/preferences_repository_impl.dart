@@ -16,10 +16,7 @@ class PreferencesRepositoryImpl implements PreferencesRepository {
   }
 
   @override
-  Future<void> saveUserPreference(
-    UserPreferences userPreference,
-  ) {
+  Future<void> saveUserPreference(UserPreferences userPreference) {
     return datasource.saveUserPreference(userPreference);
   }
 }
-

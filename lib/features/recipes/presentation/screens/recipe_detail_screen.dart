@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:meal_plan_app/features/auth/presentation/provider/provider.dart';
+import 'package:meal_plan_app/features/meal_plan/presentation/providers/provider.dart';
 import 'package:meal_plan_app/features/recipes/presentation/providers/providers.dart';
 import 'package:meal_plan_app/features/recipes/presentation/utils/ingredient_substitute_flow.dart';
 import 'package:meal_plan_app/features/shared/widgets/widgets.dart';
@@ -9,8 +10,9 @@ import 'package:meal_plan_app/l10n/app_localizations.dart';
 
 class RecipeDetailScreen extends ConsumerWidget {
   final int recipeId;
+  final int? entryId;
 
-  const RecipeDetailScreen({super.key, required this.recipeId});
+  const RecipeDetailScreen({super.key, required this.recipeId, this.entryId});
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -161,11 +163,109 @@ class RecipeDetailScreen extends ConsumerWidget {
 
                 FilledButton.icon(
                   onPressed: () {
-                    context.push('/recipes/$recipeId/assistant');
+                    if (entryId != null) {
+                      context.push(
+                        '/recipes/$recipeId/assistant?entryId=$entryId',
+                      );
+                    } else {
+                      context.push('/recipes/$recipeId/assistant');
+                    }
                   },
                   icon: const Icon(Icons.play_circle_fill),
                   label: Text(l10n.openCookingAssistant),
                 ),
+                if (entryId != null) ...[
+                  const SizedBox(height: 12),
+                  OutlinedButton.icon(
+                    onPressed: () async {
+                      final confirmed = await showDialog<bool>(
+                        context: context,
+                        builder: (ctx) => AlertDialog(
+                          title: Text(l10n.recipeCompleteDialogTitle),
+                          content: Text(
+                            l10n.recipeCompleteDialogMessage,
+                          ),
+                          actions: [
+                            TextButton(
+                              onPressed: () => Navigator.of(ctx).pop(false),
+                              child: Text(l10n.cancel),
+                            ),
+                            FilledButton(
+                              onPressed: () => Navigator.of(ctx).pop(true),
+                              child: Text(l10n.cookingAssistantCompleteAction),
+                            ),
+                          ],
+                        ),
+                      );
+
+                      if (confirmed != true || !context.mounted) return;
+
+                      showDialog(
+                        context: context,
+                        barrierDismissible: false,
+                        builder: (ctx) =>
+                            const Center(child: CircularProgressIndicator()),
+                      );
+
+                      try {
+                        int? servings = recipe.baseServings;
+                        
+                        if (servings == null) {
+                          servings = await _showServingsDialog(context);
+                        }
+
+                        if (servings == null || !context.mounted) return;
+
+                        final result = await ref
+                            .read(mealPlanEntryActionsProvider.notifier)
+                            .bulkDeduct(recipeId, servings, entryId: entryId);
+
+                        if (context.mounted) {
+                          Navigator.of(context).pop(); // dismiss loading
+
+                          if (result != null) {
+                            final successCount = result.deducted.length;
+                            final missingCount = result.missing.length;
+
+                            ScaffoldMessenger.of(context).showSnackBar(
+                              SnackBar(
+                                    content: Text(
+                                      l10n.recipeCompletedSuccess(
+                                        successCount.toString(),
+                                        missingCount > 0 ? l10n.recipeCompletedMissingNote(missingCount.toString()) : '',
+                                      ),
+                                    ),
+                              ),
+                            );
+                            context.pop(); // Go back to meal plan
+                          } else {
+                            ScaffoldMessenger.of(context).showSnackBar(
+                              SnackBar(
+                                content: Text(
+                                  ref.read(mealPlanEntryActionsProvider).errorMessage ??
+                                      l10n.genericError,
+                                ),
+                              ),
+                            );
+                          }
+                        }
+                      } catch (e) {
+                        if (context.mounted) {
+                          Navigator.of(context).pop(); // dismiss loading
+                          ScaffoldMessenger.of(
+                            context,
+                          ).showSnackBar(SnackBar(content: Text(l10n.genericError)));
+                        }
+                      }
+                    },
+                    icon: const Icon(Icons.check_circle_outline),
+                    label: Text(l10n.markAsCompleteLabel),
+                    style: OutlinedButton.styleFrom(
+                      foregroundColor: Colors.green,
+                      side: const BorderSide(color: Colors.green),
+                    ),
+                  ),
+                ],
                 const SizedBox(height: 24),
 
                 // Instructions Section
@@ -229,5 +329,59 @@ class RecipeDetailScreen extends ConsumerWidget {
       safeUnit,
       safeName,
     ].where((part) => part.isNotEmpty).join(' ');
+  }
+
+  Future<int?> _showServingsDialog(BuildContext context) async {
+    final l10n = AppLocalizations.of(context);
+    int servings = 1;
+
+    return showDialog<int?>(
+      context: context,
+      builder: (ctx) => AlertDialog(
+        title: Text(l10n.servingsPickerDialogTitle),
+        content: StatefulBuilder(
+          builder: (context, setLocalState) => Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  IconButton(
+                    onPressed: servings > 1
+                        ? () => setLocalState(() => servings--)
+                        : null,
+                    icon: const Icon(Icons.remove_circle_outline),
+                  ),
+                  Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 20),
+                    child: Text(
+                      servings.toString(),
+                      style: const TextStyle(
+                        fontSize: 24,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                  ),
+                  IconButton(
+                    onPressed: () => setLocalState(() => servings++),
+                    icon: const Icon(Icons.add_circle_outline),
+                  ),
+                ],
+              ),
+            ],
+          ),
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.of(ctx).pop(),
+            child: Text(l10n.cancel),
+          ),
+          FilledButton(
+            onPressed: () => Navigator.of(ctx).pop(servings),
+            child: Text(l10n.servingsPickerConfirm),
+          ),
+        ],
+      ),
+    );
   }
 }

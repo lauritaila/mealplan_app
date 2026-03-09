@@ -10,29 +10,13 @@ import 'package:meal_plan_app/features/auth/presentation/provider/provider.dart'
 import 'package:meal_plan_app/features/shared/screens/main_layout.dart';
 import 'package:meal_plan_app/features/shared/shared.dart';
 
+import 'package:meal_plan_app/features/grocery_list/grocery_list.dart';
+
 import '../../features/meal_plan/meal_plan.dart';
 import 'package:meal_plan_app/features/meal_plan/domain/domain.dart';
 import 'package:meal_plan_app/features/meal_plan/presentation/screens/loading_meal_plan_screen.dart';
-
-// --- Placeholders para las pantallas ---
-
-class GroceryListScreen extends StatelessWidget {
-  const GroceryListScreen({super.key});
-  @override
-  Widget build(BuildContext context) => Scaffold(
-    appBar: AppBar(title: const Text('Grocery List')),
-    body: Center(child: Text('Grocery List Screen')),
-  );
-}
-
-class NutritionScreen extends StatelessWidget {
-  const NutritionScreen({super.key});
-  @override
-  Widget build(BuildContext context) => Scaffold(
-    appBar: AppBar(title: const Text('Nutrition')),
-    body: Center(child: Text('Nutrition Screen')),
-  );
-}
+import 'package:meal_plan_app/features/meal_plan/presentation/screens/meal_plan_list_screen.dart';
+import 'package:meal_plan_app/features/meal_plan/presentation/screens/meal_plan_entries_screen.dart';
 
 // --- Configuración del Router ---
 class GoRouterNotifier extends ChangeNotifier {
@@ -85,6 +69,7 @@ final appRouterProvider = Provider<GoRouter>((ref) {
             mealTypes: List<String>.from(
               extra['mealTypes'] as List? ?? const [],
             ),
+            usePantry: (extra['usePantry'] as bool?) ?? true,
           );
         },
       ),
@@ -122,13 +107,21 @@ final appRouterProvider = Provider<GoRouter>((ref) {
             builder: (context, state) => const MealPlanDayScreen(),
             routes: [
               GoRoute(
-                path: ':id', // El path es solo el parámetro
+                path: 'history',
+                builder: (context, state) => const MealPlanListScreen(),
+              ),
+              GoRoute(
+                path: ':id',
                 builder: (context, state) {
-                  final planId = state.pathParameters['id'] ?? 'no-id';
-                  // Aquí iría tu pantalla de detalle del plan
-                  return Scaffold(
-                    appBar: AppBar(title: Text('Plan $planId')),
-                    body: Center(child: Text('Viewing Plan ID: $planId')),
+                  final planId = int.tryParse(state.pathParameters['id'] ?? '');
+                  if (planId == null || planId <= 0) {
+                    return const MealPlanDayScreen();
+                  }
+                  final extra = state.extra as Map<String, dynamic>?;
+                  final planName = extra?['planName'] as String?;
+                  return MealPlanEntriesScreen(
+                    planId: planId,
+                    planName: planName,
                   );
                 },
               ),
@@ -147,11 +140,16 @@ final appRouterProvider = Provider<GoRouter>((ref) {
                 builder: (context, state) {
                   final idParam = state.pathParameters['id'];
                   final parsedId = int.tryParse(idParam ?? '');
+                  final entryIdParam = state.uri.queryParameters['entryId'];
+                  final entryId = int.tryParse(entryIdParam ?? '');
                   if (parsedId == null || parsedId <= 0) {
                     // Invalid ID: show recipes list or error screen
                     return const RecipesListScreen();
                   }
-                  return RecipeDetailScreen(recipeId: parsedId);
+                  return RecipeDetailScreen(
+                    recipeId: parsedId,
+                    entryId: entryId,
+                  );
                 },
                 routes: [
                   GoRoute(
@@ -159,10 +157,15 @@ final appRouterProvider = Provider<GoRouter>((ref) {
                     builder: (context, state) {
                       final idParam = state.pathParameters['id'];
                       final parsedId = int.tryParse(idParam ?? '');
+                      final entryIdParam = state.uri.queryParameters['entryId'];
+                      final entryId = int.tryParse(entryIdParam ?? '');
                       if (parsedId == null || parsedId <= 0) {
                         return const RecipesListScreen();
                       }
-                      return CookingAssistantScreen(recipeId: parsedId);
+                      return CookingAssistantScreen(
+                        recipeId: parsedId,
+                        entryId: entryId,
+                      );
                     },
                   ),
                 ],
@@ -171,11 +174,30 @@ final appRouterProvider = Provider<GoRouter>((ref) {
           ),
           GoRoute(
             path: '/grocery-list',
-            builder: (context, state) => const GroceryListScreen(),
+            builder: (context, state) => const GroceryListsScreen(),
+            routes: [
+              GoRoute(
+                path: 'pantry',
+                builder: (context, state) => const PantryScreen(),
+              ),
+              GoRoute(
+                path: ':id',
+                builder: (context, state) {
+                  final idParam = state.pathParameters['id'];
+                  final parsedId = int.tryParse(idParam ?? '');
+                  if (parsedId == null || parsedId <= 0) {
+                    return const GroceryListsScreen();
+                  }
+                  return GroceryListDetailScreen(listId: parsedId);
+                },
+              ),
+            ],
           ),
           GoRoute(
             path: '/nutrition',
-            builder: (context, state) => const NutritionScreen(),
+            builder: (context, state) => const Scaffold(
+              body: Center(child: Text('Nutrition Screen Placeholder')),
+            ),
           ),
           GoRoute(
             path: '/profile',

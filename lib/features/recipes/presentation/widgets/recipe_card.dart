@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:meal_plan_app/features/shared/widgets/widgets.dart';
+import 'package:meal_plan_app/l10n/app_localizations.dart';
 
 class RecipeCard extends StatelessWidget {
   final String name;
@@ -12,6 +13,7 @@ class RecipeCard extends StatelessWidget {
   final bool hideNutritionValues;
   final VoidCallback onTap;
   final VoidCallback onFavoriteTap;
+  final VoidCallback? onAddToGroceryList;
 
   const RecipeCard({
     super.key,
@@ -25,6 +27,7 @@ class RecipeCard extends StatelessWidget {
     this.hideNutritionValues = false,
     required this.onTap,
     required this.onFavoriteTap,
+    this.onAddToGroceryList,
   });
 
   @override
@@ -58,6 +61,12 @@ class RecipeCard extends StatelessWidget {
                       ),
                     ),
                   ),
+                  if (onAddToGroceryList != null)
+                    IconButton(
+                      icon: const Icon(Icons.shopping_cart_outlined),
+                      tooltip: AppLocalizations.of(context).menuAddToGrocery,
+                      onPressed: onAddToGroceryList,
+                    ),
                   IconButton(
                     icon: Icon(
                       isFavorite ? Icons.favorite : Icons.favorite_border,

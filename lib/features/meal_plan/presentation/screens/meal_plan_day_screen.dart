@@ -4,6 +4,8 @@ import 'package:go_router/go_router.dart';
 import 'package:meal_plan_app/config/errors/app_errors.dart';
 import 'package:meal_plan_app/features/auth/domain/entities/user.dart';
 import 'package:meal_plan_app/features/auth/presentation/provider/provider.dart';
+import 'package:meal_plan_app/features/grocery_list/presentation/providers/grocery_actions_provider.dart';
+import 'package:meal_plan_app/features/grocery_list/presentation/widgets/select_grocery_list_sheet.dart';
 import 'package:meal_plan_app/features/meal_plan/domain/domain.dart';
 import 'package:meal_plan_app/features/meal_plan/presentation/providers/provider.dart';
 import 'package:meal_plan_app/features/shared/widgets/widgets.dart';
@@ -33,6 +35,11 @@ class MealPlanDayScreen extends ConsumerWidget {
       appBar: AppBar(
         title: Text(l10n.mealsOfDayTitle),
         actions: [
+          IconButton(
+            icon: const Icon(Icons.history),
+            tooltip: 'Mis planes',
+            onPressed: () => context.push('/meal-plan/history'),
+          ),
           IconButton(
             icon: const Icon(Icons.refresh),
             onPressed: () =>
@@ -139,9 +146,22 @@ class MealPlanDayScreen extends ConsumerWidget {
                             DayMealEntryStatusUpdateStatus.loading ||
                         actionsState.status ==
                             MealPlanEntryActionStatus.loading,
-                    onOpenRecipe: entry.recipeId > 0
-                        ? () => context.push('/recipes/${entry.recipeId}')
+                    onOpenRecipe: entry.recipeId != null && entry.recipeId! > 0
+                        ? () => context.push(
+                              '/recipes/${entry.recipeId}?entryId=${entry.entryId}',
+                            )
                         : null,
+                    onImportRecipeToList: () => _importRecipeToList(
+                      context,
+                      ref,
+                      recipeId: entry.recipeId,
+                    ),
+                    onCompleteEntry: () => _confirmComplete(
+                      context,
+                      ref,
+                      entry: entry,
+                      selectedDate: selectedDate,
+                    ),
                     onToggleSkipped: () async {
                       final wasSkipped = _isSkippedStatus(entry.status);
                       await ref
@@ -207,32 +227,170 @@ class MealPlanDayScreen extends ConsumerWidget {
 }
 
 // Helper functions at widget scope
+Future<void> _importRecipeToList(
+  BuildContext context,
+  WidgetRef ref, {
+  required int recipeId,
+}) async {
+  if (recipeId <= 0) {
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(content: Text(AppLocalizations.of(context).noRecipeAssociated)),
+    );
+    return;
+  }
+  final l10n = AppLocalizations.of(context);
+  final selected = await showSelectOrCreateGroceryListSheet(
+    context: context,
+    ref: ref,
+    title: l10n.addRecipeToListTitle,
+  );
+  if (selected == null || !context.mounted) return;
+  final ok = await ref
+      .read(groceryActionsProvider.notifier)
+      .importRecipe(selected.id, recipeId);
+  if (!context.mounted) return;
+  ScaffoldMessenger.of(context).showSnackBar(
+    SnackBar(
+      content: Text(
+        ok
+            ? l10n.recipeAddedToList(selected.name)
+            : l10n.recipeAddFailed,
+      ),
+    ),
+  );
+}
+
+Future<void> _confirmComplete(
+  BuildContext context,
+  WidgetRef ref, {
+  required DayMealEntry entry,
+  required DateTime selectedDate,
+}) async {
+  if (entry.recipeId <= 0) {
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(content: Text(l10n.noRecipeAssociated)),
+    );
+    return;
+  }
+  final l10n = AppLocalizations.of(context);
+  final confirmed = await showDialog<bool>(
+    context: context,
+    builder: (ctx) => AlertDialog(
+      title: Text(l10n.markCompleteDialogTitle),
+      content: Column(
+        mainAxisSize: MainAxisSize.min,
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Text(l10n.markCompleteQuestion(entry.name)),
+          const SizedBox(height: 12),
+          Container(
+            padding: const EdgeInsets.all(12),
+            decoration: BoxDecoration(
+              color: Colors.amber.withAlpha(30),
+              borderRadius: BorderRadius.circular(8),
+              border: Border.all(color: Colors.amber),
+            ),
+            child: Row(
+              children: [
+                const Icon(Icons.info_outline, color: Colors.amber, size: 18),
+                const SizedBox(width: 8),
+                Expanded(
+                  child: Text(
+                    l10n.markCompleteDeductInfo,
+                    style: const TextStyle(fontSize: 12),
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ],
+      ),
+      actions: [
+        TextButton(
+          onPressed: () => Navigator.of(ctx).pop(false),
+          child: Text(l10n.cancel),
+        ),
+        FilledButton.icon(
+          onPressed: () => Navigator.of(ctx).pop(true),
+          icon: const Icon(Icons.check_circle_outline),
+          label: Text(l10n.completeAction),
+          style: FilledButton.styleFrom(backgroundColor: Colors.green),
+        ),
+      ],
+    ),
+  );
+  if (confirmed != true || !context.mounted) return;
+  final messenger = ScaffoldMessenger.of(context);
+  final result = await ref
+      .read(mealPlanEntryActionsProvider.notifier)
+      .bulkDeduct(
+        entry.recipeId,
+        entry.servings ?? 1,
+        entryId: entry.entryId,
+      );
+  if (!context.mounted) return;
+  ref.invalidate(mealPlanDayEntriesProvider(selectedDate));
+  ref.read(mealPlanEntryActionsProvider.notifier).reset();
+  if (result != null) {
+    messenger.showSnackBar(
+      SnackBar(
+        content: Text(
+          result.missing.isEmpty
+              ? l10n.mealCompletedSuccess(result.deducted.length)
+              : l10n.mealCompletedMissing(result.missing.length),
+        ),
+        duration: const Duration(seconds: 4),
+      ),
+    );
+  }
+}
+
 Future<void> _confirmDeleteEntry(
   BuildContext context,
   WidgetRef ref,
   int entryId,
   DateTime selectedDate,
 ) async {
+  bool removeShoppingList = false;
   final confirmed = await showDialog<bool>(
     context: context,
-    builder: (ctx) => AlertDialog(
-      title: Text(AppLocalizations.of(ctx).deleteMealDialogTitle),
-      content: Text(AppLocalizations.of(ctx).deleteMealDialogMessage),
-      actions: [
-        TextButton(
-          onPressed: () => Navigator.of(ctx).pop(false),
-          child: Text(AppLocalizations.of(ctx).cancel),
+    builder: (ctx) => StatefulBuilder(
+      builder: (ctx, setLocalState) => AlertDialog(
+        title: Text(AppLocalizations.of(ctx).deleteMealDialogTitle),
+        content: Column(
+          mainAxisSize: MainAxisSize.min,
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text(AppLocalizations.of(ctx).deleteMealDialogMessage),
+            const SizedBox(height: 12),
+            CheckboxListTile(
+              contentPadding: EdgeInsets.zero,
+              value: removeShoppingList,
+              onChanged: (v) =>
+                  setLocalState(() => removeShoppingList = v ?? false),
+              title: Text(AppLocalizations.of(ctx).alsoRemoveFromGrocery),
+              controlAffinity: ListTileControlAffinity.leading,
+            ),
+          ],
         ),
-        FilledButton(
-          onPressed: () => Navigator.of(ctx).pop(true),
-          child: Text(AppLocalizations.of(ctx).deleteAction),
-        ),
-      ],
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.of(ctx).pop(false),
+            child: Text(AppLocalizations.of(ctx).cancel),
+          ),
+          FilledButton(
+            onPressed: () => Navigator.of(ctx).pop(true),
+            child: Text(AppLocalizations.of(ctx).deleteAction),
+          ),
+        ],
+      ),
     ),
   );
   if (confirmed != true || !context.mounted) return;
 
-  await ref.read(mealPlanEntryActionsProvider.notifier).deleteEntry(entryId);
+  await ref
+      .read(mealPlanEntryActionsProvider.notifier)
+      .deleteEntry(entryId, removeShoppingList: removeShoppingList);
 
   if (!context.mounted) return;
   final state = ref.read(mealPlanEntryActionsProvider);
@@ -367,6 +525,8 @@ class _MealEntryCard extends StatelessWidget {
   final bool hideNutritionValues;
   final bool isUpdating;
   final VoidCallback? onOpenRecipe;
+  final VoidCallback onImportRecipeToList;
+  final VoidCallback onCompleteEntry;
   final Future<void> Function() onToggleSkipped;
   final VoidCallback onDeleteEntry;
   final VoidCallback onRegenerateEntry;
@@ -378,6 +538,8 @@ class _MealEntryCard extends StatelessWidget {
     required this.hideNutritionValues,
     required this.isUpdating,
     required this.onToggleSkipped,
+    required this.onImportRecipeToList,
+    required this.onCompleteEntry,
     required this.onDeleteEntry,
     required this.onRegenerateEntry,
     required this.onSwapRecipe,
@@ -440,8 +602,34 @@ class _MealEntryCard extends StatelessWidget {
                     if (value == 'regenerate') onRegenerateEntry();
                     if (value == 'swap') onSwapRecipe();
                     if (value == 'change_date') onChangeDate();
+                    if (value == 'import_recipe') onImportRecipeToList();
+                    if (value == 'skip') onToggleSkipped();
                   },
                   itemBuilder: (_) => [
+                    PopupMenuItem(
+                      value: 'import_recipe',
+                      child: ListTile(
+                        leading: Icon(Icons.shopping_cart_outlined),
+                        title: Text(l10n.menuAddToGrocery),
+                        contentPadding: EdgeInsets.zero,
+                      ),
+                    ),
+                    PopupMenuItem(
+                      value: 'skip',
+                      child: ListTile(
+                        leading: Icon(
+                          isSkipped
+                              ? Icons.replay_circle_filled
+                              : Icons.do_not_disturb_on,
+                        ),
+                        title: Text(
+                          isSkipped
+                              ? l10n.unskipMealAction
+                              : l10n.skipMealAction,
+                        ),
+                        contentPadding: EdgeInsets.zero,
+                      ),
+                    ),
                     PopupMenuItem(
                       value: 'change_date',
                       child: ListTile(
@@ -550,14 +738,21 @@ class _MealEntryCard extends StatelessWidget {
                 const SizedBox(width: 10),
                 Expanded(
                   child: FilledButton.tonalIcon(
-                    onPressed: isUpdating ? null : onToggleSkipped,
+                    onPressed: (isUpdating || entry.status?.toLowerCase() == 'completed')
+                        ? null
+                        : onCompleteEntry,
                     icon: Icon(
-                      isSkipped
-                          ? Icons.replay_circle_filled
-                          : Icons.do_not_disturb_on,
+                      entry.status?.toLowerCase() == 'completed'
+                          ? Icons.check_circle
+                          : Icons.check_circle_outline,
+                      color: entry.status?.toLowerCase() == 'completed'
+                          ? Colors.green
+                          : null,
                     ),
                     label: Text(
-                      isSkipped ? l10n.unskipMealAction : l10n.skipMealAction,
+                      entry.status?.toLowerCase() == 'completed'
+                          ? 'Completada'
+                          : 'Completar receta',
                     ),
                   ),
                 ),
@@ -957,6 +1152,7 @@ class _RegenerateDayEntrySheetState extends State<_RegenerateDayEntrySheet> {
   final _descController = TextEditingController();
   int? _selectedMaxTime;
   bool _isLoading = false;
+  bool _usePantry = false;
   String? _error;
 
   @override
@@ -1045,6 +1241,18 @@ class _RegenerateDayEntrySheetState extends State<_RegenerateDayEntrySheet> {
                 }).toList(),
               ),
             ],
+            const SizedBox(height: 8),
+            CheckboxListTile(
+              contentPadding: EdgeInsets.zero,
+              value: _usePantry,
+              onChanged: (v) => setState(() => _usePantry = v ?? false),
+              title: const Text('Usar ingredientes de mi despensa'),
+              subtitle: const Text(
+                'La IA priorizará ingredientes que ya tienes',
+                style: TextStyle(fontSize: 12),
+              ),
+              controlAffinity: ListTileControlAffinity.leading,
+            ),
             if (_error != null) ...[
               const SizedBox(height: 12),
               Text(_error!, style: const TextStyle(color: Colors.red)),
@@ -1082,6 +1290,7 @@ class _RegenerateDayEntrySheetState extends State<_RegenerateDayEntrySheet> {
           : _descController.text.trim(),
       mealTypes: [widget.mealType],
       maxTotalTimeMinutes: _selectedMaxTime,
+      usePantry: _usePantry ? true : null,
     );
 
     final updated = await widget.actionsNotifier.changeRecipe(

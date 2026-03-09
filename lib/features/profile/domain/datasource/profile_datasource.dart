@@ -1,5 +1,5 @@
 abstract class ProfileDatasource {
-  Future<Map<String, dynamic>> updateLanguage( String langCode);
+  Future<Map<String, dynamic>> updateLanguage(String langCode);
   Future<Map<String, dynamic>> updateHideNutritionValues(
     bool hideNutritionValues,
   );

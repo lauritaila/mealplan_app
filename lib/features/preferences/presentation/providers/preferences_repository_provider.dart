@@ -13,4 +13,3 @@ PreferencesRepositoryImpl preferencesRepository(Ref ref) {
   }
   return PreferencesRepositoryImpl(PreferencesSupabaseDatasourceImpl(client));
 }
-

@@ -20,11 +20,16 @@ class PermissionDetails extends Equatable {
     required this.mealPlanDays,
     required this.mealPlanGenerate,
     required this.mealPlanTypeFood,
-    required this.mealPlanTime
+    required this.mealPlanTime,
   });
 
   @override
-  List<Object?> get props => [mealPlanDays, mealPlanGenerate, mealPlanTypeFood, mealPlanTime];
+  List<Object?> get props => [
+    mealPlanDays,
+    mealPlanGenerate,
+    mealPlanTypeFood,
+    mealPlanTime,
+  ];
 }
 
 class UserProfile extends Equatable {

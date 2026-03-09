@@ -22,6 +22,7 @@ class _NewMealPlanScreenState extends ConsumerState<NewMealPlanScreen> {
   };
   int _selectedDays = 5;
   int _peopleCount = 2;
+  bool _usePantry = true;
 
   @override
   void initState() {
@@ -63,6 +64,7 @@ class _NewMealPlanScreenState extends ConsumerState<NewMealPlanScreen> {
           ..add(availableMealTypes.first);
       }
       _descriptionController.clear();
+      _usePantry = true;
     });
     ref.read(mealPlanGeneratorProvider.notifier).reset();
   }
@@ -235,6 +237,25 @@ class _NewMealPlanScreenState extends ConsumerState<NewMealPlanScreen> {
                     ),
                   ),
                   const SizedBox(height: 8),
+                  _Section(
+                    title: '',
+                    child: SwitchListTile(
+                      contentPadding: EdgeInsets.zero,
+                      title: Text(
+                        l10n.usePantryLabel,
+                        style: const TextStyle(fontWeight: FontWeight.w600, fontSize: 16),
+                      ),
+                      subtitle: Text(l10n.usePantrySubtitle),
+                      value: _usePantry,
+                      onChanged: (val) {
+                        setState(() {
+                          _usePantry = val;
+                        });
+                      },
+                      activeColor: Theme.of(context).colorScheme.primary,
+                    ),
+                  ),
+                  const SizedBox(height: 8),
                   SizedBox(
                     width: double.infinity,
                     child: ElevatedButton(
@@ -288,6 +309,7 @@ class _NewMealPlanScreenState extends ConsumerState<NewMealPlanScreen> {
         'numberOfDays': _selectedDays,
         'quantityOfPeople': peopleCount,
         'mealTypes': _selectedMealTypes.toList(),
+        'usePantry': _usePantry,
       },
     );
   }
