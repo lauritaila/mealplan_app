@@ -40,15 +40,14 @@ class _AddItemBottomSheetState extends ConsumerState<AddItemBottomSheet> {
     if (!(_formKey.currentState?.validate() ?? false)) return;
     setState(() => _loading = true);
 
+    final l10n = AppLocalizations.of(context);
     final name = _nameCtrl.text.trim();
     final qty = double.tryParse(_quantityCtrl.text.trim()) ?? 1.0;
     final unit = _unitCtrl.text.trim().ifEmpty(l10n.addItemDefaultUnit);
 
     bool ok = false;
     if (_isPantryMode) {
-      final expiresAt = _expiryDate != null
-          ? _expiryDate!.toIso8601String().split('T').first
-          : null;
+      final expiresAt = _expiryDate?.toIso8601String().split('T').first;
       final category = _categoryCtrl.text.trim().isEmpty
           ? null
           : _categoryCtrl.text.trim();

@@ -95,7 +95,7 @@ class _DetailMealPlanScreenState extends ConsumerState<DetailMealPlanScreen> {
                                 context,
                                 plan.startDate,
                                 plan.endDate,
-                                plan!.id,
+                                plan.id,
                               ),
                             ),
                         ],
@@ -151,50 +151,62 @@ class _DetailMealPlanScreenState extends ConsumerState<DetailMealPlanScreen> {
                 mainAxisSize: MainAxisSize.min,
                 crossAxisAlignment: CrossAxisAlignment.stretch,
                 children: [
-                  FilledButton.icon(
-                    onPressed: isLoading
-                        ? null
-                        : () => _importToGroceryList(context, plan!.id),
-                    icon: const Icon(Icons.shopping_cart_outlined),
-                    label: Text(l10n.saveToGroceryList),
-                  ),
-                  const SizedBox(height: 8),
-                  ElevatedButton(
+                  FilledButton(
                     onPressed: () async {
-                      // 1. Mostrar modal de lista de compra
-                      final selected = await showSelectOrCreateGroceryListSheet(
+                      // 1. Mostrar modal preguntando si quiere guardar ingredientes
+                      final wantsToSave = await showDialog<bool>(
                         context: context,
-                        ref: ref,
-                        title: l10n.saveIngredientsPrompt,
+                        builder: (ctx) => AlertDialog(
+                          title: Text(l10n.saveIngredientsSheetTitle),
+                          content: Text(l10n.saveIngredientsDialogContent),
+                          actions: [
+                            TextButton(
+                              onPressed: () => Navigator.of(ctx).pop(false),
+                              child: Text(l10n.no),
+                            ),
+                            FilledButton(
+                              onPressed: () => Navigator.of(ctx).pop(true),
+                              child: Text(l10n.yes),
+                            ),
+                          ],
+                        ),
                       );
 
-                      if (selected != null && context.mounted) {
-                        final ok = await ref
-                            .read(groceryActionsProvider.notifier)
-                            .importMealPlan(
-                              selected.id,
-                              plan!.id,
-                            );
+                      if (wantsToSave == true && context.mounted) {
+                        // 2. Mostrar modal de lista de compra
+                        final selected = await showSelectOrCreateGroceryListSheet(
+                          context: context,
+                          title: l10n.saveIngredientsPrompt,
+                        );
 
-                        if (context.mounted) {
-                          ScaffoldMessenger.of(context).showSnackBar(
-                            SnackBar(
-                              content: Text(
-                                ok
-                                    ? l10n.savedIngredientsSuccess(selected.name)
-                                    : l10n.savedIngredientsFailed,
+                        if (selected != null && context.mounted) {
+                          final ok = await ref
+                              .read(groceryActionsProvider.notifier)
+                              .importMealPlan(
+                                selected.id,
+                                plan!.id,
+                              );
+
+                          if (context.mounted) {
+                            ScaffoldMessenger.of(context).showSnackBar(
+                              SnackBar(
+                                content: Text(
+                                  ok
+                                      ? l10n.savedIngredientsSuccess(selected.name)
+                                      : l10n.savedIngredientsFailed,
+                                ),
                               ),
-                            ),
-                          );
+                            );
+                          }
                         }
                       }
 
-                      // 2. Navegar al home (pase lo que pase, tras la selección o si cancela)
+                      // 3. Navegar al home (pase lo que pase)
                       if (context.mounted) {
                         context.go('/home');
                       }
                     },
-                    style: ElevatedButton.styleFrom(
+                    style: FilledButton.styleFrom(
                       padding: const EdgeInsets.symmetric(vertical: 16),
                       shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(14),
@@ -378,17 +390,16 @@ class _DetailMealPlanScreenState extends ConsumerState<DetailMealPlanScreen> {
     DateTime endDate,
     int planId,
   ) async {
+    final l10n = AppLocalizations.of(context);
     final pickedDate = await showDatePicker(
       context: context,
       initialDate: startDate,
       firstDate: DateTime(2000, 1, 1),
       lastDate: DateTime(2100, 12, 31),
-      helpText: 'Selecciona nueva fecha de inicio',
+      helpText: l10n.selectNewStartDate,
     );
 
     if (pickedDate == null || !context.mounted) return;
-
-    final l10n = AppLocalizations.of(context);
     final diff = endDate.difference(startDate);
     final newEndDate = pickedDate.add(diff);
 
@@ -661,12 +672,12 @@ class _DetailMealPlanScreenState extends ConsumerState<DetailMealPlanScreen> {
     ref.read(mealPlanEntryActionsProvider.notifier).reset();
   }
 
+  // ignore: unused_element
   Future<void> _importToGroceryList(BuildContext context, int planId) async {
     final messenger = ScaffoldMessenger.of(context);
     final l10n = AppLocalizations.of(context);
     final selected = await showSelectOrCreateGroceryListSheet(
       context: context,
-      ref: ref,
       title: l10n.savePlanToList,
     );
     if (selected == null || !mounted) return;

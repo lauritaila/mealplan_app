@@ -32,8 +32,8 @@ class PantryItemTile extends StatelessWidget {
       chipColor = theme.colorScheme.errorContainer;
       chipTextColor = theme.colorScheme.onErrorContainer;
     } else if (expiringSoon) {
-      chipColor = const Color(0xFFFFEDD8);
-      chipTextColor = const Color(0xFF7C4A00);
+      chipColor = theme.colorScheme.tertiaryContainer;
+      chipTextColor = theme.colorScheme.onTertiaryContainer;
     }
 
     return Dismissible(

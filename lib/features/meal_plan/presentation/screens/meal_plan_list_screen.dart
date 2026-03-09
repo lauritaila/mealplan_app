@@ -21,6 +21,10 @@ class MealPlanListScreen extends ConsumerWidget {
         title: Text(l10n.myPlansTitle),
         actions: [
           IconButton(
+            icon: const Icon(Icons.today),
+            onPressed: () => context.push('/meal-plan/current'),
+          ),
+          IconButton(
             icon: const Icon(Icons.refresh),
             onPressed: () => ref.invalidate(mealPlansProvider),
           ),
@@ -79,7 +83,7 @@ class MealPlanListScreen extends ConsumerWidget {
           return ListView.separated(
             padding: const EdgeInsets.fromLTRB(16, 16, 16, 100),
             itemCount: plans.length,
-            separatorBuilder: (_, __) => const SizedBox(height: 8),
+            separatorBuilder: (context, index) => const SizedBox(height: 8),
             itemBuilder: (context, index) {
               final plan = plans[index];
               return _MealPlanCard(plan: plan);
@@ -241,7 +245,6 @@ class _MealPlanCard extends ConsumerWidget {
     final messenger = ScaffoldMessenger.of(context);
     final selected = await showSelectOrCreateGroceryListSheet(
       context: context,
-      ref: ref,
       title: l10n.saveIngredientsSheetTitle,
     );
     if (selected == null) return;

@@ -6,7 +6,7 @@ import 'package:meal_plan_app/l10n/app_localizations.dart';
 class GroceryListCard extends StatelessWidget {
   final GroceryList list;
   final VoidCallback onTap;
-  final VoidCallback? onDelete;
+  final Future<bool> Function()? onDelete;
 
   const GroceryListCard({
     super.key,
@@ -31,7 +31,7 @@ class GroceryListCard extends StatelessWidget {
         child: const Icon(Icons.delete_outline, color: Colors.white),
       ),
       confirmDismiss: (_) async {
-        return await showDialog<bool>(
+        final confirmed = await showDialog<bool>(
           context: context,
           builder: (ctx) => AlertDialog(
             title: Text(AppLocalizations.of(context).deleteGroceryListDialogTitle),
@@ -48,14 +48,19 @@ class GroceryListCard extends StatelessWidget {
             ],
           ),
         );
+
+        if (confirmed == true && onDelete != null) {
+          return await onDelete!.call();
+        }
+        return false;
       },
-      onDismissed: (_) => onDelete?.call(),
+      onDismissed: (_) {},
       child: Card(
         elevation: 0,
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(16),
           side: BorderSide(
-            color: theme.colorScheme.outlineVariant.withOpacity(0.5),
+            color: theme.colorScheme.outlineVariant.withValues(alpha: 0.5),
           ),
         ),
         child: InkWell(
@@ -88,13 +93,13 @@ class GroceryListCard extends StatelessWidget {
                           fontWeight: FontWeight.w600,
                         ),
                       ),
-                      const SizedBox(height: 2),
-                      Text(
-                        _formatDate(list.createdAt, context),
-                        style: theme.textTheme.bodySmall?.copyWith(
-                          color: theme.colorScheme.onSurfaceVariant,
+                      if (list.createdAt != null)
+                        Text(
+                          _formatDate(list.createdAt!, context),
+                          style: theme.textTheme.bodySmall?.copyWith(
+                            color: theme.colorScheme.onSurfaceVariant,
+                          ),
                         ),
-                      ),
                     ],
                   ),
                 ),

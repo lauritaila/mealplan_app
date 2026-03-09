@@ -310,13 +310,12 @@ class _PlanEntryCard extends ConsumerWidget {
     final l10n = AppLocalizations.of(context);
     final selected = await showSelectOrCreateGroceryListSheet(
       context: context,
-      ref: ref,
       title: l10n.addRecipeToListTitle,
     );
     if (selected == null) return;
     final ok = await ref
         .read(groceryActionsProvider.notifier)
-        .importRecipe(selected.id, entry.recipeId);
+        .importRecipe(selected.id, recipeId);
     messenger.showSnackBar(
       SnackBar(
         content: Text(
@@ -392,10 +391,17 @@ class _PlanEntryCard extends ConsumerWidget {
       messenger.showSnackBar(
         SnackBar(
           content: Text(
-                result.missing.isEmpty
+            result.missing.isEmpty
                 ? l10n.allIngredientsDeducted(result.deducted.length)
                 : l10n.someIngredientsMissing(result.missing.length),
           ),
+          duration: const Duration(seconds: 4),
+        ),
+      );
+    } else {
+      messenger.showSnackBar(
+        SnackBar(
+          content: Text(l10n.bulkDeductUnknownError),
           duration: const Duration(seconds: 4),
         ),
       );

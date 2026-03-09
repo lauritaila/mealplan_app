@@ -1,7 +1,6 @@
 import 'package:dio/dio.dart';
 import 'package:meal_plan_app/config/config.dart';
 import 'package:meal_plan_app/config/constants/dio.dart';
-import 'package:meal_plan_app/config/errors/app_errors.dart';
 import 'package:meal_plan_app/features/grocery_list/domain/domain.dart';
 import 'package:meal_plan_app/features/grocery_list/infrastructure/mappers/grocery_mapper.dart';
 import 'package:meal_plan_app/features/grocery_list/infrastructure/mappers/pantry_mapper.dart';
@@ -38,8 +37,9 @@ class HttpGroceryDatasource extends GroceryDatasource {
       _assertSuccess(response.statusCode ?? 200);
       final data = response.data;
       if (data == null) return [];
-      if (data is! List)
+      if (data is! List) {
         throw const DataAppError.serializationFailed('grocery lists');
+      }
       return GroceryListMapper.fromList(data);
     } on DioException catch (e) {
       _handleDioException(e);
@@ -172,6 +172,7 @@ class HttpGroceryDatasource extends GroceryDatasource {
         data: body,
       );
       _assertSuccess(response.statusCode ?? 200);
+      if (response.data == null) throw const NetworkAppError.badResponse();
       final data = _toMap(response.data);
       return GroceryListItemMapper.fromMap(data);
     } on DioException catch (e) {
@@ -238,6 +239,7 @@ class HttpGroceryDatasource extends GroceryDatasource {
       if (expiresAt != null) body['expires_at'] = expiresAt;
       final response = await _dio.post('/api/pantry', data: body);
       _assertSuccess(response.statusCode ?? 200);
+      if (response.data == null) throw const NetworkAppError.badResponse();
       final data = _toMap(response.data);
       return PantryItemMapper.fromMap(data);
     } on DioException catch (e) {
@@ -261,6 +263,7 @@ class HttpGroceryDatasource extends GroceryDatasource {
       if (expiresAt != null) body['expires_at'] = expiresAt;
       final response = await _dio.patch('/api/pantry/$id', data: body);
       _assertSuccess(response.statusCode ?? 200);
+      if (response.data == null) throw const NetworkAppError.badResponse();
       final data = _toMap(response.data);
       return PantryItemMapper.fromMap(data);
     } on DioException catch (e) {

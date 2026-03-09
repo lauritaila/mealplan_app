@@ -9,8 +9,7 @@ import 'package:meal_plan_app/l10n/app_localizations.dart';
 /// new one on the fly. Returns the chosen [GroceryList], or null if dismissed.
 Future<GroceryList?> showSelectOrCreateGroceryListSheet({
   required BuildContext context,
-  required WidgetRef ref,
-  String title = 'Seleccionar lista',
+  required String title,
 }) {
   return showModalBottomSheet<GroceryList?>(
     context: context,
@@ -52,8 +51,7 @@ class _SelectGroceryListSheetState
     return Padding(
       padding: EdgeInsets.only(
         bottom:
-            MediaQuery.of(context).viewInsets.bottom +
-            MediaQuery.of(context).padding.bottom,
+            MediaQuery.of(context).viewInsets.bottom,
         left: 20,
         right: 20,
         top: 20,
@@ -107,7 +105,7 @@ class _SelectGroceryListSheetState
                 );
               },
               loading: () => const Center(child: CircularProgressIndicator()),
-              error: (_, __) => Text(
+              error: (error, stack) => Text(
                 AppLocalizations.of(context).groceryListsErrorLoading,
                 style: TextStyle(color: theme.colorScheme.error),
               ),

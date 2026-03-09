@@ -20,7 +20,7 @@ class GroceryListDetailScreen extends ConsumerWidget {
         body: const Center(child: CircularProgressIndicator()),
       ),
       error: (e, _) => Scaffold(
-        appBar: AppBar(title: Text(AppLocalizations.of(context).error)),
+        appBar: AppBar(title: Text(AppLocalizations.of(context).errorTitle)),
         body: Center(
           child: Column(
             mainAxisSize: MainAxisSize.min,
@@ -75,14 +75,14 @@ class GroceryListDetailScreen extends ConsumerWidget {
           ),
           body: RefreshIndicator(
             onRefresh: () async =>
-                ref.refresh(groceryListDetailProvider(listId)),
+                await ref.read(groceryListDetailProvider(listId).future),
             child: detail.items.isEmpty
                 ? CustomScrollView(
                     physics: const AlwaysScrollableScrollPhysics(),
                     slivers: [
                       SliverFillRemaining(
                         hasScrollBody: false,
-                        child: _EmptyState(listId: listId),
+                        child: const _EmptyState(),
                       ),
                     ],
                   )
@@ -198,12 +198,12 @@ class _SectionHeader extends StatelessWidget {
 }
 
 class _EmptyState extends StatelessWidget {
-  final int listId;
-  const _EmptyState({required this.listId});
+  const _EmptyState();
 
   @override
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context);
+    final theme = Theme.of(context);
     return Center(
       child: Column(
         mainAxisSize: MainAxisSize.min,

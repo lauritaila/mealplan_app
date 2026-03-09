@@ -60,7 +60,7 @@ final shouldShowMealTypeSelectionProvider = AutoDisposeProvider<bool>.internal(
 @Deprecated('Will be removed in 3.0. Use Ref instead')
 // ignore: unused_element
 typedef ShouldShowMealTypeSelectionRef = AutoDisposeProviderRef<bool>;
-String _$mealPlanGeneratorHash() => r'6b0c2102d617283a90b7225af3d93f7f5be9b8f0';
+String _$mealPlanGeneratorHash() => r'9806fb62fa7203a3e63fd819e24259c8ec472ed1';
 
 /// See also [MealPlanGenerator].
 @ProviderFor(MealPlanGenerator)

@@ -17,6 +17,7 @@ import 'package:meal_plan_app/features/meal_plan/domain/domain.dart';
 import 'package:meal_plan_app/features/meal_plan/presentation/screens/loading_meal_plan_screen.dart';
 import 'package:meal_plan_app/features/meal_plan/presentation/screens/meal_plan_list_screen.dart';
 import 'package:meal_plan_app/features/meal_plan/presentation/screens/meal_plan_entries_screen.dart';
+import 'package:meal_plan_app/features/nutrition/presentation/screens/nutrition_screen.dart';
 
 // --- Configuración del Router ---
 class GoRouterNotifier extends ChangeNotifier {
@@ -69,7 +70,7 @@ final appRouterProvider = Provider<GoRouter>((ref) {
             mealTypes: List<String>.from(
               extra['mealTypes'] as List? ?? const [],
             ),
-            usePantry: (extra['usePantry'] as bool?) ?? true,
+            usePantry: (extra['usePantry'] as bool?) ?? false,
           );
         },
       ),
@@ -104,16 +105,22 @@ final appRouterProvider = Provider<GoRouter>((ref) {
           ),
           GoRoute(
             path: '/meal-plan',
-            builder: (context, state) => const MealPlanDayScreen(),
+            builder: (context, state) => const MealPlanListScreen(),
             routes: [
               GoRoute(
                 path: 'history',
                 builder: (context, state) => const MealPlanListScreen(),
               ),
               GoRoute(
+                path: 'current',
+                builder: (context, state) => const MealPlanDayScreen(),
+              ),
+              GoRoute(
                 path: ':id',
                 builder: (context, state) {
-                  final planId = int.tryParse(state.pathParameters['id'] ?? '');
+                  final planId = int.tryParse(
+                    state.pathParameters['id'] ?? '',
+                  );
                   if (planId == null || planId <= 0) {
                     return const MealPlanDayScreen();
                   }
@@ -140,16 +147,11 @@ final appRouterProvider = Provider<GoRouter>((ref) {
                 builder: (context, state) {
                   final idParam = state.pathParameters['id'];
                   final parsedId = int.tryParse(idParam ?? '');
-                  final entryIdParam = state.uri.queryParameters['entryId'];
-                  final entryId = int.tryParse(entryIdParam ?? '');
                   if (parsedId == null || parsedId <= 0) {
                     // Invalid ID: show recipes list or error screen
                     return const RecipesListScreen();
                   }
-                  return RecipeDetailScreen(
-                    recipeId: parsedId,
-                    entryId: entryId,
-                  );
+                  return RecipeDetailScreen(recipeId: parsedId);
                 },
                 routes: [
                   GoRoute(
@@ -157,15 +159,10 @@ final appRouterProvider = Provider<GoRouter>((ref) {
                     builder: (context, state) {
                       final idParam = state.pathParameters['id'];
                       final parsedId = int.tryParse(idParam ?? '');
-                      final entryIdParam = state.uri.queryParameters['entryId'];
-                      final entryId = int.tryParse(entryIdParam ?? '');
                       if (parsedId == null || parsedId <= 0) {
                         return const RecipesListScreen();
                       }
-                      return CookingAssistantScreen(
-                        recipeId: parsedId,
-                        entryId: entryId,
-                      );
+                      return CookingAssistantScreen(recipeId: parsedId);
                     },
                   ),
                 ],
@@ -195,9 +192,7 @@ final appRouterProvider = Provider<GoRouter>((ref) {
           ),
           GoRoute(
             path: '/nutrition',
-            builder: (context, state) => const Scaffold(
-              body: Center(child: Text('Nutrition Screen Placeholder')),
-            ),
+            builder: (context, state) => const NutritionScreen(),
           ),
           GoRoute(
             path: '/profile',

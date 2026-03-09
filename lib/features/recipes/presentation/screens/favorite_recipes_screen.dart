@@ -66,8 +66,7 @@ class FavoriteRecipesScreen extends ConsumerWidget {
                   onAddToGroceryList: () async {
                     final selected = await showSelectOrCreateGroceryListSheet(
                       context: context,
-                      ref: ref,
-                      title: 'Agregar receta a lista',
+                      title: l10n.addRecipeToListTitle,
                     );
                     if (selected == null || !context.mounted) return;
                     final ok = await ref
@@ -78,8 +77,8 @@ class FavoriteRecipesScreen extends ConsumerWidget {
                       SnackBar(
                         content: Text(
                           ok
-                              ? 'Receta agregada a "${selected.name}"'
-                              : 'No se pudo agregar la receta',
+                              ? l10n.recipeAddedToList(selected.name)
+                              : l10n.recipeAddFailed,
                         ),
                       ),
                     );
