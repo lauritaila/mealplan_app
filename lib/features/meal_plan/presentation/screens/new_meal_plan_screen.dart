@@ -442,7 +442,7 @@ class _IconCircleButton extends StatelessWidget {
           color: Colors.white,
           boxShadow: [
             BoxShadow(
-              color: Colors.black.withOpacity(0.04),
+              color: const Color.fromRGBO(0, 0, 0, 0.04),
               blurRadius: 6,
               offset: const Offset(0, 2),
             )

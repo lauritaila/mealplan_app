@@ -126,9 +126,20 @@ class GroceryListsScreen extends ConsumerWidget {
                         list: list,
                         onTap: () => context.push('/grocery-list/${list.id}'),
                         onDelete: () async {
-                          await ref
-                              .read(groceryActionsProvider.notifier)
-                              .deleteList(list.id);
+                          try {
+                            await ref
+                                .read(groceryActionsProvider.notifier)
+                                .deleteList(list.id);
+                            return true;
+                          } catch (e) {
+                            if (!context.mounted) return false;
+                            ScaffoldMessenger.of(context).showSnackBar(
+                              SnackBar(
+                                content: Text(l10n.genericDeleteError),
+                              ),
+                            );
+                            return false;
+                          }
                         },
                       ),
                     );

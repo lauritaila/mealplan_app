@@ -112,10 +112,19 @@ class MealPlanGenerator extends _$MealPlanGenerator {
       final mealPlansState = ref.read(mealPlansProvider);
       DateTime startDate = DateTime.now();
 
-      if (mealPlansState.hasValue &&
-          mealPlansState.value != null &&
-          mealPlansState.value!.isNotEmpty) {
-        DateTime latestEndDate = mealPlansState.value!
+      final List<MealPlan> currentPlans;
+      if (mealPlansState is AsyncData) {
+        currentPlans = mealPlansState.value!;
+      } else if (mealPlansState is AsyncLoading) {
+        // Option A: wait for it
+        currentPlans = await ref.read(mealPlansProvider.future);
+      } else {
+        // Error or other: assume empty or propagate error
+        currentPlans = [];
+      }
+
+      if (currentPlans.isNotEmpty) {
+        DateTime latestEndDate = currentPlans
             .map((p) => p.endDate)
             .reduce((a, b) => a.isAfter(b) ? a : b);
         if (latestEndDate.isAfter(

@@ -37,10 +37,9 @@ class HttpNutritionDatasource implements NutritionDatasource {
         queryParameters: {'days': days},
       );
 
-      if (response.statusCode == 200 && response.data != null) {
-        final dto = NutritionSummaryResponseDto.fromJson(
-          response.data as Map<String, dynamic>,
-        );
+      final data = response.data;
+      if (response.statusCode == 200 && data != null && data is Map<String, dynamic>) {
+        final dto = NutritionSummaryResponseDto.fromJson(data);
         return NutritionMapper.dtoToEntity(dto);
       } else {
         throw NetworkAppError.badResponse();

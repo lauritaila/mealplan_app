@@ -25,7 +25,7 @@ class PantryScreen extends ConsumerWidget {
         surfaceTintColor: Colors.transparent,
       ),
       body: RefreshIndicator(
-        onRefresh: () async => await ref.read(pantryItemsProvider.future),
+        onRefresh: () async => await ref.refresh(pantryItemsProvider.future),
         child: pantryAsync.when(
           loading: () => const Center(child: CircularProgressIndicator()),
           error: (e, _) => Center(
@@ -130,7 +130,6 @@ class _CategoryHeader extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
-    final l10n = AppLocalizations.of(context);
     return Padding(
       padding: const EdgeInsets.fromLTRB(4, 16, 4, 6),
       child: Text(
@@ -211,8 +210,14 @@ class _EditPantryItemDialogState extends ConsumerState<_EditPantryItemDialog> {
   }
 
   Future<void> _save() async {
+    final l10n = AppLocalizations.of(context);
     final qty = double.tryParse(_quantityCtrl.text.trim());
-    if (qty == null || qty <= 0) return;
+    if (qty == null || qty <= 0) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text(l10n.addItemQuantityInvalid)),
+      );
+      return;
+    }
     setState(() => _loading = true);
     final expiresAt = _expiryDate != null
         ? _expiryDate!.toIso8601String().split('T').first

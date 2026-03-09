@@ -984,7 +984,7 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get usePantrySubtitle =>
-      'Prioritize recipes with ingredients you already have.';
+      'AI will prioritize ingredients you already have';
 
   @override
   String get consistencyRingTitle => 'Consistency';
@@ -1284,7 +1284,7 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String importMealPlanSuccess(Object listName) {
-    return 'Importेड meal plan to $listName';
+    return 'Imported meal plan to $listName';
   }
 
   @override
@@ -1398,4 +1398,49 @@ class AppLocalizationsEn extends AppLocalizations {
   String pantryDeleteDialogMessage(Object itemName) {
     return 'Are you sure you want to delete $itemName?';
   }
+
+  @override
+  String get back => 'Back';
+
+  @override
+  String get next => 'Next';
+
+  @override
+  String get complete_recipe => 'Complete Recipe';
+
+  @override
+  String get bulkDeductUnknownError => 'Failed to deduct ingredients';
+
+  @override
+  String get selectNewStartDate => 'Select new start date';
+
+  @override
+  String get saveIngredientsDialogContent =>
+      'Do you want to save the ingredients to a shopping list?';
+
+  @override
+  String get yes => 'Yes';
+
+  @override
+  String get no => 'No';
+
+  @override
+  String get mealPlanHistory => 'My plans';
+
+  @override
+  String get usePantryTitle => 'Use pantry ingredients';
+
+  @override
+  String get mealCompletedError => 'Failed to mark meal as completed';
+
+  @override
+  String greeting(Object name) {
+    return 'Hi, $name';
+  }
+
+  @override
+  String get mealCompletedLabel => 'Completed';
+
+  @override
+  String get completeRecipeLabel => 'Complete recipe';
 }

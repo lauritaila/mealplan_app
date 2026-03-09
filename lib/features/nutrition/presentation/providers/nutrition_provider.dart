@@ -18,6 +18,9 @@ class NutritionDaysFilter extends _$NutritionDaysFilter {
   int build() => 7;
 
   void setDays(int days) {
+    if (days <= 0) {
+      throw ArgumentError('days must be > 0');
+    }
     state = days;
   }
 }

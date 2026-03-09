@@ -54,12 +54,24 @@ class _GroceryItemTileState extends ConsumerState<GroceryItemTile>
   }
 
   Future<void> _toggleCheck() async {
-    final newVal = !_checked;
+    final oldVal = _checked;
+    final newVal = !oldVal;
+
     setState(() => _checked = newVal);
     _animController.forward().then((_) => _animController.reverse());
-    await ref
-        .read(groceryActionsProvider.notifier)
-        .updateItem(widget.listId, widget.item.id, checked: newVal);
+
+    final messenger = ScaffoldMessenger.of(context);
+    final errorMsg = AppLocalizations.of(context).savedIngredientsFailed;
+
+    try {
+      await ref
+          .read(groceryActionsProvider.notifier)
+          .updateItem(widget.listId, widget.item.id, checked: newVal);
+    } catch (e) {
+      if (!mounted) return;
+      setState(() => _checked = oldVal);
+      messenger.showSnackBar(SnackBar(content: Text(errorMsg)));
+    }
   }
 
   @override
@@ -170,14 +182,22 @@ class _GroceryItemTileState extends ConsumerState<GroceryItemTile>
   }
 
   Future<void> _showEditQuantity(BuildContext context) async {
+    final l10n = AppLocalizations.of(context);
+    final messenger = ScaffoldMessenger.of(context);
     final result = await showDialog<double>(
       context: context,
       builder: (_) => _EditQuantityDialog(initial: widget.item.quantity),
     );
-    if (result != null) {
-      await ref
-          .read(groceryActionsProvider.notifier)
-          .updateItem(widget.listId, widget.item.id, quantity: result);
+    if (result != null && mounted) {
+      final errorMsg = l10n.savedIngredientsFailed;
+      try {
+        await ref
+            .read(groceryActionsProvider.notifier)
+            .updateItem(widget.listId, widget.item.id, quantity: result);
+      } catch (e) {
+        if (!mounted) return;
+        messenger.showSnackBar(SnackBar(content: Text(errorMsg)));
+      }
     }
   }
 }
@@ -199,7 +219,7 @@ class _EditQuantityDialogState extends State<_EditQuantityDialog> {
     _ctrl = TextEditingController(
       text: widget.initial == widget.initial.roundToDouble()
           ? widget.initial.toInt().toString()
-          : widget.initial.toStringAsFixed(2),
+          : widget.initial.toStringAsFixed(1),
     );
   }
 

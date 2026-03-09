@@ -478,7 +478,7 @@
   "achievementWasteDesc": "You've used all ingredients from your list.",
   "achievementVarietyTitle": "Culinary Explorer",
   "achievementVarietyDesc": "You've tried 10 different recipes this month.",
-  "nutritionTitle": "Nutrition",
+
   "nutritionFilterDaily": "Daily",
   "nutritionFilterWeekly": "Weekly",
   "nutritionFilterMonthly": "Monthly",
@@ -564,7 +564,7 @@
   "saveIngredientsPrompt": "Select a list",
   "datesUpdatedSuccess": "Dates updated successfully",
   "savePlanToList": "Save Plan to List",
-  "importMealPlanSuccess": "Importेड meal plan to {listName}",
+  "importMealPlanSuccess": "Imported meal plan to {listName}",
   "@importMealPlanSuccess": {
     "placeholders": {
       "listName": {}
@@ -619,5 +619,25 @@
     "placeholders": {
       "itemName": {}
     }
-  }
+  },
+  "back": "Back",
+  "next": "Next",
+  "complete_recipe": "Complete Recipe",
+  "bulkDeductUnknownError": "Failed to deduct ingredients",
+  "selectNewStartDate": "Select new start date",
+  "saveIngredientsDialogContent": "Do you want to save the ingredients to a shopping list?",
+  "yes": "Yes",
+  "no": "No",
+  "mealPlanHistory": "My plans",
+  "usePantryTitle": "Use pantry ingredients",
+  "usePantrySubtitle": "AI will prioritize ingredients you already have",
+  "mealCompletedError": "Failed to mark meal as completed",
+  "greeting": "Hi, {name}",
+  "@greeting": {
+    "placeholders": {
+      "name": {}
+    }
+  },
+  "mealCompletedLabel": "Completed",
+  "completeRecipeLabel": "Complete recipe"
 }

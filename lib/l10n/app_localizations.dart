@@ -1877,7 +1877,7 @@ abstract class AppLocalizations {
   /// No description provided for @usePantrySubtitle.
   ///
   /// In en, this message translates to:
-  /// **'Prioritize recipes with ingredients you already have.'**
+  /// **'AI will prioritize ingredients you already have'**
   String get usePantrySubtitle;
 
   /// No description provided for @consistencyRingTitle.
@@ -2417,7 +2417,7 @@ abstract class AppLocalizations {
   /// No description provided for @importMealPlanSuccess.
   ///
   /// In en, this message translates to:
-  /// **'Importेड meal plan to {listName}'**
+  /// **'Imported meal plan to {listName}'**
   String importMealPlanSuccess(Object listName);
 
   /// No description provided for @importMealPlanFailure.
@@ -2629,6 +2629,90 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Are you sure you want to delete {itemName}?'**
   String pantryDeleteDialogMessage(Object itemName);
+
+  /// No description provided for @back.
+  ///
+  /// In en, this message translates to:
+  /// **'Back'**
+  String get back;
+
+  /// No description provided for @next.
+  ///
+  /// In en, this message translates to:
+  /// **'Next'**
+  String get next;
+
+  /// No description provided for @complete_recipe.
+  ///
+  /// In en, this message translates to:
+  /// **'Complete Recipe'**
+  String get complete_recipe;
+
+  /// No description provided for @bulkDeductUnknownError.
+  ///
+  /// In en, this message translates to:
+  /// **'Failed to deduct ingredients'**
+  String get bulkDeductUnknownError;
+
+  /// No description provided for @selectNewStartDate.
+  ///
+  /// In en, this message translates to:
+  /// **'Select new start date'**
+  String get selectNewStartDate;
+
+  /// No description provided for @saveIngredientsDialogContent.
+  ///
+  /// In en, this message translates to:
+  /// **'Do you want to save the ingredients to a shopping list?'**
+  String get saveIngredientsDialogContent;
+
+  /// No description provided for @yes.
+  ///
+  /// In en, this message translates to:
+  /// **'Yes'**
+  String get yes;
+
+  /// No description provided for @no.
+  ///
+  /// In en, this message translates to:
+  /// **'No'**
+  String get no;
+
+  /// No description provided for @mealPlanHistory.
+  ///
+  /// In en, this message translates to:
+  /// **'My plans'**
+  String get mealPlanHistory;
+
+  /// No description provided for @usePantryTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Use pantry ingredients'**
+  String get usePantryTitle;
+
+  /// No description provided for @mealCompletedError.
+  ///
+  /// In en, this message translates to:
+  /// **'Failed to mark meal as completed'**
+  String get mealCompletedError;
+
+  /// No description provided for @greeting.
+  ///
+  /// In en, this message translates to:
+  /// **'Hi, {name}'**
+  String greeting(Object name);
+
+  /// No description provided for @mealCompletedLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Completed'**
+  String get mealCompletedLabel;
+
+  /// No description provided for @completeRecipeLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Complete recipe'**
+  String get completeRecipeLabel;
 }
 
 class _AppLocalizationsDelegate

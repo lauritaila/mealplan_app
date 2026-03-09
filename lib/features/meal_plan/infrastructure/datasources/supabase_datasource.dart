@@ -496,16 +496,20 @@ class SupabaseMealPlanDatasource extends MealPlanDatasource {
       if (data == null || data is! List) {
         throw const DataAppError.emptyResponse('meal plans');
       }
-      return (data as List).map((item) {
-        final m = Map<String, dynamic>.from(item as Map);
-        return MealPlanSummary(
-          id: m['id'] as int,
-          planName: m['plan_name'] as String? ?? '',
-          startDate: DateTime.parse(m['start_date'] as String),
-          endDate: DateTime.parse(m['end_date'] as String),
-          generatedByAi: m['generated_by_ai'] as bool? ?? false,
-          createdAt: DateTime.parse(m['created_at'] as String),
-        );
+      return data.map((item) {
+        try {
+          final m = Map<String, dynamic>.from(item as Map);
+          return MealPlanSummary(
+            id: m['id'] as int,
+            planName: m['plan_name'] as String? ?? '',
+            startDate: DateTime.parse(m['start_date'] as String),
+            endDate: DateTime.parse(m['end_date'] as String),
+            generatedByAi: m['generated_by_ai'] as bool? ?? false,
+            createdAt: DateTime.parse(m['created_at'] as String),
+          );
+        } catch (e) {
+          throw DataAppError.serializationFailed('meal plans: $e');
+        }
       }).toList();
     } on DioException catch (e) {
       if (e.type == DioExceptionType.connectionTimeout ||
@@ -587,15 +591,19 @@ class SupabaseMealPlanDatasource extends MealPlanDatasource {
       if (data == null || data is! Map) {
         throw const DataAppError.mappingError();
       }
-      final m = Map<String, dynamic>.from(data);
-      return ReuseMealPlanResponse(
-        sourcePlanId: m['source_plan_id'] as int,
-        newPlanId: m['new_plan_id'] as int,
-        newPlanName: m['new_plan_name'] as String? ?? '',
-        startDate: DateTime.parse(m['start_date'] as String),
-        endDate: DateTime.parse(m['end_date'] as String),
-        entriesCloned: m['entries_cloned'] as int? ?? 0,
-      );
+      try {
+        final m = Map<String, dynamic>.from(data);
+        return ReuseMealPlanResponse(
+          sourcePlanId: m['source_plan_id'] as int,
+          newPlanId: m['new_plan_id'] as int,
+          newPlanName: m['new_plan_name'] as String? ?? '',
+          startDate: DateTime.parse(m['start_date'] as String),
+          endDate: DateTime.parse(m['end_date'] as String),
+          entriesCloned: m['entries_cloned'] as int? ?? 0,
+        );
+      } catch (e) {
+        throw DataAppError.serializationFailed('reuse meal plan response: $e');
+      }
     } on DioException catch (e) {
       if (e.type == DioExceptionType.connectionTimeout ||
           e.type == DioExceptionType.sendTimeout ||
@@ -688,20 +696,26 @@ class SupabaseMealPlanDatasource extends MealPlanDatasource {
       if (data == null || data is! Map) {
         return const BulkDeductResult(deducted: [], missing: []);
       }
-      final m = Map<String, dynamic>.from(data);
-      BulkDeductIngredient mapItem(Map<String, dynamic> item) =>
-          BulkDeductIngredient(
-            ingredient: item['ingredient'] as String? ?? '',
-            quantity: (item['quantity'] as num?)?.toDouble() ?? 0,
-            unit: item['unit'] as String? ?? '',
-          );
-      final deducted = ((m['deducted'] as List?) ?? [])
-          .map((e) => mapItem(Map<String, dynamic>.from(e as Map)))
-          .toList();
-      final missing = ((m['missing'] as List?) ?? [])
-          .map((e) => mapItem(Map<String, dynamic>.from(e as Map)))
-          .toList();
-      return BulkDeductResult(deducted: deducted, missing: missing);
+      try {
+        final m = Map<String, dynamic>.from(data);
+        BulkDeductIngredient mapItem(Map<String, dynamic> item) =>
+            BulkDeductIngredient(
+              ingredient: item['ingredient'] as String? ?? '',
+              quantity: (item['quantity'] as num?)?.toDouble() ?? 0,
+              unit: item['unit'] as String? ?? '',
+            );
+
+        final deducted = ((m['deducted'] as List?) ?? [])
+            .map((e) => mapItem(Map<String, dynamic>.from(e as Map)))
+            .toList();
+        final missing = ((m['missing'] as List?) ?? [])
+            .map((e) => mapItem(Map<String, dynamic>.from(e as Map)))
+            .toList();
+
+        return BulkDeductResult(deducted: deducted, missing: missing);
+      } catch (e) {
+        throw DataAppError.serializationFailed('bulk deduct result: $e');
+      }
     } on DioException catch (e) {
       if (e.type == DioExceptionType.connectionTimeout ||
           e.type == DioExceptionType.sendTimeout ||

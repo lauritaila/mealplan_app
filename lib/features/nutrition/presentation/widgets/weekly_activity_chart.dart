@@ -33,6 +33,21 @@ class _WeeklyActivityChartState extends State<WeeklyActivityChart> {
   }
 
   @override
+  void didUpdateWidget(WeeklyActivityChart oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    if (widget.hideNutritionValues && !oldWidget.hideNutritionValues) {
+      setState(() {
+        _selectedMetric = NutritionMetric.protein;
+      });
+    }
+  }
+
+  String _abbreviate(String text, int maxLength) {
+    if (text.length <= maxLength) return text;
+    return text.substring(0, maxLength);
+  }
+
+  @override
   Widget build(BuildContext context) {
     if (widget.dailyTotals.isEmpty) {
       return const SizedBox.shrink();
@@ -64,22 +79,22 @@ class _WeeklyActivityChartState extends State<WeeklyActivityChart> {
               segments: [
                 ButtonSegment(
                   value: NutritionMetric.calories,
-                  label: Text(l10n.metricCalories.substring(0, 3)),
+                  label: Text(_abbreviate(l10n.metricCalories, 3)),
                   icon: const Icon(Icons.local_fire_department, size: 16),
                 ),
                 ButtonSegment(
                   value: NutritionMetric.protein,
-                  label: Text(l10n.metricProtein.substring(0, 3)),
+                  label: Text(_abbreviate(l10n.metricProtein, 3)),
                   icon: const Icon(Icons.fitness_center, size: 16),
                 ),
                 ButtonSegment(
                   value: NutritionMetric.carbs,
-                  label: Text(l10n.metricCarbs.substring(0, 3)),
+                  label: Text(_abbreviate(l10n.metricCarbs, 3)),
                   icon: const Icon(Icons.grass, size: 16),
                 ),
                 ButtonSegment(
                   value: NutritionMetric.fats,
-                  label: Text(l10n.metricFat.substring(0, 3)),
+                  label: Text(_abbreviate(l10n.metricFat, 3)),
                   icon: const Icon(Icons.water_drop, size: 16),
                 ),
               ],
@@ -128,6 +143,9 @@ class _WeeklyActivityChartState extends State<WeeklyActivityChart> {
                   tooltipPadding: const EdgeInsets.all(8),
                   tooltipMargin: 8,
                   getTooltipItem: (group, groupIndex, rod, rodIndex) {
+                    if (group.x < 0 || group.x >= widget.dailyTotals.length) {
+                      return null;
+                    }
                     final data = widget.dailyTotals[group.x];
                     final dateStr = DateFormat.yMMMd(locale).format(data.date);
 

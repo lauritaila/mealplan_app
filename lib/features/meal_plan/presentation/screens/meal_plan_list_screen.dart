@@ -245,7 +245,6 @@ class _MealPlanCard extends ConsumerWidget {
     final messenger = ScaffoldMessenger.of(context);
     final selected = await showSelectOrCreateGroceryListSheet(
       context: context,
-      ref: ref,
       title: l10n.saveIngredientsSheetTitle,
     );
     if (selected == null) return;

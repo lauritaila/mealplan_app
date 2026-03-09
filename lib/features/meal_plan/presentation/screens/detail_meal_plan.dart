@@ -158,15 +158,15 @@ class _DetailMealPlanScreenState extends ConsumerState<DetailMealPlanScreen> {
                         context: context,
                         builder: (ctx) => AlertDialog(
                           title: Text(l10n.saveIngredientsSheetTitle),
-                          content: Text('¿Deseas guardar los ingredientes en una lista de compras?'),
+                          content: Text(l10n.saveIngredientsDialogContent),
                           actions: [
                             TextButton(
                               onPressed: () => Navigator.of(ctx).pop(false),
-                              child: Text('No'),
+                              child: Text(l10n.no),
                             ),
                             FilledButton(
                               onPressed: () => Navigator.of(ctx).pop(true),
-                              child: Text('Sí'),
+                              child: Text(l10n.yes),
                             ),
                           ],
                         ),
@@ -176,7 +176,6 @@ class _DetailMealPlanScreenState extends ConsumerState<DetailMealPlanScreen> {
                         // 2. Mostrar modal de lista de compra
                         final selected = await showSelectOrCreateGroceryListSheet(
                           context: context,
-                          ref: ref,
                           title: l10n.saveIngredientsPrompt,
                         );
 
@@ -396,7 +395,7 @@ class _DetailMealPlanScreenState extends ConsumerState<DetailMealPlanScreen> {
       initialDate: startDate,
       firstDate: DateTime(2000, 1, 1),
       lastDate: DateTime(2100, 12, 31),
-      helpText: 'Selecciona nueva fecha de inicio',
+      helpText: l10n.selectNewStartDate,
     );
 
     if (pickedDate == null || !context.mounted) return;

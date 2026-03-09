@@ -25,8 +25,10 @@ class NutritionMapper {
     DateTime? parsedDate;
     try {
       parsedDate = DateTime.parse(dto.date);
-    } catch (_) {
-      parsedDate = DateTime.now();
+    } catch (e) {
+      // ignore: avoid_print
+      print('Error parsing date: ${dto.date}. Error: $e');
+      rethrow;
     }
 
     return DailyTotal(

@@ -61,7 +61,7 @@ class Auth extends _$Auth {
       String? langCode = user.configurations?['language'] as String?;
       if (langCode == null || langCode.isEmpty) {
         try {
-          final platformLang = Platform.localeName.split('_')[0];
+          final platformLang = Platform.localeName.split(RegExp('[-_]'))[0];
           await ref.read(profileRepositoryProvider).updateLanguage(platformLang);
           langCode = platformLang;
         } catch (e) {
@@ -164,7 +164,7 @@ class Auth extends _$Auth {
       String? langCode = userProfile.configurations?['language'] as String?;
       if (langCode == null || langCode.isEmpty) {
         try {
-          final platformLang = Platform.localeName.split('_')[0];
+          final platformLang = Platform.localeName.split(RegExp('[-_]'))[0];
           await ref.read(profileRepositoryProvider).updateLanguage(platformLang);
           langCode = platformLang;
         } catch (e) {

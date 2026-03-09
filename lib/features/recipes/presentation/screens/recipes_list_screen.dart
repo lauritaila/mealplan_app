@@ -72,7 +72,6 @@ class RecipesListScreen extends ConsumerWidget {
                   onAddToGroceryList: () async {
                     final selected = await showSelectOrCreateGroceryListSheet(
                       context: context,
-                      ref: ref,
                       title: l10n.addRecipeToListTitle,
                     );
                     if (selected == null || !context.mounted) return;

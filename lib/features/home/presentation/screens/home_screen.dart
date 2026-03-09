@@ -190,7 +190,7 @@ class HomeScreen extends ConsumerWidget {
                         children: [
                           if (userName.isNotEmpty)
                             Text(
-                              '${l10n.homeTitle == "Home" ? "Hi" : "Hola"}, ${userName.split(' ')[0]}',
+                              l10n.greeting(userName.split(' ')[0]),
                               style: Theme.of(context).textTheme.headlineMedium?.copyWith(
                                     fontWeight: FontWeight.bold,
                                     color: const Color(0xFF002140),
@@ -364,9 +364,9 @@ class _RecipeCard extends ConsumerWidget {
                   spacing: 6,
                   runSpacing: 6,
                   children: [
-                    _MiniMacroBadge(label: 'Pro', value: '${entry.proteinGrams?.toInt() ?? 0}g'),
-                    _MiniMacroBadge(label: 'Carb', value: '${entry.carbsGrams?.toInt() ?? 0}g'),
-                    _MiniMacroBadge(label: 'Gra', value: '${entry.fatsGrams?.toInt() ?? 0}g'),
+                    _MiniMacroBadge(label: l10n.metricProtein, value: '${entry.proteinGrams?.toInt() ?? 0}g'),
+                    _MiniMacroBadge(label: l10n.metricCarbs, value: '${entry.carbsGrams?.toInt() ?? 0}g'),
+                    _MiniMacroBadge(label: l10n.metricFat, value: '${entry.fatsGrams?.toInt() ?? 0}g'),
                     _MiniMacroBadge(label: 'Kcal', value: '${entry.calories?.toInt() ?? 0}'),
                   ],
                 ),
@@ -397,7 +397,7 @@ class _RecipeCard extends ConsumerWidget {
                     child: TextButton(
                       onPressed: () {
                         if (entry.entryId > 0) {
-                          _confirmEatOut(context, ref, l10n, entry);
+                          _confirmAndToggleSkip(context, ref, l10n, entry, selectedDate);
                         }
                       },
                       style: TextButton.styleFrom(
@@ -492,8 +492,22 @@ class _RecipeCard extends ConsumerWidget {
       );
     }
   }
-  Future<void> _confirmEatOut(BuildContext context, WidgetRef ref, AppLocalizations l10n, DayMealEntry entry) async {
-    final confirm = await showDialog<bool>(
+  // Removed _confirmEatOut and moved logic to shared _confirmAndToggleSkip
+}
+
+Future<void> _confirmAndToggleSkip(
+  BuildContext context,
+  WidgetRef ref,
+  AppLocalizations l10n,
+  DayMealEntry entry,
+  DateTime date,
+) async {
+  final isSkipped = entry.status?.toLowerCase() == 'skipped' || 
+                    entry.status?.toLowerCase() == 'skiped';
+  
+  bool confirm = true;
+  if (!isSkipped) {
+    confirm = await showDialog<bool>(
       context: context,
       builder: (ctx) => AlertDialog(
         title: Text(l10n.homeSkipMealQuestion),
@@ -510,10 +524,12 @@ class _RecipeCard extends ConsumerWidget {
           ),
         ],
       ),
-    );
-    if (confirm != true || !context.mounted) return;
-    await ref.read(dayMealEntryStatusUpdateProvider.notifier).toggleSkipped(entry, selectedDate);
+    ) ?? false;
   }
+
+  if (confirm != true || !context.mounted) return;
+  await ref.read(dayMealEntryStatusUpdateProvider.notifier).toggleSkipped(entry, date);
+}
 
   Widget _getMealIcon(String? type) {
     final lower = type?.toLowerCase() ?? '';
@@ -556,29 +572,8 @@ class _QuickActionsWidget extends ConsumerStatefulWidget {
 }
 
 class _QuickActionsWidgetState extends ConsumerState<_QuickActionsWidget> {
-  Future<void> _handleSkipToggle(BuildContext context, WidgetRef ref, AppLocalizations l10n, DayMealEntry currentMeal, bool isSkipped) async {
-    if (!isSkipped) {
-      final confirm = await showDialog<bool>(
-        context: context,
-        builder: (ctx) => AlertDialog(
-          title: Text(l10n.homeSkipMealQuestion),
-          content: Text(l10n.homeSkipMealDescription),
-          actions: [
-            TextButton(
-              onPressed: () => Navigator.pop(ctx, false),
-              child: Text(l10n.cancel),
-            ),
-            FilledButton(
-              onPressed: () => Navigator.pop(ctx, true),
-              style: FilledButton.styleFrom(backgroundColor: const Color(0xFF5A7AAB)),
-              child: Text(l10n.homeConfirmAction),
-            ),
-          ],
-        ),
-      );
-      if (confirm != true) return;
-    }
-    await ref.read(dayMealEntryStatusUpdateProvider.notifier).toggleSkipped(currentMeal, DateTime.now());
+  Future<void> _handleSkipToggle(BuildContext context, WidgetRef ref, AppLocalizations l10n, DayMealEntry currentMeal, DateTime date) async {
+    await _confirmAndToggleSkip(context, ref, l10n, currentMeal, date);
   }
 
   @override
@@ -638,12 +633,6 @@ class _DailyNutritionSection extends StatelessWidget {
       data: (summary) {
         final today = summary.todaySummary;
         if (today == null) return const SizedBox.shrink();
-
-        // Target goals (fallback to 2000 kcal standard if not specified)
-        final targetCalories = 2000.0;
-        final targetProtein = 150.0;
-        final targetCarbs = 250.0;
-        final targetFats = 70.0;
 
         return Padding(
           padding: const EdgeInsets.symmetric(vertical: 16),

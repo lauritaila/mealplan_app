@@ -480,7 +480,7 @@
   "achievementWasteDesc": "Has utilizado todos los ingredientes de tu lista.",
   "achievementVarietyTitle": "Explorador culinario",
   "achievementVarietyDesc": "Has probado 10 recetas diferentes este mes.",
-  "nutritionTitle": "Nutrición",
+
   "nutritionFilterDaily": "Hoy",
   "nutritionFilterWeekly": "7 días",
   "nutritionFilterMonthly": "30 días",
@@ -621,5 +621,25 @@
     "placeholders": {
       "itemName": {}
     }
-  }
+  },
+  "back": "Atrás",
+  "next": "Siguiente",
+  "complete_recipe": "Completar receta",
+  "bulkDeductUnknownError": "Error al descontar ingredientes",
+  "selectNewStartDate": "Selecciona nueva fecha de inicio",
+  "saveIngredientsDialogContent": "¿Deseas guardar los ingredientes en una lista de compras?",
+  "yes": "Sí",
+  "no": "No",
+  "mealPlanHistory": "Mis planes",
+  "usePantryTitle": "Usar ingredientes de mi despensa",
+  "usePantrySubtitle": "La IA priorizará ingredientes que ya tienes",
+  "mealCompletedError": "Error al marcar la comida como completada",
+  "greeting": "Hola, {name}",
+  "@greeting": {
+    "placeholders": {
+      "name": {}
+    }
+  },
+  "mealCompletedLabel": "Completada",
+  "completeRecipeLabel": "Completar receta"
 }

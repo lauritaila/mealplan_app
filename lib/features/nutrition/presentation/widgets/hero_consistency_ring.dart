@@ -67,7 +67,7 @@ class HeroConsistencyRing extends StatelessWidget {
                   mainAxisSize: MainAxisSize.min,
                   children: [
                     Text(
-                      '${consistencyScore.toStringAsFixed(0)}%',
+                      '${(clampedScore * 100).toStringAsFixed(0)}%',
                       style: Theme.of(context).textTheme.headlineMedium
                           ?.copyWith(fontWeight: FontWeight.w800, color: color),
                     ),
@@ -79,7 +79,7 @@ class HeroConsistencyRing extends StatelessWidget {
         ),
         const SizedBox(height: 24),
         Text(
-          _getMotivationalMessage(consistencyScore, l10n),
+          _getMotivationalMessage(clampedScore * 100, l10n),
           style: Theme.of(context).textTheme.bodyMedium?.copyWith(
             color: Colors.grey.shade800,
             fontWeight: FontWeight.w600,

@@ -1,3 +1,4 @@
+import 'package:logging/logging.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:meal_plan_app/features/grocery_list/domain/domain.dart';
 import 'package:meal_plan_app/features/grocery_list/presentation/providers/pantry_provider.dart';
@@ -31,6 +32,8 @@ class PantryActionState {
 
 @riverpod
 class PantryActions extends _$PantryActions {
+  static final Logger _logger = Logger('PantryActionsProvider');
+
   @override
   PantryActionState build() => const PantryActionState();
 
@@ -46,7 +49,11 @@ class PantryActions extends _$PantryActions {
   }) async {
     if ((ingredientId == null || ingredientId <= 0) &&
         (ingredientName == null || ingredientName.trim().isEmpty)) {
-      print('Warning: Ingredient name or ID is required to add to pantry');
+      _logger.warning('Ingredient name or ID is required to add to pantry');
+      state = state.copyWith(
+        status: PantryActionStatus.error,
+        errorMessage: 'Ingredient name or ID is required',
+      );
       return null;
     }
     state = state.copyWith(

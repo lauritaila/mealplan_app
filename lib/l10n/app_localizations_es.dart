@@ -988,8 +988,7 @@ class AppLocalizationsEs extends AppLocalizations {
   String get usePantryLabel => 'Usar ingredientes de la despensa';
 
   @override
-  String get usePantrySubtitle =>
-      'Priorizar recetas con ingredientes que ya tienes.';
+  String get usePantrySubtitle => 'La IA priorizará ingredientes que ya tienes';
 
   @override
   String get consistencyRingTitle => 'Consistencia';
@@ -1404,4 +1403,49 @@ class AppLocalizationsEs extends AppLocalizations {
   String pantryDeleteDialogMessage(Object itemName) {
     return '¿Seguro que deseas eliminar $itemName?';
   }
+
+  @override
+  String get back => 'Atrás';
+
+  @override
+  String get next => 'Siguiente';
+
+  @override
+  String get complete_recipe => 'Completar receta';
+
+  @override
+  String get bulkDeductUnknownError => 'Error al descontar ingredientes';
+
+  @override
+  String get selectNewStartDate => 'Selecciona nueva fecha de inicio';
+
+  @override
+  String get saveIngredientsDialogContent =>
+      '¿Deseas guardar los ingredientes en una lista de compras?';
+
+  @override
+  String get yes => 'Sí';
+
+  @override
+  String get no => 'No';
+
+  @override
+  String get mealPlanHistory => 'Mis planes';
+
+  @override
+  String get usePantryTitle => 'Usar ingredientes de mi despensa';
+
+  @override
+  String get mealCompletedError => 'Error al marcar la comida como completada';
+
+  @override
+  String greeting(Object name) {
+    return 'Hola, $name';
+  }
+
+  @override
+  String get mealCompletedLabel => 'Completada';
+
+  @override
+  String get completeRecipeLabel => 'Completar receta';
 }

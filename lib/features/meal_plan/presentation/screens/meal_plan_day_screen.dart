@@ -37,7 +37,7 @@ class MealPlanDayScreen extends ConsumerWidget {
         actions: [
           IconButton(
             icon: const Icon(Icons.history),
-            tooltip: 'Mis planes',
+            tooltip: l10n.mealPlanHistory,
             onPressed: () => context.push('/meal-plan/history'),
           ),
           IconButton(
@@ -241,7 +241,6 @@ Future<void> _importRecipeToList(
   final l10n = AppLocalizations.of(context);
   final selected = await showSelectOrCreateGroceryListSheet(
     context: context,
-    ref: ref,
     title: l10n.addRecipeToListTitle,
   );
   if (selected == null || !context.mounted) return;
@@ -329,9 +328,10 @@ Future<void> _confirmComplete(
         entryId: entry.entryId,
       );
   if (!context.mounted) return;
-  ref.invalidate(mealPlanDayEntriesProvider(selectedDate));
-  ref.read(mealPlanEntryActionsProvider.notifier).reset();
+
   if (result != null) {
+    ref.invalidate(mealPlanDayEntriesProvider(selectedDate));
+    ref.read(mealPlanEntryActionsProvider.notifier).reset();
     messenger.showSnackBar(
       SnackBar(
         content: Text(
@@ -341,6 +341,10 @@ Future<void> _confirmComplete(
         ),
         duration: const Duration(seconds: 4),
       ),
+    );
+  } else {
+    messenger.showSnackBar(
+      SnackBar(content: Text(l10n.mealCompletedError)),
     );
   }
 }
@@ -736,25 +740,30 @@ class _MealEntryCard extends StatelessWidget {
                   ),
                 ),
                 const SizedBox(width: 10),
-                Expanded(
-                  child: FilledButton.tonalIcon(
-                    onPressed: (isUpdating || entry.status?.toLowerCase() == 'completed')
-                        ? null
-                        : onCompleteEntry,
-                    icon: Icon(
-                      entry.status?.toLowerCase() == 'completed'
-                          ? Icons.check_circle
-                          : Icons.check_circle_outline,
-                      color: entry.status?.toLowerCase() == 'completed'
-                          ? Colors.green
-                          : null,
-                    ),
-                    label: Text(
-                      entry.status?.toLowerCase() == 'completed'
-                          ? 'Completada'
-                          : 'Completar receta',
-                    ),
-                  ),
+                Builder(
+                  builder: (context) {
+                    final isCompleted = entry.status?.toLowerCase() == 'completed';
+                    return Expanded(
+                      child: FilledButton.tonalIcon(
+                        onPressed: (isUpdating || isCompleted)
+                            ? null
+                            : onCompleteEntry,
+                        icon: Icon(
+                          isCompleted
+                              ? Icons.check_circle
+                              : Icons.check_circle_outline,
+                          color: isCompleted
+                              ? Colors.green
+                              : null,
+                        ),
+                        label: Text(
+                          isCompleted
+                              ? l10n.mealCompletedLabel
+                              : l10n.completeRecipeLabel,
+                        ),
+                      ),
+                    );
+                  }
                 ),
               ],
             ),
@@ -1246,10 +1255,10 @@ class _RegenerateDayEntrySheetState extends State<_RegenerateDayEntrySheet> {
               contentPadding: EdgeInsets.zero,
               value: _usePantry,
               onChanged: (v) => setState(() => _usePantry = v ?? false),
-              title: const Text('Usar ingredientes de mi despensa'),
-              subtitle: const Text(
-                'La IA priorizará ingredientes que ya tienes',
-                style: TextStyle(fontSize: 12),
+              title: Text(l10n.usePantryTitle),
+              subtitle: Text(
+                l10n.usePantrySubtitle,
+                style: const TextStyle(fontSize: 12),
               ),
               controlAffinity: ListTileControlAffinity.leading,
             ),
