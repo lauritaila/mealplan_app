@@ -132,7 +132,7 @@ class _GroceryItemTileState extends ConsumerState<GroceryItemTile>
             style: theme.textTheme.bodyLarge!.copyWith(
               decoration: _checked ? TextDecoration.lineThrough : null,
               color: _checked
-                  ? theme.colorScheme.onSurface.withOpacity(0.45)
+                  ? theme.colorScheme.onSurface.withValues(alpha: 0.45)
                   : theme.colorScheme.onSurface,
             ),
             child: Text(widget.item.ingredientName),

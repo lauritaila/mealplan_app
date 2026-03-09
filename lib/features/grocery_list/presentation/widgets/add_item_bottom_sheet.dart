@@ -47,9 +47,7 @@ class _AddItemBottomSheetState extends ConsumerState<AddItemBottomSheet> {
 
     bool ok = false;
     if (_isPantryMode) {
-      final expiresAt = _expiryDate != null
-          ? _expiryDate!.toIso8601String().split('T').first
-          : null;
+      final expiresAt = _expiryDate?.toIso8601String().split('T').first;
       final category = _categoryCtrl.text.trim().isEmpty
           ? null
           : _categoryCtrl.text.trim();

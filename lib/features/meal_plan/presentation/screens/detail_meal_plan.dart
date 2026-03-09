@@ -95,7 +95,7 @@ class _DetailMealPlanScreenState extends ConsumerState<DetailMealPlanScreen> {
                                 context,
                                 plan.startDate,
                                 plan.endDate,
-                                plan!.id,
+                                plan.id,
                               ),
                             ),
                         ],
@@ -390,6 +390,7 @@ class _DetailMealPlanScreenState extends ConsumerState<DetailMealPlanScreen> {
     DateTime endDate,
     int planId,
   ) async {
+    final l10n = AppLocalizations.of(context);
     final pickedDate = await showDatePicker(
       context: context,
       initialDate: startDate,
@@ -399,8 +400,6 @@ class _DetailMealPlanScreenState extends ConsumerState<DetailMealPlanScreen> {
     );
 
     if (pickedDate == null || !context.mounted) return;
-
-    final l10n = AppLocalizations.of(context);
     final diff = endDate.difference(startDate);
     final newEndDate = pickedDate.add(diff);
 
@@ -673,12 +672,12 @@ class _DetailMealPlanScreenState extends ConsumerState<DetailMealPlanScreen> {
     ref.read(mealPlanEntryActionsProvider.notifier).reset();
   }
 
+  // ignore: unused_element
   Future<void> _importToGroceryList(BuildContext context, int planId) async {
     final messenger = ScaffoldMessenger.of(context);
     final l10n = AppLocalizations.of(context);
     final selected = await showSelectOrCreateGroceryListSheet(
       context: context,
-      ref: ref,
       title: l10n.savePlanToList,
     );
     if (selected == null || !mounted) return;

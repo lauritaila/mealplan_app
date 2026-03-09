@@ -117,7 +117,7 @@ class GroceryListsScreen extends ConsumerWidget {
                 }
                 return SliverList.separated(
                   itemCount: lists.length,
-                  separatorBuilder: (_, __) => const SizedBox(height: 8),
+                  separatorBuilder: (context, index) => const SizedBox(height: 8),
                   itemBuilder: (ctx, i) {
                     final list = lists[i];
                     return Padding(
@@ -180,11 +180,11 @@ class _PantryCard extends StatelessWidget {
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.circular(20),
         side: BorderSide(
-          color: theme.colorScheme.primary.withOpacity(0.35),
+          color: theme.colorScheme.primary.withValues(alpha: 0.35),
           width: 1.5,
         ),
       ),
-      color: theme.colorScheme.primaryContainer.withOpacity(0.35),
+      color: theme.colorScheme.primaryContainer.withValues(alpha: 0.35),
       child: InkWell(
         onTap: () => context.push('/grocery-list/pantry'),
         borderRadius: BorderRadius.circular(20),

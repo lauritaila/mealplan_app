@@ -61,9 +61,9 @@ class _AchievementTile extends StatelessWidget {
     return Container(
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
-        color: iconColor.withOpacity(0.05),
+        color: iconColor.withValues(alpha: 0.05),
         borderRadius: BorderRadius.circular(16),
-        border: Border.all(color: iconColor.withOpacity(0.15)),
+        border: Border.all(color: iconColor.withValues(alpha: 0.15)),
       ),
       child: Row(
         children: [

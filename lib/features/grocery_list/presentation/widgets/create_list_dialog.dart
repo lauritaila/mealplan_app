@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:meal_plan_app/features/grocery_list/domain/entities/grocery_list.dart';
 import 'package:meal_plan_app/features/grocery_list/presentation/providers/provider.dart';
 import 'package:meal_plan_app/l10n/app_localizations.dart';
 
@@ -41,7 +40,6 @@ class _CreateListDialogState extends ConsumerState<CreateListDialog> {
 
   @override
   Widget build(BuildContext context) {
-    final theme = Theme.of(context);
     return AlertDialog(
       title: Text(AppLocalizations.of(context).createListDialogTitle),
       content: Form(

@@ -282,7 +282,7 @@ class _NewMealPlanScreenState extends ConsumerState<NewMealPlanScreen> {
                                 _usePantry = val;
                               });
                             },
-                            activeColor: Colors.white,
+                            activeThumbColor: Colors.white,
                             activeTrackColor: const Color(0xFF4C6B4F),
                           ),
                         ],

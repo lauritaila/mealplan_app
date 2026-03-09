@@ -219,9 +219,7 @@ class _EditPantryItemDialogState extends ConsumerState<_EditPantryItemDialog> {
       return;
     }
     setState(() => _loading = true);
-    final expiresAt = _expiryDate != null
-        ? _expiryDate!.toIso8601String().split('T').first
-        : null;
+    final expiresAt = _expiryDate?.toIso8601String().split('T').first;
     try {
       await ref
           .read(pantryActionsProvider.notifier)

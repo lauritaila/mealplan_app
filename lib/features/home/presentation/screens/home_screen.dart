@@ -7,7 +7,6 @@ import 'package:meal_plan_app/features/home/presentation/providers/home_provider
 import 'package:meal_plan_app/features/meal_plan/domain/entities/day_meal_entry.dart';
 import 'package:meal_plan_app/features/meal_plan/presentation/providers/provider.dart';
 import 'package:meal_plan_app/features/nutrition/presentation/providers/nutrition_provider.dart';
-import 'package:meal_plan_app/features/recipes/presentation/providers/toggle_favorite_provider.dart';
 import 'package:meal_plan_app/l10n/app_localizations.dart';
 
 class _WeekProgressIndicator extends StatelessWidget {
@@ -24,7 +23,7 @@ class _WeekProgressIndicator extends StatelessWidget {
         borderRadius: BorderRadius.circular(16),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withOpacity(0.05),
+            color: Colors.black.withValues(alpha: 0.05),
             blurRadius: 10,
             offset: const Offset(0, 4),
           ),
@@ -72,7 +71,7 @@ class _WeekProgressIndicator extends StatelessWidget {
               width: 50,
               child: CircularProgressIndicator(strokeWidth: 3),
             ),
-            error: (_, __) => const Icon(Icons.error_outline),
+            error: (error, stack) => const Center(child: Icon(Icons.error_outline)),
           ),
         ],
       ),
@@ -249,7 +248,7 @@ class HomeScreen extends ConsumerWidget {
                     );
                   },
                   loading: () => const Center(child: CircularProgressIndicator()),
-                  error: (_, __) => const SizedBox.shrink(),
+                  error: (error, stack) => const SizedBox.shrink(),
                 ),
                 _QuickActionsWidget(mealEntriesAsync: mealEntriesAsync),
         
@@ -317,7 +316,7 @@ class _RecipeCard extends ConsumerWidget {
         borderRadius: BorderRadius.circular(24),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withOpacity(0.03),
+            color: Colors.black.withValues(alpha: 0.03),
             blurRadius: 10,
             offset: const Offset(0, 4),
           ),
@@ -377,7 +376,7 @@ class _RecipeCard extends ConsumerWidget {
                   Expanded(
                     child: TextButton(
                       onPressed: () {
-                        if (entry.recipeId != null && entry.recipeId! > 0) {
+                        if (entry.recipeId > 0) {
                           context.push('/recipes/${entry.recipeId}?entryId=${entry.entryId}');
                         }
                       },
@@ -435,7 +434,7 @@ class _RecipeCard extends ConsumerWidget {
   }
 
   Future<void> _confirmComplete(BuildContext context, WidgetRef ref, AppLocalizations l10n) async {
-    if (entry.recipeId == null || entry.recipeId! <= 0) return;
+    if (entry.recipeId <= 0) return;
 
     final confirmed = await showDialog<bool>(
       context: context,
@@ -469,7 +468,7 @@ class _RecipeCard extends ConsumerWidget {
     final result = await ref
         .read(mealPlanEntryActionsProvider.notifier)
         .bulkDeduct(
-          entry.recipeId!,
+          entry.recipeId,
           entry.servings ?? 1,
           entryId: entry.entryId,
         );
@@ -539,7 +538,6 @@ Future<void> _confirmAndToggleSkip(
     if (lower.contains('snack')) return const Icon(Icons.fastfood_outlined, color: Color(0xFF4C6B4F));
     return const Icon(Icons.restaurant_outlined, color: Color(0xFF4C6B4F));
   }
-}
 
 class _MiniMacroBadge extends StatelessWidget {
   final String label;
@@ -572,17 +570,10 @@ class _QuickActionsWidget extends ConsumerStatefulWidget {
 }
 
 class _QuickActionsWidgetState extends ConsumerState<_QuickActionsWidget> {
-  Future<void> _handleSkipToggle(BuildContext context, WidgetRef ref, AppLocalizations l10n, DayMealEntry currentMeal, DateTime date) async {
-    await _confirmAndToggleSkip(context, ref, l10n, currentMeal, date);
-  }
-
   @override
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context);
-    final entries = widget.mealEntriesAsync.value ?? [];
-    final currentMeal = entries.where((e) => e.status != 'completed' && e.status != 'skipped').firstOrNull ?? entries.firstOrNull;
-    final isSkipped = currentMeal?.status?.toLowerCase() == 'skipped' || currentMeal?.status?.toLowerCase() == 'skiped';
-
+    
     return Row(
       children: [
         Expanded(
@@ -680,7 +671,7 @@ class _DailyNutritionSection extends StatelessWidget {
         );
       },
       loading: () => const SizedBox.shrink(),
-      error: (_, __) => const SizedBox.shrink(),
+      error: (error, stack) => const SizedBox.shrink(),
     );
   }
 }

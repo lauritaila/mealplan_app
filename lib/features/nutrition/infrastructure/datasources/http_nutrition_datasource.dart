@@ -1,7 +1,6 @@
 import 'package:dio/dio.dart';
 import 'package:meal_plan_app/config/config.dart';
 import 'package:meal_plan_app/config/constants/dio.dart';
-import 'package:meal_plan_app/config/errors/app_errors.dart';
 import 'package:talker_dio_logger/talker_dio_logger.dart';
 import 'package:talker_flutter/talker_flutter.dart';
 

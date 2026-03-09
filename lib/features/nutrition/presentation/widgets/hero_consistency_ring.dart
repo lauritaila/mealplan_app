@@ -58,7 +58,7 @@ class HeroConsistencyRing extends StatelessWidget {
               CircularProgressIndicator(
                 value: clampedScore,
                 strokeWidth: 20,
-                backgroundColor: color.withOpacity(0.15),
+                backgroundColor: color.withValues(alpha: 0.15),
                 valueColor: AlwaysStoppedAnimation<Color>(color),
                 strokeCap: StrokeCap.round,
               ),

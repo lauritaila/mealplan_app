@@ -105,7 +105,7 @@ class _SelectGroceryListSheetState
                 );
               },
               loading: () => const Center(child: CircularProgressIndicator()),
-              error: (_, __) => Text(
+              error: (error, stack) => Text(
                 AppLocalizations.of(context).groceryListsErrorLoading,
                 style: TextStyle(color: theme.colorScheme.error),
               ),

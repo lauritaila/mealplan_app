@@ -1,7 +1,6 @@
 import 'package:dio/dio.dart';
 import 'package:meal_plan_app/config/config.dart';
 import 'package:meal_plan_app/config/constants/dio.dart';
-import 'package:meal_plan_app/config/errors/app_errors.dart';
 import 'package:meal_plan_app/features/grocery_list/domain/domain.dart';
 import 'package:meal_plan_app/features/grocery_list/infrastructure/mappers/grocery_mapper.dart';
 import 'package:meal_plan_app/features/grocery_list/infrastructure/mappers/pantry_mapper.dart';
@@ -38,8 +37,9 @@ class HttpGroceryDatasource extends GroceryDatasource {
       _assertSuccess(response.statusCode ?? 200);
       final data = response.data;
       if (data == null) return [];
-      if (data is! List)
+      if (data is! List) {
         throw const DataAppError.serializationFailed('grocery lists');
+      }
       return GroceryListMapper.fromList(data);
     } on DioException catch (e) {
       _handleDioException(e);

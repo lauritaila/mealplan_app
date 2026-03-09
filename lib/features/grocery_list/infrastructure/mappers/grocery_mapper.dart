@@ -53,8 +53,7 @@ DateTime? _parseDate(dynamic value) {
   try {
     if (value is DateTime) return value;
     return DateTime.parse(value.toString());
-  } catch (e) {
-    print('Warning: Error parsing date "$value": $e');
+  } catch (_) {
     return null;
   }
 }

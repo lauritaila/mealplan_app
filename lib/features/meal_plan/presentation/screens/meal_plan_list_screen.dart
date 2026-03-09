@@ -83,7 +83,7 @@ class MealPlanListScreen extends ConsumerWidget {
           return ListView.separated(
             padding: const EdgeInsets.fromLTRB(16, 16, 16, 100),
             itemCount: plans.length,
-            separatorBuilder: (_, __) => const SizedBox(height: 8),
+            separatorBuilder: (context, index) => const SizedBox(height: 8),
             itemBuilder: (context, index) {
               final plan = plans[index];
               return _MealPlanCard(plan: plan);

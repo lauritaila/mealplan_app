@@ -112,7 +112,7 @@ class MealPlanGenerator extends _$MealPlanGenerator {
       final mealPlansState = ref.read(mealPlansProvider);
       DateTime startDate = DateTime.now();
 
-      final List<MealPlan> currentPlans;
+      final List<dynamic> currentPlans;
       if (mealPlansState is AsyncData) {
         currentPlans = mealPlansState.value!;
       } else if (mealPlansState is AsyncLoading) {

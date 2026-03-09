@@ -1,6 +1,5 @@
-import 'package:riverpod_annotation/riverpod_annotation.dart';
-
-import '../../domain/entities/nutrition_summary.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:riverpod_annotation/riverpod_annotation.dart';import '../../domain/entities/nutrition_summary.dart';
 import '../../domain/repositories/nutrition_repository.dart';
 import '../../infrastructure/datasources/http_nutrition_datasource.dart';
 import '../../infrastructure/repositories/nutrition_repository_impl.dart';
@@ -8,7 +7,7 @@ import '../../infrastructure/repositories/nutrition_repository_impl.dart';
 part 'nutrition_provider.g.dart';
 
 @riverpod
-NutritionRepository nutritionRepository(NutritionRepositoryRef ref) {
+NutritionRepository nutritionRepository(Ref ref) {
   return NutritionRepositoryImpl(datasource: HttpNutritionDatasource());
 }
 
@@ -27,7 +26,7 @@ class NutritionDaysFilter extends _$NutritionDaysFilter {
 
 @riverpod
 Future<NutritionSummary> nutritionSummary(
-  NutritionSummaryRef ref, {
+  Ref ref, {
   int days = 7,
 }) {
   final repository = ref.watch(nutritionRepositoryProvider);
@@ -36,7 +35,7 @@ Future<NutritionSummary> nutritionSummary(
 
 @riverpod
 Future<NutritionSummary> currentNutritionSummary(
-  CurrentNutritionSummaryRef ref,
+  Ref ref,
 ) {
   final days = ref.watch(nutritionDaysFilterProvider);
   return ref.watch(nutritionSummaryProvider(days: days).future);
