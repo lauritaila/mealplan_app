@@ -137,7 +137,11 @@ class GroceryListDetailScreen extends ConsumerWidget {
             heroTag: 'grocery-detail-fab',
             tooltip: AppLocalizations.of(context).addItemTitleGrocery,
             onPressed: () => _showAddItem(context),
-            child: const Icon(Icons.add),
+            backgroundColor: const Color(0xFF7BA082),
+            foregroundColor: Colors.white,
+            elevation: 0,
+            shape: const CircleBorder(),
+            child: const Icon(Icons.add, size: 28),
           ),
         );
       },

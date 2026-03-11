@@ -10,6 +10,12 @@ import 'package:meal_plan_app/features/grocery_list/presentation/widgets/select_
 import 'package:meal_plan_app/features/meal_plan/domain/domain.dart';
 import 'package:meal_plan_app/features/meal_plan/presentation/providers/provider.dart';
 import 'package:meal_plan_app/features/shared/utils/app_error_localizations.dart';
+import 'package:meal_plan_app/features/meal_plan/presentation/widgets/detail_meal_plan/change_entry_date_sheet.dart';
+import 'package:meal_plan_app/features/meal_plan/presentation/widgets/detail_meal_plan/delete_entry_sheet.dart';
+import 'package:meal_plan_app/features/meal_plan/presentation/widgets/detail_meal_plan/entry_actions_sheet.dart';
+import 'package:meal_plan_app/features/meal_plan/presentation/widgets/detail_meal_plan/regenerate_entry_sheet.dart';
+import 'package:meal_plan_app/features/meal_plan/presentation/widgets/detail_meal_plan/save_entry_ingredients_flow.dart';
+import 'package:meal_plan_app/features/meal_plan/presentation/widgets/swap_recipe_sheet.dart';
 import 'package:meal_plan_app/l10n/app_localizations.dart';
 
 class MealPlanEntriesScreen extends ConsumerWidget {
@@ -22,6 +28,7 @@ class MealPlanEntriesScreen extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final entriesAsync = ref.watch(mealPlanEntriesProvider(planId));
     final actionsState = ref.watch(mealPlanEntryActionsProvider);
+    final statusUpdateState = ref.watch(dayMealEntryStatusUpdateProvider);
     final authState = ref.watch(authProvider);
     final l10n = AppLocalizations.of(context);
     final hideNutritionValues =
@@ -91,6 +98,24 @@ class MealPlanEntriesScreen extends ConsumerWidget {
           }
           final sortedDates = grouped.keys.toList()..sort();
 
+          // Calculate date range for the header
+          String dateRangeHeader = '';
+          if (sortedDates.isNotEmpty) {
+            final firstDate = sortedDates.first;
+            final lastDate = sortedDates.last;
+            final locale = Localizations.localeOf(context).toString();
+            if (firstDate.year != 2000) {
+              if (firstDate.month == lastDate.month && firstDate.year == lastDate.year) {
+                final monthName = DateFormat('MMMM', locale).format(firstDate);
+                dateRangeHeader = '${firstDate.day} - ${lastDate.day} de ${monthName[0].toUpperCase()}${monthName.substring(1)}';
+              } else {
+                final start = DateFormat('d MMM', locale).format(firstDate);
+                final end = DateFormat('d MMM', locale).format(lastDate);
+                dateRangeHeader = '$start - $end';
+              }
+            }
+          }
+
           return ListView.builder(
             padding: const EdgeInsets.fromLTRB(16, 24, 16, 24),
             itemCount: sortedDates.length + 1, // +1 for the top header
@@ -107,20 +132,13 @@ class MealPlanEntriesScreen extends ConsumerWidget {
                         children: [
                           Expanded(
                             child: Text(
-                              '5 - 11 de Marzo', // Ideally dynamic based on dates, mocked for design
+                              dateRangeHeader.isNotEmpty ? dateRangeHeader : (planName ?? l10n.planEntriesTitle),
                               style: const TextStyle(
                                 fontSize: 26,
                                 fontWeight: FontWeight.w900,
                                 color: Color(0xFF0F172A),
                                 height: 1.1,
                               ),
-                            ),
-                          ),
-                          Container(
-                            padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
-                            decoration: BoxDecoration(
-                              color: const Color(0xFFE8EFEA),
-                              borderRadius: BorderRadius.circular(16),
                             ),
                           ),
                         ],
@@ -150,14 +168,84 @@ class MealPlanEntriesScreen extends ConsumerWidget {
                   ...dayEntries.map(
                     (entry) => Padding(
                       padding: const EdgeInsets.only(bottom: 16),
-                      child: _PlanEntryCard(
+                      child: _MealEntryCard(
                         entry: entry,
                         hideNutritionValues: hideNutritionValues,
                         isUpdating:
+                            statusUpdateState.status ==
+                                DayMealEntryStatusUpdateStatus.loading ||
                             actionsState.status ==
-                            MealPlanEntryActionStatus.loading,
-                        userPermissions: userPermissions,
-                        planId: planId,
+                                MealPlanEntryActionStatus.loading,
+                        onOpenRecipe: entry.recipeId > 0
+                            ? () => context.push(
+                                  '/recipes/${entry.recipeId}?entryId=${entry.entryId}',
+                                )
+                            : null,
+                        onImportRecipeToList: () => _importRecipeToList(
+                          context,
+                          ref,
+                          recipeId: entry.recipeId,
+                        ),
+                        onCompleteEntry: () => _confirmComplete(
+                          context,
+                          ref,
+                          entry: entry,
+                          planId: planId,
+                        ),
+                        onToggleSkipped: () async {
+                          final wasSkipped = _isSkippedStatus(entry.status);
+                          await ref
+                              .read(dayMealEntryStatusUpdateProvider.notifier)
+                              .toggleSkipped(entry, date);
+                          final updateState = ref.read(
+                            dayMealEntryStatusUpdateProvider,
+                          );
+
+                          if (!context.mounted) return;
+
+                          if (updateState.status ==
+                                  DayMealEntryStatusUpdateStatus.success &&
+                              !wasSkipped) {
+                            await _showSkippedMealDialog(context);
+                          } else if (updateState.status ==
+                              DayMealEntryStatusUpdateStatus.error) {
+                            ScaffoldMessenger.of(context).showSnackBar(
+                              SnackBar(
+                                content: Text(
+                                  updateState.errorMessage ?? l10n.genericError,
+                                ),
+                              ),
+                            );
+                          }
+                          // invalidate entries screen provider after completion correctly
+                          ref.invalidate(mealPlanEntriesProvider(planId));
+                        },
+                        onDeleteEntry: () => _confirmDeleteEntry(
+                          context,
+                          ref,
+                          entry.entryId,
+                          planId,
+                        ),
+                        onRegenerateEntry: () => _showRegenerateSheet(
+                          context,
+                          ref,
+                          entryId: entry.entryId,
+                          mealType: entry.mealType ?? '',
+                          planId: planId,
+                          userPermissions: userPermissions,
+                        ),
+                        onSwapRecipe: () => _swapRecipe(
+                          context,
+                          ref,
+                          entryId: entry.entryId,
+                          planId: planId,
+                        ),
+                        onChangeDate: () => _changeEntryDate(
+                          context,
+                          ref,
+                          entryId: entry.entryId,
+                          planId: planId,
+                        ),
                       ),
                     ),
                   ),
@@ -280,165 +368,552 @@ class _DateHeader extends StatelessWidget {
     );
   }
 }
-class _PlanEntryCard extends ConsumerWidget {
+
+class _MealEntryCard extends StatelessWidget {
   final DayMealEntry entry;
   final bool hideNutritionValues;
   final bool isUpdating;
-  final PermissionDetails? userPermissions;
-  final int planId;
+  final VoidCallback? onOpenRecipe;
+  final VoidCallback onImportRecipeToList;
+  final VoidCallback onCompleteEntry;
+  final Future<void> Function() onToggleSkipped;
+  final VoidCallback onDeleteEntry;
+  final VoidCallback onRegenerateEntry;
+  final VoidCallback onSwapRecipe;
+  final VoidCallback onChangeDate;
 
-  const _PlanEntryCard({
+  const _MealEntryCard({
     required this.entry,
     required this.hideNutritionValues,
     required this.isUpdating,
-    required this.userPermissions,
-    required this.planId,
+    required this.onToggleSkipped,
+    required this.onImportRecipeToList,
+    required this.onCompleteEntry,
+    required this.onDeleteEntry,
+    required this.onRegenerateEntry,
+    required this.onSwapRecipe,
+    required this.onChangeDate,
+    this.onOpenRecipe,
   });
 
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
+  Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context);
+    final isSkipped = _isSkippedStatus(entry.status);
     final isCompleted = entry.status?.toLowerCase() == 'completed';
 
     return Container(
       decoration: BoxDecoration(
         color: Colors.white,
-        borderRadius: BorderRadius.circular(16),
-        border: Border.all(color: const Color(0xFFF1F5F9), width: 1.5),
+        borderRadius: BorderRadius.circular(24),
         boxShadow: const [
           BoxShadow(
-            color: Color(0x04000000),
+            color: Color(0x0A000000),
             blurRadius: 10,
             offset: Offset(0, 4),
-          ),
+          )
         ],
       ),
-      child: Material(
-        color: Colors.transparent,
-        child: InkWell(
-          borderRadius: BorderRadius.circular(16),
-          onTap: entry.recipeId > 0
-              ? () => context.push('/recipes/${entry.recipeId}?entryId=${entry.entryId}')
-              : null,
-          child: Padding(
-            padding: const EdgeInsets.all(16),
-            child: Column(
+      child: Padding(
+        padding: const EdgeInsets.all(24),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Row(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Row(
-                  crossAxisAlignment: CrossAxisAlignment.center,
-                  children: [
-                    if (entry.mealType != null && entry.mealType!.isNotEmpty)
-                      Container(
-                        width: 90, // Fixed width to balance the layout
-                        alignment: Alignment.centerLeft,
-                        child: Container(
-                          padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
-                          decoration: BoxDecoration(
-                            color: const Color(0xFFF1F5F9),
-                            borderRadius: BorderRadius.circular(8),
-                          ),
-                          child: Text(
-                            entry.mealType!.toUpperCase(),
-                            style: const TextStyle(
-                              color: Color(0xFF5C7861),
-                              fontSize: 10,
-                              fontWeight: FontWeight.w800,
-                              letterSpacing: 0.5,
-                            ),
-                          ),
-                        ),
-                      )
-                    else
-                      const SizedBox(width: 90),
-                    Expanded(
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: [
-                          const Icon(Icons.access_time_filled, size: 14, color: Color(0xFF94A3B8)),
-                          const SizedBox(width: 6),
-                          const Text(
-                            '15 min', // Mock for prep time
-                            style: TextStyle(
-                              color: Color(0xFF94A3B8),
-                              fontSize: 12,
-                              fontWeight: FontWeight.w600,
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
-                    Container(
-                      width: 90,
-                      alignment: Alignment.centerRight,
-                      child: const Icon(Icons.more_vert, size: 20, color: Color(0xFF94A3B8)),
-                    ),
-                  ],
-                ),
-                const SizedBox(height: 16),
-                Text(
-                  entry.name,
-                  style: TextStyle(
-                    fontSize: 16,
-                    fontWeight: FontWeight.bold,
-                    color: isCompleted ? const Color(0xFF94A3B8) : const Color(0xFF0F172A),
-                    decoration: isCompleted ? TextDecoration.lineThrough : null,
-                    height: 1.3,
+                Container(
+                  width: 56,
+                  height: 56,
+                  decoration: BoxDecoration(
+                    color: const Color(0xFFE8EFEA),
+                    borderRadius: BorderRadius.circular(16),
+                  ),
+                  child: const Center(
+                    child: Icon(Icons.restaurant, color: Color(0xFF5C7861), size: 28),
                   ),
                 ),
-                const SizedBox(height: 16),
-                Wrap(
-                  spacing: 8,
-                  runSpacing: 8,
-                  children: [
-                    if (!hideNutritionValues && entry.calories != null)
-                      Container(
-                        padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
-                        decoration: BoxDecoration(
-                          color: const Color(0xFFF1F5F9),
-                          borderRadius: BorderRadius.circular(12),
-                        ),
-                        child: Text(
-                          '${entry.calories!.round()} kcal',
-                          style: const TextStyle(
-                            color: Color(0xFF64748B),
-                            fontSize: 11,
-                            fontWeight: FontWeight.w600,
-                          ),
+                const SizedBox(width: 16),
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        entry.name,
+                        style: const TextStyle(
+                          fontSize: 18,
+                          fontWeight: FontWeight.w800,
+                          color: Color(0xFF0F172A),
+                          height: 1.2,
                         ),
                       ),
-                    ...entry.categories.take(3).map((category) => Container(
-                          padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
-                          decoration: BoxDecoration(
-                            color: const Color(0xFFF7FBF8),
-                            borderRadius: BorderRadius.circular(12),
+                      const SizedBox(height: 8),
+                      // Time, Servings, KCAL sub-row
+                      Row(
+                        children: [
+                          const Icon(Icons.person_outline, size: 14, color: Color(0xFF64748B)),
+                          const SizedBox(width: 4),
+                          Text(
+                            '${_formatInt(entry.servings)} serv',
+                            style: const TextStyle(fontSize: 12, color: Color(0xFF64748B), fontWeight: FontWeight.w600),
                           ),
-                          child: Text(
-                            category,
-                            style: const TextStyle(
-                              color: Color(0xFF5C7861),
-                              fontSize: 11,
-                              fontWeight: FontWeight.w600,
+                          const SizedBox(width: 12),
+                          if (!hideNutritionValues && entry.calories != null) ...[
+                            const Icon(Icons.bolt, size: 14, color: Color(0xFF64748B)),
+                            const SizedBox(width: 4),
+                            Text(
+                              '${entry.calories!.toInt()} Cal',
+                              style: const TextStyle(fontSize: 12, color: Color(0xFF64748B), fontWeight: FontWeight.w600),
                             ),
-                          ),
-                        )),
-                    if (isCompleted)
-                      Container(
-                        padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
-                        decoration: BoxDecoration(
-                          color: Colors.green.withOpacity(0.1),
-                          borderRadius: BorderRadius.circular(12),
-                        ),
-                        child: const Icon(Icons.check_circle, size: 14, color: Colors.green),
+                          ],
+                        ],
                       ),
-                  ],
+                    ],
+                  ),
+                ),
+                const SizedBox(width: 8),
+                SizedBox(
+                  width: 32,
+                  height: 32,
+                  child: IconButton(
+                    padding: EdgeInsets.zero,
+                    icon: const Icon(Icons.more_vert, color: Color(0xFFCBD5E1)),
+                    onPressed: isUpdating
+                        ? null
+                        : () {
+                            showModalBottomSheet<void>(
+                              context: context,
+                              isScrollControlled: true,
+                              backgroundColor: Colors.white,
+                              shape: const RoundedRectangleBorder(
+                                borderRadius: BorderRadius.vertical(
+                                  top: Radius.circular(20),
+                                ),
+                              ),
+                              builder: (_) => EntryActionsSheet(
+                                entry: entry,
+                                onToggleSkipped: onToggleSkipped,
+                                onImportRecipeToList: onImportRecipeToList,
+                                onDeleteEntry: onDeleteEntry,
+                                onRegenerateEntry: onRegenerateEntry,
+                                onSwapRecipe: onSwapRecipe,
+                                onChangeDate: onChangeDate,
+                              ),
+                            );
+                          },
+                  ),
                 ),
               ],
             ),
-          ),
+            if (!hideNutritionValues) ...[
+              const SizedBox(height: 24),
+              Container(
+                padding: const EdgeInsets.symmetric(vertical: 16, horizontal: 20),
+                decoration: BoxDecoration(
+                  color: const Color(0xFFEFF3F0),
+                  borderRadius: BorderRadius.circular(24),
+                ),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    _MiniMacro(label: 'PROTEIN', value: '${entry.proteinGrams?.toStringAsFixed(0) ?? '0'}g'),
+                    Container(width: 1, height: 32, color: const Color(0xFFD4E0D6)),
+                    _MiniMacro(label: 'FAT', value: '${entry.fatsGrams?.toStringAsFixed(0) ?? '0'}g'),
+                    Container(width: 1, height: 32, color: const Color(0xFFD4E0D6)),
+                    _MiniMacro(label: 'CARBS', value: '${entry.carbsGrams?.toStringAsFixed(0) ?? '0'}g'),
+                    Container(width: 1, height: 32, color: const Color(0xFFD4E0D6)),
+                    _MiniMacro(label: 'KCAL', value: entry.calories?.toStringAsFixed(0) ?? '0'),
+                  ],
+                ),
+              ),
+            ],
+            if (entry.categories.isNotEmpty) ...[
+              const SizedBox(height: 20),
+              Wrap(
+                spacing: 8,
+                runSpacing: 8,
+                children: entry.categories
+                    .map((category) => _CategoryChip(label: category))
+                    .toList(),
+              ),
+            ],
+            const SizedBox(height: 24),
+            Row(
+              children: [
+                Expanded(
+                  child: OutlinedButton(
+                    onPressed: onOpenRecipe,
+                    style: OutlinedButton.styleFrom(
+                      foregroundColor: const Color(0xFF5C7861),
+                      side: const BorderSide(color: Color(0xFF5C7861)),
+                      padding: const EdgeInsets.symmetric(vertical: 16),
+                      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+                    ),
+                    child: Text(l10n.viewRecipeDetails, style: const TextStyle(fontWeight: FontWeight.w700, fontSize: 13)),
+                  ),
+                ),
+                const SizedBox(width: 12),
+                Expanded(
+                  child: FilledButton.icon(
+                    onPressed: (isUpdating || isCompleted || isSkipped) ? null : onCompleteEntry,
+                    style: FilledButton.styleFrom(
+                      backgroundColor: isSkipped ? Colors.grey : (isCompleted ? Colors.green : const Color(0xFF5C7861)),
+                      disabledBackgroundColor: isSkipped ? Colors.grey.shade300 : null,
+                      disabledForegroundColor: isSkipped ? Colors.grey.shade600 : null,
+                      padding: const EdgeInsets.symmetric(vertical: 16),
+                      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+                      minimumSize: const Size(0, 52), // Uniform height
+                    ),
+                    icon: Icon(
+                        isSkipped ? Icons.do_not_disturb_on 
+                        : (isCompleted ? Icons.check_circle : Icons.check_circle_outline), 
+                        size: 20
+                    ),
+                    label: FittedBox(
+                      fit: BoxFit.scaleDown,
+                      child: Text(
+                        isSkipped ? l10n.mealSkippedLabel : (isCompleted ? l10n.mealCompletedLabel : l10n.completeAction),
+                        style: const TextStyle(fontWeight: FontWeight.w700, fontSize: 13),
+                        maxLines: 1,
+                      ),
+                    ),
+                  ),
+                ),
+              ],
+            ),
+            if (isUpdating) ...[
+              const SizedBox(height: 16),
+              const LinearProgressIndicator(minHeight: 2, color: Color(0xFF5C7861)),
+            ],
+          ],
         ),
       ),
     );
   }
+}
+
+class _CategoryChip extends StatelessWidget {
+  final String label;
+
+  const _CategoryChip({required this.label});
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
+      decoration: BoxDecoration(
+        color: Theme.of(context).colorScheme.secondaryContainer,
+        borderRadius: BorderRadius.circular(12),
+      ),
+      child: Text(label, style: Theme.of(context).textTheme.bodySmall),
+    );
+  }
+}
+
+class _MiniMacro extends StatelessWidget {
+  final String label;
+  final String value;
+  
+  const _MiniMacro({required this.label, required this.value});
+  
+  @override
+  Widget build(BuildContext context) {
+    return Column(
+      mainAxisSize: MainAxisSize.min,
+      crossAxisAlignment: CrossAxisAlignment.center,
+      children: [
+        Text(
+          label,
+          style: const TextStyle(
+            color: Color(0xFF7A9382), 
+            fontSize: 11, 
+            fontWeight: FontWeight.w600,
+            letterSpacing: 0.5,
+          ),
+        ),
+        const SizedBox(height: 4),
+        Text(
+          value,
+          style: const TextStyle(
+            color: Color(0xFF263238), 
+            fontSize: 18, 
+            fontWeight: FontWeight.w800,
+          ),
+        ),
+      ],
+    );
+  }
+}
+
+Future<void> _importRecipeToList(
+  BuildContext context,
+  WidgetRef ref, {
+  required int recipeId,
+}) async {
+  if (recipeId <= 0) {
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(content: Text(AppLocalizations.of(context).noRecipeAssociated)),
+    );
+    return;
+  }
+  await SaveEntryIngredientsFlow.show(
+    context: context,
+    ref: ref,
+    recipeId: recipeId,
+  );
+}
+
+Future<void> _confirmComplete(
+  BuildContext context,
+  WidgetRef ref, {
+  required DayMealEntry entry,
+  required int planId,
+}) async {
+  final l10n = AppLocalizations.of(context);
+  if (entry.recipeId <= 0) {
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(content: Text(l10n.noRecipeAssociated)),
+    );
+    return;
+  }
+  final confirmed = await showDialog<bool>(
+    context: context,
+    builder: (ctx) => AlertDialog(
+      title: Text(l10n.markCompleteDialogTitle),
+      content: Column(
+        mainAxisSize: MainAxisSize.min,
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Text(l10n.markCompleteQuestion(entry.name)),
+          const SizedBox(height: 12),
+          Container(
+            padding: const EdgeInsets.all(12),
+            decoration: BoxDecoration(
+              color: Colors.amber.withAlpha(30),
+              borderRadius: BorderRadius.circular(8),
+              border: Border.all(color: Colors.amber),
+            ),
+            child: Row(
+              children: [
+                const Icon(Icons.info_outline, color: Colors.amber, size: 18),
+                const SizedBox(width: 8),
+                Expanded(
+                  child: Text(
+                    l10n.markCompleteDeductInfo,
+                    style: const TextStyle(fontSize: 12),
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ],
+      ),
+      actions: [
+        TextButton(
+          onPressed: () => Navigator.of(ctx).pop(false),
+          child: Text(l10n.cancel),
+        ),
+        FilledButton.icon(
+          onPressed: () => Navigator.of(ctx).pop(true),
+          icon: const Icon(Icons.check_circle_outline),
+          label: Text(l10n.completeAction),
+          style: FilledButton.styleFrom(backgroundColor: Colors.green),
+        ),
+      ],
+    ),
+  );
+  if (confirmed != true || !context.mounted) return;
+  final messenger = ScaffoldMessenger.of(context);
+  final result = await ref
+      .read(mealPlanEntryActionsProvider.notifier)
+      .bulkDeduct(
+        entry.recipeId,
+        entry.servings ?? 1,
+        entryId: entry.entryId,
+      );
+  if (!context.mounted) return;
+
+  if (result != null) {
+    ref.invalidate(mealPlanEntriesProvider(planId));
+    ref.read(mealPlanEntryActionsProvider.notifier).reset();
+    messenger.showSnackBar(
+      SnackBar(
+        content: Text(
+          result.missing.isEmpty
+              ? l10n.mealCompletedSuccess(result.deducted.length)
+              : l10n.mealCompletedMissing(result.missing.length),
+        ),
+        duration: const Duration(seconds: 4),
+      ),
+    );
+  } else {
+    messenger.showSnackBar(
+      SnackBar(content: Text(l10n.mealCompletedError)),
+    );
+  }
+}
+
+Future<void> _confirmDeleteEntry(
+  BuildContext context,
+  WidgetRef ref,
+  int entryId,
+  int planId,
+) async {
+  final actionsNotifier = ref.read(mealPlanEntryActionsProvider.notifier);
+  await showModalBottomSheet<void>(
+    context: context,
+    isScrollControlled: true,
+    backgroundColor: Colors.transparent,
+    builder: (_) => DeleteEntrySheet(
+      entryId: entryId,
+      actionsNotifier: actionsNotifier,
+      onDeleted: () {
+        ref.invalidate(mealPlanEntriesProvider(planId));
+      },
+    ),
+  );
+}
+
+Future<void> _swapRecipe(
+  BuildContext context,
+  WidgetRef ref, {
+  required int entryId,
+  required int planId,
+}) async {
+  final selectedRecipeId = await showModalBottomSheet<int?>(
+    context: context,
+    isScrollControlled: true,
+    useSafeArea: true,
+    shape: const RoundedRectangleBorder(
+      borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
+    ),
+    builder: (_) => const SwapRecipeSheet(),
+  );
+
+  if (selectedRecipeId == null || !context.mounted) return;
+
+  final notifier = ref.read(mealPlanEntryActionsProvider.notifier);
+  final updated = await notifier.swapRecipe(entryId, selectedRecipeId);
+
+  if (updated == null) {
+    if (!context.mounted) return;
+    final state = ref.read(mealPlanEntryActionsProvider);
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        content: Text(
+          state.errorMessage ?? AppLocalizations.of(context).genericError,
+        ),
+      ),
+    );
+    notifier.reset();
+    return;
+  }
+
+  if (!context.mounted) return;
+  ref.invalidate(mealPlanEntriesProvider(planId));
+  notifier.reset();
+}
+
+Future<void> _changeEntryDate(
+  BuildContext context,
+  WidgetRef ref, {
+  required int entryId,
+  required int planId,
+}) async {
+  final pickedDate = await showModalBottomSheet<DateTime?>(
+    context: context,
+    isScrollControlled: true,
+    backgroundColor: Colors.white,
+    shape: const RoundedRectangleBorder(
+      borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
+    ),
+    builder: (_) => ChangeEntryDateSheet(initialDate: DateTime.now()),
+  );
+
+  if (pickedDate == null || !context.mounted) return;
+  
+  // Normalized date for storing
+  final normalizedDate = DateTime(
+    pickedDate.year,
+    pickedDate.month,
+    pickedDate.day,
+  );
+
+  final notifier = ref.read(mealPlanEntryActionsProvider.notifier);
+  await notifier.moveEntryToDate(entryId, normalizedDate);
+
+  if (!context.mounted) return;
+  final state = ref.read(mealPlanEntryActionsProvider);
+  if (state.status == MealPlanEntryActionStatus.success) {
+    ref.invalidate(mealPlanEntriesProvider(planId));
+    notifier.reset();
+  } else if (state.status == MealPlanEntryActionStatus.error) {
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        content: Text(
+          state.errorMessage ?? AppLocalizations.of(context).genericMoveError,
+        ),
+      ),
+    );
+    notifier.reset();
+  }
+}
+
+Future<void> _showRegenerateSheet(
+  BuildContext context,
+  WidgetRef ref, {
+  required int entryId,
+  required String mealType,
+  required int planId,
+  required PermissionDetails? userPermissions,
+}) async {
+  final notifier = ref.read(mealPlanEntryActionsProvider.notifier);
+  final updated = await showModalBottomSheet<DayMealEntry?>(
+    context: context,
+    isScrollControlled: true,
+    useSafeArea: true,
+    backgroundColor: Colors.white,
+    shape: const RoundedRectangleBorder(
+      borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
+    ),
+    builder: (_) => RegenerateEntrySheet(
+      entryId: entryId,
+      mealType: mealType,
+      userPermissions: userPermissions,
+      actionsNotifier: notifier,
+    ),
+  );
+
+  if (updated == null || !context.mounted) return;
+  ref.invalidate(mealPlanEntriesProvider(planId));
+  ref.read(mealPlanEntryActionsProvider.notifier).reset();
+}
+
+Future<void> _showSkippedMealDialog(BuildContext context) async {
+  final l10n = AppLocalizations.of(context);
+  return showDialog(
+    context: context,
+    builder: (ctx) => AlertDialog(
+      title: Text(l10n.skipMealDialogTitle),
+      content: Text(l10n.skipMealDialogMessage),
+      actions: [
+        FilledButton(
+          onPressed: () => Navigator.of(ctx).pop(),
+          child: Text(l10n.done),
+        ),
+      ],
+    ),
+  );
+}
+
+bool _isSkippedStatus(String? status) {
+  if (status == null) return false;
+  return status.toLowerCase() == 'skipped';
+}
+
+String _formatInt(int? value) {
+  if (value == null) return '--';
+  return value.toString();
 }
 
 class _ActionRow extends StatelessWidget {
@@ -447,7 +922,6 @@ class _ActionRow extends StatelessWidget {
   final Color iconBgColor;
   final Color iconColor;
   final VoidCallback onTap;
-  final bool isDestructive;
 
   const _ActionRow({
     required this.icon,
@@ -455,7 +929,6 @@ class _ActionRow extends StatelessWidget {
     required this.iconBgColor,
     required this.iconColor,
     required this.onTap,
-    this.isDestructive = false,
   });
 
   @override
@@ -475,10 +948,10 @@ class _ActionRow extends StatelessWidget {
             const SizedBox(width: 16),
             Text(
               label,
-              style: TextStyle(
+              style: const TextStyle(
                 fontSize: 16,
                 fontWeight: FontWeight.w600,
-                color: isDestructive ? const Color(0xFFE57373) : const Color(0xFF1A1E1B),
+                color: Color(0xFF1A1E1B),
               ),
             ),
           ],
@@ -487,4 +960,3 @@ class _ActionRow extends StatelessWidget {
     );
   }
 }
-
