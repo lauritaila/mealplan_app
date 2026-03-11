@@ -57,55 +57,49 @@ class GroceryListCard extends StatelessWidget {
       onDismissed: (_) {},
       child: Card(
         elevation: 0,
+        color: Colors.white,
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(16),
           side: BorderSide(
-            color: theme.colorScheme.outlineVariant.withValues(alpha: 0.5),
+            color: Colors.grey.shade200,
           ),
         ),
         child: InkWell(
           onTap: onTap,
           borderRadius: BorderRadius.circular(16),
           child: Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 18),
+            padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 16),
             child: Row(
               children: [
-                Container(
-                  width: 44,
-                  height: 44,
-                  decoration: BoxDecoration(
-                    color: theme.colorScheme.primaryContainer,
-                    borderRadius: BorderRadius.circular(12),
-                  ),
-                  child: Icon(
-                    Icons.shopping_cart_outlined,
-                    color: theme.colorScheme.onPrimaryContainer,
-                  ),
-                ),
-                const SizedBox(width: 14),
                 Expanded(
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Text(
                         list.name,
-                        style: theme.textTheme.titleMedium?.copyWith(
-                          fontWeight: FontWeight.w600,
+                        style: const TextStyle(
+                          color: Color(0xFF334139), // Dark green-grey
+                          fontWeight: FontWeight.bold,
+                          fontSize: 15,
                         ),
                       ),
-                      if (list.createdAt != null)
+                      if (list.createdAt != null) ...[
+                        const SizedBox(height: 4),
                         Text(
                           _formatDate(list.createdAt!, context),
-                          style: theme.textTheme.bodySmall?.copyWith(
-                            color: theme.colorScheme.onSurfaceVariant,
+                          style: TextStyle(
+                            color: Colors.blueGrey.shade400,
+                            fontSize: 12,
                           ),
                         ),
+                      ],
                     ],
                   ),
                 ),
-                Icon(
+                const Icon(
                   Icons.chevron_right,
-                  color: theme.colorScheme.onSurfaceVariant,
+                  color: Color(0xFF7BA082),
+                  size: 20,
                 ),
               ],
             ),

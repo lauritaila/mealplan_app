@@ -136,7 +136,7 @@ class _CookingAssistantScreenState
                             curve: Curves.easeInOut,
                           );
                         },
-                        child: Text(l10n.back),
+                        child: const Text('Atrás'),
                       ),
                     const Spacer(),
                     if (_currentIndex < steps.length - 1)
@@ -147,13 +147,13 @@ class _CookingAssistantScreenState
                             curve: Curves.easeInOut,
                           );
                         },
-                        child: Text(l10n.next),
+                        child: const Text('Siguiente'),
                       )
                     else
                       FilledButton.icon(
                         icon: const Icon(Icons.check_circle_outline),
                         onPressed: _completeRecipe,
-                        label: Text(l10n.complete_recipe),
+                        label: const Text('Completar receta'),
                         style: FilledButton.styleFrom(
                           backgroundColor: Colors.green,
                         ),
@@ -169,40 +169,15 @@ class _CookingAssistantScreenState
   }
 
   Future<void> _completeRecipe() async {
-    final l10n = AppLocalizations.of(context);
-    final messenger = ScaffoldMessenger.of(context);
-    
-    try {
-      final notifier = ref.read(mealPlanEntryActionsProvider.notifier);
-      final result = await notifier.bulkDeduct(widget.recipeId, 1);
-
-      if (!mounted) return;
-
-      if (result != null) {
-        messenger.showSnackBar(
-          SnackBar(
-            content: Text(
-              result.missing.isEmpty
-                  ? l10n.allIngredientsDeducted(result.deducted.length)
-                  : l10n.someIngredientsMissing(result.missing.length),
-            ),
-          ),
+     final notifier = ref.read(mealPlanEntryActionsProvider.notifier);
+     final result = await notifier.bulkDeduct(widget.recipeId, 1);
+     if (!context.mounted) return;
+     if (result != null) {
+        ScaffoldMessenger.of(context).showSnackBar(
+           SnackBar(content: Text(result.missing.isEmpty ? '¡Receta completada y descontada de la despensa!' : 'Receta completada. Faltaron ${result.missing.length} ingredientes en la despensa.')),
         );
-      } else {
-        messenger.showSnackBar(
-          SnackBar(content: Text(l10n.bulkDeductUnknownError)),
-        );
-      }
-    } catch (e) {
-      if (!mounted) return;
-      messenger.showSnackBar(
-        SnackBar(content: Text(l10n.genericError)),
-      );
-    } finally {
-      if (mounted) {
-        context.pop();
-      }
-    }
+     }
+     context.pop();
   }
 
   Color _pastelColor(int index) {

@@ -409,98 +409,12 @@
   "@errorEmailConfirmationMismatch": {
     "description": "Se muestra cuando el correo ingresado para confirmar no coincide con el del usuario."
   },
-  "homeTodayPlanReady": "Tu plan para hoy está listo",
-  "homeWeekLabel": "SEMANA",
-  "homeViewRecipeShort": "Ver Receta",
-  "homeFavoritesAction": "Favoritas",
-  "homeEatOutAction": "Comer Fuera",
-  "homeSkipMealQuestion": "¿Qué comida comerás fuera?",
-  "homeSkipMealDescription": "Selecciona las comidas que no prepararás en casa para ajustar tus macros del día.",
-  "homeConfirmAction": "Confirmar",
-  "homeSkippingMeal": "Saltando {mealName}...",
-  "@homeSkippingMeal": {
-    "placeholders": {
-      "mealName": {}
-    }
-  },
-  "usePantryLabel": "Usar ingredientes de la despensa",
-  "usePantrySubtitle": "Priorizar recetas con ingredientes que ya tienes.",
-  "consistencyRingTitle": "Consistencia",
-  "consistencyRingTooltip": "Tu puntaje de consistencia se basa en qué tan cerca estuviste de tus objetivos nutricionales los últimos 7 días.",
-  "consistencyRingSubtitle": "Basado en tus últimos 7 días",
-  "consistencyMessageHigh": "¡Excelente! Mantienes un {score}% de consistencia.",
-  "@consistencyMessageHigh": {
-    "placeholders": {
-      "score": {}
-    }
-  },
-  "consistencyMessageMedium": "¡Buen trabajo! Estás por encima del 50%.",
-  "consistencyMessageLow": "¡Vamos! Puedes mejorar tu consistencia.",
-  "menuAddToGrocery": "Agregar a la lista",
-  "planEntriesTitle": "Comidas del plan",
-  "noEntriesInPlan": "No hay comidas en este plan.",
-  "menuViewRecipe": "Ver receta",
-  "menuMarkComplete": "Marcar como completada",
-  "addRecipeToListTitle": "Agregar ingredientes a la lista",
-  "recipeAddedToList": "Agregado a {listName}",
-  "@recipeAddedToList": {
-    "placeholders": {
-      "listName": {}
-    }
-  },
-  "recipeAddFailed": "Error al agregar a la lista",
-  "markCompleteDialogTitle": "Marcar como completada",
-  "markCompleteQuestion": "¿Preparaste {recipeName}?",
-  "@markCompleteQuestion": {
-    "placeholders": {
-      "recipeName": {}
-    }
-  },
-  "markCompleteDeductInfo": "Al marcar como completada, se descontarán los ingredientes de tu despensa.",
-  "completeAction": "Completar",
-  "allIngredientsDeducted": "{count} ingredientes descontados",
-  "@allIngredientsDeducted": {
-    "placeholders": {
-      "count": {}
-    }
-  },
-  "someIngredientsMissing": "{count} ingredientes faltantes en despensa",
-  "@someIngredientsMissing": {
-    "placeholders": {
-      "count": {}
-    }
-  },
-  "alsoRemoveFromGrocery": "También eliminar de la lista de compras",
-  "weeklyAveragesTitle": "Promedios semanales",
-  "weeklyActivityTitle": "Actividad semanal",
-  "achievementsTitle": "Logros",
-  "achievementStreakTitle": "Racha de oro",
-  "achievementStreakDesc": "Has completado tus comidas 5 días seguidos.",
-  "achievementWasteTitle": "Cero desperdicio",
-  "achievementWasteDesc": "Has utilizado todos los ingredientes de tu lista.",
-  "achievementVarietyTitle": "Explorador culinario",
-  "achievementVarietyDesc": "Has probado 10 recetas diferentes este mes.",
-
-  "nutritionFilterDaily": "Hoy",
-  "nutritionFilterWeekly": "7 días",
-  "nutritionFilterMonthly": "30 días",
-  "nutritionErrorLoading": "Error al cargar los datos nutricionales",
-  "deleteGroceryListDialogTitle": "Eliminar lista de compras",
-  "deleteGroceryListDialogMessage": "¿Estás seguro de que quieres eliminar la lista \"{name}\"?",
-  "@deleteGroceryListDialogMessage": {
-    "placeholders": {
-      "name": {}
-    }
-  },
-  "myPlansTitle": "Mis Planes",
-  "newPlan": "Nuevo Plan",
-  "noSavedPlans": "No hay planes guardados",
-  "createFirstPlan": "Crea tu primer plan",
-  "ai": "IA",
-  "menuViewEntries": "Ver entradas",
-  "menuSaveIngredients": "Guardar ingredientes",
-  "menuReusePlan": "Reutilizar plan",
   "saveIngredientsSheetTitle": "Guardar Ingredientes",
+  "saveIngredientsDialogContent": "¿Quieres guardar los ingredientes de este plan en una lista de compras?",
+  "yesSaveAction": "Sí, Guardar",
+  "notNowAction": "Ahora No",
+  "selectListTitle": "Seleccionar Lista",
+  "selectListSubtitle": "Elige dónde guardar tus artículos",
   "savedIngredientsSuccess": "Ingredientes guardados en {listName}",
   "@savedIngredientsSuccess": {
     "placeholders": {
@@ -508,7 +422,8 @@
     }
   },
   "savedIngredientsFailed": "Error al guardar ingredientes",
-  "planReusedSuccess": "Plan reutilizado como {planName} con {count} entradas",
+  "deletePlanAlsoRemoveGrocery": "También eliminar ingredientes de la lista de compras",
+  "planReusedSuccess": "Plan '{planName}' reutilizado con {count} recetas",
   "@planReusedSuccess": {
     "placeholders": {
       "planName": {},
@@ -516,130 +431,195 @@
     }
   },
   "planReusedView": "Ver",
-  "planReusedFailed": "Error al reutilizar plan",
-  "deletePlanDialogTitle": "Eliminar plan",
-  "deletePlanDialogMessage": "¿Seguro que deseas eliminar este plan?",
-  "deletePlanAlsoRemoveGrocery": "También remover de la lista de compras",
-  "planDeletedSuccess": "Plan eliminado con éxito",
-  "planDeleteFailed": "Error al eliminar el plan",
+  "planReusedFailed": "Error al reutilizar el plan",
   "reusePlanSheetTitle": "Reutilizar Plan",
   "reusePlanStartDateLabel": "Fecha de inicio",
-  "reusePlanSelectDate": "Seleccionar fecha",
-  "reusePlanNameLabel": "Nombre del plan",
+  "reusePlanSelectDate": "Seleccionar Fecha",
+  "reusePlanNameLabel": "Nombre (Opcional)",
   "reusePlanNameHint": "Ej. Plan de la próxima semana",
-  "groceryListsTitle": "Listas de Compras",
-  "groceryListsNewListLabel": "Nueva Lista",
-  "groceryListsSectionHeader": "Tus Listas",
-  "groceryListsErrorLoading": "Error cargando listas",
-  "groceryListsEmptyTitle": "Aún no hay listas",
-  "groceryListsEmptySubtitle": "Crea una nueva lista para guardar tus ingredientes.",
-  "pantryCardTitle": "Despensa",
-  "pantryCardSubtitle": "Administra los artículos de tu despensa",
-  "pantryCountLabel": "{count} artículos",
-  "@pantryCountLabel": {
-    "placeholders": {
-      "count": {}
-    }
-  },
-  "groceryListDetailPendingHeader": "Pendientes",
-  "groceryListDetailCompletedHeader": "Completados",
-  "addItemTitleGrocery": "Agregar artículo",
-  "groceryListDetailEmptyTitle": "Esta lista está vacía",
-  "groceryListDetailEmptySubtitle": "Agrega artículos manualmente o desde tus planes de comida.",
-  "pantryTitle": "Despensa",
-  "pantryOtherCategory": "Otros",
-  "pantryAddTooltip": "Agregar artículo",
-  "pantryEmptyTitle": "La despensa está vacía",
-  "pantryEmptySubtitle": "Agrega artículos a tu despensa.",
-  "pantryNoDate": "Sin fecha de expiración",
-  "pantryEditTitle": "Editar {itemName}",
-  "@pantryEditTitle": {
-    "placeholders": {
-      "itemName": {}
-    }
-  },
-  "pantryQuantityLabel": "Cantidad",
-  "pantryExpiryLabel": "Fecha de expiración",
-  "save": "Guardar",
-  "changeDatesTooltip": "Cambiar fechas",
-  "saveToGroceryList": "Guardar en Lista",
-  "saveIngredientsPrompt": "Selecciona una lista",
-  "datesUpdatedSuccess": "Fechas actualizadas",
-  "savePlanToList": "Guardar Plan a Lista",
-  "importMealPlanSuccess": "Plan importado a {listName}",
-  "@importMealPlanSuccess": {
+  "menuReusePlan": "Reutilizar plan",
+  "menuSaveIngredients": "Guardar ingredientes",
+  "menuViewEntries": "Ver recetas",
+  "planActionsTitle": "Acciones del Plan",
+  "datesUpdatedSuccess": "Fechas actualizadas correctamente",
+  "noRecipeAssociated": "No hay receta asociada a esta comida.",
+  "addRecipeToListTitle": "Agregar Receta a la Lista",
+  "recipeAddedToList": "Ingredientes de la receta agregados a {listName}",
+  "@recipeAddedToList": {
     "placeholders": {
       "listName": {}
     }
   },
-  "importMealPlanFailure": "Error al importar el plan",
-  "alsoRemoveGroceryList": "Remover de la lista de compras",
-  "alsoRemoveGroceryListSubtitle": "Se removerán los ingredientes relacionados",
-  "noRecipeAssociated": "No hay receta asociada",
-  "mealCompletedSuccess": "{count} comidas completadas",
+  "recipeAddFailed": "Error al agregar receta a la lista.",
+  "markCompleteDialogTitle": "Marcar como Completado",
+  "markCompleteQuestion": "¿Has completado {mealName}?",
+  "@markCompleteQuestion": {
+    "placeholders": {
+      "mealName": {}
+    }
+  },
+  "markCompleteDeductInfo": "Los ingredientes se descontarán de tu despensa si están disponibles.",
+  "completeAction": "Completar",
+  "mealCompletedSuccess": "¡Comida completada! Se descontaron {count} ingredientes de la despensa.",
   "@mealCompletedSuccess": {
     "placeholders": {
       "count": {}
     }
   },
-  "mealCompletedMissing": "{count} faltantes",
+  "mealCompletedMissing": "Comida completada. Faltaron {count} ingredientes de la despensa.",
   "@mealCompletedMissing": {
     "placeholders": {
       "count": {}
     }
   },
-  "selectGroceryListEmpty": "No se encontraron listas de compras",
-  "selectGroceryListNewList": "Crear Nueva Lista",
-  "listNameLabel": "Nombre de la Lista",
-  "create": "Crear",
-  "listNameEmptyError": "El nombre no puede estar vacío",
-  "createListErrorCreate": "Error al crear lista",
-  "createListDialogTitle": "Crear Lista",
-  "listNameHint": "Ej. Compras semanales",
-  "addItemDefaultUnit": "unidades",
-  "addItemErrorAdding": "Error al agregar el artículo",
-  "addItemTitlePantry": "Agregar a Despensa",
-  "addItemIngredientNameLabel": "Nombre del Ingrediente",
-  "addItemIngredientNameRequired": "Requerido",
-  "addItemQuantityLabel": "Cantidad",
-  "addItemQuantityRequired": "Requerido",
-  "addItemQuantityInvalid": "Cantidad inválida",
-  "addItemUnitLabel": "Unidad",
-  "addItemUnitHint": "Ej. kg, lbs",
-  "addItemCategoryLabel": "Categoría",
-  "addItemCategoryHint": "Seleccionar categoría",
-  "addItemExpiryLabel": "Expiración",
-  "addItemButton": "Agregar",
-  "groceryItemInPantry": "En despensa",
-  "groceryItemEditTooltip": "Editar artículo",
-  "editQuantityDialogTitle": "Editar Cantidad",
-  "pantryItemExpired": "Expirado",
-  "editAction": "Editar",
-  "pantryDeleteDialogTitle": "Eliminar Artículo",
-  "pantryDeleteDialogMessage": "¿Seguro que deseas eliminar {itemName}?",
-  "@pantryDeleteDialogMessage": {
+  "mealCompletedError": "Error al completar la comida.",
+  "alsoRemoveFromGrocery": "También retirar de la lista de compras",
+  "menuAddToGrocery": "Agregar a lista de compras",
+  "mealCompletedLabel": "Completado",
+  "usePantryTitle": "Usar Despensa",
+  "usePantrySubtitle": "Descontar ingredientes de la despensa al generar.",
+  "usePantryLabel": "Usar Ingredientes de la Despensa",
+  "edit": "Editar",
+  "createNewListAction": "Crear Nueva Lista",
+  "addCustomName": "Nombre Personalizado",
+  "existingListsLabel": "Listas Existentes",
+  "noExistingLists": "No se encontraron listas existentes.",
+  "savedRecipesCount": "{count} recetas guardadas",
+  "@savedRecipesCount": {
     "placeholders": {
-      "itemName": {}
+      "count": {}
     }
   },
-  "back": "Atrás",
-  "next": "Siguiente",
-  "complete_recipe": "Completar receta",
-  "bulkDeductUnknownError": "Error al descontar ingredientes",
-  "selectNewStartDate": "Selecciona nueva fecha de inicio",
-  "saveIngredientsDialogContent": "¿Deseas guardar los ingredientes en una lista de compras?",
-  "yes": "Sí",
-  "no": "No",
-  "mealPlanHistory": "Mis planes",
-  "usePantryTitle": "Usar ingredientes de mi despensa",
-  "usePantrySubtitle": "La IA priorizará ingredientes que ya tienes",
-  "mealCompletedError": "Error al marcar la comida como completada",
-  "greeting": "Hola, {name}",
+  "createListErrorCreate": "Error al crear la lista de compras.",
+  "createListBottomSheetTitle": "Crear Lista",
+  "createListBottomSheetSubtitle": "Crear una nueva lista de compras.",
+  "listNameLabel": "Nombre de la Lista",
+  "listNameHint": "Ej. Compras Mensuales",
+  "listNameEmptyError": "El nombre de la lista no puede estar vacío.",
+  "create": "Crear",
+  "deletePlanSheetQuotaNote": "Esta acción no se puede deshacer.",
+  "regenerateRecipePromptTitle": "Regenerar Receta",
+  "regenerateRecipePromptSubtitle": "¿Estás seguro de que deseas regenerar esta receta?",
+  "regenerateRecipeNotePrefix": "Nota: ",
+  "regenerateRecipeNoteText": "Esto consumirá tu cuota de generación.",
+  "regenerateNotesHint": "¿Algún requerimiento especial? (ej. mas proteína)",
+  "regenerateRecipeButtonTitle": "Regenerar",
+  "selectDatesTitle": "Seleccionar Fechas",
+  "selectDatesSubtitle": "Elige las fechas para tu plan de comidas.",
+  "confirmSelectionAction": "Confirmar Selección",
+  "pantryOtherCategory": "Otros",
+  "pantryAddTooltip": "Agregar a Despensa",
+  "pantryEmptyTitle": "Tu despensa está vacía.",
+  "pantryEmptySubtitle": "Agrega artículos para llevar registro.",
+  "addItemQuantityInvalid": "Cantidad ingresada inválida.",
+  "pantryNoDate": "Sin fecha de caducidad",
+  "pantryEditTitle": "Editar {ingredientName}",
+  "@pantryEditTitle": {
+    "placeholders": {
+      "ingredientName": {}
+    }
+  },
+  "pantryQuantityLabel": "Cantidad",
+  "pantryExpiryLabel": "Fecha de Caducidad",
+  "save": "Guardar",
+  "pantryItemExpired": "Caducado",
+  "pantryStockLow": "Pocas existencias",
+  "pantryStockNormal": "Stock adecuado",
+  "pantryDeleteDialogTitle": "Eliminar Artículo",
+  "pantryDeleteDialogMessage": "¿Estás seguro de que deseas eliminar {ingredientName} de tu despensa?",
+  "@pantryDeleteDialogMessage": {
+    "placeholders": {
+      "ingredientName": {}
+    }
+  },
+  "addItemDefaultUnit": "piezas",
+  "addItemErrorAdding": "Error al agregar el artículo.",
+  "addItemTitlePantry": "Agregar a Despensa",
+  "addItemTitleGrocery": "Agregar a Lista de Compras",
+  "addItemIngredientNameLabel": "Nombre del Artículo",
+  "addItemIngredientNamePantryHint": "Ej. Leche",
+  "addItemIngredientNameGroceryHint": "Ej. Pan",
+  "addItemIngredientNameRequired": "El nombre del artículo es requerido.",
+  "addItemQuantityLabel": "Cantidad",
+  "addItemQuantityRequired": "La cantidad es requerida.",
+  "addItemUnitLabel": "Unidad",
+  "addItemUnitHint": "Ej. kg, litros",
+  "addItemCategoryLabel": "Categoría",
+  "addItemCategoryHint": "Seleccionar categoría",
+  "addItemExpiryLabel": "Fecha de Caducidad",
+  "addItemButtonPantry": "Agregar a Despensa",
+  "addItemButtonGrocery": "Agregar a Lista de Compras",
+  "pantryCountLabel": "{count} artículos en despensa",
+  "@pantryCountLabel": {
+    "placeholders": {
+      "count": {}
+    }
+  },
+  "groceryListDetailPendingHeader": "Artículos Pendientes",
+  "groceryListDetailCompletedHeader": "Artículos Completados",
+  "groceryListDetailEmptyTitle": "Esta lista está vacía.",
+  "groceryListDetailEmptySubtitle": "Agrega artículos con el botón +.",
+  "groceryItemInPantry": "En Despensa",
+  "groceryItemEditTooltip": "Editar Artículo",
+  "editQuantityDialogTitle": "Editar Cantidad",
+  "grocerySectionTitle": "Compras",
+  "groceryListsTab": "Listas",
+  "pantryTab": "Despensa",
+  "groceryListsErrorLoading": "Error al cargar las listas.",
+  "groceryListsEmptyTitle": "No se encontraron listas.",
+  "groceryListsEmptySubtitle": "Crea tu primera lista de compras.",
+  "deleteGroceryListDialogTitle": "Eliminar Lista",
+  "deleteGroceryListDialogMessage": "¿Estás seguro de que deseas eliminar {listName}?",
+  "@deleteGroceryListDialogMessage": {
+    "placeholders": {
+      "listName": {}
+    }
+  },
+  "profilePlanFreeBadge": "Plan Gratis",
+  "homeWeekLabel": "Esta Semana",
+  "greeting": "¡Hola, {name}!",
   "@greeting": {
     "placeholders": {
       "name": {}
     }
   },
-  "mealCompletedLabel": "Completada",
-  "completeRecipeLabel": "Completar receta"
+  "homeTodayPlanReady": "Tu plan del día está listo.",
+  "homeViewRecipeShort": "Ver",
+  "homeEatOutAction": "Comer Fuera",
+  "homeSkipMealQuestion": "¿Saltar Comida?",
+  "homeSkipMealDescription": "¿Estás seguro de que deseas saltar esta comida?",
+  "homeConfirmAction": "Confirmar",
+  "homeFavoritesAction": "Favoritos",
+  "homeProgressAction": "Progreso",
+  "homeEmptyPlanTitle": "No hay planes para hoy.",
+  "homeEmptyPlanMessage": "¡Crea un nuevo plan o disfruta tu día libre!",
+  "averageAbbr": "prom",
+  "selectGroceryListEmpty": "No tienes listas de compras. Crea una nueva.",
+  "selectGroceryListNewList": "Crear Nueva Lista",
+  "mealPlanHistory": "Historial",
+  "planEntriesTitle": "Entradas del Plan",
+  "noEntriesInPlan": "No se encontraron entradas en este plan.",
+  "myPlansTitle": "Mis Planes",
+  "createNewPlanTooltip": "Crear nuevo plan",
+  "noPlansAddedTitle": "Aún no hay planes.",
+  "noPlansAddedMessage": "Comienza tu viaje generando un nuevo plan de comidas.",
+  "tryAgain": "Intentar de nuevo",
+  "days": "{count} días",
+  "@days": {
+    "placeholders": {
+      "count": {}
+    }
+  },
+  "approvePlanEndDate": "Fecha de fin desconocida",
+  "nutritionFilterDaily": "Diario",
+  "nutritionFilterWeekly": "Semanal",
+  "nutritionFilterMonthly": "Mensual",
+  "nutritionErrorLoading": "Error al cargar datos nutricionales.",
+  "achievementsTitle": "Logros",
+  "weeklyActivityTitle": "Actividad Semanal",
+  "mondayToSundayLabel": "LUN - DOM",
+  "mealPlanActionViewDetails": "Ver Detalles",
+  "planDeletedSuccess": "Plan eliminado.",
+  "planBadgeAI": "GENERADO CON IA",
+  "planBadgeCustom": "PERSONALIZADO"
 }

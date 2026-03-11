@@ -87,18 +87,32 @@ class _PremiumBanner extends StatelessWidget {
   Widget build(BuildContext context) {
     return Container(
       width: double.infinity,
-      padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 24),
+      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
       decoration: BoxDecoration(
-        color: const Color(0xFFD6E5D6),
-        borderRadius: BorderRadius.circular(24),
+        color: const Color(0xFFF7FBF8), // Very pale green
+        borderRadius: BorderRadius.circular(16),
+        border: Border.all(color: Colors.grey.shade200),
       ),
       child: Row(
         children: [
+          Container(
+            padding: const EdgeInsets.all(8),
+            decoration: const BoxDecoration(
+              color: Color(0xFFE8F0E8),
+              shape: BoxShape.circle,
+            ),
+            child: const Icon(
+              Icons.workspace_premium, 
+              color: Color(0xFF7BA082), 
+              size: 24,
+            ),
+          ),
+          const SizedBox(width: 16),
           Expanded(
             child: Text(
               l10n.goPremiumUnlockMorePlans,
-              style: Theme.of(context).textTheme.titleSmall?.copyWith(
-                    color: const Color(0xFF2E4D2E),
+              style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                    color: const Color(0xFF4A5F50),
                     fontWeight: FontWeight.w600,
                   ),
             ),
@@ -113,18 +127,15 @@ class _PremiumBanner extends StatelessWidget {
               },
             ),
             style: ElevatedButton.styleFrom(
-              backgroundColor: const Color(0xFF5A7A5A),
+              backgroundColor: const Color(0xFF819F86), // Muted green from screenshot
               foregroundColor: Colors.white,
-              padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
+              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
               shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(16),
+                borderRadius: BorderRadius.circular(8),
               ),
               elevation: 0,
             ),
-            child: Text(
-              l10n.goPremiumTitle,
-              style: const TextStyle(fontWeight: FontWeight.bold),
-            ),
+            child: const Text('Saber más', style: TextStyle(fontWeight: FontWeight.w600, fontSize: 12)),
           ),
         ],
       ),
@@ -219,7 +230,14 @@ class HomeScreen extends ConsumerWidget {
                 // Recipes Section
                 mealEntriesAsync.when(
                   data: (entries) {
-                    if (entries.isEmpty) return const SizedBox.shrink();
+                    if (entries.isEmpty) {
+                      return Column(
+                        children: [
+                          _EmptyPlanWidget(l10n: l10n),
+                          const SizedBox(height: 24),
+                        ],
+                      );
+                    }
                     return Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
@@ -247,7 +265,10 @@ class HomeScreen extends ConsumerWidget {
                       ],
                     );
                   },
-                  loading: () => const Center(child: CircularProgressIndicator()),
+                  loading: () => const Padding(
+                    padding: EdgeInsets.symmetric(vertical: 40),
+                    child: Center(child: CircularProgressIndicator()),
+                  ),
                   error: (error, stack) => const SizedBox.shrink(),
                 ),
                 _QuickActionsWidget(mealEntriesAsync: mealEntriesAsync),
@@ -258,25 +279,25 @@ class HomeScreen extends ConsumerWidget {
         
                 // Action Buttons Section
                 
-                // const SizedBox(height: 24),
-                // Generate Plan Button
-                SizedBox(
-                  width: double.infinity,
-                  height: 64,
-                  child: OutlinedButton.icon(
-                    onPressed: () => context.push('/meal-plan/new'),
-                    icon: const Icon(Icons.refresh, size: 24),
-                    label: Text(
-                      l10n.generateNewPlan,
-                      style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
-                    ),
-                    style: OutlinedButton.styleFrom(
-                      foregroundColor: const Color(0xFF4C6B4F),
-                      side: const BorderSide(color: Color(0xFFE0E0E0), width: 1.5),
-                      shape: const StadiumBorder(),
+                // Generate Plan Button (only show if there is a plan)
+                if (mealEntriesAsync.valueOrNull?.isNotEmpty == true)
+                  SizedBox(
+                    width: double.infinity,
+                    height: 64,
+                    child: OutlinedButton.icon(
+                      onPressed: () => context.push('/meal-plan/new'),
+                      icon: const Icon(Icons.refresh, size: 24),
+                      label: Text(
+                        l10n.generateNewPlan,
+                        style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+                      ),
+                      style: OutlinedButton.styleFrom(
+                        foregroundColor: const Color(0xFF4C6B4F),
+                        side: const BorderSide(color: Color(0xFFE0E0E0), width: 1.5),
+                        shape: const StadiumBorder(),
+                      ),
                     ),
                   ),
-                ),
               ],
             ),
           ),
@@ -561,42 +582,173 @@ class _MiniMacroBadge extends StatelessWidget {
   }
 }
 
-class _QuickActionsWidget extends ConsumerStatefulWidget {
+class _QuickActionsWidget extends ConsumerWidget {
   final AsyncValue<List<DayMealEntry>> mealEntriesAsync;
   const _QuickActionsWidget({required this.mealEntriesAsync});
 
   @override
-  ConsumerState<_QuickActionsWidget> createState() => _QuickActionsWidgetState();
-}
-
-class _QuickActionsWidgetState extends ConsumerState<_QuickActionsWidget> {
-  @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
     final l10n = AppLocalizations.of(context);
     
     return Row(
       children: [
         Expanded(
-          child: GestureDetector(
+          child: _QuickActionCard(
+            icon: Icons.favorite,
+            iconColor: const Color(0xFF7BA082),
+            label: l10n.homeFavoritesAction,
             onTap: () => context.push('/recipes/favorites'),
-            child: Container(
-              padding: const EdgeInsets.symmetric(vertical: 20),
-              decoration: BoxDecoration(
-                color: const Color(0xFFE8EDE8),
-                borderRadius: BorderRadius.circular(24),
+          ),
+        ),
+        const SizedBox(width: 12),
+        Expanded(
+          child: _QuickActionCard(
+            icon: Icons.show_chart,
+            iconColor: const Color(0xFF7BA082),
+            label: l10n.homeProgressAction,
+            onTap: () => context.push('/nutrition'),
+          ),
+        ),
+      ],
+    );
+  }
+}
+
+class _QuickActionCard extends StatelessWidget {
+  final IconData icon;
+  final Color iconColor;
+  final String label;
+  final VoidCallback onTap;
+
+  const _QuickActionCard({
+    required this.icon,
+    required this.iconColor,
+    required this.label,
+    required this.onTap,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return GestureDetector(
+      onTap: onTap,
+      child: Container(
+        padding: const EdgeInsets.symmetric(vertical: 16),
+        decoration: BoxDecoration(
+          color: Colors.white,
+          borderRadius: BorderRadius.circular(16),
+          border: Border.all(color: Colors.grey.shade200),
+          boxShadow: [
+            BoxShadow(
+              color: Colors.black.withValues(alpha: 0.02),
+              blurRadius: 8,
+              offset: const Offset(0, 2),
+            ),
+          ],
+        ),
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Icon(icon, color: iconColor, size: 20),
+            const SizedBox(width: 8),
+            Text(
+              label,
+              style: const TextStyle(
+                color: Color(0xFF002140),
+                fontWeight: FontWeight.w600,
+                fontSize: 14,
               ),
-              child: Column(
-                children: [
-                  const Icon(Icons.favorite_border, color: Color(0xFF4C6B4F)),
-                  const SizedBox(height: 8),
-                  Text(
-                    l10n.homeFavoritesAction,
-                    style: TextStyle(
-                      color: Colors.blueGrey.shade700,
-                      fontWeight: FontWeight.w600,
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+class _EmptyPlanWidget extends StatelessWidget {
+  final AppLocalizations l10n;
+  const _EmptyPlanWidget({required this.l10n});
+
+  @override
+  Widget build(BuildContext context) {
+    return Column(
+      children: [
+        const SizedBox(height: 16),
+        Stack(
+          alignment: Alignment.bottomRight,
+          children: [
+            Container(
+              width: 140,
+              height: 140,
+              decoration: const BoxDecoration(
+                color: Color(0xFFF4F7F9),
+                shape: BoxShape.circle,
+              ),
+              child: const Center(
+                child: Icon(
+                  Icons.restaurant,
+                  size: 60,
+                  color: Color(0xFFC7D3CA),
+                ),
+              ),
+            ),
+            Positioned(
+              bottom: 4,
+              right: 4,
+              child: Container(
+                padding: const EdgeInsets.all(6),
+                decoration: BoxDecoration(
+                  color: Colors.white,
+                  shape: BoxShape.circle,
+                  border: Border.all(color: Colors.grey.shade200),
+                  boxShadow: [
+                    BoxShadow(
+                      color: Colors.black.withValues(alpha: 0.05),
+                      blurRadius: 4,
+                      offset: const Offset(0, 2),
                     ),
-                  ),
-                ],
+                  ],
+                ),
+                child: const Icon(Icons.edit_calendar, size: 20, color: Color(0xFF7BA082)),
+              ),
+            ),
+          ],
+        ),
+        const SizedBox(height: 24),
+        Text(
+          l10n.homeEmptyPlanTitle,
+          style: Theme.of(context).textTheme.titleLarge?.copyWith(
+                fontWeight: FontWeight.bold,
+                color: const Color(0xFF002140),
+              ),
+        ),
+        const SizedBox(height: 8),
+        Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 24),
+          child: Text(
+            l10n.homeEmptyPlanMessage,
+            textAlign: TextAlign.center,
+            style: TextStyle(
+              color: Colors.grey.shade600,
+              height: 1.4,
+            ),
+          ),
+        ),
+        const SizedBox(height: 24),
+        SizedBox(
+          width: double.infinity,
+          height: 56,
+          child: FilledButton.icon(
+            onPressed: () => context.push('/meal-plan/new'),
+            icon: const Icon(Icons.auto_awesome, size: 20),
+            label: Text(
+              l10n.generateNewPlan,
+              style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+            ),
+            style: FilledButton.styleFrom(
+              backgroundColor: const Color(0xFF7BA082),
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(16),
               ),
             ),
           ),

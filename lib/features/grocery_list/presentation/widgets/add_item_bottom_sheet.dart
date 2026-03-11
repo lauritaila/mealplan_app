@@ -94,149 +94,252 @@ class _AddItemBottomSheetState extends ConsumerState<AddItemBottomSheet> {
     if (picked != null && mounted) setState(() => _expiryDate = picked);
   }
 
+  InputDecoration _inputDecoration(String hint, {IconData? prefixIcon, Widget? suffixIcon}) {
+    return InputDecoration(
+      hintText: hint,
+      hintStyle: const TextStyle(color: Color(0xFF9E9E9E), fontSize: 14),
+      prefixIcon: prefixIcon != null ? Icon(prefixIcon, color: const Color(0xFF7BA082)) : null,
+      suffixIcon: suffixIcon,
+      filled: true,
+      fillColor: Colors.white,
+      contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
+      border: OutlineInputBorder(
+        borderRadius: BorderRadius.circular(10),
+        borderSide: const BorderSide(color: Color(0xFFE8ECE7), width: 1),
+      ),
+      enabledBorder: OutlineInputBorder(
+        borderRadius: BorderRadius.circular(10),
+        borderSide: const BorderSide(color: Color(0xFFE8ECE7), width: 1),
+      ),
+      focusedBorder: OutlineInputBorder(
+        borderRadius: BorderRadius.circular(10),
+        borderSide: const BorderSide(color: Color(0xFF7BA082), width: 1.5),
+      ),
+    );
+  }
+
+  Widget _buildLabel(String text) {
+    return Padding(
+      padding: const EdgeInsets.only(bottom: 6.0, left: 2.0),
+      child: Text(
+        text,
+        style: const TextStyle(
+          fontSize: 13,
+          fontWeight: FontWeight.w600,
+          color: Color(0xFF4A5D4E), // Dark green-grey
+        ),
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
     final l10n = AppLocalizations.of(context);
-    return Padding(
-      padding: EdgeInsets.only(
-        bottom: MediaQuery.of(context).viewInsets.bottom,
+    
+    return Container(
+      decoration: const BoxDecoration(
+        color: Color(0xFFF8F6F6),
+        borderRadius: BorderRadius.vertical(top: Radius.circular(24)),
       ),
-      child: SingleChildScrollView(
-        padding: const EdgeInsets.fromLTRB(24, 16, 24, 32),
-        child: Form(
-          key: _formKey,
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              // Handle bar
-              Center(
-                child: Container(
-                  width: 36,
-                  height: 4,
-                  margin: const EdgeInsets.only(bottom: 20),
-                  decoration: BoxDecoration(
-                    color: theme.colorScheme.outlineVariant,
-                    borderRadius: BorderRadius.circular(2),
-                  ),
-                ),
-              ),
-              Text(
-                _isPantryMode ? l10n.addItemTitlePantry : l10n.addItemTitleGrocery,
-                style: theme.textTheme.titleLarge?.copyWith(
-                  fontWeight: FontWeight.bold,
-                ),
-              ),
-              const SizedBox(height: 20),
-              TextFormField(
-                controller: _nameCtrl,
-                textCapitalization: TextCapitalization.sentences,
-                decoration: InputDecoration(
-                  labelText: l10n.addItemIngredientNameLabel,
-                  prefixIcon: const Icon(Icons.restaurant_outlined),
-                ),
-                validator: (v) => (v == null || v.trim().isEmpty)
-                    ? l10n.addItemIngredientNameRequired
-                    : null,
-              ),
-              const SizedBox(height: 14),
-              Row(
-                children: [
-                  Expanded(
-                    flex: 2,
-                    child: TextFormField(
-                      controller: _quantityCtrl,
-                      keyboardType: const TextInputType.numberWithOptions(
-                        decimal: true,
-                      ),
-                      decoration: InputDecoration(
-                        labelText: l10n.addItemQuantityLabel,
-                        prefixIcon: const Icon(Icons.numbers_outlined),
-                      ),
-                      validator: (v) {
-                        if (v == null || v.trim().isEmpty) {
-                          return l10n.addItemQuantityRequired;
-                        }
-                        if (double.tryParse(v.trim()) == null) {
-                          return l10n.addItemQuantityInvalid;
-                        }
-                        return null;
-                      },
+      child: Padding(
+        padding: EdgeInsets.only(
+          bottom: MediaQuery.of(context).viewInsets.bottom,
+        ),
+        child: SingleChildScrollView(
+          padding: const EdgeInsets.fromLTRB(24, 16, 24, 32),
+          child: Form(
+            key: _formKey,
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                // Handle bar
+                Center(
+                  child: Container(
+                    width: 36,
+                    height: 4,
+                    margin: const EdgeInsets.only(bottom: 24),
+                    decoration: BoxDecoration(
+                      color: const Color(0xFFC7CEC5),
+                      borderRadius: BorderRadius.circular(2),
                     ),
                   ),
-                  const SizedBox(width: 12),
-                  Expanded(
-                    flex: 3,
-                    child: TextFormField(
-                      controller: _unitCtrl,
-                      textCapitalization: TextCapitalization.none,
-                      decoration: InputDecoration(
-                        labelText: l10n.addItemUnitLabel,
-                        hintText: l10n.addItemUnitHint,
-                        prefixIcon: const Icon(Icons.scale_outlined),
+                ),
+                // Title and clear button
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Text(
+                      _isPantryMode ? l10n.addItemTitlePantry : l10n.addItemTitleGrocery,
+                      style: theme.textTheme.titleLarge?.copyWith(
+                        fontWeight: FontWeight.bold,
+                        color: const Color(0xFF2C392D),
+                      ),
+                    ),
+                    if (!_isPantryMode)
+                      IconButton(
+                        onPressed: () => Navigator.pop(context),
+                        icon: const Icon(Icons.close, color: Color(0xFF7BA082)),
+                      ),
+                  ],
+                ),
+                const SizedBox(height: 20),
+                
+                // Ingredient Name
+                _buildLabel(l10n.addItemIngredientNameLabel),
+                TextFormField(
+                  controller: _nameCtrl,
+                  textCapitalization: TextCapitalization.sentences,
+                  decoration: _inputDecoration(
+                    _isPantryMode ? l10n.addItemIngredientNamePantryHint : l10n.addItemIngredientNameGroceryHint,
+                    prefixIcon: _isPantryMode ? Icons.restaurant_outlined : Icons.shopping_basket_outlined,
+                  ),
+                  validator: (v) => (v == null || v.trim().isEmpty)
+                      ? l10n.addItemIngredientNameRequired
+                      : null,
+                ),
+                const SizedBox(height: 16),
+                
+                // Quantity and Unit Row
+                Row(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Expanded(
+                      flex: 1,
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          _buildLabel(l10n.addItemQuantityLabel),
+                          TextFormField(
+                            controller: _quantityCtrl,
+                            keyboardType: const TextInputType.numberWithOptions(
+                              decimal: true,
+                            ),
+                            decoration: _inputDecoration('0'),
+                            validator: (v) {
+                              if (v == null || v.trim().isEmpty) {
+                                return l10n.addItemQuantityRequired;
+                              }
+                              if (double.tryParse(v.trim()) == null) {
+                                return l10n.addItemQuantityInvalid;
+                              }
+                              return null;
+                            },
+                          ),
+                        ],
+                      ),
+                    ),
+                    const SizedBox(width: 16),
+                    Expanded(
+                      flex: 1,
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          _buildLabel(l10n.addItemUnitLabel),
+                          TextFormField(
+                            controller: _unitCtrl,
+                            textCapitalization: TextCapitalization.none,
+                            decoration: _inputDecoration(
+                              l10n.addItemUnitHint,
+                              suffixIcon: const Icon(Icons.keyboard_arrow_down, color: Color(0xFF7BA082)),
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ],
+                ),
+                
+                if (_isPantryMode) ...[
+                  const SizedBox(height: 16),
+                  // Category
+                  _buildLabel(l10n.addItemCategoryLabel),
+                  TextFormField(
+                    controller: _categoryCtrl,
+                    textCapitalization: TextCapitalization.sentences,
+                    decoration: _inputDecoration(
+                      l10n.addItemCategoryHint,
+                      suffixIcon: const Icon(Icons.keyboard_arrow_down, color: Color(0xFF7BA082)),
+                    ),
+                  ),
+                  const SizedBox(height: 16),
+                  
+                  // Expiry Date
+                  _buildLabel(l10n.addItemExpiryLabel),
+                  InkWell(
+                    onTap: _pickDate,
+                    borderRadius: BorderRadius.circular(10),
+                    child: Container(
+                      decoration: BoxDecoration(
+                        color: Colors.white,
+                        borderRadius: BorderRadius.circular(10),
+                        border: Border.all(color: const Color(0xFFE8ECE7), width: 1),
+                      ),
+                      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
+                      child: Row(
+                        children: [
+                          const Icon(Icons.calendar_today_outlined, color: Color(0xFF7BA082)),
+                          const SizedBox(width: 12),
+                          Expanded(
+                            child: Text(
+                              _expiryDate != null
+                                  ? _formatDate(_expiryDate!, context)
+                                  : 'mm/dd/yyyy',
+                              style: TextStyle(
+                                color: _expiryDate != null ? Colors.black87 : const Color(0xFF9E9E9E),
+                                fontSize: 14,
+                              ),
+                            ),
+                          ),
+                          Icon(
+                            _expiryDate != null ? Icons.clear : Icons.calendar_month,
+                            color: const Color(0xFF2C392D),
+                            size: 20,
+                          ),
+                        ],
                       ),
                     ),
                   ),
                 ],
-              ),
-              if (_isPantryMode) ...[
-                const SizedBox(height: 14),
-                TextFormField(
-                  controller: _categoryCtrl,
-                  textCapitalization: TextCapitalization.sentences,
-                  decoration: InputDecoration(
-                    labelText: l10n.addItemCategoryLabel,
-                    hintText: l10n.addItemCategoryHint,
-                    prefixIcon: const Icon(Icons.label_outline),
-                  ),
-                ),
-                const SizedBox(height: 14),
-                InkWell(
-                  onTap: _pickDate,
-                  borderRadius: BorderRadius.circular(12),
-                  child: InputDecorator(
-                    decoration: InputDecoration(
-                      labelText: l10n.addItemExpiryLabel,
-                      prefixIcon: const Icon(Icons.calendar_today_outlined),
-                      suffixIcon: _expiryDate != null
-                          ? IconButton(
-                              icon: const Icon(Icons.clear, size: 18),
-                              onPressed: () =>
-                                  setState(() => _expiryDate = null),
-                            )
-                          : null,
+                const SizedBox(height: 32),
+                
+                // Submit Button
+                SizedBox(
+                  width: double.infinity,
+                  child: FilledButton(
+                    onPressed: _loading ? null : _submit,
+                    style: FilledButton.styleFrom(
+                      backgroundColor: const Color(0xFF7BA082),
+                      foregroundColor: Colors.white,
+                      padding: const EdgeInsets.symmetric(vertical: 16),
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(12),
+                      ),
                     ),
-                    child: Text(
-                      _expiryDate != null
-                          ? _formatDate(_expiryDate!, context)
-                          : l10n.pantryNoDate,
-                      style: theme.textTheme.bodyMedium,
-                    ),
+                    child: _loading
+                        ? const SizedBox(
+                            width: 20,
+                            height: 20,
+                            child: CircularProgressIndicator(strokeWidth: 2.5, color: Colors.white),
+                          )
+                        : Row(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              if (!_isPantryMode) ...[
+                                const Icon(Icons.add_circle, size: 20),
+                                const SizedBox(width: 8),
+                              ],
+                              Text(
+                                _isPantryMode ? l10n.addItemButtonPantry : l10n.addItemButtonGrocery,
+                                style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+                              ),
+                            ],
+                          ),
                   ),
                 ),
               ],
-              const SizedBox(height: 24),
-              SizedBox(
-                width: double.infinity,
-                child: FilledButton(
-                  onPressed: _loading ? null : _submit,
-                  style: FilledButton.styleFrom(
-                    padding: const EdgeInsets.symmetric(vertical: 16),
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(14),
-                    ),
-                  ),
-                  child: _loading
-                      ? const SizedBox(
-                          width: 20,
-                          height: 20,
-                          child: CircularProgressIndicator(strokeWidth: 2.5),
-                        )
-                      : Text(l10n.addItemButton, style: const TextStyle(fontSize: 16)),
-                ),
-              ),
-            ],
+            ),
           ),
         ),
       ),
@@ -244,7 +347,7 @@ class _AddItemBottomSheetState extends ConsumerState<AddItemBottomSheet> {
   }
 
   String _formatDate(DateTime d, BuildContext context) {
-    return DateFormat('d MMM y', Localizations.localeOf(context).toString()).format(d);
+    return DateFormat('MM/dd/yyyy', Localizations.localeOf(context).toString()).format(d);
   }
 }
 

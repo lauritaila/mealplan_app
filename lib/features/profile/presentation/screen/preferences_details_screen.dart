@@ -80,13 +80,6 @@ class _PreferencesDetailsScreenState
     super.dispose();
   }
 
-  String _localizedTitle(
-    Map<String, String> titles,
-    String locale,
-    String fallback,
-  ) {
-    return titles[locale] ?? titles['en'] ?? fallback;
-  }
 
   String _localizedOption(
     Map<String, Map<String, String>> labels,
@@ -97,7 +90,8 @@ class _PreferencesDetailsScreenState
     return map[key] ?? key;
   }
 
-  void _updateFoodPreferences(PreferencesDetails preferencesNotifier) {
+  void _updateFoodPreferences(dynamic notifier) {
+    if (notifier is! PreferencesDetails) return;
     final disliked = _dislikedController.text
         .split(',')
         .map((e) => e.trim())
@@ -108,14 +102,14 @@ class _PreferencesDetailsScreenState
         .map((e) => e.trim())
         .where((e) => e.isNotEmpty)
         .toList();
-    preferencesNotifier.setDislikedFoods(disliked);
-    preferencesNotifier.setLikedFoods(liked);
+    notifier.setDislikedFoods(disliked);
+    notifier.setLikedFoods(liked);
   }
 
   @override
   Widget build(BuildContext context) {
-    final theme = Theme.of(context);
     final l10n = AppLocalizations.of(context);
+    final theme = Theme.of(context);
     final authState = ref.watch(authProvider);
     final preferencesState = ref.watch(preferencesDetailsProvider);
     final preferencesNotifier = ref.read(preferencesDetailsProvider.notifier);
@@ -123,492 +117,442 @@ class _PreferencesDetailsScreenState
     final localeCode = Localizations.localeOf(context).languageCode;
     final effectiveLanguageCode = preferencesState.languageCode ?? localeCode;
 
-    return Scaffold(
-      appBar: AppBar(title: Text(l10n.profilePreferencesTitle)),
-      body: SingleChildScrollView(
-        padding: const EdgeInsets.all(16),
-        child: configAsync.when(
-          loading: () => const Center(
-            child: Padding(
-              padding: EdgeInsets.all(24),
-              child: CircularProgressIndicator(),
-            ),
-          ),
-          error: (error, _) => Padding(
-            padding: const EdgeInsets.symmetric(vertical: 12),
-            child: Text(error.toString()),
-          ),
-          data: (config) {
-            final dietOptions = config.dietOptions;
-            final allergyOptions = config.allergyOptions;
-            final goalOptions = config.goalOptions;
-            final skillLevels = config.skillLevels;
-            final timeOptions = config.timeOptions;
-            final minHousehold = config.householdSize.min;
-            final maxHousehold = config.householdSize.max;
-            final showDisliked = config.textFields.foodPreferencesDisliked;
-            final showLiked = config.textFields.foodPreferencesLiked;
-            final dietaryTitle = _localizedTitle(
-              config.dietaryTitles,
-              effectiveLanguageCode,
-              l10n.profileDietarySpecsLabel,
-            );
-            final allergiesTitle = _localizedTitle(
-              config.allergyTitles,
-              effectiveLanguageCode,
-              l10n.allergiesTitle,
-            );
-            final goalsTitle = _localizedTitle(
-              config.goalTitles,
-              effectiveLanguageCode,
-              l10n.goalsTitle,
-            );
-            final cookingTitle = _localizedTitle(
-              config.cookingTitles,
-              effectiveLanguageCode,
-              l10n.cookingDetailsTitle,
-            );
-            final cookingSkillTitle = _localizedTitle(
-              config.cookingSkillTitles,
-              effectiveLanguageCode,
-              l10n.cookingSkillTitle,
-            );
-            final cookingTimeTitle = _localizedTitle(
-              config.cookingTimeTitles,
-              effectiveLanguageCode,
-              l10n.timeAvailabilityTitle,
-            );
-            final cookingHouseholdTitle = _localizedTitle(
-              config.cookingHouseholdTitles,
-              effectiveLanguageCode,
-              l10n.householdSizeTitle,
-            );
-            final foodPreferencesTitle = _localizedTitle(
-              config.foodPreferencesTitles,
-              effectiveLanguageCode,
-              l10n.foodPreferencesTitle,
-            );
-            final dislikedTitle = _localizedTitle(
-              config.foodPreferencesDislikedTitles,
-              effectiveLanguageCode,
-              l10n.dislikedFoodsTitle,
-            );
-            final dislikedHint = _localizedTitle(
-              config.foodPreferencesDislikedHints,
-              effectiveLanguageCode,
-              l10n.dislikedFoodsHint,
-            );
-            final likedTitle = _localizedTitle(
-              config.foodPreferencesLikedTitles,
-              effectiveLanguageCode,
-              l10n.likedFoodsTitle,
-            );
-            final likedHint = _localizedTitle(
-              config.foodPreferencesLikedHints,
-              effectiveLanguageCode,
-              l10n.likedFoodsHint,
-            );
+    final primaryGreen = theme.colorScheme.primary;
+    final darkText = theme.colorScheme.onSurface;
+    final secondaryText = theme.colorScheme.onSurfaceVariant;
+    final cardBg = theme.colorScheme.surface;
 
-            return Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Card(
-                  child: Padding(
-                    padding: const EdgeInsets.all(16),
-                    child: SwitchListTile(
-                      contentPadding: EdgeInsets.zero,
-                      title: Text(l10n.profileHideNutritionLabel),
-                      value: preferencesState.hideNutritionValues,
-                      onChanged: preferencesNotifier.setHideNutritionValues,
-                    ),
-                  ),
-                ),
-                const SizedBox(height: 12),
-                Card(
-                  child: Padding(
-                    padding: const EdgeInsets.all(16),
-                    child: SizedBox(
-                      width: double.infinity,
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Text(dietaryTitle, style: theme.textTheme.titleSmall),
-                          const SizedBox(height: 12),
-                          Wrap(
-                            spacing: 10,
-                            runSpacing: 10,
-                            children: dietOptions.map((diet) {
-                              final isSelected = preferencesState
-                                  .dietaryRestrictions
-                                  .contains(diet);
-                              return FilterChip(
-                                label: Text(
-                                  _localizedOption(
-                                    config.dietaryOptionLabels,
-                                    effectiveLanguageCode,
-                                    diet,
-                                  ),
-                                ),
-                                selected: isSelected,
-                                onSelected: (selected) {
-                                  preferencesNotifier.toggleDietaryRestriction(
-                                    diet,
-                                    selected,
-                                  );
-                                },
-                              );
-                            }).toList(),
-                          ),
-                        ],
-                      ),
-                    ),
-                  ),
-                ),
-                const SizedBox(height: 12),
-                Card(
-                  child: Padding(
-                    padding: const EdgeInsets.all(16),
-                    child: SizedBox(
-                      width: double.infinity,
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Text(
-                            allergiesTitle,
-                            style: theme.textTheme.titleSmall,
-                          ),
-                          const SizedBox(height: 12),
-                          Wrap(
-                            spacing: 10,
-                            runSpacing: 10,
-                            children: allergyOptions.map((allergy) {
-                              final isSelected = preferencesState.allergies
-                                  .contains(allergy);
-                              return FilterChip(
-                                label: Text(
-                                  _localizedOption(
-                                    config.allergyOptionLabels,
-                                    effectiveLanguageCode,
-                                    allergy,
-                                  ),
-                                ),
-                                selected: isSelected,
-                                onSelected: (selected) {
-                                  preferencesNotifier.toggleAllergy(
-                                    allergy,
-                                    selected,
-                                  );
-                                },
-                              );
-                            }).toList(),
-                          ),
-                        ],
-                      ),
-                    ),
-                  ),
-                ),
-                const SizedBox(height: 12),
-                Card(
-                  child: Padding(
-                    padding: const EdgeInsets.all(16),
-                    child: SizedBox(
-                      width: double.infinity,
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Text(goalsTitle, style: theme.textTheme.titleSmall),
-                          const SizedBox(height: 12),
-                          Wrap(
-                            spacing: 10,
-                            runSpacing: 10,
-                            children: goalOptions.map((goal) {
-                              final isSelected = preferencesState.healthGoals
-                                  .contains(goal);
-                              return FilterChip(
-                                label: Text(
-                                  _localizedOption(
-                                    config.goalOptionLabels,
-                                    effectiveLanguageCode,
-                                    goal,
-                                  ),
-                                ),
-                                selected: isSelected,
-                                onSelected: (selected) {
-                                  preferencesNotifier.toggleHealthGoal(
-                                    goal,
-                                    selected,
-                                  );
-                                },
-                              );
-                            }).toList(),
-                          ),
-                        ],
-                      ),
-                    ),
-                  ),
-                ),
-                const SizedBox(height: 12),
-                Card(
-                  child: Padding(
-                    padding: const EdgeInsets.all(16),
-                    child: SizedBox(
-                      width: double.infinity,
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Text(cookingTitle, style: theme.textTheme.titleSmall),
-                          const SizedBox(height: 12),
-                          Text(
-                            cookingSkillTitle,
-                            style: theme.textTheme.bodyMedium,
-                          ),
-                          const SizedBox(height: 8),
-                          Wrap(
-                            spacing: 10,
-                            children: skillLevels.map((level) {
-                              return ChoiceChip(
-                                label: Text(
-                                  _localizedOption(
-                                    config.cookingOptionLabels,
-                                    effectiveLanguageCode,
-                                    level,
-                                  ),
-                                ),
-                                selected:
-                                    preferencesState.cookingSkillLevel == level,
-                                onSelected: (_) {
-                                  preferencesNotifier.setCookingSkillLevel(
-                                    level,
-                                  );
-                                },
-                              );
-                            }).toList(),
-                          ),
-                          const SizedBox(height: 16),
-                          Text(
-                            cookingTimeTitle,
-                            style: theme.textTheme.bodyMedium,
-                          ),
-                          const SizedBox(height: 8),
-                          Wrap(
-                            spacing: 10,
-                            children: timeOptions.map((time) {
-                              return ChoiceChip(
-                                label: Text(
-                                  _localizedOption(
-                                    config.cookingOptionLabels,
-                                    effectiveLanguageCode,
-                                    time,
-                                  ),
-                                ),
-                                selected:
-                                    preferencesState.timeAvailability == time,
-                                onSelected: (_) {
-                                  preferencesNotifier.setTimeAvailability(time);
-                                },
-                              );
-                            }).toList(),
-                          ),
-                          const SizedBox(height: 16),
-                          Text(
-                            cookingHouseholdTitle,
-                            style: theme.textTheme.bodyMedium,
-                          ),
-                          const SizedBox(height: 8),
-                          Row(
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            children: [
-                              IconButton(
-                                icon: const Icon(Icons.remove_circle_outline),
-                                onPressed:
-                                    preferencesState.householdSize >
-                                        minHousehold
-                                    ? () => preferencesNotifier
-                                          .updateHouseholdSize(
-                                            preferencesState.householdSize - 1,
-                                          )
-                                    : null,
-                              ),
-                              Text(
-                                preferencesState.householdSize.toString(),
-                                style: theme.textTheme.titleLarge,
-                              ),
-                              IconButton(
-                                icon: const Icon(Icons.add_circle_outline),
-                                onPressed:
-                                    preferencesState.householdSize <
-                                        maxHousehold
-                                    ? () => preferencesNotifier
-                                          .updateHouseholdSize(
-                                            preferencesState.householdSize + 1,
-                                          )
-                                    : null,
-                              ),
-                            ],
-                          ),
-                        ],
-                      ),
-                    ),
-                  ),
-                ),
-                const SizedBox(height: 12),
-                Card(
-                  child: Padding(
-                    padding: const EdgeInsets.all(16),
-                    child: SizedBox(
-                      width: double.infinity,
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Text(
-                            foodPreferencesTitle,
-                            style: theme.textTheme.titleSmall,
-                          ),
-                          const SizedBox(height: 12),
-                          if (showDisliked) ...[
-                            Text(
-                              dislikedTitle,
-                              style: theme.textTheme.bodyMedium,
-                            ),
-                            const SizedBox(height: 8),
-                            TextFormField(
-                              controller: _dislikedController,
-                              decoration: InputDecoration(
-                                hintText: dislikedHint,
-                                border: const OutlineInputBorder(),
-                              ),
-                              maxLines: 3,
-                              onEditingComplete: () =>
-                                  _updateFoodPreferences(preferencesNotifier),
-                            ),
-                          ],
-                          if (showDisliked && showLiked)
-                            const SizedBox(height: 16),
-                          if (showLiked) ...[
-                            Text(likedTitle, style: theme.textTheme.bodyMedium),
-                            const SizedBox(height: 8),
-                            TextFormField(
-                              controller: _likedController,
-                              decoration: InputDecoration(
-                                hintText: likedHint,
-                                border: const OutlineInputBorder(),
-                              ),
-                              maxLines: 3,
-                              onEditingComplete: () =>
-                                  _updateFoodPreferences(preferencesNotifier),
-                            ),
-                          ],
-                        ],
-                      ),
-                    ),
-                  ),
-                ),
-                const SizedBox(height: 16),
-                SizedBox(
-                  width: double.infinity,
-                  child: ElevatedButton(
-                    onPressed: () async {
-                      final auth = authState;
-                      if (auth is! AuthenticatedAuthState) {
-                        ScaffoldMessenger.of(context).showSnackBar(
-                          SnackBar(
-                            content: Text(l10n.errorMealPlanNotAuthenticated),
-                          ),
-                        );
-                        return;
-                      }
-                      try {
-                        _updateFoodPreferences(preferencesNotifier);
-                        final updatedPreferencesState = ref.read(
-                          preferencesDetailsProvider,
-                        );
-                        final repository = ref.read(
-                          preferencesRepositoryProvider,
-                        );
-                        final profileRepository = ref.read(
-                          profileRepositoryProvider,
-                        );
-                        final userPreferences = updatedPreferencesState
-                            .toUserPreferences(auth.user.id);
-                        // Save previous state for rollback if needed
-                        final previousPreferences = await repository
-                            .fetchUserPreference();
-                        try {
-                          await repository.saveUserPreference(userPreferences);
-                          await profileRepository.updateHideNutritionValues(
-                            updatedPreferencesState.hideNutritionValues,
-                          );
-                          await ref
-                              .read(authProvider.notifier)
-                              .refreshUserStatus();
-                          if (!context.mounted) return;
-                          ScaffoldMessenger.of(context).showSnackBar(
-                            SnackBar(content: Text(l10n.preferencesSaved)),
-                          );
-                        } catch (e) {
-                          // Attempt rollback if first call succeeded but second failed
-                          Object? rollbackError;
-                          if (previousPreferences != null) {
-                            try {
-                              await repository.saveUserPreference(
-                                previousPreferences,
-                              );
-                            } catch (rollback) {
-                              rollbackError = rollback;
-                              // Log rollback error
-                              debugPrint('Rollback failed: $rollback');
-                            }
-                          }
-                          if (!context.mounted) return;
-                          String message = e is AppError
-                              ? localizeErrorCode(
-                                  l10n,
-                                  e.code,
-                                  fallback: e.message,
-                                )
-                              : e.toString();
-                          if (rollbackError != null) {
-                            String rollbackMsg = rollbackError is AppError
-                                ? localizeErrorCode(
-                                    l10n,
-                                    rollbackError.code,
-                                    fallback: rollbackError.message,
-                                  )
-                                : rollbackError.toString();
-                            final rollbackBaseMessage = localizeErrorCode(
-                              l10n,
-                              'ERROR_SAVE_PREFERENCES_ROLLBACK_FAILED',
-                            );
-                            message =
-                                '$rollbackBaseMessage\n$message\nRollback error: $rollbackMsg';
-                          }
-                          ScaffoldMessenger.of(
-                            context,
-                          ).showSnackBar(SnackBar(content: Text(message)));
-                        }
-                      } catch (e) {
-                        if (!context.mounted) return;
-                        String message = e.toString();
-                        if (e is AppError) {
-                          message = localizeErrorCode(
-                            l10n,
-                            e.code,
-                            fallback: e.message,
-                          );
-                        }
-                        ScaffoldMessenger.of(
-                          context,
-                        ).showSnackBar(SnackBar(content: Text(message)));
-                      }
-                    },
-                    child: Text(l10n.profileSavePreferences),
-                  ),
-                ),
-              ],
-            );
-          },
+    return Scaffold(
+      backgroundColor: theme.colorScheme.surface,
+      appBar: AppBar(
+        title: Text(
+          l10n.profilePreferencesTitle,
+          style: TextStyle(fontWeight: FontWeight.bold, color: darkText),
+        ),
+        centerTitle: true,
+        backgroundColor: Colors.transparent,
+        elevation: 0,
+        leading: IconButton(
+          icon: Icon(Icons.arrow_back, color: darkText),
+          onPressed: () => Navigator.of(context).pop(),
         ),
       ),
+      body: configAsync.when(
+        loading: () => const Center(child: CircularProgressIndicator()),
+        error: (error, _) => Center(child: Text(error.toString())),
+        data: (config) {
+          final dietOptions = config.dietOptions;
+          final allergyOptions = config.allergyOptions;
+          final goalOptions = config.goalOptions;
+          final skillLevels = config.skillLevels;
+          final timeOptions = config.timeOptions;
+          final minHousehold = config.householdSize.min;
+          final maxHousehold = config.householdSize.max;
+
+          return Column(
+            children: [
+              Expanded(
+                child: SingleChildScrollView(
+                  padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 16),
+                  child: Column(
+                    children: [
+                      // Hide Nutrition Card
+                      Container(
+                        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 4),
+                        decoration: BoxDecoration(
+                          color: cardBg,
+                          borderRadius: BorderRadius.circular(16),
+                          border: Border.all(color: const Color(0xFFE2E8F0).withValues(alpha: 0.5)),
+                        ),
+                        child: Row(
+                          children: [
+                            Icon(Icons.settings_outlined, color: primaryGreen),
+                            const SizedBox(width: 12),
+                            Expanded(
+                              child: Text(
+                                l10n.profileHideNutritionLabel,
+                                style: TextStyle(fontWeight: FontWeight.w600, color: darkText),
+                              ),
+                            ),
+                            Switch(
+                              value: preferencesState.hideNutritionValues,
+                              onChanged: preferencesNotifier.setHideNutritionValues,
+                              thumbColor: WidgetStateProperty.all(primaryGreen),
+                            ),
+                          ],
+                        ),
+                      ),
+                      const SizedBox(height: 24),
+
+                      // Dietary Goals
+                      _buildSectionHeader(Icons.track_changes_outlined, l10n.goalsTitle),
+                      const SizedBox(height: 12),
+                      _buildChipWrap(
+                        options: goalOptions,
+                        selectedOptions: preferencesState.healthGoals,
+                        onToggle: preferencesNotifier.toggleHealthGoal,
+                        labelMapper: (opt) => _localizedOption(config.goalOptionLabels, effectiveLanguageCode, opt),
+                        primaryColor: primaryGreen,
+                      ),
+                      const SizedBox(height: 32),
+
+                      // Dietary Preferences
+                      _buildSectionHeader(Icons.restaurant_menu_outlined, l10n.profileDietarySpecsLabel),
+                      const SizedBox(height: 12),
+                      _buildChipWrap(
+                        options: dietOptions,
+                        selectedOptions: preferencesState.dietaryRestrictions,
+                        onToggle: preferencesNotifier.toggleDietaryRestriction,
+                        labelMapper: (opt) => _localizedOption(config.dietaryOptionLabels, effectiveLanguageCode, opt),
+                        primaryColor: primaryGreen,
+                        // hasAdd: true,
+                      ),
+                      const SizedBox(height: 32),
+
+                      // Allergies
+                      _buildSectionHeader(Icons.warning_amber_outlined, l10n.allergiesTitle),
+                      const SizedBox(height: 12),
+                      _buildChipWrap(
+                        options: allergyOptions,
+                        selectedOptions: preferencesState.allergies,
+                        onToggle: preferencesNotifier.toggleAllergy,
+                        labelMapper: (opt) => _localizedOption(config.allergyOptionLabels, effectiveLanguageCode, opt),
+                        primaryColor: const Color(0xFF718371), // Slightly different green or same
+                      ),
+                      const SizedBox(height: 32),
+
+                      // Cooking Details Card
+                      _buildSectionCard(
+                        icon: Icons.soup_kitchen_outlined,
+                        title: l10n.cookingDetailsTitle,
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text(l10n.cookingSkillTitle, style: TextStyle(fontWeight: FontWeight.bold, fontSize: 13, color: darkText)),
+                            const SizedBox(height: 12),
+                            _buildChoiceWrap(
+                              options: skillLevels,
+                              selected: preferencesState.cookingSkillLevel,
+                              onSelected: preferencesNotifier.setCookingSkillLevel,
+                              labelMapper: (opt) => _localizedOption(config.cookingOptionLabels, effectiveLanguageCode, opt),
+                              primaryColor: primaryGreen,
+                            ),
+                            const SizedBox(height: 24),
+                            Text(l10n.timeAvailabilityTitle, style: TextStyle(fontWeight: FontWeight.bold, fontSize: 13, color: darkText)),
+                            const SizedBox(height: 8),
+                            Row(
+                              children: [
+                                Expanded(
+                                  child: SliderTheme(
+                                    data: SliderThemeData(
+                                      activeTrackColor: theme.colorScheme.primaryContainer,
+                                      inactiveTrackColor: theme.colorScheme.surfaceContainerHighest,
+                                      thumbColor: primaryGreen,
+                                      trackHeight: 8,
+                                      overlayShape: SliderComponentShape.noOverlay,
+                                    ),
+                                    child: Slider(
+                                      value: timeOptions.indexOf(preferencesState.timeAvailability ?? timeOptions.first).toDouble().clamp(0, (timeOptions.length - 1).toDouble()),
+                                      min: 0,
+                                      max: (timeOptions.length - 1).toDouble(),
+                                      onChanged: (val) {
+                                        preferencesNotifier.setTimeAvailability(timeOptions[val.toInt()]);
+                                      },
+                                    ),
+                                  ),
+                                ),
+                                const SizedBox(width: 12),
+                                Text(
+                                  _localizedOption(config.cookingOptionLabels, effectiveLanguageCode, preferencesState.timeAvailability ?? timeOptions.first),
+                                  style: TextStyle(fontWeight: FontWeight.bold, color: primaryGreen),
+                                ),
+                              ],
+                            ),
+                            Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                              children: [
+                                Text(_localizedOption(config.cookingOptionLabels, effectiveLanguageCode, timeOptions.first), style: const TextStyle(fontSize: 10, color: Color(0xFFCBD5E1))),
+                                Text(_localizedOption(config.cookingOptionLabels, effectiveLanguageCode, timeOptions.last), style: const TextStyle(fontSize: 10, color: Color(0xFFCBD5E1))),
+                              ],
+                            ),
+                          ],
+                        ),
+                      ),
+                      const SizedBox(height: 24),
+
+                      // Household Size Card
+                      _buildSectionCard(
+                        icon: Icons.groups_outlined,
+                        title: l10n.householdSizeTitle,
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                          children: [
+                            _buildCircleButton(Icons.remove, () {
+                              if (preferencesState.householdSize > minHousehold) {
+                                preferencesNotifier.updateHouseholdSize(preferencesState.householdSize - 1);
+                              }
+                            }),
+                            Column(
+                              children: [
+                                Text(
+                                  preferencesState.householdSize.toString(),
+                                  style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold, color: darkText),
+                                ),
+                                Text('People', style: TextStyle(fontSize: 12, color: secondaryText)),
+                              ],
+                            ),
+                            _buildCircleButton(Icons.add, () {
+                              if (preferencesState.householdSize < maxHousehold) {
+                                preferencesNotifier.updateHouseholdSize(preferencesState.householdSize + 1);
+                              }
+                            }),
+                          ],
+                        ),
+                      ),
+                      const SizedBox(height: 24),
+
+                      // Food Preferences
+                      _buildFoodPrefField(Icons.favorite, Colors.green, 'Liked Foods', _likedController, 'Avocado, grilled salmon, kale chips...', (val) => _updateFoodPreferences(preferencesNotifier)),
+                      const SizedBox(height: 24),
+                      _buildFoodPrefField(Icons.favorite, Colors.red, 'Disliked Foods', _dislikedController, 'Olives, cilantro, mushrooms...', (val) => _updateFoodPreferences(preferencesNotifier)),
+                      const SizedBox(height: 48),
+                    ],
+                  ),
+                ),
+              ),
+
+              // Bottom Save Button
+              Padding(
+                padding: const EdgeInsets.all(24),
+                child: SizedBox(
+                  width: double.infinity,
+                  child: FilledButton.icon(
+                    onPressed: () async {
+                      final auth = authState;
+                      if (auth is! AuthenticatedAuthState) return;
+                      _updateFoodPreferences(preferencesNotifier);
+                      final updatedPreferencesState = ref.read(preferencesDetailsProvider);
+                      final repository = ref.read(preferencesRepositoryProvider);
+                      final profileRepository = ref.read(profileRepositoryProvider);
+                      final userPreferences = updatedPreferencesState.toUserPreferences(auth.user.id);
+                      try {
+                        await repository.saveUserPreference(userPreferences);
+                        await profileRepository.updateHideNutritionValues(updatedPreferencesState.hideNutritionValues);
+                        await ref.read(authProvider.notifier).refreshUserStatus();
+                        if (!context.mounted) return;
+                        ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(l10n.preferencesSaved)));
+                      } catch (e) {
+                         // Fallback error handling simplified
+                        if (!context.mounted) return;
+                        ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(e.toString())));
+                      }
+                    },
+                    icon: const Icon(Icons.save_outlined),
+                    label: Text(
+                      l10n.profileSavePreferences,
+                      style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+                    ),
+                    style: FilledButton.styleFrom(
+                      backgroundColor: primaryGreen,
+                      padding: const EdgeInsets.symmetric(vertical: 18),
+                      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+                    ),
+                  ),
+                ),
+              ),
+            ],
+          );
+        },
+      ),
+    );
+  }
+
+  Widget _buildSectionHeader(IconData icon, String title) {
+    return Builder(builder: (context) {
+      final theme = Theme.of(context);
+      return Row(
+        children: [
+          Icon(icon, size: 20, color: theme.colorScheme.primary),
+          const SizedBox(width: 8),
+          Text(
+            title,
+            style: TextStyle(fontSize: 15, fontWeight: FontWeight.bold, color: theme.colorScheme.onSurface),
+          ),
+        ],
+      );
+    });
+  }
+
+  Widget _buildChipWrap({
+    required List<String> options,
+    required List<String> selectedOptions,
+    required Function(String, bool) onToggle,
+    required String Function(String) labelMapper,
+    required Color primaryColor,
+    bool hasAdd = false,
+  }) {
+    return SizedBox(
+      width: double.infinity,
+      child: Wrap(
+        spacing: 8,
+        runSpacing: 10,
+        children: [
+          ...options.map((opt) {
+            final isSelected = selectedOptions.contains(opt);
+            return GestureDetector(
+              onTap: () => onToggle(opt, !isSelected),
+              child: Container(
+                padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 8),
+                decoration: BoxDecoration(
+                  color: isSelected ? primaryColor : Theme.of(context).colorScheme.surfaceContainerHighest,
+                  borderRadius: BorderRadius.circular(20),
+                ),
+                child: Row(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    if (isSelected) const Icon(Icons.check, size: 14, color: Colors.white),
+                    if (isSelected) const SizedBox(width: 4),
+                    Text(
+                      labelMapper(opt),
+                      style: TextStyle(
+                        fontSize: 13,
+                        fontWeight: FontWeight.w600,
+                        color: isSelected ? Colors.white : Theme.of(context).colorScheme.onSurfaceVariant,
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            );
+          }),
+          if (hasAdd)
+            Container(
+              padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 8),
+              decoration: BoxDecoration(
+                color: Theme.of(context).colorScheme.surfaceContainerHighest,
+                borderRadius: BorderRadius.circular(20),
+                border: Border.all(color: Theme.of(context).colorScheme.outline, style: BorderStyle.none), // Mock add
+              ),
+              child: Row(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Icon(Icons.add, size: 16, color: Theme.of(context).colorScheme.onSurfaceVariant),
+                  const SizedBox(width: 4),
+                  Text('Add', style: TextStyle(fontSize: 13, fontWeight: FontWeight.w600, color: Theme.of(context).colorScheme.onSurfaceVariant)),
+                ],
+              ),
+            ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildChoiceWrap({
+    required List<String> options,
+    required String? selected,
+    required Function(String) onSelected,
+    required String Function(String) labelMapper,
+    required Color primaryColor,
+  }) {
+    return Wrap(
+      spacing: 8,
+      children: options.map((opt) {
+        final isSelected = selected == opt;
+        return GestureDetector(
+          onTap: () => onSelected(opt),
+          child: Container(
+            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+            decoration: BoxDecoration(
+              color: isSelected ? primaryColor : Theme.of(context).colorScheme.surfaceContainerHighest,
+              borderRadius: BorderRadius.circular(20),
+            ),
+            child: Text(
+              labelMapper(opt),
+              style: TextStyle(
+                fontSize: 13,
+                fontWeight: FontWeight.w600,
+                color: isSelected ? Colors.white : Theme.of(context).colorScheme.onSurfaceVariant,
+              ),
+            ),
+          ),
+        );
+      }).toList(),
+    );
+  }
+
+  Widget _buildSectionCard({required IconData icon, required String title, required Widget child}) {
+    return Container(
+      width: double.infinity,
+      padding: const EdgeInsets.all(16),
+      decoration: BoxDecoration(
+        color: Theme.of(context).colorScheme.surface,
+        borderRadius: BorderRadius.circular(20),
+        border: Border.all(color: Theme.of(context).colorScheme.outlineVariant.withValues(alpha: 0.5)),
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Row(
+            children: [
+              Icon(icon, size: 20, color: Theme.of(context).colorScheme.primary),
+              const SizedBox(width: 8),
+              Text(title, style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold, color: Theme.of(context).colorScheme.onSurface)),
+            ],
+          ),
+          const SizedBox(height: 16),
+          child,
+        ],
+      ),
+    );
+  }
+
+  Widget _buildCircleButton(IconData icon, VoidCallback onTap) {
+    return Builder(builder: (context) {
+      final theme = Theme.of(context);
+      return GestureDetector(
+        onTap: onTap,
+        child: Container(
+          width: 40,
+          height: 40,
+          decoration: BoxDecoration(color: theme.colorScheme.primary.withValues(alpha: 0.3), shape: BoxShape.circle),
+          child: Icon(icon, color: theme.colorScheme.primary),
+        ),
+      );
+    });
+  }
+
+  Widget _buildFoodPrefField(IconData icon, Color iconColor, String title, TextEditingController controller, String hint, Function(String) onChanged) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Row(
+          children: [
+            Icon(icon, size: 18, color: iconColor),
+            const SizedBox(width: 8),
+            Text(title, style: TextStyle(fontSize: 14, fontWeight: FontWeight.bold, color: Theme.of(context).colorScheme.onSurface)),
+          ],
+        ),
+        const SizedBox(height: 8),
+        TextFormField(
+          controller: controller,
+          maxLines: 2,
+          decoration: InputDecoration(
+            hintText: hint,
+            hintStyle: const TextStyle(color: Color(0xFFCBD5E1), fontSize: 13),
+            filled: true,
+            fillColor: Theme.of(context).colorScheme.surface,
+            border: OutlineInputBorder(
+              borderRadius: BorderRadius.circular(12),
+              borderSide: BorderSide(color: Theme.of(context).colorScheme.outlineVariant),
+            ),
+            enabledBorder: OutlineInputBorder(
+              borderRadius: BorderRadius.circular(12),
+              borderSide: BorderSide(color: Theme.of(context).colorScheme.outlineVariant),
+            ),
+          ),
+          onChanged: onChanged,
+        ),
+      ],
     );
   }
 }

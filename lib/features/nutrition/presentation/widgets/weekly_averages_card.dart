@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 
-import '../../../../l10n/app_localizations.dart';
 import '../../domain/entities/weekly_average.dart';
 
 class WeeklyAveragesCard extends StatelessWidget {
@@ -15,47 +14,57 @@ class WeeklyAveragesCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final l10n = AppLocalizations.of(context);
+    if (hideNutritionValues) return const SizedBox.shrink();
+    
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Text(
-          l10n.weeklyAveragesTitle,
-          style: Theme.of(
-            context,
-          ).textTheme.titleLarge?.copyWith(fontWeight: FontWeight.bold),
+        const Text(
+          'Daily Totals', // Using English as per screenshot, or we could use l10n.weeklyAveragesTitle but screenshot uses English
+          style: TextStyle(
+            fontSize: 18,
+            fontWeight: FontWeight.bold,
+            color: Color(0xFF001B3A),
+          ),
         ),
         const SizedBox(height: 16),
         Row(
-          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
           children: [
-            if (!hideNutritionValues)
-              _MacroCard(
-                label: l10n.metricCalories,
-                value: '${weeklyAverage.calories.toStringAsFixed(0)} ${l10n.metricKcal}',
-                color: Colors.orange.shade300,
-                icon: Icons.local_fire_department,
+            Expanded(
+              child: _MacroCard(
+                label: 'ENERGY',
+                value: weeklyAverage.calories.toStringAsFixed(0),
+                unit: 'kcal',
               ),
-            _MacroCard(
-              label: l10n.metricProtein,
-              value: '${weeklyAverage.protein.toStringAsFixed(0)} g',
-              color: Colors.red.shade300,
-              icon: Icons.fitness_center,
             ),
-            if (!hideNutritionValues) ...[
-              _MacroCard(
-                label: l10n.metricCarbs,
-                value: '${weeklyAverage.carbs.toStringAsFixed(0)} g',
-                color: Colors.amber.shade300,
-                icon: Icons.grass,
+            const SizedBox(width: 12),
+            Expanded(
+              child: _MacroCard(
+                label: 'PROTEIN',
+                value: weeklyAverage.protein.toStringAsFixed(0),
+                unit: 'g',
               ),
-              _MacroCard(
-                label: l10n.metricFat,
-                value: '${weeklyAverage.fats.toStringAsFixed(0)} g',
-                color: Colors.blue.shade300,
-                icon: Icons.water_drop,
+            ),
+          ],
+        ),
+        const SizedBox(height: 12),
+        Row(
+          children: [
+            Expanded(
+              child: _MacroCard(
+                label: 'CARBS',
+                value: weeklyAverage.carbs.toStringAsFixed(0),
+                unit: 'g',
               ),
-            ],
+            ),
+            const SizedBox(width: 12),
+            Expanded(
+              child: _MacroCard(
+                label: 'FATS',
+                value: weeklyAverage.fats.toStringAsFixed(0),
+                unit: 'g',
+              ),
+            ),
           ],
         ),
       ],
@@ -66,51 +75,60 @@ class WeeklyAveragesCard extends StatelessWidget {
 class _MacroCard extends StatelessWidget {
   final String label;
   final String value;
-  final Color color;
-  final IconData icon;
+  final String unit;
 
   const _MacroCard({
     required this.label,
     required this.value,
-    required this.color,
-    required this.icon,
+    required this.unit,
   });
 
   @override
   Widget build(BuildContext context) {
-    return Expanded(
-      child: Container(
-        margin: const EdgeInsets.symmetric(horizontal: 4),
-        padding: const EdgeInsets.all(12),
-        decoration: BoxDecoration(
-          color: color.withValues(alpha: 0.1),
-          borderRadius: BorderRadius.circular(16),
-          border: Border.all(color: color.withValues(alpha: 0.3)),
-        ),
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            Icon(icon, color: color, size: 24),
-            const SizedBox(height: 8),
-            Text(
-              value,
-              style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 13),
-              textAlign: TextAlign.center,
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(20),
+        border: Border.all(color: Colors.grey.shade200),
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Text(
+            label,
+            style: TextStyle(
+              fontSize: 11,
+              fontWeight: FontWeight.bold,
+              letterSpacing: 1.2,
+              color: Colors.grey.shade600,
             ),
-            const SizedBox(height: 4),
-            Text(
-              label,
-              style: TextStyle(
-                fontSize: 12,
-                color: Theme.of(context).colorScheme.onSurfaceVariant,
-                fontWeight: FontWeight.w600,
+          ),
+          const SizedBox(height: 8),
+          Row(
+            crossAxisAlignment: CrossAxisAlignment.baseline,
+            textBaseline: TextBaseline.alphabetic,
+            children: [
+              Text(
+                value,
+                style: const TextStyle(
+                  fontSize: 24,
+                  fontWeight: FontWeight.w900,
+                  color: Color(0xFF001B3A),
+                ),
               ),
-              textAlign: TextAlign.center,
-              maxLines: 1,
-              overflow: TextOverflow.ellipsis,
-            ),
-          ],
-        ),
+              const SizedBox(width: 2),
+              Text(
+                unit,
+                style: TextStyle(
+                  fontSize: 13,
+                  fontWeight: FontWeight.w600,
+                  color: Colors.blueGrey.shade400,
+                ),
+              ),
+            ],
+          ),
+        ],
       ),
     );
   }

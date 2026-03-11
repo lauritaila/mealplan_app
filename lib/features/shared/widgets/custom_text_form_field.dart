@@ -31,11 +31,11 @@ class CustomTextFormField extends StatelessWidget {
     final colors = Theme.of(context).colorScheme;
 
     final border = OutlineInputBorder(
-      borderSide: BorderSide(color: Colors.transparent, width: 2),
-      borderRadius: BorderRadius.circular(10),
+      borderSide: const BorderSide(color: Colors.transparent, width: 2),
+      borderRadius: BorderRadius.circular(12),
     );
 
-    const borderRadius = Radius.circular(10);
+    const borderRadius = Radius.circular(12);
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -55,7 +55,9 @@ class CustomTextFormField extends StatelessWidget {
         Container(
           padding: const EdgeInsets.symmetric(vertical: 3),
           decoration: BoxDecoration(
-            color: Colors.white,
+            color: Theme.of(context).brightness == Brightness.light 
+                ? Colors.white 
+                : const Color(0xFF252A26),
             borderRadius: const BorderRadius.all(borderRadius),
           ),
           child: TextFormField(

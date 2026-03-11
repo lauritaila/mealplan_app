@@ -16,7 +16,7 @@ class CustomFilledButton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    const radius = Radius.circular(10);
+    const radius = Radius.circular(12);
     final Color effectiveButtonColor =
         buttonColor ?? Theme.of(context).colorScheme.primary;
     final Color effectiveTextColor =

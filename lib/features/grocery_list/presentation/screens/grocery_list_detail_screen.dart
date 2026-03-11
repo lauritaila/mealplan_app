@@ -44,7 +44,7 @@ class GroceryListDetailScreen extends ConsumerWidget {
         int pantryCount = detail.items.where((i) => i.isCoveredByPantry).length;
 
         return Scaffold(
-          backgroundColor: theme.colorScheme.surface,
+          backgroundColor: const Color(0xFFF4F7F9),
           appBar: AppBar(
             title: Text(detail.name),
             centerTitle: false,

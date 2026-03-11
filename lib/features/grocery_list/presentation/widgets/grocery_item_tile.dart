@@ -96,81 +96,91 @@ class _GroceryItemTileState extends ConsumerState<GroceryItemTile>
       onDismissed: (_) => widget.onDelete?.call(),
       child: Opacity(
         opacity: coveredByPantry ? 0.55 : 1.0,
-        child: ListTile(
-          contentPadding: const EdgeInsets.symmetric(horizontal: 12),
+        child: Card(
+          elevation: 0,
+          color: Colors.white,
+          margin: const EdgeInsets.only(bottom: 12),
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(12),
+            side: BorderSide(color: Colors.grey.shade200),
           ),
-          leading: ScaleTransition(
-            scale: _scaleAnim,
-            child: GestureDetector(
-              onTap: _toggleCheck,
-              child: AnimatedContainer(
-                duration: const Duration(milliseconds: 200),
-                width: 26,
-                height: 26,
-                decoration: BoxDecoration(
-                  color: _checked
-                      ? theme.colorScheme.primary
-                      : Colors.transparent,
-                  border: Border.all(
-                    color: _checked
-                        ? theme.colorScheme.primary
-                        : theme.colorScheme.outline,
-                    width: 2,
-                  ),
-                  borderRadius: BorderRadius.circular(8),
-                ),
-                child: _checked
-                    ? const Icon(Icons.check, size: 16, color: Colors.white)
-                    : null,
-              ),
+          child: ListTile(
+            contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 4),
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(12),
             ),
-          ),
-          title: AnimatedDefaultTextStyle(
-            duration: const Duration(milliseconds: 200),
-            style: theme.textTheme.bodyLarge!.copyWith(
-              decoration: _checked ? TextDecoration.lineThrough : null,
-              color: _checked
-                  ? theme.colorScheme.onSurface.withValues(alpha: 0.45)
-                  : theme.colorScheme.onSurface,
-            ),
-            child: Text(widget.item.ingredientName),
-          ),
-          subtitle: Row(
-            children: [
-              Text(
-                '${_formatQty(widget.item.quantity)} ${widget.item.unit}',
-                style: theme.textTheme.bodySmall?.copyWith(
-                  color: theme.colorScheme.onSurfaceVariant,
-                ),
-              ),
-              if (coveredByPantry) ...[
-                const SizedBox(width: 8),
-                Container(
-                  padding: const EdgeInsets.symmetric(
-                    horizontal: 6,
-                    vertical: 2,
-                  ),
+            leading: ScaleTransition(
+              scale: _scaleAnim,
+              child: GestureDetector(
+                onTap: _toggleCheck,
+                child: AnimatedContainer(
+                  duration: const Duration(milliseconds: 200),
+                  width: 24,
+                  height: 24,
                   decoration: BoxDecoration(
-                    color: theme.colorScheme.tertiaryContainer,
+                    color: _checked
+                        ? const Color(0xFF6B8A6B)
+                        : Colors.transparent,
+                    border: Border.all(
+                      color: _checked
+                          ? const Color(0xFF6B8A6B)
+                          : Colors.grey.shade400,
+                      width: _checked ? 0 : 1.5,
+                    ),
                     borderRadius: BorderRadius.circular(6),
                   ),
-                  child: Text(
-                    l10n.groceryItemInPantry,
-                    style: theme.textTheme.labelSmall?.copyWith(
-                      color: theme.colorScheme.onTertiaryContainer,
-                      fontWeight: FontWeight.w600,
-                    ),
+                  child: _checked
+                      ? const Icon(Icons.check, size: 16, color: Colors.white)
+                      : null,
+                ),
+              ),
+            ),
+            title: AnimatedDefaultTextStyle(
+              duration: const Duration(milliseconds: 200),
+              style: theme.textTheme.bodyMedium!.copyWith(
+                fontWeight: FontWeight.w600,
+                decoration: _checked ? TextDecoration.lineThrough : null,
+                color: _checked
+                    ? Colors.blueGrey.shade300
+                    : const Color(0xFF334139),
+              ),
+              child: Text(widget.item.ingredientName),
+            ),
+            subtitle: Row(
+              children: [
+                Text(
+                  '${_formatQty(widget.item.quantity)} ${widget.item.unit}',
+                  style: theme.textTheme.bodySmall?.copyWith(
+                    color: Colors.blueGrey.shade400,
                   ),
                 ),
+                if (coveredByPantry) ...[
+                  const SizedBox(width: 8),
+                  Container(
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 6,
+                      vertical: 2,
+                    ),
+                    decoration: BoxDecoration(
+                      color: theme.colorScheme.tertiaryContainer,
+                      borderRadius: BorderRadius.circular(6),
+                    ),
+                    child: Text(
+                      l10n.groceryItemInPantry,
+                      style: theme.textTheme.labelSmall?.copyWith(
+                        color: theme.colorScheme.onTertiaryContainer,
+                        fontWeight: FontWeight.w600,
+                      ),
+                    ),
+                  ),
+                ],
               ],
-            ],
-          ),
-          trailing: IconButton(
-            icon: const Icon(Icons.edit_outlined, size: 18),
-            tooltip: l10n.groceryItemEditTooltip,
-            onPressed: () => _showEditQuantity(context),
+            ),
+            trailing: IconButton(
+              icon: const Icon(Icons.mode_edit_outline_outlined, size: 18, color: Color(0xFF7BA082)),
+              tooltip: l10n.groceryItemEditTooltip,
+              onPressed: () => _showEditQuantity(context),
+            ),
           ),
         ),
       ),

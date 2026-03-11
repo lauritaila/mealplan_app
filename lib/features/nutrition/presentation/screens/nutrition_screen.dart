@@ -4,7 +4,6 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:meal_plan_app/l10n/app_localizations.dart';
 import 'package:meal_plan_app/features/profile/presentation/providers/profile_provider.dart';
 import '../providers/nutrition_provider.dart';
-import '../widgets/gamification_achievements.dart';
 import '../widgets/hero_consistency_ring.dart';
 import '../widgets/weekly_activity_chart.dart';
 import '../widgets/weekly_averages_card.dart';
@@ -66,8 +65,8 @@ class NutritionScreen extends ConsumerWidget {
                     hideNutritionValues: hideNutritionValues,
                   ),
                   const SizedBox(height: 32),
-                  const GamificationAchievements(),
-                  const SizedBox(height: 32),
+                  // const GamificationAchievements(),
+                  // const SizedBox(height: 32),
                 ],
               ),
             ),

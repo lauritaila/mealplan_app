@@ -3,7 +3,8 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:meal_plan_app/features/auth/presentation/provider/provider.dart';
 import 'package:meal_plan_app/features/grocery_list/presentation/providers/grocery_actions_provider.dart';
-import 'package:meal_plan_app/features/grocery_list/presentation/widgets/select_grocery_list_sheet.dart';
+import 'package:meal_plan_app/features/shared/widgets/select_list_sheet.dart';
+import 'package:meal_plan_app/features/grocery_list/presentation/providers/provider.dart';
 import 'package:meal_plan_app/features/recipes/presentation/providers/providers.dart';
 import 'package:meal_plan_app/features/recipes/presentation/widgets/recipe_card.dart';
 import 'package:meal_plan_app/l10n/app_localizations.dart';
@@ -25,7 +26,7 @@ class RecipesListScreen extends ConsumerWidget {
         title: Text(l10n.recipesTitle),
         actions: [
           IconButton(
-            icon: const Icon(Icons.favorite),
+            icon: const Icon(Icons.favorite, color: Color(0xFF6A8773)),
             onPressed: () => context.push('/recipes/favorites'),
             tooltip: l10n.favoritesTooltip,
           ),
@@ -70,20 +71,32 @@ class RecipesListScreen extends ConsumerWidget {
                     }
                   },
                   onAddToGroceryList: () async {
-                    final selected = await showSelectOrCreateGroceryListSheet(
+                    final selectedId = await showModalBottomSheet<int?>(
                       context: context,
-                      title: l10n.addRecipeToListTitle,
+                      isScrollControlled: true,
+                      backgroundColor: Colors.transparent,
+                      builder: (context) => SelectListSheet(
+                        title: l10n.addRecipeToListTitle,
+                        subtitle: 'Organiza tus recetas e ingredientes favoritos',
+                      ),
                     );
-                    if (selected == null || !context.mounted) return;
+                    if (selectedId == null || !context.mounted) return;
                     final ok = await ref
                         .read(groceryActionsProvider.notifier)
-                        .importRecipe(selected.id, recipe.id);
+                        .importRecipe(selectedId, recipe.id);
                     if (!context.mounted) return;
+                    
+                    String? listName;
+                    final lists = ref.read(groceryListsProvider).asData?.value;
+                    if (lists != null) {
+                      listName = lists.firstWhere((l) => l.id == selectedId).name;
+                    }
+
                     ScaffoldMessenger.of(context).showSnackBar(
                       SnackBar(
                         content: Text(
                           ok
-                              ? l10n.recipeAddedToList(selected.name)
+                              ? l10n.recipeAddedToList(listName ?? l10n.groceryTitle)
                               : l10n.recipeAddFailed,
                         ),
                       ),

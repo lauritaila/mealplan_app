@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import '../../../../l10n/app_localizations.dart';
 
 class HeroConsistencyRing extends StatelessWidget {
   final double consistencyScore;
@@ -9,56 +8,21 @@ class HeroConsistencyRing extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final clampedScore = consistencyScore.clamp(0.0, 100.0) / 100.0;
-    final color = _getScoreColor(clampedScore);
-    final l10n = AppLocalizations.of(context);
+    final color = const Color(0xFF7BA082); // Muted green from screenshot
 
     return Column(
       mainAxisSize: MainAxisSize.min,
       children: [
-        Row(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            Text(
-              l10n.consistencyRingTitle,
-              style: Theme.of(
-                context,
-              ).textTheme.titleMedium?.copyWith(fontWeight: FontWeight.bold),
-            ),
-            const SizedBox(width: 8),
-            Tooltip(
-              message: l10n.consistencyRingTooltip,
-              textAlign: TextAlign.center,
-              triggerMode: TooltipTriggerMode.tap,
-              margin: const EdgeInsets.symmetric(horizontal: 24),
-              padding: const EdgeInsets.all(12),
-              showDuration: const Duration(seconds: 4),
-              child: Icon(
-                Icons.info_outline,
-                size: 18,
-                color: Theme.of(context).colorScheme.onSurfaceVariant,
-              ),
-            ),
-          ],
-        ),
-        const SizedBox(height: 8),
-        Text(
-          l10n.consistencyRingSubtitle,
-          style: Theme.of(context).textTheme.bodySmall?.copyWith(
-            color: Theme.of(context).colorScheme.onSurfaceVariant,
-          ),
-          textAlign: TextAlign.center,
-        ),
-        const SizedBox(height: 24),
         SizedBox(
-          width: 180,
-          height: 180,
+          width: 200,
+          height: 200,
           child: Stack(
             fit: StackFit.expand,
             children: [
               CircularProgressIndicator(
                 value: clampedScore,
-                strokeWidth: 20,
-                backgroundColor: color.withValues(alpha: 0.15),
+                strokeWidth: 16,
+                backgroundColor: const Color(0xFFE8F0E8),
                 valueColor: AlwaysStoppedAnimation<Color>(color),
                 strokeCap: StrokeCap.round,
               ),
@@ -68,8 +32,21 @@ class HeroConsistencyRing extends StatelessWidget {
                   children: [
                     Text(
                       '${(clampedScore * 100).toStringAsFixed(0)}%',
-                      style: Theme.of(context).textTheme.headlineMedium
-                          ?.copyWith(fontWeight: FontWeight.w800, color: color),
+                      style: const TextStyle(
+                        fontSize: 48,
+                        fontWeight: FontWeight.w900,
+                        color: Color(0xFF001B3A),
+                        letterSpacing: -1.5,
+                      ),
+                    ),
+                    Text(
+                      'CONSISTENCY',
+                      style: TextStyle(
+                        fontSize: 12,
+                        fontWeight: FontWeight.bold,
+                        letterSpacing: 1.5,
+                        color: Colors.grey.shade600,
+                      ),
                     ),
                   ],
                 ),
@@ -77,28 +54,7 @@ class HeroConsistencyRing extends StatelessWidget {
             ],
           ),
         ),
-        const SizedBox(height: 24),
-        Text(
-          _getMotivationalMessage(clampedScore * 100, l10n),
-          style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-            color: Colors.grey.shade800,
-            fontWeight: FontWeight.w600,
-          ),
-          textAlign: TextAlign.center,
-        ),
       ],
     );
-  }
-
-  Color _getScoreColor(double ratio) {
-    if (ratio >= 0.8) return Colors.green.shade400;
-    if (ratio >= 0.5) return Colors.orange.shade400;
-    return Colors.red.shade400;
-  }
-
-  String _getMotivationalMessage(double score, AppLocalizations l10n) {
-    if (score >= 80) return l10n.consistencyMessageHigh(score.toStringAsFixed(0));
-    if (score >= 50) return l10n.consistencyMessageMedium;
-    return l10n.consistencyMessageLow;
   }
 }

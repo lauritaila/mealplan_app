@@ -17,7 +17,7 @@ import 'package:meal_plan_app/features/meal_plan/domain/domain.dart';
 import 'package:meal_plan_app/features/meal_plan/presentation/screens/loading_meal_plan_screen.dart';
 import 'package:meal_plan_app/features/meal_plan/presentation/screens/meal_plan_list_screen.dart';
 import 'package:meal_plan_app/features/meal_plan/presentation/screens/meal_plan_entries_screen.dart';
-import 'package:meal_plan_app/features/nutrition/presentation/screens/nutrition_screen.dart';
+
 
 // --- Configuración del Router ---
 class GoRouterNotifier extends ChangeNotifier {
@@ -70,7 +70,7 @@ final appRouterProvider = Provider<GoRouter>((ref) {
             mealTypes: List<String>.from(
               extra['mealTypes'] as List? ?? const [],
             ),
-            usePantry: (extra['usePantry'] as bool?) ?? false,
+            usePantry: (extra['usePantry'] as bool?) ?? true,
           );
         },
       ),
@@ -105,15 +105,11 @@ final appRouterProvider = Provider<GoRouter>((ref) {
           ),
           GoRoute(
             path: '/meal-plan',
-            builder: (context, state) => const MealPlanListScreen(),
+            builder: (context, state) => const MealPlanDayScreen(),
             routes: [
               GoRoute(
                 path: 'history',
                 builder: (context, state) => const MealPlanListScreen(),
-              ),
-              GoRoute(
-                path: 'current',
-                builder: (context, state) => const MealPlanDayScreen(),
               ),
               GoRoute(
                 path: ':id',
@@ -192,7 +188,7 @@ final appRouterProvider = Provider<GoRouter>((ref) {
           ),
           GoRoute(
             path: '/nutrition',
-            builder: (context, state) => const NutritionScreen(),
+            builder: (context, state) => const Scaffold(body: Center(child: Text('Nutrition Screen Placeholder'))),
           ),
           GoRoute(
             path: '/profile',

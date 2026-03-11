@@ -955,193 +955,23 @@ class AppLocalizationsEs extends AppLocalizations {
       'El correo no coincide con tu cuenta.';
 
   @override
-  String get homeTodayPlanReady => 'Tu plan para hoy está listo';
-
-  @override
-  String get homeWeekLabel => 'SEMANA';
-
-  @override
-  String get homeViewRecipeShort => 'Ver Receta';
-
-  @override
-  String get homeFavoritesAction => 'Favoritas';
-
-  @override
-  String get homeEatOutAction => 'Comer Fuera';
-
-  @override
-  String get homeSkipMealQuestion => '¿Qué comida comerás fuera?';
-
-  @override
-  String get homeSkipMealDescription =>
-      'Selecciona las comidas que no prepararás en casa para ajustar tus macros del día.';
-
-  @override
-  String get homeConfirmAction => 'Confirmar';
-
-  @override
-  String homeSkippingMeal(Object mealName) {
-    return 'Saltando $mealName...';
-  }
-
-  @override
-  String get usePantryLabel => 'Usar ingredientes de la despensa';
-
-  @override
-  String get usePantrySubtitle => 'La IA priorizará ingredientes que ya tienes';
-
-  @override
-  String get consistencyRingTitle => 'Consistencia';
-
-  @override
-  String get consistencyRingTooltip =>
-      'Tu puntaje de consistencia se basa en qué tan cerca estuviste de tus objetivos nutricionales los últimos 7 días.';
-
-  @override
-  String get consistencyRingSubtitle => 'Basado en tus últimos 7 días';
-
-  @override
-  String consistencyMessageHigh(Object score) {
-    return '¡Excelente! Mantienes un $score% de consistencia.';
-  }
-
-  @override
-  String get consistencyMessageMedium =>
-      '¡Buen trabajo! Estás por encima del 50%.';
-
-  @override
-  String get consistencyMessageLow => '¡Vamos! Puedes mejorar tu consistencia.';
-
-  @override
-  String get menuAddToGrocery => 'Agregar a la lista';
-
-  @override
-  String get planEntriesTitle => 'Comidas del plan';
-
-  @override
-  String get noEntriesInPlan => 'No hay comidas en este plan.';
-
-  @override
-  String get menuViewRecipe => 'Ver receta';
-
-  @override
-  String get menuMarkComplete => 'Marcar como completada';
-
-  @override
-  String get addRecipeToListTitle => 'Agregar ingredientes a la lista';
-
-  @override
-  String recipeAddedToList(Object listName) {
-    return 'Agregado a $listName';
-  }
-
-  @override
-  String get recipeAddFailed => 'Error al agregar a la lista';
-
-  @override
-  String get markCompleteDialogTitle => 'Marcar como completada';
-
-  @override
-  String markCompleteQuestion(Object recipeName) {
-    return '¿Preparaste $recipeName?';
-  }
-
-  @override
-  String get markCompleteDeductInfo =>
-      'Al marcar como completada, se descontarán los ingredientes de tu despensa.';
-
-  @override
-  String get completeAction => 'Completar';
-
-  @override
-  String allIngredientsDeducted(Object count) {
-    return '$count ingredientes descontados';
-  }
-
-  @override
-  String someIngredientsMissing(Object count) {
-    return '$count ingredientes faltantes en despensa';
-  }
-
-  @override
-  String get alsoRemoveFromGrocery => 'También eliminar de la lista de compras';
-
-  @override
-  String get weeklyAveragesTitle => 'Promedios semanales';
-
-  @override
-  String get weeklyActivityTitle => 'Actividad semanal';
-
-  @override
-  String get achievementsTitle => 'Logros';
-
-  @override
-  String get achievementStreakTitle => 'Racha de oro';
-
-  @override
-  String get achievementStreakDesc =>
-      'Has completado tus comidas 5 días seguidos.';
-
-  @override
-  String get achievementWasteTitle => 'Cero desperdicio';
-
-  @override
-  String get achievementWasteDesc =>
-      'Has utilizado todos los ingredientes de tu lista.';
-
-  @override
-  String get achievementVarietyTitle => 'Explorador culinario';
-
-  @override
-  String get achievementVarietyDesc =>
-      'Has probado 10 recetas diferentes este mes.';
-
-  @override
-  String get nutritionFilterDaily => 'Hoy';
-
-  @override
-  String get nutritionFilterWeekly => '7 días';
-
-  @override
-  String get nutritionFilterMonthly => '30 días';
-
-  @override
-  String get nutritionErrorLoading => 'Error al cargar los datos nutricionales';
-
-  @override
-  String get deleteGroceryListDialogTitle => 'Eliminar lista de compras';
-
-  @override
-  String deleteGroceryListDialogMessage(Object name) {
-    return '¿Estás seguro de que quieres eliminar la lista \"$name\"?';
-  }
-
-  @override
-  String get myPlansTitle => 'Mis Planes';
-
-  @override
-  String get newPlan => 'Nuevo Plan';
-
-  @override
-  String get noSavedPlans => 'No hay planes guardados';
-
-  @override
-  String get createFirstPlan => 'Crea tu primer plan';
-
-  @override
-  String get ai => 'IA';
-
-  @override
-  String get menuViewEntries => 'Ver entradas';
-
-  @override
-  String get menuSaveIngredients => 'Guardar ingredientes';
-
-  @override
-  String get menuReusePlan => 'Reutilizar plan';
-
-  @override
   String get saveIngredientsSheetTitle => 'Guardar Ingredientes';
+
+  @override
+  String get saveIngredientsDialogContent =>
+      '¿Quieres guardar los ingredientes de este plan en una lista de compras?';
+
+  @override
+  String get yesSaveAction => 'Sí, Guardar';
+
+  @override
+  String get notNowAction => 'Ahora No';
+
+  @override
+  String get selectListTitle => 'Seleccionar Lista';
+
+  @override
+  String get selectListSubtitle => 'Elige dónde guardar tus artículos';
 
   @override
   String savedIngredientsSuccess(Object listName) {
@@ -1152,32 +982,19 @@ class AppLocalizationsEs extends AppLocalizations {
   String get savedIngredientsFailed => 'Error al guardar ingredientes';
 
   @override
+  String get deletePlanAlsoRemoveGrocery =>
+      'También eliminar ingredientes de la lista de compras';
+
+  @override
   String planReusedSuccess(Object planName, Object count) {
-    return 'Plan reutilizado como $planName con $count entradas';
+    return 'Plan \'$planName\' reutilizado con $count recetas';
   }
 
   @override
   String get planReusedView => 'Ver';
 
   @override
-  String get planReusedFailed => 'Error al reutilizar plan';
-
-  @override
-  String get deletePlanDialogTitle => 'Eliminar plan';
-
-  @override
-  String get deletePlanDialogMessage =>
-      '¿Seguro que deseas eliminar este plan?';
-
-  @override
-  String get deletePlanAlsoRemoveGrocery =>
-      'También remover de la lista de compras';
-
-  @override
-  String get planDeletedSuccess => 'Plan eliminado con éxito';
-
-  @override
-  String get planDeleteFailed => 'Error al eliminar el plan';
+  String get planReusedFailed => 'Error al reutilizar el plan';
 
   @override
   String get reusePlanSheetTitle => 'Reutilizar Plan';
@@ -1186,188 +1003,251 @@ class AppLocalizationsEs extends AppLocalizations {
   String get reusePlanStartDateLabel => 'Fecha de inicio';
 
   @override
-  String get reusePlanSelectDate => 'Seleccionar fecha';
+  String get reusePlanSelectDate => 'Seleccionar Fecha';
 
   @override
-  String get reusePlanNameLabel => 'Nombre del plan';
+  String get reusePlanNameLabel => 'Nombre (Opcional)';
 
   @override
   String get reusePlanNameHint => 'Ej. Plan de la próxima semana';
 
   @override
-  String get groceryListsTitle => 'Listas de Compras';
+  String get menuReusePlan => 'Reutilizar plan';
 
   @override
-  String get groceryListsNewListLabel => 'Nueva Lista';
+  String get menuSaveIngredients => 'Guardar ingredientes';
 
   @override
-  String get groceryListsSectionHeader => 'Tus Listas';
+  String get menuViewEntries => 'Ver recetas';
 
   @override
-  String get groceryListsErrorLoading => 'Error cargando listas';
+  String get planActionsTitle => 'Acciones del Plan';
 
   @override
-  String get groceryListsEmptyTitle => 'Aún no hay listas';
+  String get datesUpdatedSuccess => 'Fechas actualizadas correctamente';
 
   @override
-  String get groceryListsEmptySubtitle =>
-      'Crea una nueva lista para guardar tus ingredientes.';
+  String get noRecipeAssociated => 'No hay receta asociada a esta comida.';
 
   @override
-  String get pantryCardTitle => 'Despensa';
+  String get addRecipeToListTitle => 'Agregar Receta a la Lista';
 
   @override
-  String get pantryCardSubtitle => 'Administra los artículos de tu despensa';
-
-  @override
-  String pantryCountLabel(Object count) {
-    return '$count artículos';
+  String recipeAddedToList(Object listName) {
+    return 'Ingredientes de la receta agregados a $listName';
   }
 
   @override
-  String get groceryListDetailPendingHeader => 'Pendientes';
+  String get recipeAddFailed => 'Error al agregar receta a la lista.';
 
   @override
-  String get groceryListDetailCompletedHeader => 'Completados';
+  String get markCompleteDialogTitle => 'Marcar como Completado';
 
   @override
-  String get addItemTitleGrocery => 'Agregar artículo';
+  String markCompleteQuestion(Object mealName) {
+    return '¿Has completado $mealName?';
+  }
 
   @override
-  String get groceryListDetailEmptyTitle => 'Esta lista está vacía';
+  String get markCompleteDeductInfo =>
+      'Los ingredientes se descontarán de tu despensa si están disponibles.';
 
   @override
-  String get groceryListDetailEmptySubtitle =>
-      'Agrega artículos manualmente o desde tus planes de comida.';
+  String get completeAction => 'Completar';
 
   @override
-  String get pantryTitle => 'Despensa';
+  String mealCompletedSuccess(Object count) {
+    return '¡Comida completada! Se descontaron $count ingredientes de la despensa.';
+  }
+
+  @override
+  String mealCompletedMissing(Object count) {
+    return 'Comida completada. Faltaron $count ingredientes de la despensa.';
+  }
+
+  @override
+  String get mealCompletedError => 'Error al completar la comida.';
+
+  @override
+  String get alsoRemoveFromGrocery => 'También retirar de la lista de compras';
+
+  @override
+  String get menuAddToGrocery => 'Agregar a lista de compras';
+
+  @override
+  String get mealCompletedLabel => 'Completado';
+
+  @override
+  String get usePantryTitle => 'Usar Despensa';
+
+  @override
+  String get usePantrySubtitle =>
+      'Descontar ingredientes de la despensa al generar.';
+
+  @override
+  String get usePantryLabel => 'Usar Ingredientes de la Despensa';
+
+  @override
+  String get edit => 'Editar';
+
+  @override
+  String get createNewListAction => 'Crear Nueva Lista';
+
+  @override
+  String get addCustomName => 'Nombre Personalizado';
+
+  @override
+  String get existingListsLabel => 'Listas Existentes';
+
+  @override
+  String get noExistingLists => 'No se encontraron listas existentes.';
+
+  @override
+  String savedRecipesCount(Object count) {
+    return '$count recetas guardadas';
+  }
+
+  @override
+  String get createListErrorCreate => 'Error al crear la lista de compras.';
+
+  @override
+  String get createListBottomSheetTitle => 'Crear Lista';
+
+  @override
+  String get createListBottomSheetSubtitle =>
+      'Crear una nueva lista de compras.';
+
+  @override
+  String get listNameLabel => 'Nombre de la Lista';
+
+  @override
+  String get listNameHint => 'Ej. Compras Mensuales';
+
+  @override
+  String get listNameEmptyError =>
+      'El nombre de la lista no puede estar vacío.';
+
+  @override
+  String get create => 'Crear';
+
+  @override
+  String get deletePlanSheetQuotaNote => 'Esta acción no se puede deshacer.';
+
+  @override
+  String get regenerateRecipePromptTitle => 'Regenerar Receta';
+
+  @override
+  String get regenerateRecipePromptSubtitle =>
+      '¿Estás seguro de que deseas regenerar esta receta?';
+
+  @override
+  String get regenerateRecipeNotePrefix => 'Nota: ';
+
+  @override
+  String get regenerateRecipeNoteText =>
+      'Esto consumirá tu cuota de generación.';
+
+  @override
+  String get regenerateNotesHint =>
+      '¿Algún requerimiento especial? (ej. mas proteína)';
+
+  @override
+  String get regenerateRecipeButtonTitle => 'Regenerar';
+
+  @override
+  String get selectDatesTitle => 'Seleccionar Fechas';
+
+  @override
+  String get selectDatesSubtitle => 'Elige las fechas para tu plan de comidas.';
+
+  @override
+  String get confirmSelectionAction => 'Confirmar Selección';
 
   @override
   String get pantryOtherCategory => 'Otros';
 
   @override
-  String get pantryAddTooltip => 'Agregar artículo';
+  String get pantryAddTooltip => 'Agregar a Despensa';
 
   @override
-  String get pantryEmptyTitle => 'La despensa está vacía';
+  String get pantryEmptyTitle => 'Tu despensa está vacía.';
 
   @override
-  String get pantryEmptySubtitle => 'Agrega artículos a tu despensa.';
+  String get pantryEmptySubtitle => 'Agrega artículos para llevar registro.';
 
   @override
-  String get pantryNoDate => 'Sin fecha de expiración';
+  String get addItemQuantityInvalid => 'Cantidad ingresada inválida.';
 
   @override
-  String pantryEditTitle(Object itemName) {
-    return 'Editar $itemName';
+  String get pantryNoDate => 'Sin fecha de caducidad';
+
+  @override
+  String pantryEditTitle(Object ingredientName) {
+    return 'Editar $ingredientName';
   }
 
   @override
   String get pantryQuantityLabel => 'Cantidad';
 
   @override
-  String get pantryExpiryLabel => 'Fecha de expiración';
+  String get pantryExpiryLabel => 'Fecha de Caducidad';
 
   @override
   String get save => 'Guardar';
 
   @override
-  String get changeDatesTooltip => 'Cambiar fechas';
+  String get pantryItemExpired => 'Caducado';
 
   @override
-  String get saveToGroceryList => 'Guardar en Lista';
+  String get pantryStockLow => 'Pocas existencias';
 
   @override
-  String get saveIngredientsPrompt => 'Selecciona una lista';
+  String get pantryStockNormal => 'Stock adecuado';
 
   @override
-  String get datesUpdatedSuccess => 'Fechas actualizadas';
+  String get pantryDeleteDialogTitle => 'Eliminar Artículo';
 
   @override
-  String get savePlanToList => 'Guardar Plan a Lista';
-
-  @override
-  String importMealPlanSuccess(Object listName) {
-    return 'Plan importado a $listName';
+  String pantryDeleteDialogMessage(Object ingredientName) {
+    return '¿Estás seguro de que deseas eliminar $ingredientName de tu despensa?';
   }
 
   @override
-  String get importMealPlanFailure => 'Error al importar el plan';
+  String get addItemDefaultUnit => 'piezas';
 
   @override
-  String get alsoRemoveGroceryList => 'Remover de la lista de compras';
-
-  @override
-  String get alsoRemoveGroceryListSubtitle =>
-      'Se removerán los ingredientes relacionados';
-
-  @override
-  String get noRecipeAssociated => 'No hay receta asociada';
-
-  @override
-  String mealCompletedSuccess(Object count) {
-    return '$count comidas completadas';
-  }
-
-  @override
-  String mealCompletedMissing(Object count) {
-    return '$count faltantes';
-  }
-
-  @override
-  String get selectGroceryListEmpty => 'No se encontraron listas de compras';
-
-  @override
-  String get selectGroceryListNewList => 'Crear Nueva Lista';
-
-  @override
-  String get listNameLabel => 'Nombre de la Lista';
-
-  @override
-  String get create => 'Crear';
-
-  @override
-  String get listNameEmptyError => 'El nombre no puede estar vacío';
-
-  @override
-  String get createListErrorCreate => 'Error al crear lista';
-
-  @override
-  String get createListDialogTitle => 'Crear Lista';
-
-  @override
-  String get listNameHint => 'Ej. Compras semanales';
-
-  @override
-  String get addItemDefaultUnit => 'unidades';
-
-  @override
-  String get addItemErrorAdding => 'Error al agregar el artículo';
+  String get addItemErrorAdding => 'Error al agregar el artículo.';
 
   @override
   String get addItemTitlePantry => 'Agregar a Despensa';
 
   @override
-  String get addItemIngredientNameLabel => 'Nombre del Ingrediente';
+  String get addItemTitleGrocery => 'Agregar a Lista de Compras';
 
   @override
-  String get addItemIngredientNameRequired => 'Requerido';
+  String get addItemIngredientNameLabel => 'Nombre del Artículo';
+
+  @override
+  String get addItemIngredientNamePantryHint => 'Ej. Leche';
+
+  @override
+  String get addItemIngredientNameGroceryHint => 'Ej. Pan';
+
+  @override
+  String get addItemIngredientNameRequired =>
+      'El nombre del artículo es requerido.';
 
   @override
   String get addItemQuantityLabel => 'Cantidad';
 
   @override
-  String get addItemQuantityRequired => 'Requerido';
-
-  @override
-  String get addItemQuantityInvalid => 'Cantidad inválida';
+  String get addItemQuantityRequired => 'La cantidad es requerida.';
 
   @override
   String get addItemUnitLabel => 'Unidad';
 
   @override
-  String get addItemUnitHint => 'Ej. kg, lbs';
+  String get addItemUnitHint => 'Ej. kg, litros';
 
   @override
   String get addItemCategoryLabel => 'Categoría';
@@ -1376,76 +1256,183 @@ class AppLocalizationsEs extends AppLocalizations {
   String get addItemCategoryHint => 'Seleccionar categoría';
 
   @override
-  String get addItemExpiryLabel => 'Expiración';
+  String get addItemExpiryLabel => 'Fecha de Caducidad';
 
   @override
-  String get addItemButton => 'Agregar';
+  String get addItemButtonPantry => 'Agregar a Despensa';
 
   @override
-  String get groceryItemInPantry => 'En despensa';
+  String get addItemButtonGrocery => 'Agregar a Lista de Compras';
 
   @override
-  String get groceryItemEditTooltip => 'Editar artículo';
+  String pantryCountLabel(Object count) {
+    return '$count artículos en despensa';
+  }
+
+  @override
+  String get groceryListDetailPendingHeader => 'Artículos Pendientes';
+
+  @override
+  String get groceryListDetailCompletedHeader => 'Artículos Completados';
+
+  @override
+  String get groceryListDetailEmptyTitle => 'Esta lista está vacía.';
+
+  @override
+  String get groceryListDetailEmptySubtitle =>
+      'Agrega artículos con el botón +.';
+
+  @override
+  String get groceryItemInPantry => 'En Despensa';
+
+  @override
+  String get groceryItemEditTooltip => 'Editar Artículo';
 
   @override
   String get editQuantityDialogTitle => 'Editar Cantidad';
 
   @override
-  String get pantryItemExpired => 'Expirado';
+  String get grocerySectionTitle => 'Compras';
 
   @override
-  String get editAction => 'Editar';
+  String get groceryListsTab => 'Listas';
 
   @override
-  String get pantryDeleteDialogTitle => 'Eliminar Artículo';
+  String get pantryTab => 'Despensa';
 
   @override
-  String pantryDeleteDialogMessage(Object itemName) {
-    return '¿Seguro que deseas eliminar $itemName?';
+  String get groceryListsErrorLoading => 'Error al cargar las listas.';
+
+  @override
+  String get groceryListsEmptyTitle => 'No se encontraron listas.';
+
+  @override
+  String get groceryListsEmptySubtitle => 'Crea tu primera lista de compras.';
+
+  @override
+  String get deleteGroceryListDialogTitle => 'Eliminar Lista';
+
+  @override
+  String deleteGroceryListDialogMessage(Object listName) {
+    return '¿Estás seguro de que deseas eliminar $listName?';
   }
 
   @override
-  String get back => 'Atrás';
+  String get profilePlanFreeBadge => 'Plan Gratis';
 
   @override
-  String get next => 'Siguiente';
-
-  @override
-  String get complete_recipe => 'Completar receta';
-
-  @override
-  String get bulkDeductUnknownError => 'Error al descontar ingredientes';
-
-  @override
-  String get selectNewStartDate => 'Selecciona nueva fecha de inicio';
-
-  @override
-  String get saveIngredientsDialogContent =>
-      '¿Deseas guardar los ingredientes en una lista de compras?';
-
-  @override
-  String get yes => 'Sí';
-
-  @override
-  String get no => 'No';
-
-  @override
-  String get mealPlanHistory => 'Mis planes';
-
-  @override
-  String get usePantryTitle => 'Usar ingredientes de mi despensa';
-
-  @override
-  String get mealCompletedError => 'Error al marcar la comida como completada';
+  String get homeWeekLabel => 'Esta Semana';
 
   @override
   String greeting(Object name) {
-    return 'Hola, $name';
+    return '¡Hola, $name!';
   }
 
   @override
-  String get mealCompletedLabel => 'Completada';
+  String get homeTodayPlanReady => 'Tu plan del día está listo.';
 
   @override
-  String get completeRecipeLabel => 'Completar receta';
+  String get homeViewRecipeShort => 'Ver';
+
+  @override
+  String get homeEatOutAction => 'Comer Fuera';
+
+  @override
+  String get homeSkipMealQuestion => '¿Saltar Comida?';
+
+  @override
+  String get homeSkipMealDescription =>
+      '¿Estás seguro de que deseas saltar esta comida?';
+
+  @override
+  String get homeConfirmAction => 'Confirmar';
+
+  @override
+  String get homeFavoritesAction => 'Favoritos';
+
+  @override
+  String get homeProgressAction => 'Progreso';
+
+  @override
+  String get homeEmptyPlanTitle => 'No hay planes para hoy.';
+
+  @override
+  String get homeEmptyPlanMessage =>
+      '¡Crea un nuevo plan o disfruta tu día libre!';
+
+  @override
+  String get averageAbbr => 'prom';
+
+  @override
+  String get selectGroceryListEmpty =>
+      'No tienes listas de compras. Crea una nueva.';
+
+  @override
+  String get selectGroceryListNewList => 'Crear Nueva Lista';
+
+  @override
+  String get mealPlanHistory => 'Historial';
+
+  @override
+  String get planEntriesTitle => 'Entradas del Plan';
+
+  @override
+  String get noEntriesInPlan => 'No se encontraron entradas en este plan.';
+
+  @override
+  String get myPlansTitle => 'Mis Planes';
+
+  @override
+  String get createNewPlanTooltip => 'Crear nuevo plan';
+
+  @override
+  String get noPlansAddedTitle => 'Aún no hay planes.';
+
+  @override
+  String get noPlansAddedMessage =>
+      'Comienza tu viaje generando un nuevo plan de comidas.';
+
+  @override
+  String get tryAgain => 'Intentar de nuevo';
+
+  @override
+  String days(Object count) {
+    return '$count días';
+  }
+
+  @override
+  String get approvePlanEndDate => 'Fecha de fin desconocida';
+
+  @override
+  String get nutritionFilterDaily => 'Diario';
+
+  @override
+  String get nutritionFilterWeekly => 'Semanal';
+
+  @override
+  String get nutritionFilterMonthly => 'Mensual';
+
+  @override
+  String get nutritionErrorLoading => 'Error al cargar datos nutricionales.';
+
+  @override
+  String get achievementsTitle => 'Logros';
+
+  @override
+  String get weeklyActivityTitle => 'Actividad Semanal';
+
+  @override
+  String get mondayToSundayLabel => 'LUN - DOM';
+
+  @override
+  String get mealPlanActionViewDetails => 'Ver Detalles';
+
+  @override
+  String get planDeletedSuccess => 'Plan eliminado.';
+
+  @override
+  String get planBadgeAI => 'GENERADO CON IA';
+
+  @override
+  String get planBadgeCustom => 'PERSONALIZADO';
 }

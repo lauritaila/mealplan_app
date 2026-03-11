@@ -13,17 +13,10 @@ class PantryScreen extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final pantryAsync = ref.watch(pantryItemsProvider);
-    final theme = Theme.of(context);
     final l10n = AppLocalizations.of(context);
 
     return Scaffold(
-      backgroundColor: theme.colorScheme.surface,
-      appBar: AppBar(
-        title: Text(l10n.pantryTitle),
-        centerTitle: false,
-        backgroundColor: theme.colorScheme.surface,
-        surfaceTintColor: Colors.transparent,
-      ),
+      backgroundColor: const Color(0xFFFBFDFB), // Same as GroceryListsTab
       body: RefreshIndicator(
         onRefresh: () async => await ref.refresh(pantryItemsProvider.future),
         child: pantryAsync.when(
@@ -74,13 +67,16 @@ class PantryScreen extends ConsumerWidget {
                   final catItems = grouped[cat]!;
                   if (index < cursor + catItems.length) {
                     final item = catItems[index - cursor];
-                    return PantryItemTile(
-                      key: Key('pantry-${item.id}'),
-                      item: item,
-                      onEdit: () => _showEditPantryItem(context, item),
-                      onDelete: () => ref
-                          .read(pantryActionsProvider.notifier)
-                          .deleteItem(item.id),
+                    return Padding(
+                      padding: const EdgeInsets.only(bottom: 8.0),
+                      child: PantryItemTile(
+                        key: Key('pantry-${item.id}'),
+                        item: item,
+                        onEdit: () => _showEditPantryItem(context, item),
+                        onDelete: () => ref
+                            .read(pantryActionsProvider.notifier)
+                            .deleteItem(item.id),
+                      ),
                     );
                   }
                   cursor += catItems.length;
@@ -95,7 +91,11 @@ class PantryScreen extends ConsumerWidget {
         heroTag: 'pantry-fab',
         tooltip: l10n.pantryAddTooltip,
         onPressed: () => _showAddItem(context),
-        child: const Icon(Icons.add),
+        backgroundColor: const Color(0xFF7BA082),
+        foregroundColor: Colors.white,
+        elevation: 0,
+        shape: const CircleBorder(),
+        child: const Icon(Icons.add, size: 28),
       ),
     );
   }
