@@ -5,6 +5,16 @@
       "source": "madteacher/mad-agents-skills",
       "sourceType": "github",
       "computedHash": "0c62d299cfdb82a8a22eadcb9b58c998cb6ceb85368a342689143a0278e4c7bb"
+    },
+    "flutter-dev": {
+      "source": "bogdanustyak/flutter-expert-skill",
+      "sourceType": "github",
+      "computedHash": "2209539f9c03ad73aa2c84ccb9d4edd9b0780602b3f51242dbaac517fa4381d6"
+    },
+    "flutter-theming": {
+      "source": "flutter/skills",
+      "sourceType": "github",
+      "computedHash": "ebc026601a8a3e0991c665444e267226e740fc212c1ee6fcded9fafca33dbbcb"
     }
   }
 }

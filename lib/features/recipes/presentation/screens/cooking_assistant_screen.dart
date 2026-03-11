@@ -101,7 +101,7 @@ class _CookingAssistantScreenState
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(
-                      'PROGRESO DE LA RECETA',
+                      l10n.cookingProgress,
                       style: theme.textTheme.labelSmall?.copyWith(
                         color: const Color(0xFF8A9A8A),
                         letterSpacing: 1.2,
@@ -118,23 +118,17 @@ class _CookingAssistantScreenState
                           text: TextSpan(
                             children: [
                               TextSpan(
-                                text: 'Paso ${_currentIndex + 1} ',
+                                text: l10n.stepOfTotal(_currentIndex + 1, steps.length),
                                 style: theme.textTheme.headlineSmall?.copyWith(
                                   color: const Color(0xFF4A614A),
                                   fontWeight: FontWeight.bold,
-                                ),
-                              ),
-                              TextSpan(
-                                text: 'de ${steps.length}',
-                                style: theme.textTheme.titleMedium?.copyWith(
-                                  color: const Color(0xFF8A9A8A),
                                 ),
                               ),
                             ],
                           ),
                         ),
                         Text(
-                          '$percentage% completado',
+                          l10n.percentCompleted(percentage),
                           style: theme.textTheme.bodyMedium?.copyWith(
                             color: const Color(0xFF8A9A8A),
                             fontWeight: FontWeight.w500,
@@ -220,7 +214,7 @@ class _CookingAssistantScreenState
                             const Icon(Icons.list_alt, color: Color(0xFF4A614A), size: 20),
                             const SizedBox(width: 8),
                             Text(
-                              'Necesitas para este paso',
+                              l10n.neededForThisStep,
                               style: theme.textTheme.titleMedium?.copyWith(
                                 color: const Color(0xFF1B261B),
                                 fontWeight: FontWeight.bold,
@@ -238,7 +232,7 @@ class _CookingAssistantScreenState
                             unit: ingredient.unit,
                             name: ingredient.name,
                           ),
-                          subtitle: 'Ingrediente principal', // Could be dynamic if available
+                          subtitle: l10n.mainIngredientSubtitle, // Could be dynamic if available
                           onTap: () => showIngredientSubstituteFlow(
                             context: context,
                             ref: ref,
@@ -253,7 +247,7 @@ class _CookingAssistantScreenState
                         ...step.toolsNeeded.map((tool) => _InfoCard(
                           icon: Icons.kitchen_outlined,
                           title: tool,
-                          subtitle: 'Utensilio necesario',
+                          subtitle: l10n.neededToolSubtitle,
                         )),
                         
                         const SizedBox(height: 32),
@@ -289,8 +283,8 @@ class _CookingAssistantScreenState
                           children: [
                             Text(
                               _currentIndex < steps.length - 1
-                                  ? 'Siguiente paso'
-                                  : 'Finalizar receta',
+                                  ? l10n.nextStepAction
+                                  : l10n.finishRecipeAction,
                               style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
                             ),
                             const SizedBox(width: 8),
@@ -317,7 +311,7 @@ class _CookingAssistantScreenState
                                       )
                                   : null,
                               icon: const Icon(Icons.arrow_back_ios, size: 16),
-                              label: const Text('Anterior'),
+                              label: Text(l10n.wizardPrevious),
                               style: OutlinedButton.styleFrom(
                                 side: BorderSide.none,
                                 backgroundColor: const Color(0xFFE8EDE8),
@@ -338,7 +332,7 @@ class _CookingAssistantScreenState
                                 _pageController.jumpToPage(0);
                               },
                               icon: const Icon(Icons.replay, size: 18),
-                              label: const Text('Reiniciar'),
+                              label: Text(l10n.resetTimer),
                               style: OutlinedButton.styleFrom(
                                 side: BorderSide.none,
                                 backgroundColor: const Color(0xFFEDF2F7),
@@ -363,12 +357,13 @@ class _CookingAssistantScreenState
   }
 
   Future<void> _completeRecipe() async {
+     final l10n = AppLocalizations.of(context);
      final notifier = ref.read(mealPlanEntryActionsProvider.notifier);
      final result = await notifier.bulkDeduct(widget.recipeId, 1);
      if (!context.mounted) return;
      if (result != null) {
         ScaffoldMessenger.of(context).showSnackBar(
-           SnackBar(content: Text(result.missing.isEmpty ? '¡Receta completada y descontada de la despensa!' : 'Receta completada. Faltaron ${result.missing.length} ingredientes en la despensa.')),
+           SnackBar(content: Text(result.missing.isEmpty ? l10n.recipeCompletedSnack : l10n.recipeCompletedMissingSnack(result.missing.length))),
         );
      }
      context.pop();
@@ -394,9 +389,9 @@ class _CookingAssistantScreenState
 
     return [
       quantityText,
-      safeUnit,
+      if (safeUnit.isNotEmpty) safeUnit,
       safeName,
-    ].where((part) => part.isNotEmpty).join(' ');
+    ].join(' ');
   }
 }
 
@@ -484,6 +479,7 @@ class _TimerCardState extends State<_TimerCard> {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
+    final l10n = AppLocalizations.of(context);
     
     return Card(
       elevation: 0,
@@ -494,7 +490,7 @@ class _TimerCardState extends State<_TimerCard> {
         child: Column(
           children: [
             Text(
-              'TEMPORIZADOR',
+              l10n.timerLabel,
               style: theme.textTheme.labelSmall?.copyWith(
                 color: const Color(0xFF4A614A),
                 letterSpacing: 1.5,
@@ -523,7 +519,7 @@ class _TimerCardState extends State<_TimerCard> {
                 FilledButton.icon(
                   onPressed: _toggleTimer,
                   icon: Icon(_running ? Icons.pause : Icons.play_arrow),
-                  label: Text(_running ? 'Pausar' : 'Iniciar'),
+                  label: Text(_running ? l10n.pauseTimer : l10n.startTimer),
                   style: FilledButton.styleFrom(
                     backgroundColor: const Color(0xFF4A614A),
                     padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 12),

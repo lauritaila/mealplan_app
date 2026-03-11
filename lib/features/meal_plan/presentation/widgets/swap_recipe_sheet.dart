@@ -49,10 +49,10 @@ class _SwapRecipeSheetState extends ConsumerState<SwapRecipeSheet> {
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
                   const SizedBox(width: 48), // Balance for centering title
-                  const Expanded(
+                  Expanded(
                     child: Text(
-                      'Cambiar por Favorita',
-                      style: TextStyle(fontSize: 20, fontWeight: FontWeight.w800),
+                      l10n.swapFavoriteTitle,
+                      style: const TextStyle(fontSize: 20, fontWeight: FontWeight.w800),
                       textAlign: TextAlign.center,
                     ),
                   ),
@@ -67,7 +67,7 @@ class _SwapRecipeSheetState extends ConsumerState<SwapRecipeSheet> {
             Padding(
               padding: const EdgeInsets.symmetric(horizontal: 24),
               child: Text(
-                'MIS RECETAS FAVORITAS',
+                l10n.myFavoriteRecipes,
                 style: TextStyle(fontSize: 12, fontWeight: FontWeight.w800, color: Colors.grey.shade500, letterSpacing: 1.1),
               ),
             ),
@@ -115,13 +115,13 @@ class _SwapRecipeSheetState extends ConsumerState<SwapRecipeSheet> {
                                     const SizedBox(height: 8),
                                     Row(
                                       children: [
-                                        _MacroChip(label: '${recipe.calories?.toStringAsFixed(0) ?? "--"} kcal', isCalories: true),
+                                        _MacroChip(label: '${recipe.calories?.toStringAsFixed(0) ?? "--"} ${l10n.kcalLabel}', isCalories: true),
                                         const SizedBox(width: 8),
                                         _MacroChip(label: 'P: ${recipe.proteinGrams?.toStringAsFixed(0) ?? "-"}g'),
                                         const SizedBox(width: 4),
-                                        _MacroChip(label: 'C: ${recipe.carbsGrams?.toStringAsFixed(0) ?? "-"}g'),
+                                        _MacroChip(label: '${l10n.metricCarbsShort[0]}: ${recipe.carbsGrams?.toStringAsFixed(0) ?? "-"}g'),
                                         const SizedBox(width: 4),
-                                        _MacroChip(label: 'G: ${recipe.fatsGrams?.toStringAsFixed(0) ?? "-"}g'),
+                                        _MacroChip(label: '${l10n.metricFat[0]}: ${recipe.fatsGrams?.toStringAsFixed(0) ?? "-"}g'),
                                       ],
                                     ),
                                   ],
@@ -140,7 +140,7 @@ class _SwapRecipeSheetState extends ConsumerState<SwapRecipeSheet> {
               padding: const EdgeInsets.fromLTRB(24, 16, 24, 16),
               child: FilledButton.icon(
                 icon: const Icon(Icons.check, color: Colors.white, size: 20),
-                label: const Text('Confirmar Selección', style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold)),
+                label: Text(l10n.saveSelectionAction, style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold)),
                 style: FilledButton.styleFrom(
                   minimumSize: const Size(double.infinity, 56),
                   backgroundColor: const Color(0xFF576F5F),

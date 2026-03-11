@@ -557,13 +557,13 @@ class AppLocalizationsEn extends AppLocalizations {
   String get dislikedFoodsTitle => 'Disliked Foods';
 
   @override
-  String get dislikedFoodsHint => 'List foods you dislike or want to avoid...';
+  String get dislikedFoodsHint => 'Olives, cilantro, mushrooms...';
 
   @override
   String get likedFoodsTitle => 'Liked Foods';
 
   @override
-  String get likedFoodsHint => 'List your favorite foods and ingredients...';
+  String get likedFoodsHint => 'Avocado, grilled salmon, kale chips...';
 
   @override
   String get goalsTitle => 'Dietary Choices & Goals';
@@ -1427,4 +1427,128 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get planBadgeCustom => 'CUSTOMIZED';
+
+  @override
+  String get cookingProgress => 'RECIPE PROGRESS';
+
+  @override
+  String stepOfTotal(Object current, Object total) {
+    return 'Step $current of $total';
+  }
+
+  @override
+  String percentCompleted(Object percent) {
+    return '$percent% completed';
+  }
+
+  @override
+  String get neededForThisStep => 'Needed for this step';
+
+  @override
+  String get mainIngredientSubtitle => 'Main ingredient';
+
+  @override
+  String get neededToolSubtitle => 'Required tool';
+
+  @override
+  String get nextStepAction => 'Next step';
+
+  @override
+  String get finishRecipeAction => 'Finish recipe';
+
+  @override
+  String get recipeCompletedSnack =>
+      'Recipe completed and deducted from pantry!';
+
+  @override
+  String recipeCompletedMissingSnack(Object count) {
+    return 'Recipe completed. $count ingredients were missing from pantry.';
+  }
+
+  @override
+  String get timerLabel => 'TIMER';
+
+  @override
+  String get checkYourInbox => 'Check your inbox';
+
+  @override
+  String get otpVerificationMessage =>
+      'We\'ve sent a 6-digit verification code to your new email address. Please enter it below to complete the change.';
+
+  @override
+  String get otpRequestMessage =>
+      'Enter your new email address. We\'ll send a verification code to ensure it\'s you.';
+
+  @override
+  String get newEmailAddressLabel => 'New Email Address';
+
+  @override
+  String get newEmailPlaceholder => 'name@example.com';
+
+  @override
+  String get didntReceiveCode => 'Didn\'t receive the code?';
+
+  @override
+  String get resendAction => 'Resend';
+
+  @override
+  String get secureVerificationNote =>
+      'Secure verification powered by SageAuth';
+
+  @override
+  String get saveSelectionAction => 'Save selection';
+
+  @override
+  String get premiumLearnMore => 'Learn more';
+
+  @override
+  String get swapFavoriteTitle => 'Swap for Favorite';
+
+  @override
+  String get myFavoriteRecipes => 'MY FAVORITE RECIPES';
+
+  @override
+  String get servingsShortLabel => 'serv';
+
+  @override
+  String get peopleLabel => 'People';
+
+  @override
+  String get likedFoodsLabel => 'Liked Foods';
+
+  @override
+  String get dislikedFoodsLabel => 'Disliked Foods';
+
+  @override
+  String get addLabel => 'Add';
+
+  @override
+  String get kcalLabel => 'Kcal';
+
+  @override
+  String get metricCarbsShort => 'Carbs';
+
+  @override
+  String get timeLabelUpper => 'TIME';
+
+  @override
+  String get servingsLabelUpper => 'SERVINGS';
+
+  @override
+  String get caloriesLabelUpper => 'CALORIES';
+
+  @override
+  String get nutritionPerServing => 'Nutrition per serving';
+
+  @override
+  String itemsCount(Object count) {
+    return '$count items';
+  }
+
+  @override
+  String get servingShort => 'serving';
+
+  @override
+  String get organizeFavoritesSubtitle =>
+      'Organize your favorite recipes and ingredients';
 }

@@ -560,15 +560,13 @@ class AppLocalizationsEs extends AppLocalizations {
   String get dislikedFoodsTitle => 'Alimentos que no te gustan';
 
   @override
-  String get dislikedFoodsHint =>
-      'Lista los alimentos que no te gustan o quieres evitar...';
+  String get dislikedFoodsHint => 'Aceitunas, cilantro, champiñones...';
 
   @override
   String get likedFoodsTitle => 'Alimentos que te gustan';
 
   @override
-  String get likedFoodsHint =>
-      'Lista tus alimentos e ingredientes favoritos...';
+  String get likedFoodsHint => 'Aguacate, salmón, col rizada...';
 
   @override
   String get goalsTitle => 'Objetivos y elecciones alimentarias';
@@ -1435,4 +1433,127 @@ class AppLocalizationsEs extends AppLocalizations {
 
   @override
   String get planBadgeCustom => 'PERSONALIZADO';
+
+  @override
+  String get cookingProgress => 'PROGRESO DE LA RECETA';
+
+  @override
+  String stepOfTotal(Object current, Object total) {
+    return 'Paso $current de $total';
+  }
+
+  @override
+  String percentCompleted(Object percent) {
+    return '$percent% completado';
+  }
+
+  @override
+  String get neededForThisStep => 'Necesitas para este paso';
+
+  @override
+  String get mainIngredientSubtitle => 'Ingrediente principal';
+
+  @override
+  String get neededToolSubtitle => 'Utensilio necesario';
+
+  @override
+  String get nextStepAction => 'Siguiente paso';
+
+  @override
+  String get finishRecipeAction => 'Finalizar receta';
+
+  @override
+  String get recipeCompletedSnack =>
+      '¡Receta completada y descontada de la despensa!';
+
+  @override
+  String recipeCompletedMissingSnack(Object count) {
+    return 'Receta completada. Faltaron $count ingredientes en la despensa.';
+  }
+
+  @override
+  String get timerLabel => 'TEMPORIZADOR';
+
+  @override
+  String get checkYourInbox => 'Revisa tu bandeja de entrada';
+
+  @override
+  String get otpVerificationMessage =>
+      'Hemos enviado un código de verificación de 6 dígitos a tu nueva dirección de correo electrónico. Por favor, ingrésalo a continuación para completar el cambio.';
+
+  @override
+  String get otpRequestMessage =>
+      'Ingresa tu nueva dirección de correo electrónico. Te enviaremos un código de verificación para asegurarnos de que eres tú.';
+
+  @override
+  String get newEmailAddressLabel => 'Nueva cuenta de correo';
+
+  @override
+  String get newEmailPlaceholder => 'nombre@ejemplo.com';
+
+  @override
+  String get didntReceiveCode => '¿No recibiste el código?';
+
+  @override
+  String get resendAction => 'Reenviar';
+
+  @override
+  String get secureVerificationNote => 'Verificación segura mediante SageAuth';
+
+  @override
+  String get saveSelectionAction => 'Guardar selección';
+
+  @override
+  String get premiumLearnMore => 'Saber más';
+
+  @override
+  String get swapFavoriteTitle => 'Cambiar por Favorita';
+
+  @override
+  String get myFavoriteRecipes => 'MIS RECETAS FAVORITAS';
+
+  @override
+  String get servingsShortLabel => 'serv';
+
+  @override
+  String get peopleLabel => 'Personas';
+
+  @override
+  String get likedFoodsLabel => 'Comidas que te gustan';
+
+  @override
+  String get dislikedFoodsLabel => 'Comidas que no te gustan';
+
+  @override
+  String get addLabel => 'Añadir';
+
+  @override
+  String get kcalLabel => 'Kcal';
+
+  @override
+  String get metricCarbsShort => 'Carbohidratos';
+
+  @override
+  String get timeLabelUpper => 'TIEMPO';
+
+  @override
+  String get servingsLabelUpper => 'PORCIONES';
+
+  @override
+  String get caloriesLabelUpper => 'CALORÍAS';
+
+  @override
+  String get nutritionPerServing => 'Nutrición por porción';
+
+  @override
+  String itemsCount(Object count) {
+    return '$count ingredientes';
+  }
+
+  @override
+  String get servingShort => 'porción';
+
+  @override
+  String get organizeFavoritesSubtitle =>
+      'Organiza tus recetas e ingredientes favoritos';
 }

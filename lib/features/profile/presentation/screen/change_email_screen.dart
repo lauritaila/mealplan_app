@@ -147,7 +147,7 @@ class _ChangeEmailScreenState extends ConsumerState<ChangeEmailScreen> {
               ),
               const SizedBox(height: 32),
               Text(
-                state.otpRequested ? 'Check your inbox' : l10n.profileChangeEmailLabel,
+                state.otpRequested ? l10n.checkYourInbox : l10n.profileChangeEmailLabel,
                 style: TextStyle(
                   fontSize: 24,
                   fontWeight: FontWeight.bold,
@@ -159,8 +159,8 @@ class _ChangeEmailScreenState extends ConsumerState<ChangeEmailScreen> {
                 padding: const EdgeInsets.symmetric(horizontal: 16),
                 child: Text(
                   state.otpRequested
-                      ? "We've sent a 6-digit verification code to your new email address. Please enter it below to complete the change."
-                      : "Enter your new email address. We'll send a verification code to ensure it's you.",
+                      ? l10n.otpVerificationMessage
+                      : l10n.otpRequestMessage,
                   textAlign: TextAlign.center,
                   style: TextStyle(
                     fontSize: 15,
@@ -176,7 +176,7 @@ class _ChangeEmailScreenState extends ConsumerState<ChangeEmailScreen> {
                 Align(
                   alignment: Alignment.centerLeft,
                   child: Text(
-                    'New Email Address',
+                    l10n.newEmailAddressLabel,
                     style: TextStyle(
                       fontSize: 14,
                       fontWeight: FontWeight.bold,
@@ -189,7 +189,7 @@ class _ChangeEmailScreenState extends ConsumerState<ChangeEmailScreen> {
                   controller: _emailController,
                   keyboardType: TextInputType.emailAddress,
                   decoration: InputDecoration(
-                    hintText: 'name@example.com',
+                    hintText: l10n.newEmailPlaceholder,
                     hintStyle: const TextStyle(color: Color(0xFF94A3B8)),
                     filled: true,
                     fillColor: Colors.white,
@@ -302,20 +302,20 @@ class _ChangeEmailScreenState extends ConsumerState<ChangeEmailScreen> {
                 Row(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
-                    Text("Didn't receive the code? ", style: TextStyle(color: secondaryText)),
+                    Text("${l10n.didntReceiveCode} ", style: TextStyle(color: secondaryText)),
                     GestureDetector(
                       onTap: () => _requestCode(),
                       child: Text(
-                        "Resend",
+                        l10n.resendAction,
                         style: TextStyle(color: primaryGreen, fontWeight: FontWeight.bold),
                       ),
                     ),
                   ],
                 )
               else
-                const Text(
-                  'Secure verification powered by SageAuth',
-                  style: TextStyle(fontSize: 12, color: Color(0xFFCBD5E1)),
+                Text(
+                  l10n.secureVerificationNote,
+                  style: const TextStyle(fontSize: 12, color: Color(0xFFCBD5E1)),
                 ),
             ],
           ),

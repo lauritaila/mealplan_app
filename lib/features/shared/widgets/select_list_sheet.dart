@@ -258,7 +258,7 @@ class _SelectListSheetState extends ConsumerState<SelectListSheet> {
                   elevation: 0,
                 ),
                 child: Text(
-                  'Guardar selección',
+                  l10n.saveSelectionAction,
                   style: const TextStyle(fontSize: 18, fontWeight: FontWeight.w800),
                 ),
               ),

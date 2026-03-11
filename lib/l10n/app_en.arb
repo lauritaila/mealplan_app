@@ -108,6 +108,8 @@
   "cancelAndGoBack": "Cancel and go back",
   "planLimitReachedTitle": "Plan limit reached",
   "planLimitReachedMessage": "You have run out of plan generations this week.",
+  "planLimitReachedTitle": "Plan limit reached",
+  "planLimitReachedMessage": "You have run out of plan generations this week.",
   "newPlanTitle": "New Plan",
   "clear": "Clear",
   "configurePlanTitle": "Configure your plan",
@@ -621,5 +623,65 @@
   "mealPlanActionViewDetails": "View Details",
   "planDeletedSuccess": "Plan obliterated.",
   "planBadgeAI": "GENERATED WITH AI",
-  "planBadgeCustom": "CUSTOMIZED"
+  "planBadgeCustom": "CUSTOMIZED",
+  "cookingProgress": "RECIPE PROGRESS",
+  "stepOfTotal": "Step {current} of {total}",
+  "@stepOfTotal": {
+    "placeholders": {
+      "current": {},
+      "total": {}
+    }
+  },
+  "percentCompleted": "{percent}% completed",
+  "@percentCompleted": {
+    "placeholders": {
+      "percent": {}
+    }
+  },
+  "neededForThisStep": "Needed for this step",
+  "mainIngredientSubtitle": "Main ingredient",
+  "neededToolSubtitle": "Required tool",
+  "nextStepAction": "Next step",
+  "finishRecipeAction": "Finish recipe",
+  "recipeCompletedSnack": "Recipe completed and deducted from pantry!",
+  "recipeCompletedMissingSnack": "Recipe completed. {count} ingredients were missing from pantry.",
+  "@recipeCompletedMissingSnack": {
+    "placeholders": {
+      "count": {}
+    }
+  },
+  "timerLabel": "TIMER",
+  "checkYourInbox": "Check your inbox",
+  "otpVerificationMessage": "We've sent a 6-digit verification code to your new email address. Please enter it below to complete the change.",
+  "otpRequestMessage": "Enter your new email address. We'll send a verification code to ensure it's you.",
+  "newEmailAddressLabel": "New Email Address",
+  "newEmailPlaceholder": "name@example.com",
+  "didntReceiveCode": "Didn't receive the code?",
+  "resendAction": "Resend",
+  "secureVerificationNote": "Secure verification powered by SageAuth",
+  "saveSelectionAction": "Save selection",
+  "premiumLearnMore": "Learn more",
+  "swapFavoriteTitle": "Swap for Favorite",
+  "myFavoriteRecipes": "MY FAVORITE RECIPES",
+  "servingsShortLabel": "serv",
+  "peopleLabel": "People",
+  "likedFoodsLabel": "Liked Foods",
+  "dislikedFoodsLabel": "Disliked Foods",
+  "likedFoodsHint": "Avocado, grilled salmon, kale chips...",
+  "dislikedFoodsHint": "Olives, cilantro, mushrooms...",
+  "addLabel": "Add",
+  "kcalLabel": "Kcal",
+  "metricCarbsShort": "Carbs",
+  "timeLabelUpper": "TIME",
+  "servingsLabelUpper": "SERVINGS",
+  "caloriesLabelUpper": "CALORIES",
+  "nutritionPerServing": "Nutrition per serving",
+  "itemsCount": "{count} items",
+  "@itemsCount": {
+    "placeholders": {
+      "count": {}
+    }
+  },
+  "servingShort": "serving",
+  "organizeFavoritesSubtitle": "Organize your favorite recipes and ingredients"
 }

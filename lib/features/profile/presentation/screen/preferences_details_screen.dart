@@ -298,7 +298,7 @@ class _PreferencesDetailsScreenState
                                   preferencesState.householdSize.toString(),
                                   style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold, color: darkText),
                                 ),
-                                Text('People', style: TextStyle(fontSize: 12, color: secondaryText)),
+                                Text(l10n.peopleLabel, style: TextStyle(fontSize: 12, color: secondaryText)),
                               ],
                             ),
                             _buildCircleButton(Icons.add, () {
@@ -312,9 +312,9 @@ class _PreferencesDetailsScreenState
                       const SizedBox(height: 24),
 
                       // Food Preferences
-                      _buildFoodPrefField(Icons.favorite, Colors.green, 'Liked Foods', _likedController, 'Avocado, grilled salmon, kale chips...', (val) => _updateFoodPreferences(preferencesNotifier)),
+                      _buildFoodPrefField(Icons.favorite, Colors.green, l10n.likedFoodsLabel, _likedController, l10n.likedFoodsHint, (val) => _updateFoodPreferences(preferencesNotifier)),
                       const SizedBox(height: 24),
-                      _buildFoodPrefField(Icons.favorite, Colors.red, 'Disliked Foods', _dislikedController, 'Olives, cilantro, mushrooms...', (val) => _updateFoodPreferences(preferencesNotifier)),
+                      _buildFoodPrefField(Icons.favorite, Colors.red, l10n.dislikedFoodsLabel, _dislikedController, l10n.dislikedFoodsHint, (val) => _updateFoodPreferences(preferencesNotifier)),
                       const SizedBox(height: 48),
                     ],
                   ),
@@ -438,7 +438,10 @@ class _PreferencesDetailsScreenState
                 children: [
                   Icon(Icons.add, size: 16, color: Theme.of(context).colorScheme.onSurfaceVariant),
                   const SizedBox(width: 4),
-                  Text('Add', style: TextStyle(fontSize: 13, fontWeight: FontWeight.w600, color: Theme.of(context).colorScheme.onSurfaceVariant)),
+                  Text(
+                    AppLocalizations.of(context).addLabel,
+                    style: TextStyle(fontSize: 13, fontWeight: FontWeight.w600, color: Theme.of(context).colorScheme.onSurfaceVariant),
+                  ),
                 ],
               ),
             ),

@@ -1085,7 +1085,7 @@ abstract class AppLocalizations {
   /// No description provided for @dislikedFoodsHint.
   ///
   /// In en, this message translates to:
-  /// **'List foods you dislike or want to avoid...'**
+  /// **'Olives, cilantro, mushrooms...'**
   String get dislikedFoodsHint;
 
   /// No description provided for @likedFoodsTitle.
@@ -1097,7 +1097,7 @@ abstract class AppLocalizations {
   /// No description provided for @likedFoodsHint.
   ///
   /// In en, this message translates to:
-  /// **'List your favorite foods and ingredients...'**
+  /// **'Avocado, grilled salmon, kale chips...'**
   String get likedFoodsHint;
 
   /// No description provided for @goalsTitle.
@@ -2695,6 +2695,228 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'CUSTOMIZED'**
   String get planBadgeCustom;
+
+  /// No description provided for @cookingProgress.
+  ///
+  /// In en, this message translates to:
+  /// **'RECIPE PROGRESS'**
+  String get cookingProgress;
+
+  /// No description provided for @stepOfTotal.
+  ///
+  /// In en, this message translates to:
+  /// **'Step {current} of {total}'**
+  String stepOfTotal(Object current, Object total);
+
+  /// No description provided for @percentCompleted.
+  ///
+  /// In en, this message translates to:
+  /// **'{percent}% completed'**
+  String percentCompleted(Object percent);
+
+  /// No description provided for @neededForThisStep.
+  ///
+  /// In en, this message translates to:
+  /// **'Needed for this step'**
+  String get neededForThisStep;
+
+  /// No description provided for @mainIngredientSubtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Main ingredient'**
+  String get mainIngredientSubtitle;
+
+  /// No description provided for @neededToolSubtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Required tool'**
+  String get neededToolSubtitle;
+
+  /// No description provided for @nextStepAction.
+  ///
+  /// In en, this message translates to:
+  /// **'Next step'**
+  String get nextStepAction;
+
+  /// No description provided for @finishRecipeAction.
+  ///
+  /// In en, this message translates to:
+  /// **'Finish recipe'**
+  String get finishRecipeAction;
+
+  /// No description provided for @recipeCompletedSnack.
+  ///
+  /// In en, this message translates to:
+  /// **'Recipe completed and deducted from pantry!'**
+  String get recipeCompletedSnack;
+
+  /// No description provided for @recipeCompletedMissingSnack.
+  ///
+  /// In en, this message translates to:
+  /// **'Recipe completed. {count} ingredients were missing from pantry.'**
+  String recipeCompletedMissingSnack(Object count);
+
+  /// No description provided for @timerLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'TIMER'**
+  String get timerLabel;
+
+  /// No description provided for @checkYourInbox.
+  ///
+  /// In en, this message translates to:
+  /// **'Check your inbox'**
+  String get checkYourInbox;
+
+  /// No description provided for @otpVerificationMessage.
+  ///
+  /// In en, this message translates to:
+  /// **'We\'ve sent a 6-digit verification code to your new email address. Please enter it below to complete the change.'**
+  String get otpVerificationMessage;
+
+  /// No description provided for @otpRequestMessage.
+  ///
+  /// In en, this message translates to:
+  /// **'Enter your new email address. We\'ll send a verification code to ensure it\'s you.'**
+  String get otpRequestMessage;
+
+  /// No description provided for @newEmailAddressLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'New Email Address'**
+  String get newEmailAddressLabel;
+
+  /// No description provided for @newEmailPlaceholder.
+  ///
+  /// In en, this message translates to:
+  /// **'name@example.com'**
+  String get newEmailPlaceholder;
+
+  /// No description provided for @didntReceiveCode.
+  ///
+  /// In en, this message translates to:
+  /// **'Didn\'t receive the code?'**
+  String get didntReceiveCode;
+
+  /// No description provided for @resendAction.
+  ///
+  /// In en, this message translates to:
+  /// **'Resend'**
+  String get resendAction;
+
+  /// No description provided for @secureVerificationNote.
+  ///
+  /// In en, this message translates to:
+  /// **'Secure verification powered by SageAuth'**
+  String get secureVerificationNote;
+
+  /// No description provided for @saveSelectionAction.
+  ///
+  /// In en, this message translates to:
+  /// **'Save selection'**
+  String get saveSelectionAction;
+
+  /// No description provided for @premiumLearnMore.
+  ///
+  /// In en, this message translates to:
+  /// **'Learn more'**
+  String get premiumLearnMore;
+
+  /// No description provided for @swapFavoriteTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Swap for Favorite'**
+  String get swapFavoriteTitle;
+
+  /// No description provided for @myFavoriteRecipes.
+  ///
+  /// In en, this message translates to:
+  /// **'MY FAVORITE RECIPES'**
+  String get myFavoriteRecipes;
+
+  /// No description provided for @servingsShortLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'serv'**
+  String get servingsShortLabel;
+
+  /// No description provided for @peopleLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'People'**
+  String get peopleLabel;
+
+  /// No description provided for @likedFoodsLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Liked Foods'**
+  String get likedFoodsLabel;
+
+  /// No description provided for @dislikedFoodsLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Disliked Foods'**
+  String get dislikedFoodsLabel;
+
+  /// No description provided for @addLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Add'**
+  String get addLabel;
+
+  /// No description provided for @kcalLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Kcal'**
+  String get kcalLabel;
+
+  /// No description provided for @metricCarbsShort.
+  ///
+  /// In en, this message translates to:
+  /// **'Carbs'**
+  String get metricCarbsShort;
+
+  /// No description provided for @timeLabelUpper.
+  ///
+  /// In en, this message translates to:
+  /// **'TIME'**
+  String get timeLabelUpper;
+
+  /// No description provided for @servingsLabelUpper.
+  ///
+  /// In en, this message translates to:
+  /// **'SERVINGS'**
+  String get servingsLabelUpper;
+
+  /// No description provided for @caloriesLabelUpper.
+  ///
+  /// In en, this message translates to:
+  /// **'CALORIES'**
+  String get caloriesLabelUpper;
+
+  /// No description provided for @nutritionPerServing.
+  ///
+  /// In en, this message translates to:
+  /// **'Nutrition per serving'**
+  String get nutritionPerServing;
+
+  /// No description provided for @itemsCount.
+  ///
+  /// In en, this message translates to:
+  /// **'{count} items'**
+  String itemsCount(Object count);
+
+  /// No description provided for @servingShort.
+  ///
+  /// In en, this message translates to:
+  /// **'serving'**
+  String get servingShort;
+
+  /// No description provided for @organizeFavoritesSubtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Organize your favorite recipes and ingredients'**
+  String get organizeFavoritesSubtitle;
 }
 
 class _AppLocalizationsDelegate

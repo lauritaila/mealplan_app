@@ -134,27 +134,27 @@ class _RecipeDetailScreenState extends ConsumerState<RecipeDetailScreen> {
                   children: [
                     _InfoItem(
                       icon: Icons.access_time_filled,
-                      label: 'TIME',
+                      label: l10n.timeLabelUpper,
                       value: '${(recipe.prepTimeMinutes ?? 0) + (recipe.cookTimeMinutes ?? 0)} min',
                     ),
                     _InfoItem(
                       icon: Icons.restaurant_menu,
-                      label: 'SERVINGS',
-                      value: '${recipe.baseServings ?? 1} serving',
+                      label: l10n.servingsLabelUpper,
+                      value: '${recipe.baseServings ?? 1} ${l10n.servingShort}',
                     ),
                     _InfoItem(
                       icon: Icons.local_fire_department,
-                      label: 'CALORIES',
-                      value: '${recipe.calories?.toInt() ?? 0} Cal',
+                      label: l10n.caloriesLabelUpper,
+                      value: '${recipe.calories?.toInt() ?? 0} ${l10n.metricCalories}',
                     ),
                   ],
                 ),
                 const SizedBox(height: 32),
 
                 if (!hideNutritionValues) ...[
-                  const Text(
-                    'Nutrition per serving',
-                    style: TextStyle(
+                  Text(
+                    l10n.nutritionPerServing,
+                    style: const TextStyle(
                       fontSize: 18,
                       fontWeight: FontWeight.w800,
                       color: Color(0xFF1A1E1B),
@@ -164,22 +164,22 @@ class _RecipeDetailScreenState extends ConsumerState<RecipeDetailScreen> {
                   Row(
                     children: [
                       Expanded(
-                        child: _NutritionCard(
-                          label: 'Protein',
+                       child: _NutritionCard(
+                          label: l10n.metricProtein,
                           value: '${recipe.proteinGrams?.toInt() ?? 0}g',
                         ),
                       ),
                       const SizedBox(width: 12),
                       Expanded(
                         child: _NutritionCard(
-                          label: 'Fat',
+                          label: l10n.metricFat,
                           value: '${recipe.fatsGrams?.toInt() ?? 0}g',
                         ),
                       ),
                       const SizedBox(width: 12),
                       Expanded(
                         child: _NutritionCard(
-                          label: 'Carbs',
+                          label: l10n.metricCarbs,
                           value: '${recipe.carbsGrams?.toInt() ?? 0}g',
                         ),
                       ),
@@ -188,9 +188,9 @@ class _RecipeDetailScreenState extends ConsumerState<RecipeDetailScreen> {
                   const SizedBox(height: 32),
                 ],
 
-                const Text(
-                  'Description',
-                  style: TextStyle(
+                Text(
+                  l10n.descriptionTitle,
+                  style: const TextStyle(
                     fontSize: 18,
                     fontWeight: FontWeight.w800,
                     color: Color(0xFF1A1E1B),
@@ -210,9 +210,9 @@ class _RecipeDetailScreenState extends ConsumerState<RecipeDetailScreen> {
                 // Ingredients Section
                 Row(
                   children: [
-                    const Text(
-                      'Ingredients',
-                      style: TextStyle(
+                    Text(
+                      l10n.ingredientsTitle,
+                      style: const TextStyle(
                         fontSize: 18,
                         fontWeight: FontWeight.w800,
                         color: Color(0xFF1A1E1B),
@@ -220,7 +220,7 @@ class _RecipeDetailScreenState extends ConsumerState<RecipeDetailScreen> {
                     ),
                     const Spacer(),
                     Text(
-                      '${recipe.ingredients.length} items',
+                      l10n.itemsCount(recipe.ingredients.length),
                       style: const TextStyle(
                         fontSize: 13,
                         color: Color(0xFF7A9382),
@@ -290,9 +290,9 @@ class _RecipeDetailScreenState extends ConsumerState<RecipeDetailScreen> {
                 const SizedBox(height: 32),
 
                 // Instructions Section
-                const Text(
-                  'Instructions',
-                  style: TextStyle(
+                Text(
+                  l10n.instructionsTitle,
+                  style: const TextStyle(
                     fontSize: 18,
                     fontWeight: FontWeight.w800,
                     color: Color(0xFF1A1E1B),
@@ -359,9 +359,9 @@ class _RecipeDetailScreenState extends ConsumerState<RecipeDetailScreen> {
                       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
                     ),
                     icon: const Icon(Icons.smart_toy_outlined, size: 22),
-                    label: const Text(
-                      'Asistente de cocina',
-                      style: TextStyle(fontSize: 16, fontWeight: FontWeight.w700),
+                    label: Text(
+                      l10n.cookingAssistantTitle,
+                      style: const TextStyle(fontSize: 16, fontWeight: FontWeight.w700),
                     ),
                   ),
                 )
@@ -383,9 +383,9 @@ class _RecipeDetailScreenState extends ConsumerState<RecipeDetailScreen> {
                       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
                     ),
                     icon: const Icon(Icons.check_circle, size: 22),
-                    label: const Text(
-                      'Completar receta',
-                      style: TextStyle(fontSize: 16, fontWeight: FontWeight.w700),
+                    label: Text(
+                      l10n.completeAction,
+                      style: const TextStyle(fontSize: 16, fontWeight: FontWeight.w700),
                     ),
                   ),
                 ),
@@ -514,7 +514,7 @@ class _RecipeDetailScreenState extends ConsumerState<RecipeDetailScreen> {
       backgroundColor: Colors.transparent,
       builder: (context) => SelectListSheet(
         title: l10n.addRecipeToListTitle,
-        subtitle: 'Organiza tus recetas e ingredientes favoritos',
+        subtitle: l10n.organizeFavoritesSubtitle,
       ),
     );
 

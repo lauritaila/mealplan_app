@@ -621,5 +621,65 @@
   "mealPlanActionViewDetails": "Ver Detalles",
   "planDeletedSuccess": "Plan eliminado.",
   "planBadgeAI": "GENERADO CON IA",
-  "planBadgeCustom": "PERSONALIZADO"
+  "planBadgeCustom": "PERSONALIZADO",
+  "cookingProgress": "PROGRESO DE LA RECETA",
+  "stepOfTotal": "Paso {current} de {total}",
+  "@stepOfTotal": {
+    "placeholders": {
+      "current": {},
+      "total": {}
+    }
+  },
+  "percentCompleted": "{percent}% completado",
+  "@percentCompleted": {
+    "placeholders": {
+      "percent": {}
+    }
+  },
+  "neededForThisStep": "Necesitas para este paso",
+  "mainIngredientSubtitle": "Ingrediente principal",
+  "neededToolSubtitle": "Utensilio necesario",
+  "nextStepAction": "Siguiente paso",
+  "finishRecipeAction": "Finalizar receta",
+  "recipeCompletedSnack": "¡Receta completada y descontada de la despensa!",
+  "recipeCompletedMissingSnack": "Receta completada. Faltaron {count} ingredientes en la despensa.",
+  "@recipeCompletedMissingSnack": {
+    "placeholders": {
+      "count": {}
+    }
+  },
+  "timerLabel": "TEMPORIZADOR",
+  "checkYourInbox": "Revisa tu bandeja de entrada",
+  "otpVerificationMessage": "Hemos enviado un código de verificación de 6 dígitos a tu nueva dirección de correo electrónico. Por favor, ingrésalo a continuación para completar el cambio.",
+  "otpRequestMessage": "Ingresa tu nueva dirección de correo electrónico. Te enviaremos un código de verificación para asegurarnos de que eres tú.",
+  "newEmailAddressLabel": "Nueva cuenta de correo",
+  "newEmailPlaceholder": "nombre@ejemplo.com",
+  "didntReceiveCode": "¿No recibiste el código?",
+  "resendAction": "Reenviar",
+  "secureVerificationNote": "Verificación segura mediante SageAuth",
+  "saveSelectionAction": "Guardar selección",
+  "premiumLearnMore": "Saber más",
+  "swapFavoriteTitle": "Cambiar por Favorita",
+  "myFavoriteRecipes": "MIS RECETAS FAVORITAS",
+  "servingsShortLabel": "serv",
+  "peopleLabel": "Personas",
+  "likedFoodsLabel": "Comidas que te gustan",
+  "dislikedFoodsLabel": "Comidas que no te gustan",
+  "likedFoodsHint": "Aguacate, salmón, col rizada...",
+  "dislikedFoodsHint": "Aceitunas, cilantro, champiñones...",
+  "addLabel": "Añadir",
+  "kcalLabel": "Kcal",
+  "metricCarbsShort": "Carbohidratos",
+  "timeLabelUpper": "TIEMPO",
+  "servingsLabelUpper": "PORCIONES",
+  "caloriesLabelUpper": "CALORÍAS",
+  "nutritionPerServing": "Nutrición por porción",
+  "itemsCount": "{count} ingredientes",
+  "@itemsCount": {
+    "placeholders": {
+      "count": {}
+    }
+  },
+  "servingShort": "porción",
+  "organizeFavoritesSubtitle": "Organiza tus recetas e ingredientes favoritos"
 }
