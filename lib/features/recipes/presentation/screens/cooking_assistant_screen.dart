@@ -1,3 +1,4 @@
+import 'package:meal_plan_app/features/shared/shared.dart';
 import 'dart:async';
 
 import 'package:flutter/material.dart';
@@ -362,9 +363,7 @@ class _CookingAssistantScreenState
      final result = await notifier.bulkDeduct(widget.recipeId, 1);
      if (!context.mounted) return;
      if (result != null) {
-        ScaffoldMessenger.of(context).showSnackBar(
-           SnackBar(content: Text(result.missing.isEmpty ? l10n.recipeCompletedSnack : l10n.recipeCompletedMissingSnack(result.missing.length))),
-        );
+        CustomSnackbar.showInfo(context, result.missing.isEmpty ? l10n.recipeCompletedSnack : l10n.recipeCompletedMissingSnack(result.missing.length));
      }
      context.pop();
   }

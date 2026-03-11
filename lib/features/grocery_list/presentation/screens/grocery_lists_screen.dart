@@ -1,3 +1,4 @@
+import 'package:meal_plan_app/features/shared/shared.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
@@ -130,11 +131,7 @@ class _GroceryListsTab extends ConsumerWidget {
                       return true;
                     } catch (e) {
                       if (!context.mounted) return false;
-                      ScaffoldMessenger.of(context).showSnackBar(
-                        SnackBar(
-                          content: Text(l10n.genericDeleteError),
-                        ),
-                      );
+                      CustomSnackbar.showInfo(context, l10n.genericDeleteError);
                       return false;
                     }
                   },

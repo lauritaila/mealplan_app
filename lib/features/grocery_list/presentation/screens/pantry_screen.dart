@@ -1,3 +1,4 @@
+import 'package:meal_plan_app/features/shared/shared.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:meal_plan_app/features/grocery_list/domain/entities/pantry_item.dart';
@@ -213,9 +214,7 @@ class _EditPantryItemDialogState extends ConsumerState<_EditPantryItemDialog> {
     final l10n = AppLocalizations.of(context);
     final qty = double.tryParse(_quantityCtrl.text.trim());
     if (qty == null || qty <= 0) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text(l10n.addItemQuantityInvalid)),
-      );
+      CustomSnackbar.showInfo(context, l10n.addItemQuantityInvalid);
       return;
     }
     setState(() => _loading = true);
@@ -228,9 +227,7 @@ class _EditPantryItemDialogState extends ConsumerState<_EditPantryItemDialog> {
     } catch (e) {
       if (mounted) {
         setState(() => _loading = false);
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text(e.toString())),
-        );
+        CustomSnackbar.showInfo(context, e.toString());
       }
     } finally {
       if (mounted) setState(() => _loading = false);

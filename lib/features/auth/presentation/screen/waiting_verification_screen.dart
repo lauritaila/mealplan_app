@@ -35,11 +35,10 @@ class _OtpVerificationScreenState extends ConsumerState<OtpVerificationScreen> {
     final authState = ref.read(authProvider);
     if (authState is AwaitingOtpInputState) {
       ref.read(authProvider.notifier).sendOtp(authState.email);
-      ScaffoldMessenger.of(context)
-        ..hideCurrentSnackBar()
-        ..showSnackBar(
-          SnackBar(content: Text(AppLocalizations.of(context).otpSentSnack)),
-        );
+      CustomSnackbar.showInfo(
+        context,
+        AppLocalizations.of(context).otpSentSnack,
+      );
     }
   }
 
@@ -48,15 +47,10 @@ class _OtpVerificationScreenState extends ConsumerState<OtpVerificationScreen> {
     final l10n = AppLocalizations.of(context);
     ref.listen(authProvider, (previous, next) {
       if (next is ErrorAuthState) {
-        ScaffoldMessenger.of(context)
-          ..hideCurrentSnackBar()
-          ..showSnackBar(
-            SnackBar(
-              content: Text(
-                localizeErrorCode(l10n, next.code, fallback: next.message),
-              ),
-            ),
-          );
+        CustomSnackbar.showError(
+          context,
+          localizeErrorCode(l10n, next.code, fallback: next.message),
+        );
         _otpController.clear();
       }
     });

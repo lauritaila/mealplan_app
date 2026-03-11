@@ -1,3 +1,4 @@
+import 'package:meal_plan_app/features/shared/shared.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
@@ -298,14 +299,10 @@ class _DetailMealPlanScreenState extends ConsumerState<DetailMealPlanScreen> {
       ref.read(mealPlanEntryActionsProvider.notifier).reset();
     } else if (state.status == MealPlanEntryActionStatus.error) {
       if (!context.mounted) return;
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: Text(
+      CustomSnackbar.showInfo(context, 
             state.errorMessage ??
                 AppLocalizations.of(context).genericDeleteError,
-          ),
-        ),
-      );
+          );
       ref.read(mealPlanEntryActionsProvider.notifier).reset();
     }
   }
@@ -382,13 +379,9 @@ class _DetailMealPlanScreenState extends ConsumerState<DetailMealPlanScreen> {
       ref.read(mealPlanEntryActionsProvider.notifier).reset();
     } else if (state.status == MealPlanEntryActionStatus.error) {
       if (!context.mounted) return;
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: Text(
+      CustomSnackbar.showInfo(context, 
             state.errorMessage ?? AppLocalizations.of(context).genericMoveError,
-          ),
-        ),
-      );
+          );
       ref.read(mealPlanEntryActionsProvider.notifier).reset();
     }
   }
@@ -445,13 +438,9 @@ class _DetailMealPlanScreenState extends ConsumerState<DetailMealPlanScreen> {
     if (updateResult == null) {
       if (!context.mounted) return;
       final state = ref.read(mealPlanEntryActionsProvider);
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: Text(
+      CustomSnackbar.showInfo(context, 
             state.errorMessage ?? AppLocalizations.of(context).genericError,
-          ),
-        ),
-      );
+          );
       ref.read(mealPlanEntryActionsProvider.notifier).reset();
       return;
     }
@@ -499,9 +488,7 @@ class _DetailMealPlanScreenState extends ConsumerState<DetailMealPlanScreen> {
 
     ref.read(mealPlanEntryActionsProvider.notifier).reset();
 
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(content: Text(AppLocalizations.of(context).datesUpdatedSuccess)),
-    );
+    CustomSnackbar.showInfo(context, AppLocalizations.of(context).datesUpdatedSuccess);
   }
 
   void _toggleMealExpansion(int entryId) {
@@ -534,13 +521,9 @@ class _DetailMealPlanScreenState extends ConsumerState<DetailMealPlanScreen> {
     if (updated == null) {
       if (!context.mounted) return;
       final state = ref.read(mealPlanEntryActionsProvider);
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: Text(
+      CustomSnackbar.showInfo(context, 
             state.errorMessage ?? AppLocalizations.of(context).genericError,
-          ),
-        ),
-      );
+          );
       ref.read(mealPlanEntryActionsProvider.notifier).reset();
       return;
     }

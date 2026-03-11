@@ -1,3 +1,4 @@
+import 'package:meal_plan_app/features/shared/shared.dart';
 // lib/features/preferences/presentation/screens/preference_wizard_screen.dart
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -110,17 +111,13 @@ class _NavigationControls extends ConsumerWidget {
     ) {
       if (next == FormStatus.error) {
         final errorState = ref.read(preferencesWizardProvider);
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Text(
+        CustomSnackbar.showInfo(context, 
               localizeErrorCode(
                 l10n,
                 errorState.errorCode,
                 fallback: errorState.errorMessage ?? l10n.unknownError,
               ),
-            ),
-          ),
-        );
+            );
       }
       if (next == FormStatus.success) {
         ScaffoldMessenger.of(

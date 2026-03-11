@@ -1,3 +1,4 @@
+import 'package:meal_plan_app/features/shared/shared.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:meal_plan_app/config/errors/app_errors.dart';
@@ -340,11 +341,11 @@ class _PreferencesDetailsScreenState
                         await profileRepository.updateHideNutritionValues(updatedPreferencesState.hideNutritionValues);
                         await ref.read(authProvider.notifier).refreshUserStatus();
                         if (!context.mounted) return;
-                        ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(l10n.preferencesSaved)));
+                        CustomSnackbar.showInfo(context, l10n.preferencesSaved);
                       } catch (e) {
                          // Fallback error handling simplified
                         if (!context.mounted) return;
-                        ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(e.toString())));
+                        CustomSnackbar.showInfo(context, e.toString());
                       }
                     },
                     icon: const Icon(Icons.save_outlined),

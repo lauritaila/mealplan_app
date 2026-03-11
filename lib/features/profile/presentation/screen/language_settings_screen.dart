@@ -1,3 +1,4 @@
+import 'package:meal_plan_app/features/shared/shared.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:meal_plan_app/features/profile/presentation/providers/language_settings_provider.dart';
@@ -151,9 +152,7 @@ class LanguageSettingsScreen extends ConsumerWidget {
                             Navigator.of(context).pop();
                           } else if (updatedState.error != null) {
                             final errorText = localizeAppError(l10n, updatedState.error!);
-                            ScaffoldMessenger.of(context).showSnackBar(
-                              SnackBar(content: Text(errorText)),
-                            );
+                            CustomSnackbar.showInfo(context, errorText);
                           }
                         },
                   style: FilledButton.styleFrom(

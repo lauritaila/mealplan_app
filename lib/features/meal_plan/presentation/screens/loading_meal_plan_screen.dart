@@ -1,3 +1,4 @@
+import 'package:meal_plan_app/features/shared/shared.dart';
 import 'dart:async';
 
 import 'package:flutter/material.dart';
@@ -121,15 +122,9 @@ class _LoadingMealPlanScreenState extends ConsumerState<LoadingMealPlanScreen> {
         }
 
         context.pop();
-        ScaffoldMessenger.of(context)
-          ..hideCurrentSnackBar()
-          ..showSnackBar(
-            SnackBar(
-              content: Text(
+        CustomSnackbar.showInfo(context, 
                 localizeErrorCode(l10n, next.errorCode, fallback: message),
-              ),
-            ),
-          );
+              );
       }
     });
 

@@ -1,3 +1,4 @@
+import 'package:meal_plan_app/features/shared/shared.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
@@ -87,15 +88,11 @@ class FavoriteRecipesScreen extends ConsumerWidget {
                       listName = lists.firstWhere((l) => l.id == selectedId).name;
                     }
 
-                    ScaffoldMessenger.of(context).showSnackBar(
-                      SnackBar(
-                        content: Text(
+                    CustomSnackbar.showInfo(context, 
                           ok
                               ? l10n.recipeAddedToList(listName ?? l10n.groceryTitle)
                               : l10n.recipeAddFailed,
-                        ),
-                      ),
-                    );
+                        );
                   },
                 );
               },

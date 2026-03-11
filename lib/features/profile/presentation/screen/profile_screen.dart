@@ -1,3 +1,4 @@
+import 'package:meal_plan_app/features/shared/shared.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:meal_plan_app/config/config.dart';
@@ -74,7 +75,7 @@ Future<void> _showDeleteAccountModal(
                       final errorText = normalizedInput.isEmpty
                           ? l10n.errorFieldRequired
                           : l10n.errorEmailConfirmationMismatch;
-                      ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(errorText)));
+                      CustomSnackbar.showInfo(context, errorText);
                       return;
                     }
 
@@ -125,7 +126,7 @@ Future<void> _showDeleteAccountModal(
 
                     if (appError != null) {
                       final errorText = localizeAppError(l10n, appError);
-                      ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(errorText)));
+                      CustomSnackbar.showInfo(context, errorText);
                       return;
                     }
 

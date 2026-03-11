@@ -1,3 +1,4 @@
+import 'package:meal_plan_app/features/shared/shared.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
@@ -63,11 +64,7 @@ class RecipesListScreen extends ConsumerWidget {
                           .toggle(recipe.id);
                     } catch (e) {
                       if (!context.mounted) return;
-                      ScaffoldMessenger.of(context).showSnackBar(
-                        SnackBar(
-                          content: Text(l10n.favoriteUpdateFailed),
-                        ),
-                      );
+                      CustomSnackbar.showInfo(context, l10n.favoriteUpdateFailed);
                     }
                   },
                   onAddToGroceryList: () async {
@@ -92,15 +89,11 @@ class RecipesListScreen extends ConsumerWidget {
                       listName = lists.firstWhere((l) => l.id == selectedId).name;
                     }
 
-                    ScaffoldMessenger.of(context).showSnackBar(
-                      SnackBar(
-                        content: Text(
+                    CustomSnackbar.showInfo(context, 
                           ok
                               ? l10n.recipeAddedToList(listName ?? l10n.groceryTitle)
                               : l10n.recipeAddFailed,
-                        ),
-                      ),
-                    );
+                        );
                   },
                 );
               },

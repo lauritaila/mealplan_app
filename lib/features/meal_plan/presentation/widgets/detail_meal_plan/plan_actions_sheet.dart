@@ -1,3 +1,4 @@
+import 'package:meal_plan_app/features/shared/shared.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
@@ -170,9 +171,7 @@ class PlanActionsSheet extends ConsumerWidget {
         showRemoveIngredientsCheckbox: true,
         onDeleted: () {
           ref.invalidate(mealPlansProvider);
-          ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(content: Text(l10n.planDeletedSuccess)),
-          );
+          CustomSnackbar.showInfo(context, l10n.planDeletedSuccess);
         },
       ),
     );

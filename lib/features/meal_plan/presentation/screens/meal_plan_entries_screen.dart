@@ -1,3 +1,4 @@
+import 'package:meal_plan_app/features/shared/shared.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
@@ -203,13 +204,9 @@ class MealPlanEntriesScreen extends ConsumerWidget {
                             await _showSkippedMealDialog(context);
                           } else if (updateState.status ==
                               DayMealEntryStatusUpdateStatus.error) {
-                            ScaffoldMessenger.of(context).showSnackBar(
-                              SnackBar(
-                                content: Text(
+                            CustomSnackbar.showInfo(context, 
                                   updateState.errorMessage ?? l10n.genericError,
-                                ),
-                              ),
-                            );
+                                );
                           }
                           // invalidate entries screen provider after completion correctly
                           ref.invalidate(mealPlanEntriesProvider(planId));
@@ -645,9 +642,7 @@ Future<void> _importRecipeToList(
   required int recipeId,
 }) async {
   if (recipeId <= 0) {
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(content: Text(AppLocalizations.of(context).noRecipeAssociated)),
-    );
+    CustomSnackbar.showInfo(context, AppLocalizations.of(context).noRecipeAssociated);
     return;
   }
   await SaveEntryIngredientsFlow.show(
@@ -665,9 +660,7 @@ Future<void> _confirmComplete(
 }) async {
   final l10n = AppLocalizations.of(context);
   if (entry.recipeId <= 0) {
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(content: Text(l10n.noRecipeAssociated)),
-    );
+    CustomSnackbar.showInfo(context, l10n.noRecipeAssociated);
     return;
   }
   final confirmed = await showDialog<bool>(
@@ -792,13 +785,9 @@ Future<void> _swapRecipe(
   if (updated == null) {
     if (!context.mounted) return;
     final state = ref.read(mealPlanEntryActionsProvider);
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(
-        content: Text(
+    CustomSnackbar.showInfo(context, 
           state.errorMessage ?? AppLocalizations.of(context).genericError,
-        ),
-      ),
-    );
+        );
     notifier.reset();
     return;
   }
@@ -842,13 +831,9 @@ Future<void> _changeEntryDate(
     ref.invalidate(mealPlanEntriesProvider(planId));
     notifier.reset();
   } else if (state.status == MealPlanEntryActionStatus.error) {
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(
-        content: Text(
+    CustomSnackbar.showInfo(context, 
           state.errorMessage ?? AppLocalizations.of(context).genericMoveError,
-        ),
-      ),
-    );
+        );
     notifier.reset();
   }
 }

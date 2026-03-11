@@ -19,11 +19,12 @@ class LoginScreen extends StatelessWidget {
 class _LoginForm extends ConsumerWidget {
   const _LoginForm();
 
-  void showSnackbar(BuildContext context, String message) {
-    ScaffoldMessenger.of(context).hideCurrentSnackBar();
-    ScaffoldMessenger.of(
-      context,
-    ).showSnackBar(SnackBar(content: Text(message)));
+  void showSnackbar(BuildContext context, String message, {bool isError = false}) {
+    if (isError) {
+      CustomSnackbar.showError(context, message);
+    } else {
+      CustomSnackbar.showInfo(context, message);
+    }
   }
 
   @override
@@ -38,6 +39,7 @@ class _LoginForm extends ConsumerWidget {
         showSnackbar(
           context,
           localizeErrorCode(l10n, next.code, fallback: next.message),
+          isError: true,
         );
       }
       if (previous is LoadingAuthState && next is AwaitingOtpInputState) {

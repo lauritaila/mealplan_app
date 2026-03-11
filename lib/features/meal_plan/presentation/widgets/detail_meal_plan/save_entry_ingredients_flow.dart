@@ -1,3 +1,4 @@
+import 'package:meal_plan_app/features/shared/shared.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:meal_plan_app/features/grocery_list/presentation/providers/provider.dart';
@@ -39,15 +40,11 @@ class SaveEntryIngredientsFlow {
           }
         }
         
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Text(
+        CustomSnackbar.showInfo(context, 
               ok
                   ? l10n.recipeAddedToList(listName ?? 'la lista')
                   : l10n.recipeAddFailed,
-            ),
-          ),
-        );
+            );
       }
     }
   }

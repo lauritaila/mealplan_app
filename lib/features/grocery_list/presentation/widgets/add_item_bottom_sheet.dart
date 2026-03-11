@@ -1,3 +1,4 @@
+import 'package:meal_plan_app/features/shared/shared.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:intl/intl.dart';
@@ -78,9 +79,7 @@ class _AddItemBottomSheetState extends ConsumerState<AddItemBottomSheet> {
     if (ok) {
       Navigator.pop(context, true);
     } else {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text(l10n.addItemErrorAdding)),
-      );
+      CustomSnackbar.showInfo(context, l10n.addItemErrorAdding);
     }
   }
 
