@@ -93,3 +93,21 @@ Based on the `flutter-dev` skill guidelines, the application should adhere to SO
 ### Dependency Inversion Principle (DIP)
 *Depend on abstractions, not concretions.*
 *   **Dependency Injection:** Keep relying on Riverpod for dependency injection. Do not instantiate repository classes or API services directly inside UI widgets or other services. Always `ref.watch` or `ref.read` interfaces to ensure components remain testable and mockable later.
+
+---
+
+## 6. Mockup Data & Buttons Audit Findings
+
+In addition to colors and text, an initial review highlights areas where mockup (dummy) data or non-functional placeholder buttons are currently present in the UI and should be wired to actual backend logic or state management:
+
+### 📌 Mock Data Presence
+*   **Gamification & Stats**: The achievements, consistency rings, and activity charts (e.g., `gamification_achievements.dart`) frequently rely on placeholder static values for presentation purposes instead of real user progress data.
+*   **Profile & Preferences**: Certain settings screens (e.g., `preferences_details_screen.dart`, `change_email_screen.dart`) contain mock visual representations or placeholder text fields that do not yet save or reflect real user data.
+*   **Selections & Dialogs**: `select_list_sheet.dart` and similar auxiliary sheets occasionally show dummy list items or UI mockups that need to be fully integrated with dynamic data streams.
+
+### 📌 Mock / Unwired Buttons
+*   **Settings/Actions**: Check for "Save", "Edit", or "Update" buttons in profile forms (like changing email or preferences) that have empty `onPressed: () {}` callbacks or only trigger UI states without real logic.
+*   **Meal Plan Actions**: Ensure that all action buttons in the meal plan sheets (like "Swap Recipe" or "Regenerate") are fully hooked up to their respective use cases and providers.
+
+**Recommendation:**
+Review all `onPressed` and `onTap` handlers across the application to ensure they execute real business logic. Additionally, verify that every data-driven widget is observing a Riverpod provider to fetch and display actual database models, eliminating remaining hardcoded values acting as "dummy" content.
