@@ -22,6 +22,7 @@ class MealPlanListScreen extends ConsumerWidget {
       appBar: AppBar(
         backgroundColor: const Color(0xFFF8FAFC),
         elevation: 0,
+        automaticallyImplyLeading: false,
         title: Row(
           children: [
             const Icon(Icons.calendar_month, color: Color(0xFF5C7861), size: 24),
@@ -39,12 +40,29 @@ class MealPlanListScreen extends ConsumerWidget {
         ),
         actions: [
           IconButton(
-            icon: const Icon(Icons.add_circle, color: Color(0xFF5C7861), size: 28),
-            onPressed: () => context.push('/meal-plan/new'),
-            tooltip: l10n.createNewPlanTooltip,
+            icon: const Icon(Icons.calendar_today, color: Color(0xFF5C7861), size: 24),
+            onPressed: () => context.go('/meal-plan'),
+            tooltip: l10n.mealPlanTitle,
           ),
           const SizedBox(width: 8),
         ],
+      ),
+      floatingActionButton: plansAsync.when(
+        data: (plansList) => plansList.isEmpty 
+            ? null 
+            : FloatingActionButton.extended(
+                onPressed: () => context.push('/meal-plan/new'),
+                backgroundColor: const Color(0xFF7BA082),
+                foregroundColor: Colors.white,
+                elevation: 0,
+                icon: const Icon(Icons.add, size: 24),
+                label: Text(
+                  l10n.createNewPlanTooltip,
+                  style: const TextStyle(fontWeight: FontWeight.bold),
+                ),
+              ),
+        loading: () => null,
+        error: (_, __) => null,
       ),
       body: plansAsync.when(
         data: (plansList) {

@@ -41,6 +41,10 @@ class MealPlanDayScreen extends ConsumerWidget {
         backgroundColor: const Color(0xFFF8FAFC),
         elevation: 0,
         centerTitle: false,
+        leading: IconButton(
+          icon: const Icon(Icons.arrow_back, color: Color(0xFF64748B)),
+          onPressed: () => context.go('/meal-plan/history'),
+        ),
         title: Align(
           alignment: Alignment.centerRight,
           child: Text(
@@ -51,19 +55,7 @@ class MealPlanDayScreen extends ConsumerWidget {
               fontSize: 20,
             ),
           ),
-        ),
-        actions: [
-          IconButton(
-            icon: const Icon(Icons.history, color: Color(0xFF64748B)),
-            tooltip: l10n.mealPlanHistory,
-            onPressed: () => context.push('/meal-plan/history'),
-          ),
-          IconButton(
-            icon: const Icon(Icons.refresh, color: Color(0xFF64748B)),
-            onPressed: () =>
-                ref.invalidate(mealPlanDayEntriesProvider(selectedDate)),
-          ),
-        ],
+        )
       ),
       body: entriesAsync.when(
         loading: () => const Center(child: CircularProgressIndicator()),

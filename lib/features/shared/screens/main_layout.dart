@@ -52,7 +52,7 @@ class MainLayout extends ConsumerWidget {
                 context.go('/home');
                 break;
               case 1:
-                context.go('/meal-plan');
+                context.go('/meal-plan/history');
                 break;
               case 2:
                 context.go('/recipes');
