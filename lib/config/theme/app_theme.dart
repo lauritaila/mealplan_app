@@ -36,6 +36,15 @@ class AppTheme {
         elevation: 0,
         centerTitle: true,
       ),
+      bottomNavigationBarTheme: const BottomNavigationBarThemeData(
+        backgroundColor: Colors.white,
+        elevation: 0,
+      ),
+      dialogTheme: DialogThemeData(
+        backgroundColor: Colors.white,
+        elevation: 0,
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+      ),
       textTheme: GoogleFonts.publicSansTextTheme(),
       cardTheme: CardThemeData(
         color: Colors.white,

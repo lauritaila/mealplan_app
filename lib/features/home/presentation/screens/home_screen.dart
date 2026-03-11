@@ -398,7 +398,7 @@ class _RecipeCard extends ConsumerWidget {
                     child: TextButton(
                       onPressed: () {
                         if (entry.recipeId > 0) {
-                          context.push('/recipes/${entry.recipeId}?entryId=${entry.entryId}');
+                          context.push('/recipes/${entry.recipeId}?entryId=${entry.entryId}&status=${entry.status}');
                         }
                       },
                       style: TextButton.styleFrom(
@@ -477,7 +477,6 @@ class _RecipeCard extends ConsumerWidget {
             onPressed: () => Navigator.of(ctx).pop(true),
             icon: const Icon(Icons.check_circle_outline),
             label: Text(l10n.completeAction),
-            style: FilledButton.styleFrom(backgroundColor: Colors.green),
           ),
         ],
       ),

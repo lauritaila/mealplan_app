@@ -431,6 +431,7 @@ class SupabaseRecipeDatasource extends RecipeDatasource {
           ingredientsUsed: ingredientsUsed,
           toolsNeeded: toolsNeeded,
           estimatedTimeSeconds: _toInt(itemMap['estimated_time_seconds']) ?? 0,
+          isTimerNecessary: (itemMap['is_timer_necessary'] ?? false) as bool,
         );
       }).toList();
     } on DioException catch (e) {

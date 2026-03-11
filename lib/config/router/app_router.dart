@@ -142,12 +142,21 @@ final appRouterProvider = Provider<GoRouter>((ref) {
                 path: ':id',
                 builder: (context, state) {
                   final idParam = state.pathParameters['id'];
+                  final queryParams = state.uri.queryParameters;
+                  final entryIdParam = queryParams['entryId'];
+                  final status = queryParams['status'];
                   final parsedId = int.tryParse(idParam ?? '');
+                  final entryId = int.tryParse(entryIdParam ?? '');
+                  
                   if (parsedId == null || parsedId <= 0) {
                     // Invalid ID: show recipes list or error screen
                     return const RecipesListScreen();
                   }
-                  return RecipeDetailScreen(recipeId: parsedId);
+                  return RecipeDetailScreen(
+                    recipeId: parsedId,
+                    entryId: entryId,
+                    status: status,
+                  );
                 },
                 routes: [
                   GoRoute(

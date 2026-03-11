@@ -51,26 +51,55 @@ Future<void> showIngredientSubstituteFlow({
     context: context,
     builder: (dialogContext) {
       return AlertDialog(
-        title: Text(l10n.substituteConfirmTitle),
+        backgroundColor: Colors.white,
+        surfaceTintColor: Colors.transparent,
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(24)),
+        title: Text(
+          l10n.substituteConfirmTitle,
+          style: const TextStyle(fontWeight: FontWeight.bold, color: Color(0xFF1B261B)),
+        ),
         content: Column(
           mainAxisSize: MainAxisSize.min,
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Text(l10n.substituteConfirmMessage),
+            Text(
+              l10n.substituteConfirmMessage,
+              style: const TextStyle(color: Color(0xFF5A6B5A)),
+            ),
             if (!hideNutritionValues) ...[
-              const SizedBox(height: 8),
-              Text(l10n.substituteConfirmNutritionWarning),
+              const SizedBox(height: 12),
+              Text(
+                l10n.substituteConfirmNutritionWarning,
+                style: const TextStyle(
+                  color: Color(0xFF8A9A8A),
+                  fontSize: 13,
+                  fontStyle: FontStyle.italic,
+                ),
+              ),
             ],
           ],
         ),
+        actionsPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
         actions: [
           TextButton(
             onPressed: () => Navigator.of(dialogContext).pop(false),
-            child: Text(l10n.cancel),
+            child: Text(
+              l10n.cancel,
+              style: const TextStyle(color: Color(0xFF8A9A8A), fontWeight: FontWeight.bold),
+            ),
           ),
+          const SizedBox(width: 8),
           FilledButton(
             onPressed: () => Navigator.of(dialogContext).pop(true),
-            child: Text(l10n.applySubstituteAction),
+            style: FilledButton.styleFrom(
+              backgroundColor: const Color(0xFF7A9382),
+              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+              padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
+            ),
+            child: Text(
+              l10n.applySubstituteAction,
+              style: const TextStyle(fontWeight: FontWeight.bold),
+            ),
           ),
         ],
       );
@@ -84,12 +113,26 @@ Future<void> showIngredientSubstituteFlow({
     context: context,
     barrierDismissible: false,
     builder: (_) => AlertDialog(
-      content: Row(
-        children: [
-          const CircularProgressIndicator(),
-          const SizedBox(width: 16),
-          Expanded(child: Text(l10n.applyingSubstitute)),
-        ],
+      backgroundColor: Colors.white,
+      surfaceTintColor: Colors.transparent,
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
+      content: Padding(
+        padding: const EdgeInsets.symmetric(vertical: 20, horizontal: 8),
+        child: Row(
+          children: [
+            const CircularProgressIndicator(color: Color(0xFF4A614A)),
+            const SizedBox(width: 20),
+            Expanded(
+              child: Text(
+                l10n.applyingSubstitute,
+                style: const TextStyle(
+                  fontWeight: FontWeight.bold,
+                  color: Color(0xFF1B261B),
+                ),
+              ),
+            ),
+          ],
+        ),
       ),
     ),
   );

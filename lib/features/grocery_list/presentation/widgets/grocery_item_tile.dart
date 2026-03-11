@@ -4,6 +4,8 @@ import 'package:meal_plan_app/features/grocery_list/domain/entities/grocery_list
 import 'package:meal_plan_app/features/grocery_list/presentation/providers/provider.dart';
 import 'package:meal_plan_app/l10n/app_localizations.dart';
 
+import 'package:meal_plan_app/features/grocery_list/presentation/widgets/edit_quantity_bottom_sheet.dart';
+
 class GroceryItemTile extends ConsumerStatefulWidget {
   final GroceryListItem item;
   final int listId;
@@ -192,13 +194,20 @@ class _GroceryItemTileState extends ConsumerState<GroceryItemTile>
   }
 
   Future<void> _showEditQuantity(BuildContext context) async {
-    final l10n = AppLocalizations.of(context);
-    final messenger = ScaffoldMessenger.of(context);
-    final result = await showDialog<double>(
+    final result = await showModalBottomSheet<double>(
       context: context,
-      builder: (_) => _EditQuantityDialog(initial: widget.item.quantity),
+      isScrollControlled: true,
+      backgroundColor: Colors.transparent,
+      builder: (_) => EditQuantityBottomSheet(
+        initialQuantity: widget.item.quantity,
+        ingredientName: widget.item.ingredientName,
+        unit: widget.item.unit,
+      ),
     );
+
     if (result != null && mounted) {
+      final l10n = AppLocalizations.of(context);
+      final messenger = ScaffoldMessenger.of(context);
       final errorMsg = l10n.savedIngredientsFailed;
       try {
         await ref
@@ -212,56 +221,3 @@ class _GroceryItemTileState extends ConsumerState<GroceryItemTile>
   }
 }
 
-class _EditQuantityDialog extends StatefulWidget {
-  final double initial;
-  const _EditQuantityDialog({required this.initial});
-
-  @override
-  State<_EditQuantityDialog> createState() => _EditQuantityDialogState();
-}
-
-class _EditQuantityDialogState extends State<_EditQuantityDialog> {
-  late final TextEditingController _ctrl;
-
-  @override
-  void initState() {
-    super.initState();
-    _ctrl = TextEditingController(
-      text: widget.initial == widget.initial.roundToDouble()
-          ? widget.initial.toInt().toString()
-          : widget.initial.toStringAsFixed(1),
-    );
-  }
-
-  @override
-  void dispose() {
-    _ctrl.dispose();
-    super.dispose();
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    return AlertDialog(
-      title: Text(AppLocalizations.of(context).editQuantityDialogTitle),
-      content: TextField(
-        controller: _ctrl,
-        autofocus: true,
-        keyboardType: const TextInputType.numberWithOptions(decimal: true),
-        decoration: InputDecoration(labelText: AppLocalizations.of(context).addItemQuantityLabel),
-      ),
-      actions: [
-        TextButton(
-          onPressed: () => Navigator.pop(context),
-          child: Text(AppLocalizations.of(context).cancel),
-        ),
-        FilledButton(
-          onPressed: () {
-            final val = double.tryParse(_ctrl.text.trim());
-            if (val != null && val > 0) Navigator.pop(context, val);
-          },
-          child: Text(AppLocalizations.of(context).save),
-        ),
-      ],
-    );
-  }
-}

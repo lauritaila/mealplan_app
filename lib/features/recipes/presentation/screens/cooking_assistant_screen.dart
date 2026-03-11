@@ -42,8 +42,28 @@ class _CookingAssistantScreenState
         authState.user.configurations?['hideNutritionValues'] == true;
 
     return Scaffold(
+      backgroundColor: const Color(0xFFF8F9FA), // Light background like in mockup
       appBar: AppBar(
-        title: Text(l10n.cookingAssistantTitle),
+        backgroundColor: Colors.transparent,
+        elevation: 0,
+        leading: IconButton(
+          icon: const Icon(Icons.arrow_back, color: Color(0xFF4A614A)),
+          onPressed: () => context.pop(),
+        ),
+        title: Text(
+          l10n.cookingAssistantTitle,
+          style: theme.textTheme.titleLarge?.copyWith(
+            color: const Color(0xFF2D3E2D),
+            fontWeight: FontWeight.bold,
+          ),
+        ),
+        centerTitle: true,
+        actions: [
+          IconButton(
+            icon: const Icon(Icons.more_vert, color: Color(0xFF4A614A)),
+            onPressed: () {},
+          ),
+        ],
       ),
       body: stepsAsync.when(
         loading: () => const Center(child: CircularProgressIndicator()),
@@ -69,35 +89,78 @@ class _CookingAssistantScreenState
             return Center(child: Text(l10n.noCookingSteps));
           }
 
+          final progress = (_currentIndex + 1) / steps.length;
+          final percentage = (progress * 100).toInt();
+
           return Column(
             children: [
-              Container(
-                width: double.infinity,
-                padding: const EdgeInsets.fromLTRB(16, 16, 16, 8),
+              // Progress Section
+              Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 16),
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(
-                      l10n.cookingAssistantDisclaimer,
-                      style: theme.textTheme.bodySmall?.copyWith(
-                        color: theme.colorScheme.onSurfaceVariant,
+                      'PROGRESO DE LA RECETA',
+                      style: theme.textTheme.labelSmall?.copyWith(
+                        color: const Color(0xFF8A9A8A),
+                        letterSpacing: 1.2,
+                        fontWeight: FontWeight.bold,
                       ),
                     ),
-                    const SizedBox(height: 8),
-                    Text(
-                      l10n.stepOf(_currentIndex + 1, steps.length),
-                      style: theme.textTheme.titleMedium?.copyWith(
-                        fontWeight: FontWeight.bold,
+                    const SizedBox(height: 4),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      crossAxisAlignment: CrossAxisAlignment.baseline,
+                      textBaseline: TextBaseline.alphabetic,
+                      children: [
+                        RichText(
+                          text: TextSpan(
+                            children: [
+                              TextSpan(
+                                text: 'Paso ${_currentIndex + 1} ',
+                                style: theme.textTheme.headlineSmall?.copyWith(
+                                  color: const Color(0xFF4A614A),
+                                  fontWeight: FontWeight.bold,
+                                ),
+                              ),
+                              TextSpan(
+                                text: 'de ${steps.length}',
+                                style: theme.textTheme.titleMedium?.copyWith(
+                                  color: const Color(0xFF8A9A8A),
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                        Text(
+                          '$percentage% completado',
+                          style: theme.textTheme.bodyMedium?.copyWith(
+                            color: const Color(0xFF8A9A8A),
+                            fontWeight: FontWeight.w500,
+                          ),
+                        ),
+                      ],
+                    ),
+                    const SizedBox(height: 12),
+                    ClipRRect(
+                      borderRadius: BorderRadius.circular(8),
+                      child: LinearProgressIndicator(
+                        value: progress,
+                        minHeight: 8,
+                        backgroundColor: const Color(0xFFE8EDE8),
+                        valueColor: const AlwaysStoppedAnimation<Color>(Color(0xFF4A614A)),
                       ),
                     ),
                   ],
                 ),
               ),
-              const Divider(height: 1),
+
               Expanded(
                 child: PageView.builder(
                   controller: _pageController,
                   itemCount: steps.length,
+                  physics: const NeverScrollableScrollPhysics(),
                   onPageChanged: (index) {
                     setState(() {
                       _currentIndex = index;
@@ -105,59 +168,190 @@ class _CookingAssistantScreenState
                   },
                   itemBuilder: (context, index) {
                     final step = steps[index];
-                    return _AssistantStepCard(
-                      step: step,
-                      backgroundColor: _pastelColor(index),
-                      onSubstituteTap: (ingredient) {
-                        return showIngredientSubstituteFlow(
-                          context: context,
-                          ref: ref,
-                          recipeId: widget.recipeId,
-                          ingredient: ingredient,
-                          hideNutritionValues: hideNutritionValues,
-                          contextHint: step.instruction,
-                        );
-                      },
+                    return ListView(
+                      padding: const EdgeInsets.symmetric(horizontal: 24),
+                      children: [
+                        // Instruction Card
+                        Card(
+                          elevation: 0,
+                          color: Colors.white,
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(20),
+                          ),
+                          child: Padding(
+                            padding: const EdgeInsets.all(24),
+                            child: Column(
+                              children: [
+                                Text(
+                                  step.instruction.split('\n').first.trim().replaceFirst(RegExp(r'^\d+[\.\)\s]+'), ''),
+                                  textAlign: TextAlign.center,
+                                  style: theme.textTheme.titleLarge?.copyWith(
+                                    color: const Color(0xFF1B261B),
+                                    fontWeight: FontWeight.bold,
+                                    height: 1.3,
+                                  ),
+                                ),
+                                if (step.instruction.contains('\n')) ...[
+                                  const SizedBox(height: 16),
+                                  Text(
+                                    step.instruction.substring(step.instruction.indexOf('\n') + 1).trim(),
+                                    textAlign: TextAlign.center,
+                                    style: theme.textTheme.bodyMedium?.copyWith(
+                                      color: const Color(0xFF5A6B5A),
+                                      height: 1.5,
+                                    ),
+                                  ),
+                                ],
+                              ],
+                            ),
+                          ),
+                        ),
+                        const SizedBox(height: 16),
+
+                        // Timer Card
+                        if (step.isTimerNecessary) ...[
+                          _TimerCard(seconds: step.estimatedTimeSeconds),
+                          const SizedBox(height: 24),
+                        ],
+
+                        // Ingredients and Tools Section Header
+                        Row(
+                          children: [
+                            const Icon(Icons.list_alt, color: Color(0xFF4A614A), size: 20),
+                            const SizedBox(width: 8),
+                            Text(
+                              'Necesitas para este paso',
+                              style: theme.textTheme.titleMedium?.copyWith(
+                                color: const Color(0xFF1B261B),
+                                fontWeight: FontWeight.bold,
+                              ),
+                            ),
+                          ],
+                        ),
+                        const SizedBox(height: 12),
+
+                        // Ingredients
+                        ...step.ingredientsUsed.map((ingredient) => _InfoCard(
+                          icon: Icons.eco_outlined,
+                          title: _formatIngredientLine(
+                            quantity: ingredient.quantity,
+                            unit: ingredient.unit,
+                            name: ingredient.name,
+                          ),
+                          subtitle: 'Ingrediente principal', // Could be dynamic if available
+                          onTap: () => showIngredientSubstituteFlow(
+                            context: context,
+                            ref: ref,
+                            recipeId: widget.recipeId,
+                            ingredient: ingredient,
+                            hideNutritionValues: hideNutritionValues,
+                            contextHint: step.instruction,
+                          ),
+                        )),
+
+                        // Tools
+                        ...step.toolsNeeded.map((tool) => _InfoCard(
+                          icon: Icons.kitchen_outlined,
+                          title: tool,
+                          subtitle: 'Utensilio necesario',
+                        )),
+                        
+                        const SizedBox(height: 32),
+                      ],
                     );
                   },
                 ),
               ),
-              const Divider(height: 1),
+
+              // Navigation Buttons
               Padding(
-                padding: const EdgeInsets.all(16),
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.end,
+                padding: const EdgeInsets.fromLTRB(24, 8, 24, 32),
+                child: Column(
                   children: [
-                    if (_currentIndex > 0)
-                      TextButton(
-                        onPressed: () {
-                          _pageController.previousPage(
-                            duration: const Duration(milliseconds: 300),
-                            curve: Curves.easeInOut,
-                          );
-                        },
-                        child: const Text('Atrás'),
-                      ),
-                    const Spacer(),
-                    if (_currentIndex < steps.length - 1)
-                      FilledButton(
-                        onPressed: () {
-                          _pageController.nextPage(
-                            duration: const Duration(milliseconds: 300),
-                            curve: Curves.easeInOut,
-                          );
-                        },
-                        child: const Text('Siguiente'),
-                      )
-                    else
-                      FilledButton.icon(
-                        icon: const Icon(Icons.check_circle_outline),
-                        onPressed: _completeRecipe,
-                        label: const Text('Completar receta'),
+                    SizedBox(
+                      width: double.infinity,
+                      height: 56,
+                      child: FilledButton(
+                        onPressed: _currentIndex < steps.length - 1
+                            ? () => _pageController.nextPage(
+                                  duration: const Duration(milliseconds: 300),
+                                  curve: Curves.easeInOut,
+                                )
+                            : _completeRecipe,
                         style: FilledButton.styleFrom(
-                          backgroundColor: Colors.green,
+                          backgroundColor: const Color(0xFF4A614A),
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(16),
+                          ),
+                        ),
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            Text(
+                              _currentIndex < steps.length - 1
+                                  ? 'Siguiente paso'
+                                  : 'Finalizar receta',
+                              style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+                            ),
+                            const SizedBox(width: 8),
+                            Icon(
+                              _currentIndex < steps.length - 1
+                                  ? Icons.arrow_forward
+                                  : Icons.check_circle_outline,
+                            ),
+                          ],
                         ),
                       ),
+                    ),
+                    const SizedBox(height: 12),
+                    Row(
+                      children: [
+                        Expanded(
+                          child: SizedBox(
+                            height: 56,
+                            child: OutlinedButton.icon(
+                              onPressed: _currentIndex > 0
+                                  ? () => _pageController.previousPage(
+                                        duration: const Duration(milliseconds: 300),
+                                        curve: Curves.easeInOut,
+                                      )
+                                  : null,
+                              icon: const Icon(Icons.arrow_back_ios, size: 16),
+                              label: const Text('Anterior'),
+                              style: OutlinedButton.styleFrom(
+                                side: BorderSide.none,
+                                backgroundColor: const Color(0xFFE8EDE8),
+                                foregroundColor: const Color(0xFF4A614A),
+                                shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(16),
+                                ),
+                              ),
+                            ),
+                          ),
+                        ),
+                        const SizedBox(width: 12),
+                        Expanded(
+                          child: SizedBox(
+                            height: 56,
+                            child: OutlinedButton.icon(
+                              onPressed: () {
+                                _pageController.jumpToPage(0);
+                              },
+                              icon: const Icon(Icons.replay, size: 18),
+                              label: const Text('Reiniciar'),
+                              style: OutlinedButton.styleFrom(
+                                side: BorderSide.none,
+                                backgroundColor: const Color(0xFFEDF2F7),
+                                foregroundColor: const Color(0xFF4A5568),
+                                shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(16),
+                                ),
+                              ),
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
                   ],
                 ),
               ),
@@ -178,122 +372,6 @@ class _CookingAssistantScreenState
         );
      }
      context.pop();
-  }
-
-  Color _pastelColor(int index) {
-    final palette = [
-      Colors.pink.shade50,
-      Colors.blue.shade50,
-      Colors.green.shade50,
-      Colors.amber.shade50,
-      Colors.purple.shade50,
-      Colors.teal.shade50,
-    ];
-    return palette[index % palette.length];
-  }
-}
-
-class _AssistantStepCard extends StatelessWidget {
-  final CookingAssistantStep step;
-  final Color backgroundColor;
-  final Future<void> Function(RecipeIngredient ingredient) onSubstituteTap;
-
-  const _AssistantStepCard({
-    required this.step,
-    required this.backgroundColor,
-    required this.onSubstituteTap,
-  });
-
-  @override
-  Widget build(BuildContext context) {
-    final l10n = AppLocalizations.of(context);
-    final theme = Theme.of(context);
-
-    return AnimatedContainer(
-      duration: const Duration(milliseconds: 300),
-      curve: Curves.easeInOut,
-      color: backgroundColor,
-      child: ListView(
-        padding: const EdgeInsets.all(16),
-        children: [
-          Text(
-            l10n.cookingAssistantStepLabel(step.stepNumber),
-            style: theme.textTheme.titleSmall?.copyWith(
-              color: theme.colorScheme.onSurfaceVariant,
-            ),
-          ),
-          const SizedBox(height: 8),
-          Text(
-            step.instruction,
-            style: theme.textTheme.headlineSmall?.copyWith(
-              fontWeight: FontWeight.bold,
-            ),
-          ),
-          const SizedBox(height: 16),
-          StepTimer(seconds: step.estimatedTimeSeconds),
-          const SizedBox(height: 16),
-          Text(
-            l10n.cookingAssistantIngredientsTitle,
-            style: theme.textTheme.titleMedium?.copyWith(
-              fontWeight: FontWeight.bold,
-            ),
-          ),
-          const SizedBox(height: 8),
-          if (step.ingredientsUsed.isEmpty)
-            Text(l10n.noIngredients, style: theme.textTheme.bodyLarge)
-          else
-            ...step.ingredientsUsed.map((ingredient) {
-              return Padding(
-                padding: const EdgeInsets.symmetric(vertical: 4),
-                child: Row(
-                  children: [
-                    const Icon(Icons.circle, size: 8),
-                    const SizedBox(width: 12),
-                    Expanded(
-                      child: Text(
-                        _formatIngredientLine(
-                          quantity: ingredient.quantity,
-                          unit: ingredient.unit,
-                          name: ingredient.name,
-                        ),
-                        style: theme.textTheme.bodyLarge,
-                      ),
-                    ),
-                    IconButton(
-                      icon: const Icon(Icons.swap_horiz),
-                      tooltip: l10n.ingredientSubstitutesTooltip,
-                      onPressed: () {
-                        onSubstituteTap(ingredient);
-                      },
-                    ),
-                  ],
-                ),
-              );
-            }),
-          const SizedBox(height: 16),
-          Text(
-            l10n.cookingAssistantToolsTitle,
-            style: theme.textTheme.titleMedium?.copyWith(
-              fontWeight: FontWeight.bold,
-            ),
-          ),
-          const SizedBox(height: 8),
-          if (step.toolsNeeded.isEmpty)
-            Text(l10n.noToolsNeeded, style: theme.textTheme.bodyLarge)
-          else
-            Wrap(
-              spacing: 8,
-              runSpacing: 4,
-              children: step.toolsNeeded.map((tool) {
-                return Chip(
-                  label: Text(tool),
-                  backgroundColor: theme.colorScheme.surface,
-                );
-              }).toList(),
-            ),
-        ],
-      ),
-    );
   }
 
   String _formatIngredientLine({
@@ -322,16 +400,16 @@ class _AssistantStepCard extends StatelessWidget {
   }
 }
 
-class StepTimer extends StatefulWidget {
+class _TimerCard extends StatefulWidget {
   final int seconds;
 
-  const StepTimer({super.key, required this.seconds});
+  const _TimerCard({required this.seconds});
 
   @override
-  State<StepTimer> createState() => _StepTimerState();
+  State<_TimerCard> createState() => _TimerCardState();
 }
 
-class _StepTimerState extends State<StepTimer> {
+class _TimerCardState extends State<_TimerCard> {
   Timer? _timer;
   late int _remaining;
   bool _running = false;
@@ -343,7 +421,7 @@ class _StepTimerState extends State<StepTimer> {
   }
 
   @override
-  void didUpdateWidget(covariant StepTimer oldWidget) {
+  void didUpdateWidget(covariant _TimerCard oldWidget) {
     super.didUpdateWidget(oldWidget);
     if (oldWidget.seconds != widget.seconds) {
       _remaining = widget.seconds;
@@ -398,42 +476,72 @@ class _StepTimerState extends State<StepTimer> {
   String _formatTime(int totalSeconds) {
     final minutes = totalSeconds ~/ 60;
     final seconds = totalSeconds % 60;
-    final padded = seconds.toString().padLeft(2, '0');
-    return '$minutes:$padded';
+    final minStr = minutes.toString().padLeft(2, '0');
+    final secStr = seconds.toString().padLeft(2, '0');
+    return '$minStr : $secStr';
   }
 
   @override
   Widget build(BuildContext context) {
-    final l10n = AppLocalizations.of(context);
     final theme = Theme.of(context);
-
-    if (widget.seconds <= 0) {
-      return Text(
-        l10n.noTimerAvailable,
-        style: theme.textTheme.bodyMedium,
-      );
-    }
-
+    
     return Card(
+      elevation: 0,
+      color: const Color(0xFFEFF3EF),
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
       child: Padding(
-        padding: const EdgeInsets.all(12),
-        child: Row(
+        padding: const EdgeInsets.symmetric(vertical: 24, horizontal: 16),
+        child: Column(
           children: [
-            Expanded(
-              child: Text(
-                l10n.estimatedTimeLabel(_formatTime(_remaining)),
-                style: theme.textTheme.titleMedium,
+            Text(
+              'TEMPORIZADOR',
+              style: theme.textTheme.labelSmall?.copyWith(
+                color: const Color(0xFF4A614A),
+                letterSpacing: 1.5,
+                fontWeight: FontWeight.bold,
               ),
             ),
-            TextButton(
-              onPressed: _toggleTimer,
-              child: Text(
-                _running ? l10n.pauseTimer : l10n.startTimer,
-              ),
+            const SizedBox(height: 16),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                const Icon(Icons.timer_outlined, color: Color(0xFF2D3E2D), size: 32),
+                const SizedBox(width: 12),
+                Text(
+                  _formatTime(_remaining),
+                  style: theme.textTheme.displayMedium?.copyWith(
+                    color: const Color(0xFF1A201A),
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+              ],
             ),
-            TextButton(
-              onPressed: _resetTimer,
-              child: Text(l10n.resetTimer),
+            const SizedBox(height: 20),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                FilledButton.icon(
+                  onPressed: _toggleTimer,
+                  icon: Icon(_running ? Icons.pause : Icons.play_arrow),
+                  label: Text(_running ? 'Pausar' : 'Iniciar'),
+                  style: FilledButton.styleFrom(
+                    backgroundColor: const Color(0xFF4A614A),
+                    padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
+                    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+                  ),
+                ),
+                const SizedBox(width: 12),
+                IconButton.filled(
+                  onPressed: _resetTimer,
+                  icon: const Icon(Icons.replay),
+                  style: IconButton.styleFrom(
+                    backgroundColor: const Color(0xFFE2E8F0),
+                    foregroundColor: const Color(0xFF4A5568),
+                    padding: const EdgeInsets.all(12),
+                    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+                  ),
+                ),
+              ],
             ),
           ],
         ),
@@ -441,3 +549,59 @@ class _StepTimerState extends State<StepTimer> {
     );
   }
 }
+
+class _InfoCard extends StatelessWidget {
+  final IconData icon;
+  final String title;
+  final String subtitle;
+  final VoidCallback? onTap;
+
+  const _InfoCard({
+    required this.icon,
+    required this.title,
+    required this.subtitle,
+    this.onTap,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+
+    return Padding(
+      padding: const EdgeInsets.only(bottom: 8),
+      child: Card(
+        elevation: 0,
+        color: Colors.white,
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+        child: ListTile(
+          onTap: onTap,
+          leading: Container(
+            padding: const EdgeInsets.all(10),
+            decoration: BoxDecoration(
+              color: const Color(0xFFE8EDE8),
+              borderRadius: BorderRadius.circular(12),
+            ),
+            child: Icon(icon, color: const Color(0xFF4A614A), size: 24),
+          ),
+          title: Text(
+            title,
+            style: theme.textTheme.bodyLarge?.copyWith(
+              fontWeight: FontWeight.bold,
+              color: const Color(0xFF1B261B),
+            ),
+          ),
+          subtitle: Text(
+            subtitle,
+            style: theme.textTheme.bodySmall?.copyWith(
+              color: const Color(0xFF8A9A8A),
+            ),
+          ),
+          trailing: onTap != null 
+            ? const Icon(Icons.swap_horiz, color: Color(0xFF8A9A8A), size: 20)
+            : null,
+        ),
+      ),
+    );
+  }
+}
+

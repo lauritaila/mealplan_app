@@ -207,7 +207,7 @@ class MealPlanDayScreen extends ConsumerWidget {
                                 MealPlanEntryActionStatus.loading,
                         onOpenRecipe: entry.recipeId > 0
                             ? () => context.push(
-                                  '/recipes/${entry.recipeId}?entryId=${entry.entryId}',
+                                  '/recipes/${entry.recipeId}?entryId=${entry.entryId}&status=${entry.status}',
                                 )
                             : null,
                         onImportRecipeToList: () => _importRecipeToList(
