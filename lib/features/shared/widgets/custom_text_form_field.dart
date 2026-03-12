@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:meal_plan_app/config/theme/app_theme.dart';
 
 class CustomTextFormField extends StatelessWidget {
   final String? label;
@@ -11,6 +12,7 @@ class CustomTextFormField extends StatelessWidget {
   final Function(String)? onChanged;
   final String? Function(String?)? validator;
   final Function(String)? onFieldSubmitted;
+  final TextEditingController? controller;
 
   const CustomTextFormField({
     super.key,
@@ -24,79 +26,93 @@ class CustomTextFormField extends StatelessWidget {
     this.onChanged,
     this.validator,
     this.onFieldSubmitted,
+    this.controller,
   });
 
   @override
   Widget build(BuildContext context) {
-    final colors = Theme.of(context).colorScheme;
-
-    final border = OutlineInputBorder(
-      borderSide: BorderSide(color: colors.primary.withOpacity(0.35), width: 1.5),
-      borderRadius: BorderRadius.circular(12),
-    );
-
-    final focusBorder = OutlineInputBorder(
-      borderSide: BorderSide(color: colors.primary, width: 2),
-      borderRadius: BorderRadius.circular(12),
-    );
-
-    const borderRadius = Radius.circular(12);
+    final theme = Theme.of(context);
+    final textTheme = theme.textTheme;
+    final customColors = theme.extension<AppCustomColors>()!;
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Padding(
-          padding: const EdgeInsets.only(left: 10),
-          child: Text(
-            label ?? '',
-            style: TextStyle(
-              fontSize: 14,
-              color: colors.primary,
-              fontWeight: FontWeight.bold,
+        if (label != null)
+          Padding(
+            padding: const EdgeInsets.only(left: 4, bottom: 12),
+            child: Text(
+              label!.toUpperCase(),
+              style: textTheme.labelSmall?.copyWith(
+                color: customColors.slateGrey?.withValues(alpha: 0.7),
+                fontWeight: FontWeight.w900,
+                letterSpacing: 1.2,
+              ),
+            ),
+          ),
+        TextFormField(
+          controller: controller,
+          onChanged: onChanged,
+          validator: validator,
+          onFieldSubmitted: onFieldSubmitted,
+          obscureText: obscureText,
+          keyboardType: keyboardType,
+          textInputAction: textInputAction,
+          autofillHints: autofillHints,
+          style: textTheme.bodyLarge?.copyWith(
+            color: customColors.textDarkBlue,
+            fontWeight: FontWeight.w600,
+          ),
+          decoration: InputDecoration(
+            hintText: hint,
+            hintStyle: textTheme.bodyLarge?.copyWith(
+              color: customColors.slateGrey?.withValues(alpha: 0.4),
+            ),
+            filled: true,
+            fillColor: customColors.chartTabBackground,
+            contentPadding: const EdgeInsets.symmetric(horizontal: 24, vertical: 20),
+            border: OutlineInputBorder(
+              borderRadius: BorderRadius.circular(20),
+              borderSide: BorderSide.none,
+            ),
+            enabledBorder: OutlineInputBorder(
+              borderRadius: BorderRadius.circular(20),
+              borderSide: BorderSide.none,
+            ),
+            focusedBorder: OutlineInputBorder(
+              borderRadius: BorderRadius.circular(20),
+              borderSide: BorderSide(
+                color: customColors.darkSage!,
+                width: 2,
+              ),
+            ),
+            errorBorder: OutlineInputBorder(
+              borderRadius: BorderRadius.circular(20),
+              borderSide: BorderSide(
+                color: theme.colorScheme.error.withValues(alpha: 0.5),
+                width: 1,
+              ),
+            ),
+            focusedErrorBorder: OutlineInputBorder(
+              borderRadius: BorderRadius.circular(20),
+              borderSide: BorderSide(
+                color: theme.colorScheme.error,
+                width: 2,
+              ),
             ),
           ),
         ),
-        SizedBox(height: 10),
-        Container(
-          decoration: BoxDecoration(
-            borderRadius: const BorderRadius.all(borderRadius),
-          ),
-          child: TextFormField(
-            onChanged: onChanged,
-            validator: validator,
-            onFieldSubmitted: onFieldSubmitted,
-            obscureText: obscureText,
-            keyboardType: keyboardType,
-            textInputAction: textInputAction,
-            autofillHints: autofillHints,
-            style: TextStyle(fontSize: 14, color: colors.primary),
-            decoration: InputDecoration(
-              filled: true,
-              fillColor: Theme.of(context).brightness == Brightness.light 
-                  ? Colors.white 
-                  : const Color(0xFF252A26),
-              enabledBorder: border,
-              focusedBorder: focusBorder,
-              errorBorder: border.copyWith(
-                borderSide: BorderSide(color: Colors.red.shade900, width: 1.5),
+        if (errorMessage != null)
+          Padding(
+            padding: const EdgeInsets.only(top: 8, left: 12),
+            child: Text(
+              errorMessage!,
+              style: textTheme.bodySmall?.copyWith(
+                color: theme.colorScheme.error,
+                fontWeight: FontWeight.w600,
               ),
-              focusedErrorBorder: focusBorder.copyWith(
-                borderSide: BorderSide(color: Colors.red.shade900, width: 2),
-              ),
-              isDense: true,
-              contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
-              hintText: hint,
-              hintStyle: TextStyle(color: colors.onSurfaceVariant.withOpacity(0.5)),
             ),
           ),
-        ),
-        const SizedBox(height: 10),
-        errorMessage != null
-            ? Text(
-                errorMessage!,
-                style: TextStyle(color: Colors.red[900], fontSize: 12),
-              )
-            : const SizedBox.shrink(),
       ],
     );
   }

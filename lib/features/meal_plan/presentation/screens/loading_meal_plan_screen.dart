@@ -7,6 +7,7 @@ import 'package:go_router/go_router.dart';
 import 'package:meal_plan_app/features/meal_plan/presentation/providers/provider.dart';
 import 'package:meal_plan_app/l10n/app_localizations.dart';
 import 'package:meal_plan_app/features/shared/utils/app_error_localizations.dart';
+import 'package:meal_plan_app/config/theme/app_theme.dart';
 
 class LoadingMealPlanScreen extends ConsumerStatefulWidget {
   final String description;
@@ -132,9 +133,20 @@ class _LoadingMealPlanScreenState extends ConsumerState<LoadingMealPlanScreen> {
 
     return Scaffold(
       appBar: AppBar(
-        title: Text(l10n.preparingPlanTitle),
+        backgroundColor: Colors.transparent,
+        elevation: 0,
+        title: Text(
+          l10n.preparingPlanTitle,
+          style: Theme.of(context).textTheme.titleLarge?.copyWith(
+            fontWeight: FontWeight.w900,
+            color: Theme.of(context).extension<AppCustomColors>()?.textDarkBlue,
+          ),
+        ),
         leading: IconButton(
-          icon: const Icon(Icons.arrow_back),
+          icon: Icon(
+            Icons.arrow_back,
+            color: Theme.of(context).extension<AppCustomColors>()?.textDarkBlue,
+          ),
           onPressed: () {
             ref.read(mealPlanGeneratorProvider.notifier).reset();
             context.pop();
@@ -147,10 +159,14 @@ class _LoadingMealPlanScreenState extends ConsumerState<LoadingMealPlanScreen> {
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              const SizedBox(
+              SizedBox(
                 height: 80,
                 width: 80,
-                child: CircularProgressIndicator(strokeWidth: 6),
+                child: CircularProgressIndicator(
+                  strokeWidth: 6,
+                  color: Theme.of(context).extension<AppCustomColors>()?.darkSage,
+                  backgroundColor: Theme.of(context).extension<AppCustomColors>()?.chartTabBackground,
+                ),
               ),
               const SizedBox(height: 24),
               AnimatedSwitcher(
@@ -161,9 +177,9 @@ class _LoadingMealPlanScreenState extends ConsumerState<LoadingMealPlanScreen> {
                   _messages.isEmpty ? '' : _messages[_messageIndex],
                   key: ValueKey(_messageIndex),
                   textAlign: TextAlign.center,
-                  style: const TextStyle(
-                    fontSize: 18,
-                    fontWeight: FontWeight.w600,
+                  style: Theme.of(context).textTheme.headlineSmall?.copyWith(
+                    fontWeight: FontWeight.w900,
+                    color: Theme.of(context).extension<AppCustomColors>()?.textDarkBlue,
                   ),
                 ),
               ),
@@ -177,7 +193,9 @@ class _LoadingMealPlanScreenState extends ConsumerState<LoadingMealPlanScreen> {
                       )
                     : l10n.cookingCombosMessage,
                 textAlign: TextAlign.center,
-                style: Theme.of(context).textTheme.bodyMedium,
+                style: Theme.of(context).textTheme.bodyLarge?.copyWith(
+                  color: Theme.of(context).extension<AppCustomColors>()?.slateGrey,
+                ),
               ),
               const SizedBox(height: 24),
               TextButton.icon(
@@ -185,36 +203,39 @@ class _LoadingMealPlanScreenState extends ConsumerState<LoadingMealPlanScreen> {
                   ref.read(mealPlanGeneratorProvider.notifier).reset();
                   context.pop();
                 },
-                icon: const Icon(Icons.close),
-                label: Text(l10n.cancelAndGoBack),
+                icon: const Icon(Icons.close, size: 20),
+                label: Text(
+                  l10n.cancelAndGoBack.toUpperCase(),
+                  style: const TextStyle(fontWeight: FontWeight.w900, letterSpacing: 1.1),
+                ),
+                style: TextButton.styleFrom(
+                  foregroundColor: Theme.of(context).extension<AppCustomColors>()?.slateGrey,
+                ),
               ),
               const Spacer(),
               Container(
-                padding: const EdgeInsets.all(16),
+                padding: const EdgeInsets.all(20),
                 decoration: BoxDecoration(
-                  color: Theme.of(context)
-                      .colorScheme
-                      .surfaceContainerHighest
-                      .withOpacity(0.3),
-                  borderRadius: BorderRadius.circular(12),
+                  color: Theme.of(context).extension<AppCustomColors>()?.chartTabBackground,
+                  borderRadius: BorderRadius.circular(20),
                   border: Border.all(
-                    color: Theme.of(context).colorScheme.outlineVariant,
+                    color: Theme.of(context).extension<AppCustomColors>()?.darkSage!.withValues(alpha: 0.1) ?? Colors.transparent,
                   ),
                 ),
                 child: Row(
                   children: [
                     Icon(
-                      Icons.warning_amber_rounded,
-                      color: Theme.of(context).colorScheme.secondary,
-                      size: 20,
+                      Icons.info_outline_rounded,
+                      color: Theme.of(context).extension<AppCustomColors>()?.darkSage,
+                      size: 24,
                     ),
-                    const SizedBox(width: 12),
+                    const SizedBox(width: 16),
                     Expanded(
                       child: Text(
                         l10n.medicalDisclaimer,
                         style: Theme.of(context).textTheme.labelSmall?.copyWith(
-                              color: Theme.of(context).colorScheme.onSurfaceVariant,
-                              fontSize: 11,
+                              color: Theme.of(context).extension<AppCustomColors>()?.slateGrey,
+                              height: 1.4,
                             ),
                       ),
                     ),

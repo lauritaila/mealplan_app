@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:meal_plan_app/config/theme/app_theme.dart';
 import 'package:meal_plan_app/l10n/app_localizations.dart';
 
 class ChangeEntryDateSheet extends StatefulWidget {
@@ -24,11 +25,14 @@ class _ChangeEntryDateSheetState extends State<ChangeEntryDateSheet> {
 
   @override
   Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+    final customColors = theme.extension<AppCustomColors>()!;
+    final textTheme = theme.textTheme;
     final l10n = AppLocalizations.of(context);
     
     return SafeArea(
       child: Padding(
-        padding: const EdgeInsets.fromLTRB(24, 12, 24, 24),
+        padding: const EdgeInsets.fromLTRB(24, 16, 24, 24),
         child: Column(
           mainAxisSize: MainAxisSize.min,
           crossAxisAlignment: CrossAxisAlignment.stretch,
@@ -38,32 +42,34 @@ class _ChangeEntryDateSheetState extends State<ChangeEntryDateSheet> {
                 width: 40,
                 height: 4,
                 decoration: BoxDecoration(
-                  color: Colors.grey.shade200,
+                  color: customColors.slateGrey?.withValues(alpha: 0.2),
                   borderRadius: BorderRadius.circular(2),
                 ),
               ),
             ),
-            const SizedBox(height: 24),
+            const SizedBox(height: 32),
             Text(
               l10n.changeMealDateAction,
-              style: const TextStyle(
-                fontSize: 22,
-                fontWeight: FontWeight.w800,
-                color: Color(0xFF1A1E1B),
+              style: textTheme.titleLarge?.copyWith(
+                fontWeight: FontWeight.w900,
+                color: customColors.textDarkBlue,
               ),
             ),
             const SizedBox(height: 8),
             Text(
               l10n.selectDatesSubtitle,
-              style: TextStyle(color: Colors.grey.shade600, fontSize: 14),
+              style: textTheme.bodyMedium?.copyWith(
+                color: customColors.slateGrey,
+              ),
             ),
             const SizedBox(height: 16),
             Theme(
-              data: Theme.of(context).copyWith(
-                colorScheme: const ColorScheme.light(
-                  primary: Color(0xFF5C7861),
+              data: theme.copyWith(
+                colorScheme: theme.colorScheme.copyWith(
+                  primary: customColors.darkSage,
                   onPrimary: Colors.white,
-                  onSurface: Color(0xFF1A1E1B),
+                  surface: theme.scaffoldBackgroundColor,
+                  onSurface: customColors.textDarkBlue,
                 ),
               ),
               child: CalendarDatePicker(
@@ -81,12 +87,13 @@ class _ChangeEntryDateSheetState extends State<ChangeEntryDateSheet> {
             const SizedBox(height: 24),
             FilledButton(
               style: FilledButton.styleFrom(
-                backgroundColor: const Color(0xFF5C7861),
+                backgroundColor: customColors.darkSage,
                 foregroundColor: Colors.white,
-                padding: const EdgeInsets.symmetric(vertical: 18),
+                padding: const EdgeInsets.symmetric(vertical: 20),
                 shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(16),
+                  borderRadius: BorderRadius.circular(20),
                 ),
+                elevation: 0,
               ),
               onPressed: () {
                 Navigator.pop(context, _selectedDate);
@@ -102,14 +109,14 @@ class _ChangeEntryDateSheetState extends State<ChangeEntryDateSheet> {
             const SizedBox(height: 12),
             TextButton(
               style: TextButton.styleFrom(
-                foregroundColor: Colors.grey,
+                foregroundColor: customColors.slateGrey,
               ),
               onPressed: () => Navigator.pop(context),
               child: Text(
-                l10n.cancel,
+                l10n.cancel.toUpperCase(),
                 style: const TextStyle(
-                  color: Colors.grey,
-                  fontWeight: FontWeight.w700,
+                  fontWeight: FontWeight.w800,
+                  letterSpacing: 1.1,
                 ),
               ),
             ),

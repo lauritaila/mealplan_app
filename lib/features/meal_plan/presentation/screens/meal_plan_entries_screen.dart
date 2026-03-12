@@ -18,6 +18,7 @@ import 'package:meal_plan_app/features/meal_plan/presentation/widgets/detail_mea
 import 'package:meal_plan_app/features/meal_plan/presentation/widgets/detail_meal_plan/save_entry_ingredients_flow.dart';
 import 'package:meal_plan_app/features/meal_plan/presentation/widgets/swap_recipe_sheet.dart';
 import 'package:meal_plan_app/l10n/app_localizations.dart';
+import 'package:meal_plan_app/config/theme/app_theme.dart';
 
 class MealPlanEntriesScreen extends ConsumerWidget {
   final int planId;
@@ -32,30 +33,28 @@ class MealPlanEntriesScreen extends ConsumerWidget {
     final statusUpdateState = ref.watch(dayMealEntryStatusUpdateProvider);
     final authState = ref.watch(authProvider);
     final l10n = AppLocalizations.of(context);
-    final hideNutritionValues =
-        authState is AuthenticatedAuthState &&
+    final theme = Theme.of(context);
+    final customColors = theme.extension<AppCustomColors>()!;
+    final textTheme = theme.textTheme;
+
+    final hideNutritionValues = authState is AuthenticatedAuthState &&
         authState.user.configurations?['hideNutritionValues'] == true;
     final userPermissions = authState is AuthenticatedAuthState
         ? authState.user.permissions?.permissions
         : null;
 
     return Scaffold(
-      backgroundColor: const Color(0xFFF8FAFC),
+      backgroundColor: theme.scaffoldBackgroundColor,
       appBar: AppBar(
-        backgroundColor: const Color(0xFFF8FAFC),
+        backgroundColor: theme.scaffoldBackgroundColor,
         elevation: 0,
         centerTitle: true,
-        title: Column(
-          children: [
-            Text(
-              planName ?? l10n.planEntriesTitle,
-              style: const TextStyle(
-                color: Color(0xFF0F172A),
-                fontWeight: FontWeight.w900,
-                fontSize: 18,
-              ),
-            ),
-          ],
+        title: Text(
+          planName ?? l10n.planEntriesTitle,
+          style: textTheme.titleLarge?.copyWith(
+            color: customColors.textDarkBlue,
+            fontWeight: FontWeight.w900,
+          ),
         ),
       ),
       body: entriesAsync.when(
@@ -122,28 +121,20 @@ class MealPlanEntriesScreen extends ConsumerWidget {
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      Row(
-                        crossAxisAlignment: CrossAxisAlignment.end,
-                        children: [
-                          Expanded(
-                            child: Text(
-                              dateRangeHeader.isNotEmpty ? dateRangeHeader : (planName ?? l10n.planEntriesTitle),
-                              style: const TextStyle(
-                                fontSize: 26,
-                                fontWeight: FontWeight.w900,
-                                color: Color(0xFF0F172A),
-                                height: 1.1,
-                              ),
-                            ),
-                          ),
-                        ],
+                      Text(
+                        dateRangeHeader.isNotEmpty ? dateRangeHeader : (planName ?? l10n.planEntriesTitle),
+                        style: textTheme.headlineMedium?.copyWith(
+                          fontWeight: FontWeight.w900,
+                          color: customColors.textDarkBlue,
+                          height: 1.1,
+                          letterSpacing: -0.5,
+                        ),
                       ),
                       const SizedBox(height: 12),
-                      const Text(
-                        'Tu plan nutricional personalizado para reducir la inflamación.', // Dynamic based on plan description ideally
-                        style: TextStyle(
-                          fontSize: 14,
-                          color: Color(0xFF64748B),
+                      Text(
+                        l10n.configurePlanSubtitle, // Using a generic localized description for now
+                        style: textTheme.bodyMedium?.copyWith(
+                          color: customColors.slateGrey,
                           height: 1.4,
                         ),
                       ),
@@ -333,7 +324,11 @@ class _DateHeader extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     if (date.year == 2000) return const SizedBox.shrink();
+    final theme = Theme.of(context);
+    final customColors = theme.extension<AppCustomColors>()!;
+    final textTheme = theme.textTheme;
     final df = DateFormat('EEEE, d MMMM', Localizations.localeOf(context).toString());
+
     return Padding(
       padding: const EdgeInsets.only(bottom: 8),
       child: Column(
@@ -341,19 +336,14 @@ class _DateHeader extends StatelessWidget {
         children: [
           Text(
             df.format(date).toUpperCase(),
-            style: const TextStyle(
-              color: Color(0xFF5C7861),
+            style: textTheme.labelLarge?.copyWith(
+              color: customColors.darkSage,
               fontWeight: FontWeight.w800,
-              fontSize: 13,
               letterSpacing: 1.2,
             ),
           ),
           const SizedBox(height: 8),
-          Container(
-            height: 1,
-            color: const Color(0xFFE2E8F0),
-            width: double.infinity,
-          ),
+          Divider(color: Colors.grey.shade100, height: 1),
         ],
       ),
     );
@@ -389,6 +379,9 @@ class _MealEntryCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+    final customColors = theme.extension<AppCustomColors>()!;
+    final textTheme = theme.textTheme;
     final l10n = AppLocalizations.of(context);
     final isSkipped = _isSkippedStatus(entry.status);
     final isCompleted = entry.status?.toLowerCase() == 'completed';
@@ -397,11 +390,11 @@ class _MealEntryCard extends StatelessWidget {
       decoration: BoxDecoration(
         color: Colors.white,
         borderRadius: BorderRadius.circular(24),
-        boxShadow: const [
+        boxShadow: [
           BoxShadow(
-            color: Color(0x0A000000),
-            blurRadius: 10,
-            offset: Offset(0, 4),
+            color: Colors.black.withValues(alpha: 0.04),
+            blurRadius: 12,
+            offset: const Offset(0, 4),
           )
         ],
       ),
@@ -411,17 +404,17 @@ class _MealEntryCard extends StatelessWidget {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Row(
-              crossAxisAlignment: CrossAxisAlignment.start,
+              crossAxisAlignment: CrossAxisAlignment.center,
               children: [
                 Container(
                   width: 56,
                   height: 56,
                   decoration: BoxDecoration(
-                    color: const Color(0xFFE8EFEA),
+                    color: customColors.chartTabBackground,
                     borderRadius: BorderRadius.circular(16),
                   ),
-                  child: const Center(
-                    child: Icon(Icons.restaurant, color: Color(0xFF5C7861), size: 28),
+                  child: Center(
+                    child: Icon(Icons.restaurant, color: customColors.darkSage, size: 28),
                   ),
                 ),
                 const SizedBox(width: 16),
@@ -431,10 +424,9 @@ class _MealEntryCard extends StatelessWidget {
                     children: [
                       Text(
                         entry.name,
-                        style: const TextStyle(
-                          fontSize: 18,
+                        style: textTheme.titleMedium?.copyWith(
                           fontWeight: FontWeight.w800,
-                          color: Color(0xFF0F172A),
+                          color: customColors.textDarkBlue,
                           height: 1.2,
                         ),
                       ),
@@ -442,19 +434,25 @@ class _MealEntryCard extends StatelessWidget {
                       // Time, Servings, KCAL sub-row
                       Row(
                         children: [
-                          const Icon(Icons.person_outline, size: 14, color: Color(0xFF64748B)),
+                          Icon(Icons.person_outline, size: 14, color: customColors.slateGrey),
                           const SizedBox(width: 4),
                           Text(
-                            '${_formatInt(entry.servings)} serv',
-                            style: const TextStyle(fontSize: 12, color: Color(0xFF64748B), fontWeight: FontWeight.w600),
+                            '${_formatInt(entry.servings)} ${l10n.servingShort}',
+                            style: textTheme.bodySmall?.copyWith(
+                              color: customColors.slateGrey,
+                              fontWeight: FontWeight.w600,
+                            ),
                           ),
                           const SizedBox(width: 12),
                           if (!hideNutritionValues && entry.calories != null) ...[
-                            const Icon(Icons.bolt, size: 14, color: Color(0xFF64748B)),
+                            Icon(Icons.bolt, size: 14, color: customColors.slateGrey),
                             const SizedBox(width: 4),
                             Text(
-                              '${entry.calories!.toInt()} Cal',
-                              style: const TextStyle(fontSize: 12, color: Color(0xFF64748B), fontWeight: FontWeight.w600),
+                              '${entry.calories!.toInt()} ${l10n.metricCalories}',
+                              style: textTheme.bodySmall?.copyWith(
+                                color: customColors.slateGrey,
+                                fontWeight: FontWeight.w600,
+                              ),
                             ),
                           ],
                         ],
@@ -468,7 +466,7 @@ class _MealEntryCard extends StatelessWidget {
                   height: 32,
                   child: IconButton(
                     padding: EdgeInsets.zero,
-                    icon: const Icon(Icons.more_vert, color: Color(0xFFCBD5E1)),
+                    icon: Icon(Icons.more_vert, color: customColors.slateGrey?.withValues(alpha: 0.4)),
                     onPressed: isUpdating
                         ? null
                         : () {
@@ -501,19 +499,19 @@ class _MealEntryCard extends StatelessWidget {
               Container(
                 padding: const EdgeInsets.symmetric(vertical: 16, horizontal: 20),
                 decoration: BoxDecoration(
-                  color: const Color(0xFFEFF3F0),
+                  color: customColors.chartTabBackground,
                   borderRadius: BorderRadius.circular(24),
                 ),
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
-                    _MiniMacro(label: 'PROTEIN', value: '${entry.proteinGrams?.toStringAsFixed(0) ?? '0'}g'),
-                    Container(width: 1, height: 32, color: const Color(0xFFD4E0D6)),
-                    _MiniMacro(label: 'FAT', value: '${entry.fatsGrams?.toStringAsFixed(0) ?? '0'}g'),
-                    Container(width: 1, height: 32, color: const Color(0xFFD4E0D6)),
-                    _MiniMacro(label: 'CARBS', value: '${entry.carbsGrams?.toStringAsFixed(0) ?? '0'}g'),
-                    Container(width: 1, height: 32, color: const Color(0xFFD4E0D6)),
-                    _MiniMacro(label: 'KCAL', value: entry.calories?.toStringAsFixed(0) ?? '0'),
+                    _MiniMacro(label: l10n.metricProtein.toUpperCase(), value: '${entry.proteinGrams?.toStringAsFixed(0) ?? '0'}g'),
+                    Container(width: 1, height: 32, color: customColors.darkSage?.withValues(alpha: 0.1)),
+                    _MiniMacro(label: l10n.metricFat.toUpperCase(), value: '${entry.fatsGrams?.toStringAsFixed(0) ?? '0'}g'),
+                    Container(width: 1, height: 32, color: customColors.darkSage?.withValues(alpha: 0.1)),
+                    _MiniMacro(label: l10n.metricCarbs.toUpperCase(), value: '${entry.carbsGrams?.toStringAsFixed(0) ?? '0'}g'),
+                    Container(width: 1, height: 32, color: customColors.darkSage?.withValues(alpha: 0.1)),
+                    _MiniMacro(label: l10n.metricCalories.toUpperCase(), value: entry.calories?.toStringAsFixed(0) ?? '0'),
                   ],
                 ),
               ),
@@ -535,12 +533,15 @@ class _MealEntryCard extends StatelessWidget {
                   child: OutlinedButton(
                     onPressed: onOpenRecipe,
                     style: OutlinedButton.styleFrom(
-                      foregroundColor: const Color(0xFF5C7861),
-                      side: const BorderSide(color: Color(0xFF5C7861)),
+                      foregroundColor: customColors.darkSage,
+                      side: BorderSide(color: customColors.darkSage!.withValues(alpha: 0.6)),
                       padding: const EdgeInsets.symmetric(vertical: 16),
                       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
                     ),
-                    child: Text(l10n.viewRecipeDetails, style: const TextStyle(fontWeight: FontWeight.w700, fontSize: 13)),
+                    child: Text(
+                      l10n.viewRecipeDetails,
+                      style: textTheme.labelLarge?.copyWith(fontWeight: FontWeight.w700),
+                    ),
                   ),
                 ),
                 const SizedBox(width: 12),
@@ -548,9 +549,9 @@ class _MealEntryCard extends StatelessWidget {
                   child: FilledButton.icon(
                     onPressed: (isUpdating || isCompleted || isSkipped) ? null : onCompleteEntry,
                     style: FilledButton.styleFrom(
-                      backgroundColor: isSkipped ? Colors.grey : (isCompleted ? Colors.green : const Color(0xFF5C7861)),
-                      disabledBackgroundColor: isSkipped ? Colors.grey.shade300 : null,
-                      disabledForegroundColor: isSkipped ? Colors.grey.shade600 : null,
+                      backgroundColor: isSkipped ? customColors.slateGrey : (isCompleted ? Colors.green : customColors.darkSage),
+                      disabledBackgroundColor: isSkipped ? customColors.slateGrey?.withValues(alpha: 0.2) : null,
+                      disabledForegroundColor: isSkipped ? customColors.slateGrey?.withValues(alpha: 0.6) : null,
                       padding: const EdgeInsets.symmetric(vertical: 16),
                       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
                       minimumSize: const Size(0, 52), // Uniform height
@@ -564,7 +565,7 @@ class _MealEntryCard extends StatelessWidget {
                       fit: BoxFit.scaleDown,
                       child: Text(
                         isSkipped ? l10n.mealSkippedLabel : (isCompleted ? l10n.mealCompletedLabel : l10n.completeAction),
-                        style: const TextStyle(fontWeight: FontWeight.w700, fontSize: 13),
+                        style: textTheme.labelLarge?.copyWith(fontWeight: FontWeight.w700, color: isSkipped ? customColors.slateGrey : (isCompleted ? customColors.darkSage : Colors.white)),
                         maxLines: 1,
                       ),
                     ),
@@ -574,7 +575,7 @@ class _MealEntryCard extends StatelessWidget {
             ),
             if (isUpdating) ...[
               const SizedBox(height: 16),
-              const LinearProgressIndicator(minHeight: 2, color: Color(0xFF5C7861)),
+              LinearProgressIndicator(minHeight: 2, color: customColors.darkSage),
             ],
           ],
         ),
@@ -590,13 +591,23 @@ class _CategoryChip extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+    final customColors = theme.extension<AppCustomColors>()!;
+    final textTheme = theme.textTheme;
+
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
       decoration: BoxDecoration(
-        color: Theme.of(context).colorScheme.secondaryContainer,
+        color: customColors.chartTabBackground,
         borderRadius: BorderRadius.circular(12),
       ),
-      child: Text(label, style: Theme.of(context).textTheme.bodySmall),
+      child: Text(
+        label,
+        style: textTheme.bodySmall?.copyWith(
+          color: customColors.darkSage,
+          fontWeight: FontWeight.w700,
+        ),
+      ),
     );
   }
 }
@@ -609,26 +620,28 @@ class _MiniMacro extends StatelessWidget {
   
   @override
   Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+    final customColors = theme.extension<AppCustomColors>()!;
+    final textTheme = theme.textTheme;
+
     return Column(
       mainAxisSize: MainAxisSize.min,
       crossAxisAlignment: CrossAxisAlignment.center,
       children: [
         Text(
           label,
-          style: const TextStyle(
-            color: Color(0xFF7A9382), 
-            fontSize: 11, 
-            fontWeight: FontWeight.w600,
+          style: textTheme.labelSmall?.copyWith(
+            color: customColors.darkSage?.withValues(alpha: 0.7),
+            fontWeight: FontWeight.w800,
             letterSpacing: 0.5,
           ),
         ),
         const SizedBox(height: 4),
         Text(
           value,
-          style: const TextStyle(
-            color: Color(0xFF263238), 
-            fontSize: 18, 
-            fontWeight: FontWeight.w800,
+          style: textTheme.titleMedium?.copyWith(
+            color: customColors.textDarkBlue,
+            fontWeight: FontWeight.w900,
           ),
         ),
       ],
@@ -912,6 +925,10 @@ class _ActionRow extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+    final customColors = theme.extension<AppCustomColors>()!;
+    final textTheme = theme.textTheme;
+
     return InkWell(
       onTap: onTap,
       child: Padding(
@@ -927,10 +944,9 @@ class _ActionRow extends StatelessWidget {
             const SizedBox(width: 16),
             Text(
               label,
-              style: const TextStyle(
-                fontSize: 16,
+              style: textTheme.bodyLarge?.copyWith(
                 fontWeight: FontWeight.w600,
-                color: Color(0xFF1A1E1B),
+                color: customColors.textDarkBlue,
               ),
             ),
           ],

@@ -108,8 +108,6 @@
   "cancelAndGoBack": "Cancel and go back",
   "planLimitReachedTitle": "Plan limit reached",
   "planLimitReachedMessage": "You have run out of plan generations this week.",
-  "planLimitReachedTitle": "Plan limit reached",
-  "planLimitReachedMessage": "You have run out of plan generations this week.",
   "newPlanTitle": "New Plan",
   "clear": "Clear",
   "configurePlanTitle": "Configure your plan",
@@ -198,6 +196,7 @@
   "favoriteUpdateFailed": "Failed to update favorite. Please try again.",
   "favoritesTooltip": "Favorites",
   "noRecipesAvailable": "No recipes available",
+  "noDescriptionProvided": "No description provided",
   "noFavoriteRecipes": "You don't have favorite recipes",
   "recipeDetailTitle": "Recipe Detail",
   "errorTitle": "Error",
@@ -219,7 +218,12 @@
   "doYouHaveAccount": "Do you have an account?",
   "verificationCodeSentEmail": "A verification code has been sent to your email.",
   "otpEnterTitle": "Enter Verification Code",
-  "otpEnterSubtitle": "Enter the 6-digit code sent to:",
+  "otpEnterSubtitle": "Enter the 6-digit code sent to: {email}",
+  "@otpEnterSubtitle": {
+    "placeholders": {
+      "email": {}
+    }
+  },
   "otpVerificationCodeLabel": "Verification Code",
   "otpResend": "Didn't receive a code? Send again",
   "otpVerifySignIn": "Verify & Sign In",
@@ -296,6 +300,7 @@
   "profileChangeEmailLabel": "Change email",
   "profileLanguageTitle": "Language",
   "profileLanguageLabel": "App language",
+  "profileLanguageDescription": "Select your preferred language for the application interface.",
   "profileLanguageEnglish": "English",
   "profileLanguageSpanish": "Spanish",
   "profilePaymentsTitle": "Payments",
@@ -621,6 +626,7 @@
   "nutritionErrorLoading": "Failed to load nutrition data.",
   "achievementsTitle": "Achievements",
   "weeklyActivityTitle": "Weekly Activity",
+  "dailyTotalsTitle": "Daily Totals",
   "mondayToSundayLabel": "MON - SUN",
   "mealPlanActionViewDetails": "View Details",
   "planDeletedSuccess": "Plan obliterated.",
@@ -703,5 +709,18 @@
   "foodPreferencesSubtitle": "Tell us about your palette so we can personalize your culinary journey.",
   "goalsSubtitle": "Select your main nutritional goals to optimize your meal plan.",
   "cookingDetailsSubtitle": "Tell us about your cooking style and household size.",
-  "namePlaceholder": "Your full name"
+  "namePlaceholder": "Your full name",
+  "monthJan": "Jan",
+  "monthFeb": "Feb",
+  "monthMar": "Mar",
+  "monthApr": "Apr",
+  "monthMay": "May",
+  "monthJun": "Jun",
+  "monthJul": "Jul",
+  "monthAug": "Aug",
+  "monthSep": "Sep",
+  "monthOct": "Oct",
+  "monthNov": "Nov",
+  "monthDec": "Dec",
+  "breakdownTabCreate": "Create"
 }

@@ -10,6 +10,7 @@ import 'package:meal_plan_app/features/preferences/presentation/providers/prefer
     as preferences;
 import 'package:meal_plan_app/features/shared/utils/app_error_localizations.dart';
 import 'package:meal_plan_app/l10n/app_localizations.dart';
+import 'package:meal_plan_app/config/theme/app_theme.dart';
 
 class PreferencesDetailsScreen extends ConsumerStatefulWidget {
   const PreferencesDetailsScreen({super.key});
@@ -81,7 +82,6 @@ class _PreferencesDetailsScreenState
     super.dispose();
   }
 
-
   String _localizedOption(
     Map<String, Map<String, String>> labels,
     String locale,
@@ -111,6 +111,8 @@ class _PreferencesDetailsScreenState
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context);
     final theme = Theme.of(context);
+    final textTheme = theme.textTheme;
+    final customColors = theme.extension<AppCustomColors>()!;
     final authState = ref.watch(authProvider);
     final preferencesState = ref.watch(preferencesDetailsProvider);
     final preferencesNotifier = ref.read(preferencesDetailsProvider.notifier);
@@ -118,28 +120,22 @@ class _PreferencesDetailsScreenState
     final localeCode = Localizations.localeOf(context).languageCode;
     final effectiveLanguageCode = preferencesState.languageCode ?? localeCode;
 
-    final primaryGreen = theme.colorScheme.primary;
-    final darkText = theme.colorScheme.onSurface;
-    final secondaryText = theme.colorScheme.onSurfaceVariant;
-    final cardBg = theme.colorScheme.surface;
-
     return Scaffold(
       backgroundColor: theme.colorScheme.surface,
       appBar: AppBar(
         title: Text(
           l10n.profilePreferencesTitle,
-          style: TextStyle(fontWeight: FontWeight.bold, color: darkText),
+          style: textTheme.titleLarge?.copyWith(
+            fontWeight: FontWeight.w900,
+            color: customColors.textDarkBlue,
+          ),
         ),
         centerTitle: true,
         backgroundColor: Colors.transparent,
         elevation: 0,
-        leading: IconButton(
-          icon: Icon(Icons.arrow_back, color: darkText),
-          onPressed: () => Navigator.of(context).pop(),
-        ),
       ),
       body: configAsync.when(
-        loading: () => const Center(child: CircularProgressIndicator()),
+        loading: () => Center(child: CircularProgressIndicator(color: customColors.darkSage)),
         error: (error, _) => Center(child: Text(error.toString())),
         data: (config) {
           final dietOptions = config.dietOptions;
@@ -154,102 +150,146 @@ class _PreferencesDetailsScreenState
             children: [
               Expanded(
                 child: SingleChildScrollView(
-                  padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 16),
+                  padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 16),
                   child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       // Hide Nutrition Card
-                      Container(
-                        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 4),
-                        decoration: BoxDecoration(
-                          color: cardBg,
-                          borderRadius: BorderRadius.circular(16),
-                          border: Border.all(color: const Color(0xFFE2E8F0).withValues(alpha: 0.5)),
-                        ),
-                        child: Row(
-                          children: [
-                            Icon(Icons.settings_outlined, color: primaryGreen),
-                            const SizedBox(width: 12),
-                            Expanded(
-                              child: Text(
-                                l10n.profileHideNutritionLabel,
-                                style: TextStyle(fontWeight: FontWeight.w600, color: darkText),
+                      GestureDetector(
+                        onTap: () => preferencesNotifier.setHideNutritionValues(!preferencesState.hideNutritionValues),
+                        child: AnimatedContainer(
+                          duration: const Duration(milliseconds: 200),
+                          padding: const EdgeInsets.all(20),
+                          decoration: BoxDecoration(
+                            color: theme.cardTheme.color,
+                            borderRadius: BorderRadius.circular(24),
+                            border: Border.all(color: theme.dividerColor.withValues(alpha: 0.05)),
+                            boxShadow: [
+                              BoxShadow(
+                                color: Colors.black.withValues(alpha: 0.02),
+                                blurRadius: 10,
+                                offset: const Offset(0, 4),
                               ),
-                            ),
-                            Switch(
-                              value: preferencesState.hideNutritionValues,
-                              onChanged: preferencesNotifier.setHideNutritionValues,
-                              thumbColor: WidgetStateProperty.all(primaryGreen),
-                            ),
-                          ],
+                            ],
+                          ),
+                          child: Row(
+                            children: [
+                              Container(
+                                padding: const EdgeInsets.all(12),
+                                decoration: BoxDecoration(
+                                  color: customColors.darkSage?.withValues(alpha: 0.1),
+                                  shape: BoxShape.circle,
+                                ),
+                                child: Icon(Icons.show_chart, color: customColors.darkSage, size: 24),
+                              ),
+                              const SizedBox(width: 16),
+                              Expanded(
+                                child: Text(
+                                  l10n.profileHideNutritionLabel,
+                                  style: textTheme.titleMedium?.copyWith(
+                                    fontWeight: FontWeight.w900,
+                                    color: customColors.textDarkBlue,
+                                  ),
+                                ),
+                              ),
+                              Switch.adaptive(
+                                value: preferencesState.hideNutritionValues,
+                                onChanged: preferencesNotifier.setHideNutritionValues,
+                                activeColor: customColors.darkSage,
+                              ),
+                            ],
+                          ),
                         ),
                       ),
-                      const SizedBox(height: 24),
+                      const SizedBox(height: 32),
 
                       // Dietary Goals
-                      _buildSectionHeader(Icons.track_changes_outlined, l10n.goalsTitle),
-                      const SizedBox(height: 12),
+                      _buildSectionHeader(context, Icons.track_changes, l10n.goalsTitle),
+                      const SizedBox(height: 16),
                       _buildChipWrap(
+                        context: context,
                         options: goalOptions,
                         selectedOptions: preferencesState.healthGoals,
                         onToggle: preferencesNotifier.toggleHealthGoal,
                         labelMapper: (opt) => _localizedOption(config.goalOptionLabels, effectiveLanguageCode, opt),
-                        primaryColor: primaryGreen,
+                        primaryColor: customColors.darkSage!,
                       ),
                       const SizedBox(height: 32),
 
                       // Dietary Preferences
-                      _buildSectionHeader(Icons.restaurant_menu_outlined, l10n.profileDietarySpecsLabel),
-                      const SizedBox(height: 12),
+                      _buildSectionHeader(context, Icons.restaurant, l10n.profileDietarySpecsLabel),
+                      const SizedBox(height: 16),
                       _buildChipWrap(
+                        context: context,
                         options: dietOptions,
                         selectedOptions: preferencesState.dietaryRestrictions,
                         onToggle: preferencesNotifier.toggleDietaryRestriction,
                         labelMapper: (opt) => _localizedOption(config.dietaryOptionLabels, effectiveLanguageCode, opt),
-                        primaryColor: primaryGreen,
-                        // hasAdd: true,
+                        primaryColor: customColors.darkSage!,
                       ),
                       const SizedBox(height: 32),
 
                       // Allergies
-                      _buildSectionHeader(Icons.warning_amber_outlined, l10n.allergiesTitle),
-                      const SizedBox(height: 12),
+                      _buildSectionHeader(context, Icons.warning_amber, l10n.allergiesTitle),
+                      const SizedBox(height: 16),
                       _buildChipWrap(
+                        context: context,
                         options: allergyOptions,
                         selectedOptions: preferencesState.allergies,
                         onToggle: preferencesNotifier.toggleAllergy,
                         labelMapper: (opt) => _localizedOption(config.allergyOptionLabels, effectiveLanguageCode, opt),
-                        primaryColor: const Color(0xFF718371), // Slightly different green or same
+                        primaryColor: const Color(0xFFDC7353), // Standardized allergy color or darkSage
                       ),
                       const SizedBox(height: 32),
 
                       // Cooking Details Card
                       _buildSectionCard(
-                        icon: Icons.soup_kitchen_outlined,
+                        context: context,
+                        icon: Icons.soup_kitchen,
                         title: l10n.cookingDetailsTitle,
                         child: Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
-                            Text(l10n.cookingSkillTitle, style: TextStyle(fontWeight: FontWeight.bold, fontSize: 13, color: darkText)),
+                            Text(
+                              l10n.cookingSkillTitle.toUpperCase(),
+                              style: textTheme.labelSmall?.copyWith(
+                                fontWeight: FontWeight.w900,
+                                letterSpacing: 1.2,
+                                color: customColors.slateGrey?.withValues(alpha: 0.6),
+                              ),
+                            ),
                             const SizedBox(height: 12),
                             _buildChoiceWrap(
+                              context: context,
                               options: skillLevels,
                               selected: preferencesState.cookingSkillLevel,
                               onSelected: preferencesNotifier.setCookingSkillLevel,
                               labelMapper: (opt) => _localizedOption(config.cookingOptionLabels, effectiveLanguageCode, opt),
-                              primaryColor: primaryGreen,
+                              primaryColor: customColors.darkSage!,
                             ),
                             const SizedBox(height: 24),
-                            Text(l10n.timeAvailabilityTitle, style: TextStyle(fontWeight: FontWeight.bold, fontSize: 13, color: darkText)),
-                            const SizedBox(height: 8),
+                            Text(
+                              l10n.timeAvailabilityTitle.toUpperCase(),
+                              style: textTheme.labelSmall?.copyWith(
+                                fontWeight: FontWeight.w900,
+                                letterSpacing: 1.2,
+                                color: customColors.slateGrey?.withValues(alpha: 0.6),
+                              ),
+                            ),
+                            const SizedBox(height: 12),
                             Row(
                               children: [
                                 Expanded(
                                   child: SliderTheme(
                                     data: SliderThemeData(
-                                      activeTrackColor: theme.colorScheme.primaryContainer,
-                                      inactiveTrackColor: theme.colorScheme.surfaceContainerHighest,
-                                      thumbColor: primaryGreen,
-                                      trackHeight: 8,
+                                      activeTrackColor: customColors.darkSage,
+                                      inactiveTrackColor: customColors.chartTabBackground,
+                                      thumbColor: Colors.white,
+                                      thumbShape: const RoundSliderThumbShape(
+                                        enabledThumbRadius: 10,
+                                        elevation: 4,
+                                      ),
+                                      trackHeight: 6,
                                       overlayShape: SliderComponentShape.noOverlay,
                                     ),
                                     child: Slider(
@@ -262,18 +302,21 @@ class _PreferencesDetailsScreenState
                                     ),
                                   ),
                                 ),
-                                const SizedBox(width: 12),
-                                Text(
-                                  _localizedOption(config.cookingOptionLabels, effectiveLanguageCode, preferencesState.timeAvailability ?? timeOptions.first),
-                                  style: TextStyle(fontWeight: FontWeight.bold, color: primaryGreen),
+                                const SizedBox(width: 16),
+                                Container(
+                                  padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+                                  decoration: BoxDecoration(
+                                    color: customColors.darkSage?.withValues(alpha: 0.1),
+                                    borderRadius: BorderRadius.circular(8),
+                                  ),
+                                  child: Text(
+                                    _localizedOption(config.cookingOptionLabels, effectiveLanguageCode, preferencesState.timeAvailability ?? timeOptions.first),
+                                    style: textTheme.bodySmall?.copyWith(
+                                      fontWeight: FontWeight.w900,
+                                      color: customColors.darkSage,
+                                    ),
+                                  ),
                                 ),
-                              ],
-                            ),
-                            Row(
-                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                              children: [
-                                Text(_localizedOption(config.cookingOptionLabels, effectiveLanguageCode, timeOptions.first), style: const TextStyle(fontSize: 10, color: Color(0xFFCBD5E1))),
-                                Text(_localizedOption(config.cookingOptionLabels, effectiveLanguageCode, timeOptions.last), style: const TextStyle(fontSize: 10, color: Color(0xFFCBD5E1))),
                               ],
                             ),
                           ],
@@ -283,12 +326,13 @@ class _PreferencesDetailsScreenState
 
                       // Household Size Card
                       _buildSectionCard(
-                        icon: Icons.groups_outlined,
+                        context: context,
+                        icon: Icons.groups,
                         title: l10n.householdSizeTitle,
                         child: Row(
                           mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                           children: [
-                            _buildCircleButton(Icons.remove, () {
+                            _buildCircleButton(context, Icons.remove, () {
                               if (preferencesState.householdSize > minHousehold) {
                                 preferencesNotifier.updateHouseholdSize(preferencesState.householdSize - 1);
                               }
@@ -297,12 +341,21 @@ class _PreferencesDetailsScreenState
                               children: [
                                 Text(
                                   preferencesState.householdSize.toString(),
-                                  style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold, color: darkText),
+                                  style: textTheme.headlineMedium?.copyWith(
+                                    fontWeight: FontWeight.w900,
+                                    color: customColors.textDarkBlue,
+                                  ),
                                 ),
-                                Text(l10n.peopleLabel, style: TextStyle(fontSize: 12, color: secondaryText)),
+                                Text(
+                                  l10n.peopleCount(preferencesState.householdSize).split(' ').last,
+                                  style: textTheme.labelLarge?.copyWith(
+                                    color: customColors.slateGrey,
+                                    fontWeight: FontWeight.w700,
+                                  ),
+                                ),
                               ],
                             ),
-                            _buildCircleButton(Icons.add, () {
+                            _buildCircleButton(context, Icons.add, () {
                               if (preferencesState.householdSize < maxHousehold) {
                                 preferencesNotifier.updateHouseholdSize(preferencesState.householdSize + 1);
                               }
@@ -310,12 +363,28 @@ class _PreferencesDetailsScreenState
                           ],
                         ),
                       ),
-                      const SizedBox(height: 24),
+                      const SizedBox(height: 32),
 
                       // Food Preferences
-                      _buildFoodPrefField(Icons.favorite, Colors.green, l10n.likedFoodsLabel, _likedController, l10n.likedFoodsHint, (val) => _updateFoodPreferences(preferencesNotifier)),
+                      _buildFoodPrefField(
+                        context,
+                        Icons.favorite,
+                        customColors.darkSage!,
+                        l10n.likedFoodsTitle,
+                        _likedController,
+                        l10n.likedFoodsHint,
+                        (val) => _updateFoodPreferences(preferencesNotifier),
+                      ),
                       const SizedBox(height: 24),
-                      _buildFoodPrefField(Icons.favorite, Colors.red, l10n.dislikedFoodsLabel, _dislikedController, l10n.dislikedFoodsHint, (val) => _updateFoodPreferences(preferencesNotifier)),
+                      _buildFoodPrefField(
+                        context,
+                        Icons.heart_broken,
+                        const Color(0xFFDC7353),
+                        l10n.dislikedFoodsTitle,
+                        _dislikedController,
+                        l10n.dislikedFoodsHint,
+                        (val) => _updateFoodPreferences(preferencesNotifier),
+                      ),
                       const SizedBox(height: 48),
                     ],
                   ),
@@ -327,7 +396,8 @@ class _PreferencesDetailsScreenState
                 padding: const EdgeInsets.all(24),
                 child: SizedBox(
                   width: double.infinity,
-                  child: FilledButton.icon(
+                  height: 64,
+                  child: FilledButton(
                     onPressed: () async {
                       final auth = authState;
                       if (auth is! AuthenticatedAuthState) return;
@@ -342,21 +412,20 @@ class _PreferencesDetailsScreenState
                         await ref.read(authProvider.notifier).refreshUserStatus();
                         if (!context.mounted) return;
                         CustomSnackbar.showInfo(context, l10n.preferencesSaved);
+                        Navigator.of(context).pop();
                       } catch (e) {
-                         // Fallback error handling simplified
                         if (!context.mounted) return;
                         CustomSnackbar.showInfo(context, e.toString());
                       }
                     },
-                    icon: const Icon(Icons.save_outlined),
-                    label: Text(
-                      l10n.profileSavePreferences,
-                      style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
-                    ),
                     style: FilledButton.styleFrom(
-                      backgroundColor: primaryGreen,
-                      padding: const EdgeInsets.symmetric(vertical: 18),
-                      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+                      backgroundColor: customColors.darkSage,
+                      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
+                      elevation: 4,
+                    ),
+                    child: Text(
+                      l10n.profileSavePreferences,
+                      style: const TextStyle(fontSize: 16, fontWeight: FontWeight.w900),
                     ),
                   ),
                 ),
@@ -368,114 +437,112 @@ class _PreferencesDetailsScreenState
     );
   }
 
-  Widget _buildSectionHeader(IconData icon, String title) {
-    return Builder(builder: (context) {
-      final theme = Theme.of(context);
-      return Row(
-        children: [
-          Icon(icon, size: 20, color: theme.colorScheme.primary),
-          const SizedBox(width: 8),
-          Text(
-            title,
-            style: TextStyle(fontSize: 15, fontWeight: FontWeight.bold, color: theme.colorScheme.onSurface),
+  Widget _buildSectionHeader(BuildContext context, IconData icon, String title) {
+    final customColors = Theme.of(context).extension<AppCustomColors>()!;
+    final textTheme = Theme.of(context).textTheme;
+    return Row(
+      children: [
+        Icon(icon, size: 20, color: customColors.darkSage),
+        const SizedBox(width: 8),
+        Text(
+          title,
+          style: textTheme.titleSmall?.copyWith(
+            fontWeight: FontWeight.w900,
+            color: customColors.textDarkBlue,
+            letterSpacing: 0.5,
           ),
-        ],
-      );
-    });
+        ),
+      ],
+    );
   }
 
   Widget _buildChipWrap({
+    required BuildContext context,
     required List<String> options,
     required List<String> selectedOptions,
     required Function(String, bool) onToggle,
     required String Function(String) labelMapper,
     required Color primaryColor,
-    bool hasAdd = false,
   }) {
-    return SizedBox(
-      width: double.infinity,
-      child: Wrap(
-        spacing: 8,
-        runSpacing: 10,
-        children: [
-          ...options.map((opt) {
-            final isSelected = selectedOptions.contains(opt);
-            return GestureDetector(
-              onTap: () => onToggle(opt, !isSelected),
-              child: Container(
-                padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 8),
-                decoration: BoxDecoration(
-                  color: isSelected ? primaryColor : Theme.of(context).colorScheme.surfaceContainerHighest,
-                  borderRadius: BorderRadius.circular(20),
-                ),
-                child: Row(
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    if (isSelected) const Icon(Icons.check, size: 14, color: Colors.white),
-                    if (isSelected) const SizedBox(width: 4),
-                    Text(
-                      labelMapper(opt),
-                      style: TextStyle(
-                        fontSize: 13,
-                        fontWeight: FontWeight.w600,
-                        color: isSelected ? Colors.white : Theme.of(context).colorScheme.onSurfaceVariant,
-                      ),
-                    ),
-                  ],
-                ),
+    final customColors = Theme.of(context).extension<AppCustomColors>()!;
+    final textTheme = Theme.of(context).textTheme;
+    return Wrap(
+      spacing: 8,
+      runSpacing: 10,
+      children: options.map((opt) {
+        final isSelected = selectedOptions.contains(opt);
+        return GestureDetector(
+          onTap: () => onToggle(opt, !isSelected),
+          child: AnimatedContainer(
+            duration: const Duration(milliseconds: 200),
+            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
+            decoration: BoxDecoration(
+              color: isSelected ? primaryColor : customColors.chartTabBackground,
+              borderRadius: BorderRadius.circular(24),
+              border: Border.all(
+                color: isSelected ? primaryColor : Colors.transparent,
+                width: 1.5,
               ),
-            );
-          }),
-          if (hasAdd)
-            Container(
-              padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 8),
-              decoration: BoxDecoration(
-                color: Theme.of(context).colorScheme.surfaceContainerHighest,
-                borderRadius: BorderRadius.circular(20),
-                border: Border.all(color: Theme.of(context).colorScheme.outline, style: BorderStyle.none), // Mock add
-              ),
-              child: Row(
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  Icon(Icons.add, size: 16, color: Theme.of(context).colorScheme.onSurfaceVariant),
-                  const SizedBox(width: 4),
-                  Text(
-                    AppLocalizations.of(context).addLabel,
-                    style: TextStyle(fontSize: 13, fontWeight: FontWeight.w600, color: Theme.of(context).colorScheme.onSurfaceVariant),
-                  ),
-                ],
-              ),
+              boxShadow: isSelected ? [
+                BoxShadow(
+                  color: primaryColor.withValues(alpha: 0.2),
+                  blurRadius: 8,
+                  offset: const Offset(0, 4),
+                )
+              ] : null,
             ),
-        ],
-      ),
+            child: Row(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                if (isSelected) const Icon(Icons.check, size: 14, color: Colors.white),
+                if (isSelected) const SizedBox(width: 6),
+                Text(
+                  labelMapper(opt),
+                  style: textTheme.bodySmall?.copyWith(
+                    fontWeight: FontWeight.w800,
+                    color: isSelected ? Colors.white : customColors.textDarkBlue?.withValues(alpha: 0.7),
+                  ),
+                ),
+              ],
+            ),
+          ),
+        );
+      }).toList(),
     );
   }
 
   Widget _buildChoiceWrap({
+    required BuildContext context,
     required List<String> options,
     required String? selected,
     required Function(String) onSelected,
     required String Function(String) labelMapper,
     required Color primaryColor,
   }) {
+    final customColors = Theme.of(context).extension<AppCustomColors>()!;
+    final textTheme = Theme.of(context).textTheme;
     return Wrap(
       spacing: 8,
+      runSpacing: 8,
       children: options.map((opt) {
         final isSelected = selected == opt;
         return GestureDetector(
           onTap: () => onSelected(opt),
-          child: Container(
-            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+          child: AnimatedContainer(
+            duration: const Duration(milliseconds: 200),
+            padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
             decoration: BoxDecoration(
-              color: isSelected ? primaryColor : Theme.of(context).colorScheme.surfaceContainerHighest,
-              borderRadius: BorderRadius.circular(20),
+              color: isSelected ? primaryColor : customColors.chartTabBackground,
+              borderRadius: BorderRadius.circular(16),
+              border: Border.all(
+                color: isSelected ? primaryColor : customColors.slateGrey!.withValues(alpha: 0.1),
+              ),
             ),
             child: Text(
               labelMapper(opt),
-              style: TextStyle(
-                fontSize: 13,
-                fontWeight: FontWeight.w600,
-                color: isSelected ? Colors.white : Theme.of(context).colorScheme.onSurfaceVariant,
+              style: textTheme.bodySmall?.copyWith(
+                fontWeight: FontWeight.w800,
+                color: isSelected ? Colors.white : customColors.textDarkBlue?.withValues(alpha: 0.7),
               ),
             ),
           ),
@@ -484,75 +551,108 @@ class _PreferencesDetailsScreenState
     );
   }
 
-  Widget _buildSectionCard({required IconData icon, required String title, required Widget child}) {
+  Widget _buildSectionCard({required BuildContext context, required IconData icon, required String title, required Widget child}) {
+    final customColors = Theme.of(context).extension<AppCustomColors>()!;
+    final textTheme = Theme.of(context).textTheme;
     return Container(
       width: double.infinity,
-      padding: const EdgeInsets.all(16),
+      padding: const EdgeInsets.all(24),
       decoration: BoxDecoration(
-        color: Theme.of(context).colorScheme.surface,
-        borderRadius: BorderRadius.circular(20),
-        border: Border.all(color: Theme.of(context).colorScheme.outlineVariant.withValues(alpha: 0.5)),
+        color: Theme.of(context).cardTheme.color,
+        borderRadius: BorderRadius.circular(28),
+        border: Border.all(color: Theme.of(context).dividerColor.withValues(alpha: 0.05)),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withValues(alpha: 0.02),
+            blurRadius: 10,
+            offset: const Offset(0, 4),
+          ),
+        ],
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Row(
             children: [
-              Icon(icon, size: 20, color: Theme.of(context).colorScheme.primary),
+              Icon(icon, size: 20, color: customColors.darkSage),
               const SizedBox(width: 8),
-              Text(title, style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold, color: Theme.of(context).colorScheme.onSurface)),
+              Text(
+                title,
+                style: textTheme.titleSmall?.copyWith(
+                  fontWeight: FontWeight.w900,
+                  color: customColors.textDarkBlue,
+                  letterSpacing: 0.5,
+                ),
+              ),
             ],
           ),
-          const SizedBox(height: 16),
+          const SizedBox(height: 20),
           child,
         ],
       ),
     );
   }
 
-  Widget _buildCircleButton(IconData icon, VoidCallback onTap) {
-    return Builder(builder: (context) {
-      final theme = Theme.of(context);
-      return GestureDetector(
-        onTap: onTap,
-        child: Container(
-          width: 40,
-          height: 40,
-          decoration: BoxDecoration(color: theme.colorScheme.primary.withValues(alpha: 0.3), shape: BoxShape.circle),
-          child: Icon(icon, color: theme.colorScheme.primary),
+  Widget _buildCircleButton(BuildContext context, IconData icon, VoidCallback onTap) {
+    final customColors = Theme.of(context).extension<AppCustomColors>()!;
+    return GestureDetector(
+      onTap: onTap,
+      child: Container(
+        width: 48,
+        height: 48,
+        decoration: BoxDecoration(
+          color: customColors.chartTabBackground,
+          borderRadius: BorderRadius.circular(16),
+          border: Border.all(color: customColors.slateGrey!.withValues(alpha: 0.1)),
         ),
-      );
-    });
+        child: Icon(icon, color: customColors.textDarkBlue, size: 20),
+      ),
+    );
   }
 
-  Widget _buildFoodPrefField(IconData icon, Color iconColor, String title, TextEditingController controller, String hint, Function(String) onChanged) {
+  Widget _buildFoodPrefField(BuildContext context, IconData icon, Color iconColor, String title, TextEditingController controller, String hint, Function(String) onChanged) {
+    final customColors = Theme.of(context).extension<AppCustomColors>()!;
+    final textTheme = Theme.of(context).textTheme;
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Row(
           children: [
-            Icon(icon, size: 18, color: iconColor),
-            const SizedBox(width: 8),
-            Text(title, style: TextStyle(fontSize: 14, fontWeight: FontWeight.bold, color: Theme.of(context).colorScheme.onSurface)),
+            Icon(icon, size: 20, color: iconColor),
+            const SizedBox(width: 10),
+            Text(
+              title,
+              style: textTheme.titleSmall?.copyWith(
+                fontWeight: FontWeight.w900,
+                color: customColors.textDarkBlue,
+              ),
+            ),
           ],
         ),
-        const SizedBox(height: 8),
+        const SizedBox(height: 12),
         TextFormField(
           controller: controller,
-          maxLines: 2,
+          maxLines: 3,
+          style: textTheme.bodyMedium?.copyWith(
+            color: customColors.textDarkBlue,
+            fontWeight: FontWeight.w600,
+          ),
           decoration: InputDecoration(
             hintText: hint,
-            hintStyle: const TextStyle(color: Color(0xFFCBD5E1), fontSize: 13),
+            hintStyle: textTheme.bodyMedium?.copyWith(
+              color: customColors.slateGrey?.withValues(alpha: 0.4),
+            ),
             filled: true,
-            fillColor: Theme.of(context).colorScheme.surface,
+            fillColor: customColors.chartTabBackground,
             border: OutlineInputBorder(
-              borderRadius: BorderRadius.circular(12),
-              borderSide: BorderSide(color: Theme.of(context).colorScheme.outlineVariant),
+              borderRadius: BorderRadius.circular(20),
+              borderSide: BorderSide.none,
             ),
-            enabledBorder: OutlineInputBorder(
-              borderRadius: BorderRadius.circular(12),
-              borderSide: BorderSide(color: Theme.of(context).colorScheme.outlineVariant),
+            focusedBorder: OutlineInputBorder(
+              borderRadius: BorderRadius.circular(20),
+              borderSide: BorderSide(color: customColors.darkSage!, width: 2),
             ),
+            contentPadding: const EdgeInsets.all(20),
           ),
           onChanged: onChanged,
         ),

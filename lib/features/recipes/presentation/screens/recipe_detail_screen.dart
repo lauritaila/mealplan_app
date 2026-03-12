@@ -8,9 +8,15 @@ import 'package:meal_plan_app/features/grocery_list/presentation/providers/provi
 import 'package:meal_plan_app/features/meal_plan/presentation/providers/provider.dart';
 import 'package:meal_plan_app/features/recipes/presentation/providers/providers.dart';
 import 'package:meal_plan_app/features/recipes/presentation/utils/ingredient_substitute_flow.dart';
+import 'package:meal_plan_app/features/recipes/presentation/widgets/recipe_info_item.dart';
+import 'package:meal_plan_app/features/recipes/presentation/widgets/recipe_nutrition_card.dart';
+import 'package:meal_plan_app/features/recipes/presentation/widgets/recipe_ingredient_tile.dart';
+import 'package:meal_plan_app/features/recipes/presentation/widgets/recipe_instruction_step.dart';
+import 'package:meal_plan_app/features/recipes/presentation/widgets/recipe_bottom_action_button.dart';
 import 'package:meal_plan_app/features/shared/widgets/select_list_sheet.dart';
 import 'package:meal_plan_app/features/shared/widgets/widgets.dart';
 import 'package:meal_plan_app/l10n/app_localizations.dart';
+import 'package:meal_plan_app/config/theme/app_theme.dart';
 
 class RecipeDetailScreen extends ConsumerStatefulWidget {
   final int recipeId;
@@ -42,30 +48,34 @@ class _RecipeDetailScreenState extends ConsumerState<RecipeDetailScreen> {
     final recipeAsync = ref.watch(recipeDetailProvider(widget.recipeId));
     final authState = ref.watch(authProvider);
     final theme = Theme.of(context);
+    final textTheme = theme.textTheme;
+    final customColors = theme.extension<AppCustomColors>()!;
     final l10n = AppLocalizations.of(context);
     final hideNutritionValues =
         authState is AuthenticatedAuthState &&
         authState.user.configurations?['hideNutritionValues'] == true;
 
-    // Check if the recipe is already completed
     final isCompleted = _currentStatus?.toLowerCase() == 'completed';
 
     return Scaffold(
-      backgroundColor: const Color(0xFFF9FBFA),
       appBar: AppBar(
-        backgroundColor: Colors.transparent,
+        backgroundColor: theme.scaffoldBackgroundColor,
         elevation: 0,
+        centerTitle: false,
         title: Text(
           l10n.recipeDetailTitle,
-          style: const TextStyle(color: Color(0xFF1A1E1B)),
+          style: textTheme.titleLarge?.copyWith(
+            color: customColors.textDarkBlue,
+            fontWeight: FontWeight.w900,
+          ),
         ),
-        iconTheme: const IconThemeData(color: Color(0xFF1A1E1B)),
+        iconTheme: IconThemeData(color: customColors.textDarkBlue),
         actions: [
           recipeAsync.maybeWhen(
             data: (recipe) => IconButton(
               icon: Icon(
                 recipe.isFavorite ? Icons.favorite : Icons.favorite_border,
-                color: recipe.isFavorite ? Colors.red : const Color(0xFF1A1E1B),
+                color: recipe.isFavorite ? Colors.red : customColors.slateGrey,
               ),
               onPressed: () async {
                 try {
@@ -85,40 +95,37 @@ class _RecipeDetailScreenState extends ConsumerState<RecipeDetailScreen> {
       body: recipeAsync.when(
         data: (recipe) {
           return SingleChildScrollView(
-            padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 0),
+            padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 8),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                // Recipe Name
                 Text(
                   recipe.name,
-                  style: const TextStyle(
-                    fontSize: 28,
+                  style: textTheme.headlineMedium?.copyWith(
                     fontWeight: FontWeight.w900,
-                    color: Color(0xFF1A1E1B),
+                    color: customColors.textDarkBlue,
                     height: 1.1,
                   ),
                 ),
                 const SizedBox(height: 12),
 
-                // Categories
                 if (recipe.categories.isNotEmpty) ...[
                   Wrap(
                     spacing: 8,
                     runSpacing: 8,
                     children: recipe.categories.map((category) {
                       return Container(
-                        padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+                        padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 8),
                         decoration: BoxDecoration(
-                          color: const Color(0xFFF1F5F2),
-                          borderRadius: BorderRadius.circular(20),
+                          color: customColors.chartTabBackground,
+                          borderRadius: BorderRadius.circular(12),
                         ),
                         child: Text(
                           category,
-                          style: const TextStyle(
-                            color: Color(0xFF576F5F),
-                            fontSize: 12,
-                            fontWeight: FontWeight.w700,
+                          style: textTheme.labelSmall?.copyWith(
+                            color: customColors.darkSage,
+                            fontWeight: FontWeight.w900,
+                            letterSpacing: 0.5,
                           ),
                         ),
                       );
@@ -127,25 +134,25 @@ class _RecipeDetailScreenState extends ConsumerState<RecipeDetailScreen> {
                   const SizedBox(height: 24),
                 ],
 
-                // Info Row (Time, Servings, Calories)
                 Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
-                    _InfoItem(
+                    RecipeInfoItem(
                       icon: Icons.access_time_filled,
                       label: l10n.timeLabelUpper,
                       value: '${(recipe.prepTimeMinutes ?? 0) + (recipe.cookTimeMinutes ?? 0)} min',
                     ),
-                    _InfoItem(
+                    RecipeInfoItem(
                       icon: Icons.restaurant_menu,
                       label: l10n.servingsLabelUpper,
                       value: '${recipe.baseServings ?? 1} ${l10n.servingShort}',
                     ),
-                    _InfoItem(
-                      icon: Icons.local_fire_department,
-                      label: l10n.caloriesLabelUpper,
-                      value: '${recipe.calories?.toInt() ?? 0} ${l10n.metricCalories}',
-                    ),
+                    if (!hideNutritionValues)
+                      RecipeInfoItem(
+                        icon: Icons.local_fire_department,
+                        label: l10n.caloriesLabelUpper,
+                        value: '${recipe.calories?.toInt() ?? 0} ${l10n.metricCalories}',
+                      ),
                   ],
                 ),
                 const SizedBox(height: 32),
@@ -153,33 +160,35 @@ class _RecipeDetailScreenState extends ConsumerState<RecipeDetailScreen> {
                 if (!hideNutritionValues) ...[
                   Text(
                     l10n.nutritionPerServing,
-                    style: const TextStyle(
-                      fontSize: 18,
+                    style: textTheme.titleMedium?.copyWith(
                       fontWeight: FontWeight.w800,
-                      color: Color(0xFF1A1E1B),
+                      color: customColors.textDarkBlue,
                     ),
                   ),
                   const SizedBox(height: 16),
                   Row(
                     children: [
                       Expanded(
-                       child: _NutritionCard(
+                       child: RecipeNutritionCard(
                           label: l10n.metricProtein,
                           value: '${recipe.proteinGrams?.toInt() ?? 0}g',
+                          labelColor: customColors.macroProtein,
                         ),
                       ),
                       const SizedBox(width: 12),
                       Expanded(
-                        child: _NutritionCard(
+                        child: RecipeNutritionCard(
                           label: l10n.metricFat,
                           value: '${recipe.fatsGrams?.toInt() ?? 0}g',
+                          labelColor: customColors.macroFat,
                         ),
                       ),
                       const SizedBox(width: 12),
                       Expanded(
-                        child: _NutritionCard(
+                        child: RecipeNutritionCard(
                           label: l10n.metricCarbs,
                           value: '${recipe.carbsGrams?.toInt() ?? 0}g',
+                          labelColor: customColors.macroCarbs,
                         ),
                       ),
                     ],
@@ -189,120 +198,75 @@ class _RecipeDetailScreenState extends ConsumerState<RecipeDetailScreen> {
 
                 Text(
                   l10n.descriptionTitle,
-                  style: const TextStyle(
-                    fontSize: 18,
+                  style: textTheme.titleMedium?.copyWith(
                     fontWeight: FontWeight.w800,
-                    color: Color(0xFF1A1E1B),
+                    color: customColors.textDarkBlue,
                   ),
                 ),
                 const SizedBox(height: 12),
                 Text(
                   recipe.description.trim().isEmpty ? '-' : recipe.description,
-                  style: const TextStyle(
-                    fontSize: 15,
-                    color: Color(0xFF57635C),
+                  style: textTheme.bodyLarge?.copyWith(
+                    color: customColors.slateGrey,
                     height: 1.5,
                   ),
                 ),
                 const SizedBox(height: 32),
 
-                // Ingredients Section
                 Row(
                   children: [
                     Text(
                       l10n.ingredientsTitle,
-                      style: const TextStyle(
-                        fontSize: 18,
+                      style: textTheme.titleMedium?.copyWith(
                         fontWeight: FontWeight.w800,
-                        color: Color(0xFF1A1E1B),
+                        color: customColors.textDarkBlue,
                       ),
                     ),
                     const Spacer(),
                     Text(
                       l10n.itemsCount(recipe.ingredients.length),
-                      style: const TextStyle(
-                        fontSize: 13,
-                        color: Color(0xFF7A9382),
-                        fontWeight: FontWeight.w600,
+                      style: textTheme.labelMedium?.copyWith(
+                        color: customColors.darkSage,
+                        fontWeight: FontWeight.w900,
+                        letterSpacing: 0.5,
                       ),
                     ),
                   ],
                 ),
                 const SizedBox(height: 16),
                 if (recipe.ingredients.isEmpty)
-                  Text(l10n.noIngredients, style: theme.textTheme.bodyLarge)
+                  Text(l10n.noIngredients, style: textTheme.bodyLarge)
                 else
                   ...recipe.ingredients.map((ingredient) {
-                    return Container(
-                      margin: const EdgeInsets.only(bottom: 10),
-                      padding: const EdgeInsets.all(12),
-                      decoration: BoxDecoration(
-                        color: const Color(0xFFF8F9F8),
-                        borderRadius: BorderRadius.circular(12),
-                      ),
-                      child: Row(
-                        children: [
-                          Container(
-                            width: 24,
-                            height: 24,
-                            decoration: BoxDecoration(
-                              color: const Color(0xFF7A9382),
-                              borderRadius: BorderRadius.circular(12),
-                            ),
-                            child: const Icon(Icons.check, size: 14, color: Colors.white),
-                          ),
-                          const SizedBox(width: 12),
-                          Expanded(
-                            child: Text(
-                              ingredient.name,
-                              style: const TextStyle(
-                                fontWeight: FontWeight.w600,
-                                color: Color(0xFF1A1E1B),
-                              ),
-                            ),
-                          ),
-                          Text(
-                            '${ingredient.quantity?.toInt() ?? ''} ${ingredient.unit}',
-                            style: const TextStyle(
-                              color: Color(0xFF7A9382),
-                              fontWeight: FontWeight.w500,
-                            ),
-                          ),
-                          const SizedBox(width: 12),
-                          GestureDetector(
-                            onTap: () {
-                              showIngredientSubstituteFlow(
-                                context: context,
-                                ref: ref,
-                                recipeId: widget.recipeId,
-                                ingredient: ingredient,
-                                hideNutritionValues: hideNutritionValues,
-                                contextHint: recipe.name,
-                              );
-                            },
-                            child: const Icon(Icons.sync, size: 20, color: Color(0xFF7A9382)),
-                          ),
-                        ],
-                      ),
+                    return RecipeIngredientTile(
+                      ingredient: ingredient,
+                      onSubstitute: () {
+                        showIngredientSubstituteFlow(
+                          context: context,
+                          ref: ref,
+                          recipeId: widget.recipeId,
+                          ingredient: ingredient,
+                          hideNutritionValues: hideNutritionValues,
+                          contextHint: recipe.name,
+                        );
+                      },
                     );
                   }),
                 const SizedBox(height: 32),
 
-                // Instructions Section
                 Text(
                   l10n.instructionsTitle,
-                  style: const TextStyle(
-                    fontSize: 18,
+                  style: textTheme.titleMedium?.copyWith(
                     fontWeight: FontWeight.w800,
-                    color: Color(0xFF1A1E1B),
+                    color: customColors.textDarkBlue,
                   ),
                 ),
                 const SizedBox(height: 16),
                 if (recipe.instructions.trim().isEmpty)
-                  Text(l10n.noInstructions, style: theme.textTheme.bodyLarge)
+                  Text(l10n.noInstructions, style: textTheme.bodyLarge)
                 else
                   ..._buildInstructions(recipe.instructions),
-                const SizedBox(height: 100), // Space for bottom bar
+                const SizedBox(height: 100),
               ],
             ),
           );
@@ -328,63 +292,68 @@ class _RecipeDetailScreenState extends ConsumerState<RecipeDetailScreen> {
         data: (recipe) => Container(
           padding: const EdgeInsets.fromLTRB(20, 16, 20, 40),
           decoration: BoxDecoration(
-            color: Colors.white,
+            color: theme.scaffoldBackgroundColor,
             boxShadow: [
               BoxShadow(
-                color: Colors.black.withValues(alpha: 0.05),
-                blurRadius: 10,
-                offset: const Offset(0, -5),
+                color: Colors.black.withValues(alpha: 0.04),
+                blurRadius: 16,
+                offset: const Offset(0, -4),
               ),
             ],
           ),
           child: Row(
             children: [
-              // 1. Shopping Cart Button (Always visible)
-              _ActionButton(
+              RecipeBottomActionButton(
                 icon: Icons.shopping_cart_outlined,
                 onPressed: () => _onAddToGroceryList(context, ref, recipe.id),
               ),
               const SizedBox(width: 12),
 
-              // 2. Assistant Button
               if (widget.entryId == null || isCompleted)
-                // Expanded Assistant if Complete is hidden
                 Expanded(
                   child: FilledButton.icon(
                     onPressed: () => context.push('/recipes/${widget.recipeId}/assistant'),
                     style: FilledButton.styleFrom(
-                      backgroundColor: const Color(0xFF7A9382),
-                      padding: const EdgeInsets.symmetric(vertical: 16),
-                      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+                      backgroundColor: customColors.darkSage,
+                      padding: const EdgeInsets.symmetric(vertical: 20),
+                      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
+                      elevation: 0,
                     ),
-                    icon: const Icon(Icons.smart_toy_outlined, size: 22),
+                    icon: const Icon(Icons.smart_toy_outlined, size: 24),
                     label: Text(
-                      l10n.cookingAssistantTitle,
-                      style: const TextStyle(fontSize: 16, fontWeight: FontWeight.w700),
+                      l10n.cookingAssistantTitle.toUpperCase(),
+                      style: textTheme.labelLarge?.copyWith(
+                        fontWeight: FontWeight.w900,
+                        color: Colors.white,
+                        letterSpacing: 1.1,
+                      ),
                     ),
                   ),
                 )
               else ...[
-                // Small Assistant Circle
-                _ActionButton(
+                RecipeBottomActionButton(
                   icon: Icons.smart_toy_outlined,
                   onPressed: () => context.push('/recipes/${widget.recipeId}/assistant'),
                 ),
                 const SizedBox(width: 12),
 
-                // 3. Complete Button
                 Expanded(
                   child: FilledButton.icon(
                     onPressed: () => _completeFromDetail(context, ref, recipe),
                     style: FilledButton.styleFrom(
-                      backgroundColor: const Color(0xFF7A9382),
-                      padding: const EdgeInsets.symmetric(vertical: 16),
-                      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+                      backgroundColor: customColors.darkSage,
+                      padding: const EdgeInsets.symmetric(vertical: 20),
+                      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
+                      elevation: 0,
                     ),
-                    icon: const Icon(Icons.check_circle, size: 22),
+                    icon: const Icon(Icons.check_circle, size: 24),
                     label: Text(
-                      l10n.completeAction,
-                      style: const TextStyle(fontSize: 16, fontWeight: FontWeight.w700),
+                      l10n.completeAction.toUpperCase(),
+                      style: textTheme.labelLarge?.copyWith(
+                        fontWeight: FontWeight.w900,
+                        color: Colors.white,
+                        letterSpacing: 1.1,
+                      ),
                     ),
                   ),
                 ),
@@ -402,17 +371,40 @@ class _RecipeDetailScreenState extends ConsumerState<RecipeDetailScreen> {
     final confirmed = await showDialog<bool>(
       context: context,
       builder: (ctx) => AlertDialog(
-        title: Text(l10n.markCompleteDialogTitle),
-        content: Text(l10n.markCompleteQuestion(recipe.name)),
+        title: Text(
+          l10n.markCompleteDialogTitle,
+          style: Theme.of(context).textTheme.titleLarge?.copyWith(
+            fontWeight: FontWeight.w900,
+            color: Theme.of(context).extension<AppCustomColors>()?.textDarkBlue,
+          ),
+        ),
+        content: Text(
+          l10n.markCompleteQuestion(recipe.name),
+          style: Theme.of(context).textTheme.bodyLarge?.copyWith(
+            color: Theme.of(context).extension<AppCustomColors>()?.slateGrey,
+          ),
+        ),
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(ctx, false),
-            child: Text(l10n.cancel),
+            child: Text(
+              l10n.cancel.toUpperCase(),
+              style: TextStyle(
+                fontWeight: FontWeight.w800,
+                color: Theme.of(context).extension<AppCustomColors>()?.slateGrey,
+              ),
+            ),
           ),
           FilledButton(
             onPressed: () => Navigator.pop(ctx, true),
-            style: FilledButton.styleFrom(backgroundColor: Colors.green),
-            child: Text(l10n.completeAction),
+            style: FilledButton.styleFrom(
+              backgroundColor: Theme.of(context).extension<AppCustomColors>()?.darkSage,
+              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+            ),
+            child: Text(
+              l10n.completeAction.toUpperCase(),
+              style: const TextStyle(fontWeight: FontWeight.w900),
+            ),
           ),
         ],
       ),
@@ -437,9 +429,7 @@ class _RecipeDetailScreenState extends ConsumerState<RecipeDetailScreen> {
       });
 
       if (widget.entryId != null) {
-        // Find which plan to invalidate? For now, we might need a better way to refresh the caller screen.
-        // Usually invalidating the specific entry provider works if it's being watched.
-        ref.invalidate(mealPlanEntriesProvider); // Brute force refresh of entries if possible
+        ref.invalidate(mealPlanEntriesProvider);
       }
       messenger.showSnackBar(
         SnackBar(
@@ -450,7 +440,6 @@ class _RecipeDetailScreenState extends ConsumerState<RecipeDetailScreen> {
           ),
         ),
       );
-      // Wait a bit then pop
       Future.delayed(const Duration(seconds: 1), () {
         if (mounted) context.pop();
       });
@@ -466,42 +455,7 @@ class _RecipeDetailScreenState extends ConsumerState<RecipeDetailScreen> {
     return steps.asMap().entries.map((entry) {
       final index = entry.key;
       final text = entry.value.trim().replaceFirst(RegExp(r'^\d+[\.\)\s]+'), '');
-      return Padding(
-        padding: const EdgeInsets.only(bottom: 20),
-        child: Row(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Container(
-              width: 32,
-              height: 32,
-              decoration: BoxDecoration(
-                color: const Color(0xFF7A9382),
-                borderRadius: BorderRadius.circular(30),
-              ),
-              child: Center(
-                child: Text(
-                  '${index + 1}',
-                  style: const TextStyle(
-                    color: Colors.white,
-                    fontWeight: FontWeight.bold,
-                  ),
-                ),
-              ),
-            ),
-            const SizedBox(width: 16),
-            Expanded(
-              child: Text(
-                text,
-                style: const TextStyle(
-                  fontSize: 15,
-                  color: Color(0xFF57635C),
-                  height: 1.5,
-                ),
-              ),
-            ),
-          ],
-        ),
-      );
+      return RecipeInstructionStep(index: index, text: text);
     }).toList();
   }
 
@@ -536,107 +490,5 @@ class _RecipeDetailScreenState extends ConsumerState<RecipeDetailScreen> {
               ? l10n.recipeAddedToList(listName ?? l10n.groceryTitle)
               : l10n.recipeAddFailed,
         );
-  }
-}
-
-class _ActionButton extends StatelessWidget {
-  final IconData icon;
-  final VoidCallback onPressed;
-
-  const _ActionButton({required this.icon, required this.onPressed});
-
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      width: 56,
-      height: 56,
-      decoration: BoxDecoration(
-        border: Border.all(color: const Color(0xFF7A9382).withValues(alpha: 0.6), width: 2),
-        borderRadius: BorderRadius.circular(12),
-      ),
-      child: IconButton(
-        onPressed: onPressed,
-        icon: Icon(icon, color: const Color(0xFF7A9382), size: 28),
-      ),
-    );
-  }
-}
-
-class _InfoItem extends StatelessWidget {
-  final IconData icon;
-  final String label;
-  final String value;
-
-  const _InfoItem({
-    required this.icon,
-    required this.label,
-    required this.value,
-  });
-
-  @override
-  Widget build(BuildContext context) {
-    return Column(
-      children: [
-        Icon(icon, color: const Color(0xFF7A9382), size: 24),
-        const SizedBox(height: 8),
-        Text(
-          label,
-          style: const TextStyle(
-            fontSize: 10,
-            fontWeight: FontWeight.w800,
-            color: Color(0xFFA7BFAF),
-            letterSpacing: 0.5,
-          ),
-        ),
-        const SizedBox(height: 4),
-        Text(
-          value,
-          style: const TextStyle(
-            fontSize: 15,
-            fontWeight: FontWeight.w900,
-            color: Color(0xFF1A1E1B),
-          ),
-        ),
-      ],
-    );
-  }
-}
-
-class _NutritionCard extends StatelessWidget {
-  final String label;
-  final String value;
-
-  const _NutritionCard({required this.label, required this.value});
-
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      padding: const EdgeInsets.symmetric(vertical: 16),
-      decoration: BoxDecoration(
-        color: const Color(0xFFF1F5F2),
-        borderRadius: BorderRadius.circular(12),
-      ),
-      child: Column(
-        children: [
-          Text(
-            label,
-            style: const TextStyle(
-              fontSize: 12,
-              color: Color(0xFF7A9382),
-              fontWeight: FontWeight.w600,
-            ),
-          ),
-          const SizedBox(height: 4),
-          Text(
-            value,
-            style: const TextStyle(
-              fontSize: 18,
-              fontWeight: FontWeight.w900,
-              color: Color(0xFF576F5F),
-            ),
-          ),
-        ],
-      ),
-    );
   }
 }

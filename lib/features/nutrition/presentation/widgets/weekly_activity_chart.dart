@@ -2,6 +2,7 @@ import 'package:fl_chart/fl_chart.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 
+import '../../../../config/theme/app_theme.dart';
 import '../../../../l10n/app_localizations.dart';
 import '../../domain/entities/daily_total.dart';
 
@@ -75,14 +76,17 @@ class _WeeklyActivityChartState extends State<WeeklyActivityChart> {
       return const SizedBox.shrink();
     }
 
+    final theme = Theme.of(context);
+    final textTheme = theme.textTheme;
+    final customColors = theme.extension<AppCustomColors>()!;
     final l10n = AppLocalizations.of(context);
     final locale = Localizations.localeOf(context).toString();
     final maxVal = _getMaxValue();
     final avgVal = _getAvgValue();
     
-    String unitLabel = 'g';
+    String unitLabel = 'G';
     if (_selectedMetric == NutritionMetric.calories) {
-      unitLabel = 'kcal';
+      unitLabel = 'KCAL';
     }
 
     return Column(
@@ -93,19 +97,18 @@ class _WeeklyActivityChartState extends State<WeeklyActivityChart> {
           children: [
             Text(
               l10n.weeklyActivityTitle,
-              style: const TextStyle(
+              style: textTheme.titleLarge?.copyWith(
                 fontSize: 18,
-                fontWeight: FontWeight.bold,
-                color: Color(0xFF001B3A),
+                fontWeight: FontWeight.w900,
+                color: customColors.textDarkBlue,
               ),
             ),
             Text(
               l10n.mondayToSundayLabel,
-              style: TextStyle(
-                fontSize: 12,
-                fontWeight: FontWeight.bold,
+              style: textTheme.labelSmall?.copyWith(
+                fontWeight: FontWeight.w900,
                 letterSpacing: 1.5,
-                color: Colors.blueGrey.shade300,
+                color: customColors.slateGrey?.withValues(alpha: 0.6),
               ),
             ),
           ],
@@ -114,57 +117,88 @@ class _WeeklyActivityChartState extends State<WeeklyActivityChart> {
         if (!widget.hideNutritionValues) ...[
           Container(
             decoration: BoxDecoration(
-              color: const Color(0xFFF4F7F4),
+              color: customColors.chartTabBackground,
               borderRadius: BorderRadius.circular(24),
             ),
             padding: const EdgeInsets.all(4),
             child: Row(
               children: [
-                _buildTab(_abbreviate(l10n.metricCalories, 3), NutritionMetric.calories),
-                _buildTab(_abbreviate(l10n.metricProtein, 3), NutritionMetric.protein),
-                _buildTab(_abbreviate(l10n.metricCarbs, 3), NutritionMetric.carbs),
-                _buildTab(_abbreviate(l10n.metricFat, 3), NutritionMetric.fats),
+                _buildTab(_abbreviate(l10n.metricCalories, 4).toUpperCase(), NutritionMetric.calories),
+                _buildTab(_abbreviate(l10n.metricProtein, 4).toUpperCase(), NutritionMetric.protein),
+                _buildTab(_abbreviate(l10n.metricCarbs, 4).toUpperCase(), NutritionMetric.carbs),
+                _buildTab(_abbreviate(l10n.metricFat, 4).toUpperCase(), NutritionMetric.fats),
               ],
             ),
           ),
           const SizedBox(height: 16),
         ],
-        Container(
-          height: 280,
-          padding: const EdgeInsets.all(24),
-          decoration: BoxDecoration(
-            color: Colors.white,
-            borderRadius: BorderRadius.circular(24),
-            border: Border.all(color: Colors.grey.shade200),
-          ),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Row(
-                crossAxisAlignment: CrossAxisAlignment.baseline,
-                textBaseline: TextBaseline.alphabetic,
-                children: [
-                  Text(
-                    avgVal.toStringAsFixed(0),
-                    style: const TextStyle(
-                      fontSize: 32,
-                      fontWeight: FontWeight.w900,
-                      color: Color(0xFF001B3A),
-                      letterSpacing: -1,
-                    ),
+        if (widget.hideNutritionValues)
+          Container(
+            width: double.infinity,
+            padding: const EdgeInsets.all(32),
+            decoration: BoxDecoration(
+              color: theme.cardTheme.color,
+              borderRadius: BorderRadius.circular(24),
+              border: Border.all(color: theme.dividerColor.withValues(alpha: 0.1)),
+            ),
+            child: Column(
+              children: [
+                Icon(Icons.visibility_off_rounded, size: 48, color: customColors.slateGrey?.withValues(alpha: 0.3)),
+                const SizedBox(height: 16),
+                Text(
+                  l10n.profileHideNutritionLabel,
+                  textAlign: TextAlign.center,
+                  style: textTheme.bodyMedium?.copyWith(
+                    color: customColors.slateGrey,
+                    fontWeight: FontWeight.w600,
                   ),
-                  const SizedBox(width: 4),
-                  Text(
-                    '$unitLabel ${l10n.averageAbbr}',
-                    style: TextStyle(
-                      fontSize: 14,
-                      fontWeight: FontWeight.w600,
-                      color: Colors.blueGrey.shade400,
+                ),
+              ],
+            ),
+          )
+        else ...[
+          Container(
+            height: 300,
+            padding: const EdgeInsets.all(24),
+            decoration: BoxDecoration(
+              color: theme.cardTheme.color,
+              borderRadius: BorderRadius.circular(24),
+              border: Border.all(color: theme.dividerColor.withValues(alpha: 0.05)),
+              boxShadow: [
+                BoxShadow(
+                  color: Colors.black.withValues(alpha: 0.03),
+                  blurRadius: 10,
+                  offset: const Offset(0, 4),
+                ),
+              ],
+            ),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Row(
+                  crossAxisAlignment: CrossAxisAlignment.baseline,
+                  textBaseline: TextBaseline.alphabetic,
+                  children: [
+                    Text(
+                      avgVal.toStringAsFixed(0),
+                      style: textTheme.headlineLarge?.copyWith(
+                        fontSize: 32,
+                        fontWeight: FontWeight.w900,
+                        color: customColors.textDarkBlue,
+                        letterSpacing: -1,
+                      ),
                     ),
-                  ),
-                ],
-              ),
-              const SizedBox(height: 24),
+                    const SizedBox(width: 4),
+                    Text(
+                      '$unitLabel ${l10n.averageAbbr.toUpperCase()}',
+                      style: textTheme.bodySmall?.copyWith(
+                        fontWeight: FontWeight.w800,
+                        color: customColors.slateGrey,
+                      ),
+                    ),
+                  ],
+                ),
+              const SizedBox(height: 32),
               Expanded(
                 child: BarChart(
                   BarChartData(
@@ -172,8 +206,8 @@ class _WeeklyActivityChartState extends State<WeeklyActivityChart> {
                     maxY: maxVal == 0 ? 10 : maxVal * 1.2,
                     barTouchData: BarTouchData(
                       touchTooltipData: BarTouchTooltipData(
-                        getTooltipColor: (_) => Colors.black87,
-                        tooltipPadding: const EdgeInsets.all(8),
+                        getTooltipColor: (_) => customColors.textDarkBlue ?? Colors.black,
+                        tooltipPadding: const EdgeInsets.all(12),
                         tooltipMargin: 8,
                         getTooltipItem: (group, groupIndex, rod, rodIndex) {
                           if (group.x < 0 || group.x >= widget.dailyTotals.length) {
@@ -201,12 +235,18 @@ class _WeeklyActivityChartState extends State<WeeklyActivityChart> {
                           }
 
                           return BarTooltipItem(
-                            '$dateStr\n${rod.toY.toStringAsFixed(0)}$unit $metricLabel',
-                            const TextStyle(
-                              color: Colors.white,
-                              fontWeight: FontWeight.bold,
-                              fontSize: 12,
-                            ),
+                            '$dateStr\n',
+                            textTheme.labelSmall?.copyWith(color: Colors.white, fontWeight: FontWeight.normal) ?? const TextStyle(color: Colors.white),
+                            children: [
+                              TextSpan(
+                                text: '${rod.toY.toStringAsFixed(0)}$unit $metricLabel',
+                                style: const TextStyle(
+                                  color: Colors.white,
+                                  fontWeight: FontWeight.w900,
+                                  fontSize: 14,
+                                ),
+                              ),
+                            ],
                           );
                         },
                       ),
@@ -226,13 +266,13 @@ class _WeeklyActivityChartState extends State<WeeklyActivityChart> {
                             final text = DateFormat.E(locale).format(date).characters.first.toUpperCase();
 
                             return Padding(
-                              padding: const EdgeInsets.only(top: 8.0),
+                              padding: const EdgeInsets.only(top: 12.0),
                               child: Text(
                                 text,
-                                style: const TextStyle(
-                                  color: Color(0xFF7BA082),
-                                  fontWeight: FontWeight.bold,
-                                  fontSize: 10,
+                                style: textTheme.labelSmall?.copyWith(
+                                  color: customColors.darkSage,
+                                  fontWeight: FontWeight.w900,
+                                  fontSize: 11,
                                 ),
                               ),
                             );
@@ -255,7 +295,7 @@ class _WeeklyActivityChartState extends State<WeeklyActivityChart> {
                       final index = e.key;
                       final data = e.value;
                       double val = 0;
-                      Color color = const Color(0xFF7BA082); // Muted green for all bars
+                      Color barColor = customColors.darkSage!;
 
                       switch (_selectedMetric) {
                         case NutritionMetric.calories:
@@ -277,24 +317,32 @@ class _WeeklyActivityChartState extends State<WeeklyActivityChart> {
                         barRods: [
                           BarChartRodData(
                             toY: val,
-                            color: color,
-                            width: widget.dailyTotals.length > 10 ? 8 : 12,
-                            borderRadius: BorderRadius.circular(10), // Fully rounded ends
+                            color: barColor,
+                            width: widget.dailyTotals.length > 10 ? 8 : 14,
+                            borderRadius: BorderRadius.circular(12),
+                            backDrawRodData: BackgroundBarChartRodData(
+                              show: true,
+                              toY: maxVal * 1.2,
+                              color: customColors.chartTabBackground,
+                            ),
                           ),
                         ],
                       );
                     }).toList(),
                   ),
                 ),
-              ),
-            ],
+              ],
+            ),
           ),
-        ),
+        ],
       ],
     );
   }
 
   Widget _buildTab(String label, NutritionMetric metric) {
+    final theme = Theme.of(context);
+    final textTheme = theme.textTheme;
+    final customColors = theme.extension<AppCustomColors>()!;
     final isSelected = _selectedMetric == metric;
     return Expanded(
       child: GestureDetector(
@@ -304,9 +352,9 @@ class _WeeklyActivityChartState extends State<WeeklyActivityChart> {
           });
         },
         child: Container(
-          padding: const EdgeInsets.symmetric(vertical: 10),
+          padding: const EdgeInsets.symmetric(vertical: 12),
           decoration: BoxDecoration(
-            color: isSelected ? Colors.white : Colors.transparent,
+            color: isSelected ? theme.colorScheme.surface : Colors.transparent,
             borderRadius: BorderRadius.circular(20),
             boxShadow: isSelected
                 ? [
@@ -321,10 +369,10 @@ class _WeeklyActivityChartState extends State<WeeklyActivityChart> {
           child: Center(
             child: Text(
               label,
-              style: TextStyle(
-                fontSize: 13,
-                fontWeight: isSelected ? FontWeight.bold : FontWeight.w600,
-                color: isSelected ? const Color(0xFF4C6B4F) : Colors.blueGrey.shade400,
+              style: textTheme.labelSmall?.copyWith(
+                fontSize: 12,
+                fontWeight: isSelected ? FontWeight.w900 : FontWeight.w700,
+                color: isSelected ? customColors.darkSage : customColors.slateGrey?.withValues(alpha: 0.6),
               ),
             ),
           ),

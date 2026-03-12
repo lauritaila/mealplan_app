@@ -7,6 +7,7 @@ import 'package:meal_plan_app/features/profile/presentation/providers/delete_acc
 import 'package:meal_plan_app/features/shared/utils/app_error_localizations.dart';
 import 'package:meal_plan_app/l10n/app_localizations.dart';
 import 'package:go_router/go_router.dart';
+import 'package:meal_plan_app/config/theme/app_theme.dart';
 
 Future<void> _showDeleteAccountModal(
   BuildContext context,
@@ -16,53 +17,57 @@ Future<void> _showDeleteAccountModal(
   final l10n = AppLocalizations.of(context);
   final controller = TextEditingController();
   final theme = Theme.of(context);
-  final primaryGreen = theme.colorScheme.primary;
-  final darkText = theme.colorScheme.onSurface;
-  final secondaryText = theme.colorScheme.onSurfaceVariant;
+  final textTheme = theme.textTheme;
+  final customColors = theme.extension<AppCustomColors>()!;
 
   await showDialog<void>(
     context: context,
     builder: (dialogContext) {
       return Dialog(
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(24)),
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(28)),
+        backgroundColor: theme.colorScheme.surface,
         child: Padding(
-          padding: const EdgeInsets.all(24),
+          padding: const EdgeInsets.all(32),
           child: Column(
             mainAxisSize: MainAxisSize.min,
             children: [
               Text(
                 l10n.deleteAccount,
-                style: TextStyle(
-                  fontSize: 20,
-                  fontWeight: FontWeight.bold,
-                  color: darkText,
+                style: textTheme.titleLarge?.copyWith(
+                  fontWeight: FontWeight.w900,
+                  color: customColors.textDarkBlue,
                 ),
               ),
-              const SizedBox(height: 12),
+              const SizedBox(height: 16),
               Text(
                 l10n.confirmDeleteWithEmail(email),
                 textAlign: TextAlign.center,
-                style: TextStyle(color: secondaryText, fontSize: 14, height: 1.5),
+                style: textTheme.bodyMedium?.copyWith(
+                  color: customColors.slateGrey,
+                  height: 1.5,
+                ),
               ),
-              const SizedBox(height: 24),
+              const SizedBox(height: 32),
               TextField(
                 controller: controller,
                 keyboardType: TextInputType.emailAddress,
+                style: textTheme.bodyLarge?.copyWith(fontWeight: FontWeight.bold, color: customColors.textDarkBlue),
                 decoration: InputDecoration(
-                  hintText: 'email@ejemplo.com',
-                  hintStyle: const TextStyle(color: Color(0xFF94A3B8)),
+                  hintText: 'email@example.com',
+                  hintStyle: textTheme.bodyLarge?.copyWith(color: customColors.slateGrey?.withValues(alpha: 0.5)),
                   filled: true,
-                  fillColor: const Color(0xFFF1F5F9),
-                  contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
+                  fillColor: customColors.chartTabBackground,
+                  contentPadding: const EdgeInsets.symmetric(horizontal: 20, vertical: 20),
                   border: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(12),
+                    borderRadius: BorderRadius.circular(16),
                     borderSide: BorderSide.none,
                   ),
                 ),
               ),
-              const SizedBox(height: 24),
+              const SizedBox(height: 32),
               SizedBox(
                 width: double.infinity,
+                height: 60,
                 child: FilledButton(
                   onPressed: () async {
                     final confirmationEmail = controller.text.trim();
@@ -91,11 +96,17 @@ Future<void> _showDeleteAccountModal(
                       useRootNavigator: true,
                       builder: (_) {
                         return AlertDialog(
+                          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
                           content: Row(
                             children: [
-                              const CircularProgressIndicator(),
-                              const SizedBox(width: 16),
-                              Expanded(child: Text(l10n.profileFarewell)),
+                              CircularProgressIndicator(color: customColors.darkSage),
+                              const SizedBox(width: 24),
+                              Expanded(
+                                child: Text(
+                                  l10n.profileFarewell,
+                                  style: textTheme.bodyMedium?.copyWith(fontWeight: FontWeight.bold),
+                                ),
+                              ),
                             ],
                           ),
                         );
@@ -135,22 +146,24 @@ Future<void> _showDeleteAccountModal(
                     if (context.mounted) context.go('/init');
                   },
                   style: FilledButton.styleFrom(
-                    backgroundColor: primaryGreen,
-                    padding: const EdgeInsets.symmetric(vertical: 16),
-                    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+                    backgroundColor: Colors.red.shade600,
+                    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
                   ),
                   child: Text(
                     l10n.deleteAccount,
-                    style: const TextStyle(fontWeight: FontWeight.bold),
+                    style: const TextStyle(fontWeight: FontWeight.w900, fontSize: 16),
                   ),
                 ),
               ),
-              const SizedBox(height: 8),
+              const SizedBox(height: 12),
               TextButton(
                 onPressed: () => Navigator.of(dialogContext).pop(),
                 child: Text(
                   l10n.cancel,
-                  style: TextStyle(color: secondaryText, fontWeight: FontWeight.bold),
+                  style: textTheme.labelLarge?.copyWith(
+                    color: customColors.slateGrey,
+                    fontWeight: FontWeight.w900,
+                  ),
                 ),
               ),
             ],
@@ -169,6 +182,8 @@ class ProfileScreen extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final theme = Theme.of(context);
+    final textTheme = theme.textTheme;
+    final customColors = theme.extension<AppCustomColors>()!;
     final l10n = AppLocalizations.of(context);
     final authState = ref.watch(authProvider);
 
@@ -186,13 +201,14 @@ class ProfileScreen extends ConsumerWidget {
       planName = l10n.profilePlanFreeBadge;
     }
 
-    final primaryGreen = theme.colorScheme.primary;
-
     return Scaffold(
       appBar: AppBar(
         title: Text(
           l10n.profileTitle,
-          style: TextStyle(fontWeight: FontWeight.bold, color: theme.colorScheme.onSurface),
+          style: textTheme.titleLarge?.copyWith(
+            fontWeight: FontWeight.w900,
+            color: customColors.textDarkBlue,
+          ),
         ),
         centerTitle: true,
         backgroundColor: Colors.transparent,
@@ -203,62 +219,63 @@ class ProfileScreen extends ConsumerWidget {
         children: [
           // User Card
           Container(
-            padding: const EdgeInsets.symmetric(vertical: 24, horizontal: 16),
+            padding: const EdgeInsets.symmetric(vertical: 32, horizontal: 24),
             decoration: BoxDecoration(
-              color: theme.colorScheme.primaryContainer.withValues(alpha: 0.15),
-              borderRadius: BorderRadius.circular(20),
+              color: customColors.chartTabBackground?.withValues(alpha: 0.5),
+              borderRadius: BorderRadius.circular(28),
+              border: Border.all(color: theme.dividerColor.withValues(alpha: 0.05)),
             ),
             child: Column(
               mainAxisSize: MainAxisSize.min,
               children: [
-                // Free Plan Badge
+                // Plan Badge
                 Container(
-                  padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
+                  padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 6),
                   decoration: BoxDecoration(
-                    color: primaryGreen.withValues(alpha: 0.8),
-                    borderRadius: BorderRadius.circular(6),
+                    color: customColors.darkSage,
+                    borderRadius: BorderRadius.circular(10),
                   ),
                   child: Text(
-                    planName,
+                    planName.toUpperCase(),
                     style: const TextStyle(
                       color: Colors.white,
-                      fontSize: 12,
-                      fontWeight: FontWeight.w600,
+                      fontSize: 11,
+                      fontWeight: FontWeight.w900,
                     ),
                   ),
                 ),
-                const SizedBox(height: 12),
+                const SizedBox(height: 20),
                 Text(
                   displayName,
-                  style: theme.textTheme.headlineSmall?.copyWith(
-                    fontWeight: FontWeight.bold,
-                    color: theme.colorScheme.onSurface,
+                  style: textTheme.headlineSmall?.copyWith(
+                    fontWeight: FontWeight.w900,
+                    color: customColors.textDarkBlue,
                   ),
                   textAlign: TextAlign.center,
                 ),
-                const SizedBox(height: 4),
+                const SizedBox(height: 6),
                 Text(
                   email,
-                  style: theme.textTheme.bodyMedium?.copyWith(
-                    color: theme.colorScheme.onSurfaceVariant,
+                  style: textTheme.bodyMedium?.copyWith(
+                    color: customColors.slateGrey,
+                    fontWeight: FontWeight.w600,
                   ),
                   textAlign: TextAlign.center,
                 ),
               ],
             ),
           ),
-          const SizedBox(height: 32),
+          const SizedBox(height: 40),
 
           // Settings Section
           Padding(
-            padding: const EdgeInsets.only(left: 4, bottom: 12),
+            padding: const EdgeInsets.only(left: 4, bottom: 16),
             child: Text(
               l10n.settingsTitle.toUpperCase(),
-              style: TextStyle(
-                fontSize: 12,
-                fontWeight: FontWeight.bold,
-                letterSpacing: 1.2,
-                color: theme.colorScheme.onSurfaceVariant.withValues(alpha: 0.7),
+              style: textTheme.labelSmall?.copyWith(
+                fontWeight: FontWeight.w900,
+                letterSpacing: 1.5,
+                color: customColors.slateGrey?.withValues(alpha: 0.5),
               ),
             ),
           ),
@@ -266,8 +283,9 @@ class ProfileScreen extends ConsumerWidget {
           // Settings Options Card
           Container(
             decoration: BoxDecoration(
-              color: theme.colorScheme.surface,
-              borderRadius: BorderRadius.circular(16),
+              color: theme.cardTheme.color,
+              borderRadius: BorderRadius.circular(24),
+              border: Border.all(color: theme.dividerColor.withValues(alpha: 0.05)),
               boxShadow: [
                 BoxShadow(
                   color: Colors.black.withValues(alpha: 0.03),
@@ -284,108 +302,100 @@ class ProfileScreen extends ConsumerWidget {
                   title: l10n.profilePreferencesTitle,
                   onTap: () => context.push('/profile/preferences'),
                 ),
-                _buildDivider(),
+                _buildDivider(theme),
                 _buildSettingsTile(
                   context,
                   icon: Icons.email_outlined,
                   title: l10n.profileChangeEmailLabel,
                   onTap: () => context.push('/profile/change-email'),
                 ),
-                _buildDivider(),
+                _buildDivider(theme),
                 _buildSettingsTile(
                   context,
                   icon: Icons.public_outlined,
                   title: l10n.profileLanguageTitle,
                   onTap: () => context.push('/profile/language'),
                 ),
-                _buildDivider(),
+                _buildDivider(theme),
                 _buildSettingsTile(
                   context,
                   icon: Icons.payments_outlined,
                   title: l10n.profilePaymentsTitle,
                   onTap: () => context.push('/profile/view-payments'),
                 ),
-                _buildDivider(),
+                _buildDivider(theme),
                 _buildSettingsTile(
                   context,
                   icon: Icons.subscriptions_outlined,
                   title: l10n.profileSubscriptionTitle,
                   onTap: () => context.push('/profile/subscription'),
                 ),
-                // _buildDivider(),
-                // _buildSettingsTile(
-                //   context,
-                //   icon: Icons.notifications_none_outlined,
-                //   title: l10n.profileNotificationsTitle,
-                //   onTap: () {},
-                // ),
-                _buildDivider(),
+                _buildDivider(theme),
                 _buildSettingsTile(
                   context,
                   icon: Icons.description_outlined,
                   title: l10n.profileTermsTitle,
                   onTap: () => context.push('/terms-and-conditions'),
                 ),
-                _buildDivider(),
+                _buildDivider(theme),
                 _buildSettingsTile(
                   context,
                   icon: Icons.privacy_tip_outlined,
                   title: l10n.profilePrivacyTitle,
-                  showDivider: false,
                   onTap: () => context.push('/privacy-policy'),
                 ),
               ],
             ),
           ),
           
-          const SizedBox(height: 48),
+          const SizedBox(height: 56),
 
           // Buttons Section
           SizedBox(
             width: double.infinity,
+            height: 60,
             child: OutlinedButton(
               onPressed: () async {
                 await ref.read(authProvider.notifier).logOut();
                 if (context.mounted) context.go('/init');
               },
               style: OutlinedButton.styleFrom(
-                foregroundColor: primaryGreen,
-                side: BorderSide(color: primaryGreen, width: 1.5),
-                padding: const EdgeInsets.symmetric(vertical: 16),
+                foregroundColor: customColors.darkSage,
+                side: BorderSide(color: customColors.darkSage!, width: 2),
                 shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(12),
+                  borderRadius: BorderRadius.circular(16),
                 ),
               ),
               child: Text(
                 l10n.logout,
-                style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+                style: const TextStyle(fontSize: 16, fontWeight: FontWeight.w900),
               ),
             ),
           ),
-          const SizedBox(height: 16),
+          const SizedBox(height: 24),
           TextButton(
             onPressed: authState is AuthenticatedAuthState
                 ? () => _showDeleteAccountModal(context, ref, email)
                 : null,
             child: Text(
               l10n.deleteAccount,
-              style: const TextStyle(
-                color: Color(0xFFEF4444),
-                fontWeight: FontWeight.w600,
+              style: TextStyle(
+                color: Colors.red.shade400,
+                fontWeight: FontWeight.w900,
               ),
             ),
           ),
-          const SizedBox(height: 32),
+          const SizedBox(height: 48),
           Center(
             child: Text(
               '© 2026 Meal Plan App',
-              style: theme.textTheme.labelSmall?.copyWith(
-                color: theme.colorScheme.onSurfaceVariant.withValues(alpha: 0.6),
+              style: textTheme.labelSmall?.copyWith(
+                color: customColors.slateGrey?.withValues(alpha: 0.4),
                 fontStyle: FontStyle.italic,
               ),
             ),
           ),
-          const SizedBox(height: 16),
+          const SizedBox(height: 32),
         ],
       ),
     );
@@ -396,34 +406,39 @@ class ProfileScreen extends ConsumerWidget {
     required IconData icon,
     required String title,
     required VoidCallback onTap,
-    bool showDivider = true,
   }) {
+    final theme = Theme.of(context);
+    final customColors = theme.extension<AppCustomColors>()!;
+    
     return ListTile(
-      leading: Icon(icon, color: Theme.of(context).colorScheme.primary, size: 22),
+      leading: Container(
+        padding: const EdgeInsets.all(8),
+        decoration: BoxDecoration(
+          color: customColors.chartTabBackground,
+          borderRadius: BorderRadius.circular(10),
+        ),
+        child: Icon(icon, color: customColors.darkSage, size: 20),
+      ),
       title: Text(
         title,
-        style: TextStyle(
-          fontSize: 15,
-          fontWeight: FontWeight.w600,
-          color: Theme.of(context).colorScheme.onSurface,
+        style: theme.textTheme.bodyMedium?.copyWith(
+          fontWeight: FontWeight.w800,
+          color: customColors.textDarkBlue,
         ),
       ),
-      trailing: Icon(Icons.chevron_right, color: Theme.of(context).colorScheme.onSurfaceVariant.withValues(alpha: 0.4), size: 20),
+      trailing: Icon(Icons.chevron_right, color: customColors.slateGrey?.withValues(alpha: 0.3), size: 20),
       onTap: onTap,
-      contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 4),
-      shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(16),
-      ),
+      contentPadding: const EdgeInsets.symmetric(horizontal: 20, vertical: 8),
     );
   }
 
-  Widget _buildDivider() {
+  Widget _buildDivider(ThemeData theme) {
     return Divider(
       height: 1,
       thickness: 1,
-      indent: 16,
-      endIndent: 16,
-      color: Colors.grey.withValues(alpha: 0.05),
+      indent: 20,
+      endIndent: 20,
+      color: theme.dividerColor.withValues(alpha: 0.05),
     );
   }
 }

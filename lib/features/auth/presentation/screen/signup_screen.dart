@@ -70,7 +70,7 @@ class SignUpScreen extends ConsumerWidget {
           const SizedBox(height: 28),
           CustomTextFormField(
             label: l10n.name,
-            hint: l10n.namePlaceholder ?? 'Tu nombre completo',
+            hint: l10n.namePlaceholder,
             onChanged: signupFormNotifier.onNameChanged,
             errorMessage: signupFormState.isFormPosted
                 ? signupFormState.name.getErrorMessage(l10n)
@@ -79,7 +79,7 @@ class SignUpScreen extends ConsumerWidget {
           const SizedBox(height: 14),
           CustomTextFormField(
             label: l10n.email,
-            hint: 'ejemplo@correo.com',
+            hint: l10n.emailPlaceholder,
             keyboardType: TextInputType.emailAddress,
             onChanged: signupFormNotifier.onEmailChanged,
             errorMessage: signupFormState.isFormPosted

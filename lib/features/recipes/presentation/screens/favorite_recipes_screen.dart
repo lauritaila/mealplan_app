@@ -10,6 +10,7 @@ import 'package:meal_plan_app/features/recipes/presentation/providers/toggle_fav
 import 'package:meal_plan_app/features/recipes/presentation/providers/providers.dart';
 import 'package:meal_plan_app/features/recipes/presentation/widgets/recipe_card.dart';
 import 'package:meal_plan_app/l10n/app_localizations.dart';
+import 'package:meal_plan_app/config/theme/app_theme.dart';
 
 class FavoriteRecipesScreen extends ConsumerWidget {
   const FavoriteRecipesScreen({super.key});
@@ -17,29 +18,34 @@ class FavoriteRecipesScreen extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final favoritesAsync = ref.watch(favoriteRecipesProvider);
+    final theme = Theme.of(context);
+    final customColors = theme.extension<AppCustomColors>()!;
     final l10n = AppLocalizations.of(context);
     final authState = ref.watch(authProvider);
-    final hideNutritionValues =
-        authState is AuthenticatedAuthState &&
-        authState.user.configurations?['hideNutritionValues'] == true;
+    final showNutrition = authState is! AuthenticatedAuthState ||
+        authState.user.configurations?['hideNutritionValues'] != true;
 
     return Scaffold(
-      appBar: AppBar(title: Text(l10n.favoriteRecipesTitle)),
+      backgroundColor: theme.scaffoldBackgroundColor,
+      appBar: AppBar(
+        backgroundColor: theme.scaffoldBackgroundColor,
+        elevation: 0,
+        title: Text(
+          l10n.favoriteRecipesTitle,
+          style: theme.textTheme.titleLarge?.copyWith(
+            fontWeight: FontWeight.w900,
+            color: customColors.textDarkBlue,
+          ),
+        ),
+        centerTitle: true,
+        iconTheme: IconThemeData(color: customColors.textDarkBlue),
+      ),
       body: favoritesAsync.when(
         data: (favorites) {
           if (favorites.isEmpty) {
-            return Center(
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  Icon(Icons.favorite_border, size: 64, color: Colors.grey),
-                  SizedBox(height: 16),
-                  Text(
-                    l10n.noFavoriteRecipes,
-                    style: const TextStyle(fontSize: 18, color: Colors.grey),
-                  ),
-                ],
-              ),
+            return AppEmptyState(
+              title: l10n.noFavoriteRecipes,
+              icon: Icons.favorite_outline_rounded,
             );
           }
 
@@ -59,7 +65,7 @@ class FavoriteRecipesScreen extends ConsumerWidget {
                   proteinGrams: recipe.proteinGrams,
                   carbsGrams: recipe.carbsGrams,
                   fatsGrams: recipe.fatsGrams,
-                  hideNutritionValues: hideNutritionValues,
+                  hideNutritionValues: !showNutrition,
                   onTap: () => context.push('/recipes/${recipe.id}'),
                   onFavoriteTap: () async {
                     await ref
@@ -73,7 +79,7 @@ class FavoriteRecipesScreen extends ConsumerWidget {
                       backgroundColor: Colors.transparent,
                       builder: (context) => SelectListSheet(
                         title: l10n.addRecipeToListTitle,
-                        subtitle: 'Organiza tus recetas e ingredientes favoritos',
+                        subtitle: l10n.organizeFavoritesSubtitle,
                       ),
                     );
                     if (selectedId == null || !context.mounted) return;
@@ -99,21 +105,14 @@ class FavoriteRecipesScreen extends ConsumerWidget {
             ),
           );
         },
-        loading: () => const Center(child: CircularProgressIndicator()),
-        error: (error, stack) => Center(
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              const Icon(Icons.error_outline, size: 48, color: Colors.red),
-              const SizedBox(height: 16),
-              Text(l10n.errorOccurred(error.toString())),
-              const SizedBox(height: 16),
-              ElevatedButton(
-                onPressed: () => ref.invalidate(favoriteRecipesProvider),
-                child: Text(l10n.retry),
-              ),
-            ],
+        loading: () => Center(
+          child: CircularProgressIndicator(
+            color: customColors.darkSage,
           ),
+        ),
+        error: (error, stack) => AppErrorState(
+          message: error.toString(),
+          onRetry: () => ref.invalidate(favoriteRecipesProvider),
         ),
       ),
     );

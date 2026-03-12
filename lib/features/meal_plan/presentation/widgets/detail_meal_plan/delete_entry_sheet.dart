@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:meal_plan_app/config/theme/app_theme.dart';
 import 'package:meal_plan_app/features/meal_plan/presentation/providers/provider.dart';
 import 'package:meal_plan_app/l10n/app_localizations.dart';
 
@@ -25,8 +26,16 @@ class _DeleteEntrySheetState extends State<DeleteEntrySheet> {
 
   @override
   Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+    final customColors = theme.extension<AppCustomColors>()!;
+    final textTheme = theme.textTheme;
     final l10n = AppLocalizations.of(context);
-    return Padding(
+
+    return Container(
+      decoration: BoxDecoration(
+        color: theme.scaffoldBackgroundColor,
+        borderRadius: const BorderRadius.vertical(top: Radius.circular(32)),
+      ),
       padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 32),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
@@ -34,16 +43,16 @@ class _DeleteEntrySheetState extends State<DeleteEntrySheet> {
         children: [
           Center(
             child: Container(
-              width: 72,
-              height: 72,
-              decoration: const BoxDecoration(
-                color: Color(0xFFF4F7F5),
+              width: 80,
+              height: 80,
+              decoration: BoxDecoration(
+                color: theme.colorScheme.errorContainer.withValues(alpha: 0.2),
                 shape: BoxShape.circle,
               ),
-              child: const Icon(
+              child: Icon(
                 Icons.delete_outline_rounded,
-                color: Color(0xFF576F5F),
-                size: 32,
+                color: theme.colorScheme.error,
+                size: 36,
               ),
             ),
           ),
@@ -51,47 +60,44 @@ class _DeleteEntrySheetState extends State<DeleteEntrySheet> {
           Text(
             l10n.deleteMealDialogTitle,
             textAlign: TextAlign.center,
-            style: const TextStyle(
-              fontSize: 22,
-              fontWeight: FontWeight.w800,
-              color: Color(0xFF1A1E1B),
+            style: textTheme.titleLarge?.copyWith(
+              fontWeight: FontWeight.w900,
+              color: customColors.textDarkBlue,
             ),
           ),
-          const SizedBox(height: 16),
+          const SizedBox(height: 12),
           Text(
             l10n.deleteMealDialogMessage,
             textAlign: TextAlign.center,
-            style: TextStyle(
-              color: Colors.grey.shade600,
-              fontSize: 15,
+            style: textTheme.bodyMedium?.copyWith(
+              color: customColors.slateGrey,
               height: 1.5,
-              fontWeight: FontWeight.w500,
             ),
           ),
           const SizedBox(height: 24),
           Container(
             decoration: BoxDecoration(
-              color: const Color(0xFFF8FAFB),
-              borderRadius: BorderRadius.circular(16),
-              border: Border.all(color: Colors.grey.shade200),
+              color: customColors.chartTabBackground,
+              borderRadius: BorderRadius.circular(20),
+              border: Border.all(color: customColors.slateGrey!.withValues(alpha: 0.1)),
             ),
             child: CheckboxListTile(
               value: _removeShoppingList,
               onChanged: (v) => setState(() => _removeShoppingList = v ?? false),
               title: Text(
                 l10n.alsoRemoveFromGrocery,
-                style: const TextStyle(
-                  fontSize: 14,
-                  fontWeight: FontWeight.w600,
-                  color: Color(0xFF1A1E1B),
+                style: textTheme.labelLarge?.copyWith(
+                  fontWeight: FontWeight.w800,
+                  color: customColors.textDarkBlue,
                 ),
               ),
               controlAffinity: ListTileControlAffinity.leading,
-              activeColor: const Color(0xFF576F5F),
+              activeColor: customColors.darkSage,
+              checkColor: Colors.white,
               shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(4),
+                borderRadius: BorderRadius.circular(20),
               ),
-              contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 4),
+              contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
             ),
           ),
           const SizedBox(height: 32),
@@ -106,14 +112,13 @@ class _DeleteEntrySheetState extends State<DeleteEntrySheet> {
             ),
           FilledButton(
             style: FilledButton.styleFrom(
-              backgroundColor: const Color(0xFF6A8773),
+              backgroundColor: theme.colorScheme.error,
               foregroundColor: Colors.white,
-              padding: const EdgeInsets.symmetric(vertical: 18),
+              padding: const EdgeInsets.symmetric(vertical: 20),
               shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(16),
+                borderRadius: BorderRadius.circular(20),
               ),
-              elevation: 4,
-              shadowColor: Colors.black.withValues(alpha: 0.2),
+              elevation: 0,
             ),
             onPressed: _isLoading ? null : _confirm,
             child: _isLoading
@@ -126,10 +131,10 @@ class _DeleteEntrySheetState extends State<DeleteEntrySheet> {
                     ),
                   )
                 : Text(
-                    l10n.deleteAction,
+                    l10n.deleteAction.toUpperCase(),
                     style: const TextStyle(
-                      fontWeight: FontWeight.w800,
-                      fontSize: 16,
+                      fontWeight: FontWeight.w900,
+                      letterSpacing: 1.1,
                     ),
                   ),
           ),
@@ -137,11 +142,11 @@ class _DeleteEntrySheetState extends State<DeleteEntrySheet> {
           TextButton(
             onPressed: _isLoading ? null : () => Navigator.of(context).pop(),
             child: Text(
-              l10n.cancel,
-              style: const TextStyle(
-                color: Color(0xFF576F5F),
-                fontWeight: FontWeight.w700,
-                fontSize: 16,
+              l10n.cancel.toUpperCase(),
+              style: TextStyle(
+                color: customColors.slateGrey,
+                fontWeight: FontWeight.w800,
+                letterSpacing: 1.1,
               ),
             ),
           ),

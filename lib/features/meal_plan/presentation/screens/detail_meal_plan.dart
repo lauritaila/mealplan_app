@@ -8,6 +8,7 @@ import 'package:meal_plan_app/features/meal_plan/domain/domain.dart';
 import 'package:meal_plan_app/features/meal_plan/presentation/providers/provider.dart';
 import 'package:meal_plan_app/features/meal_plan/presentation/widgets/swap_recipe_sheet.dart';
 import 'package:meal_plan_app/l10n/app_localizations.dart';
+import 'package:meal_plan_app/config/theme/app_theme.dart';
 
 // Extracted Widgets
 import '../widgets/detail_meal_plan/drag_drop_hint.dart';
@@ -52,21 +53,29 @@ class _DetailMealPlanScreenState extends ConsumerState<DetailMealPlanScreen> {
     final actionsState = ref.watch(mealPlanEntryActionsProvider);
     final isLoading = actionsState.status == MealPlanEntryActionStatus.loading;
 
+    final theme = Theme.of(context);
+    final customColors = theme.extension<AppCustomColors>()!;
+    final textTheme = theme.textTheme;
+
     return Scaffold(
+      backgroundColor: theme.scaffoldBackgroundColor,
       appBar: AppBar(
+        backgroundColor: theme.scaffoldBackgroundColor,
+        elevation: 0,
         title: Text(
           l10n.approvePlanTitle.toUpperCase(),
-          style: const TextStyle(
-            fontSize: 16,
-            fontWeight: FontWeight.w800,
-            letterSpacing: 1.2,
+          style: textTheme.labelLarge?.copyWith(
+            fontWeight: FontWeight.w900,
+            color: customColors.textDarkBlue,
+            letterSpacing: 1.5,
           ),
         ),
         centerTitle: true,
+        iconTheme: IconThemeData(color: customColors.textDarkBlue),
         actions: [
           if (_plan != null)
             IconButton(
-              icon: const Icon(Icons.delete_outline_rounded, color: Color(0xFF7D9E87)),
+              icon: Icon(Icons.delete_outline_rounded, color: customColors.darkSage),
               tooltip: l10n.deletePlanTooltip,
               onPressed: isLoading
                   ? null
@@ -85,15 +94,14 @@ class _DetailMealPlanScreenState extends ConsumerState<DetailMealPlanScreen> {
                     children: [
                       // Header Card
                       Container(
-                        padding: const EdgeInsets.all(20),
+                        padding: const EdgeInsets.all(24),
                         decoration: BoxDecoration(
                           color: Colors.white,
-                          borderRadius: BorderRadius.circular(20),
-                          border: Border.all(color: Colors.grey.shade100),
+                          borderRadius: BorderRadius.circular(24),
                           boxShadow: [
                             BoxShadow(
-                              color: Colors.black.withValues(alpha: 0.03),
-                              blurRadius: 10,
+                              color: Colors.black.withValues(alpha: 0.04),
+                              blurRadius: 16,
                               offset: const Offset(0, 4),
                             ),
                           ],
@@ -106,10 +114,10 @@ class _DetailMealPlanScreenState extends ConsumerState<DetailMealPlanScreen> {
                                 children: [
                                   Text(
                                     plan!.planName,
-                                    style: const TextStyle(
-                                      fontSize: 20,
-                                      fontWeight: FontWeight.w800,
-                                      color: Color(0xFF1A1E1B),
+                                    style: textTheme.headlineSmall?.copyWith(
+                                      fontWeight: FontWeight.w900,
+                                      color: customColors.textDarkBlue,
+                                      letterSpacing: -0.5,
                                     ),
                                   ),
                                   const SizedBox(height: 8),
@@ -118,15 +126,14 @@ class _DetailMealPlanScreenState extends ConsumerState<DetailMealPlanScreen> {
                                       Icon(
                                         Icons.calendar_today_outlined,
                                         size: 14,
-                                        color: Colors.grey.shade600,
+                                        color: customColors.slateGrey,
                                       ),
                                       const SizedBox(width: 6),
                                       Text(
-                                        '${_formatDate(plan.startDate)} - ${_formatDate(plan.endDate)}',
-                                        style: TextStyle(
-                                          color: Colors.grey.shade600,
-                                          fontSize: 14,
-                                          fontWeight: FontWeight.w500,
+                                        '${_formatDate(plan.startDate, l10n)} - ${_formatDate(plan.endDate, l10n)}',
+                                        style: textTheme.bodySmall?.copyWith(
+                                          color: customColors.slateGrey,
+                                          fontWeight: FontWeight.w600,
                                         ),
                                       ),
                                     ],
@@ -142,26 +149,26 @@ class _DetailMealPlanScreenState extends ConsumerState<DetailMealPlanScreen> {
                                   plan.endDate,
                                   plan.id,
                                 ),
-                                style: TextButton.styleFrom(
-                                  backgroundColor: const Color(0xFFE9EFEB),
-                                  padding: const EdgeInsets.symmetric(
-                                    horizontal: 16,
-                                    vertical: 8,
+                                  style: TextButton.styleFrom(
+                                    backgroundColor: customColors.chartTabBackground,
+                                    padding: const EdgeInsets.symmetric(
+                                      horizontal: 16,
+                                      vertical: 10,
+                                    ),
+                                    minimumSize: Size.zero,
+                                    tapTargetSize: MaterialTapTargetSize.shrinkWrap,
+                                    shape: RoundedRectangleBorder(
+                                      borderRadius: BorderRadius.circular(12),
+                                    ),
                                   ),
-                                  minimumSize: Size.zero,
-                                  tapTargetSize: MaterialTapTargetSize.shrinkWrap,
-                                  shape: RoundedRectangleBorder(
-                                    borderRadius: BorderRadius.circular(8),
+                                  child: Text(
+                                    l10n.edit.toUpperCase(),
+                                    style: textTheme.labelMedium?.copyWith(
+                                      color: customColors.darkSage,
+                                      fontWeight: FontWeight.w900,
+                                      letterSpacing: 1.1,
+                                    ),
                                   ),
-                                ),
-                                child: Text(
-                                  l10n.edit.toUpperCase(),
-                                  style: const TextStyle(
-                                    color: Color(0xFF576F5F),
-                                    fontSize: 12,
-                                    fontWeight: FontWeight.w800,
-                                  ),
-                                ),
                               ),
                           ],
                         ),
@@ -198,11 +205,15 @@ class _DetailMealPlanScreenState extends ConsumerState<DetailMealPlanScreen> {
                     ],
                   ),
                   if (isLoading)
-                    const Positioned.fill(
+                    Positioned.fill(
                       child: AbsorbPointer(
                         child: ColoredBox(
-                          color: Color(0x33000000),
-                          child: Center(child: CircularProgressIndicator()),
+                          color: Colors.black.withValues(alpha: 0.2),
+                          child: Center(
+                            child: CircularProgressIndicator(
+                              color: customColors.darkSage,
+                            ),
+                          ),
                         ),
                       ),
                     ),
@@ -219,27 +230,26 @@ class _DetailMealPlanScreenState extends ConsumerState<DetailMealPlanScreen> {
                   crossAxisAlignment: CrossAxisAlignment.stretch,
                   children: [
                     FilledButton(
-                    onPressed: () => SaveIngredientsFlow.show(
-                      context: context,
-                      ref: ref,
-                      planId: plan!.id,
-                    ),
-                    style: FilledButton.styleFrom(
-                      backgroundColor: const Color(0xFF576F5F),
-                      foregroundColor: Colors.white,
-                      padding: const EdgeInsets.symmetric(vertical: 18),
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(16),
+                      onPressed: () => SaveIngredientsFlow.show(
+                        context: context,
+                        ref: ref,
+                        planId: plan!.id,
                       ),
-                    ),
-                    child: Text(
-                      l10n.done.toUpperCase(),
-                      style: const TextStyle(
-                        fontWeight: FontWeight.w800,
-                        letterSpacing: 1.1,
+                      style: FilledButton.styleFrom(
+                        backgroundColor: customColors.darkSage,
+                        foregroundColor: Colors.white,
+                        padding: const EdgeInsets.symmetric(vertical: 20),
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(20),
+                        ),
+                        elevation: 0,
+                        textStyle: textTheme.labelLarge?.copyWith(
+                          fontWeight: FontWeight.w900,
+                          letterSpacing: 1.1,
+                        ),
                       ),
+                      child: Text(l10n.done.toUpperCase()),
                     ),
-                  ),
                 ],
               ),
             ),
@@ -709,8 +719,21 @@ class _DetailMealPlanScreenState extends ConsumerState<DetailMealPlanScreen> {
     return a.year == b.year && a.month == b.month && a.day == b.day;
   }
 
-  String _formatDate(DateTime date) {
-    final months = ['Ene', 'Feb', 'Mar', 'Abr', 'May', 'Jun', 'Jul', 'Ago', 'Sep', 'Oct', 'Nov', 'Dic'];
+  String _formatDate(DateTime date, AppLocalizations l10n) {
+    final months = [
+      l10n.monthJan,
+      l10n.monthFeb,
+      l10n.monthMar,
+      l10n.monthApr,
+      l10n.monthMay,
+      l10n.monthJun,
+      l10n.monthJul,
+      l10n.monthAug,
+      l10n.monthSep,
+      l10n.monthOct,
+      l10n.monthNov,
+      l10n.monthDec
+    ];
     return '${date.day} ${months[date.month - 1]} ${date.year}';
   }
 }

@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:meal_plan_app/features/shared/presentation/providers/legal_provider.dart';
 import 'package:meal_plan_app/l10n/app_localizations.dart';
+import 'package:meal_plan_app/config/theme/app_theme.dart';
 
 class LegalScreen extends ConsumerWidget {
   final String name; // 'privacy_policy' or 'terms_and_conditions'
@@ -14,8 +15,9 @@ class LegalScreen extends ConsumerWidget {
     final legalContentAsync = ref.watch(getLegalContentProvider(configName: name, language: language));
     final l10n = AppLocalizations.of(context);
     final theme = Theme.of(context);
+    final textTheme = theme.textTheme;
+    final customColors = theme.extension<AppCustomColors>()!;
 
-    // Determinar el título basado en el nombre de la configuración si no ha cargado
     final fallbackTitle = name == 'privacy_policy' ? l10n.profilePrivacyTitle : l10n.profileTermsTitle;
 
     return Scaffold(
@@ -26,13 +28,21 @@ class LegalScreen extends ConsumerWidget {
             loading: () => fallbackTitle,
             error: (_, __) => fallbackTitle,
           ),
-          style: const TextStyle(fontWeight: FontWeight.bold),
+          style: textTheme.titleLarge?.copyWith(
+            fontWeight: FontWeight.w900,
+            color: customColors.textDarkBlue,
+          ),
         ),
       ),
       body: legalContentAsync.when(
         data: (content) {
           if (content == null) {
-            return Center(child: Text(l10n.genericError));
+            return Center(
+              child: Text(
+                l10n.genericError,
+                style: textTheme.bodyLarge?.copyWith(color: customColors.slateGrey),
+              ),
+            );
           }
 
           return SingleChildScrollView(
@@ -45,26 +55,36 @@ class LegalScreen extends ConsumerWidget {
                     alignment: Alignment.centerLeft,
                     child: Text(
                       '${l10n.lastUpdatedLabel}: ${content.lastUpdated}',
-                      style: theme.textTheme.labelSmall?.copyWith(
-                        color: theme.colorScheme.onSurfaceVariant.withValues(alpha: 0.6),
+                      style: textTheme.labelSmall?.copyWith(
+                        color: customColors.slateGrey?.withValues(alpha: 0.6),
                         fontStyle: FontStyle.italic,
+                        fontWeight: FontWeight.w600,
                       ),
                     ),
                   ),
-                  const SizedBox(height: 24),
+                  const SizedBox(height: 32),
                 ],
-                ...content.sections.map((section) => _LegalSectionWidget(
-                      header: section.header,
-                      content: section.content,
-                      index: content.sections.indexOf(section) + 1,
+                ...content.sections.asMap().entries.map((entry) => _LegalSectionWidget(
+                      header: entry.value.header,
+                      content: entry.value.content,
+                      index: entry.key + 1,
                     )),
                 const SizedBox(height: 40),
               ],
             ),
           );
         },
-        loading: () => const Center(child: CircularProgressIndicator()),
-        error: (error, _) => Center(child: Text(error.toString())),
+        loading: () => Center(child: CircularProgressIndicator(color: customColors.darkSage)),
+        error: (error, _) => Center(
+          child: Padding(
+            padding: const EdgeInsets.all(24.0),
+            child: Text(
+              error.toString(),
+              style: textTheme.bodyMedium?.copyWith(color: Colors.red),
+              textAlign: TextAlign.center,
+            ),
+          ),
+        ),
       ),
     );
   }
@@ -84,6 +104,8 @@ class _LegalSectionWidget extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
+    final textTheme = theme.textTheme;
+    final customColors = theme.extension<AppCustomColors>()!;
     
     return Padding(
       padding: const EdgeInsets.only(bottom: 32),
@@ -91,18 +113,18 @@ class _LegalSectionWidget extends StatelessWidget {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Container(
-            width: 28,
-            height: 28,
+            width: 32,
+            height: 32,
             decoration: BoxDecoration(
-              color: theme.colorScheme.primary.withValues(alpha: 0.8),
-              shape: BoxShape.circle,
+              color: customColors.darkSage,
+              borderRadius: BorderRadius.circular(10),
             ),
             child: Center(
               child: Text(
                 index.toString(),
                 style: const TextStyle(
                   color: Colors.white,
-                  fontWeight: FontWeight.bold,
+                  fontWeight: FontWeight.w900,
                   fontSize: 14,
                 ),
               ),
@@ -115,17 +137,19 @@ class _LegalSectionWidget extends StatelessWidget {
               children: [
                 Text(
                   header,
-                  style: theme.textTheme.titleMedium?.copyWith(
-                    fontWeight: FontWeight.bold,
-                    color: theme.colorScheme.onSurface,
+                  style: textTheme.titleMedium?.copyWith(
+                    fontWeight: FontWeight.w900,
+                    color: customColors.textDarkBlue,
+                    fontSize: 18,
                   ),
                 ),
-                const SizedBox(height: 8),
+                const SizedBox(height: 12),
                 Text(
                   content,
-                  style: theme.textTheme.bodyMedium?.copyWith(
-                    color: theme.colorScheme.onSurfaceVariant,
-                    height: 1.5,
+                  style: textTheme.bodyMedium?.copyWith(
+                    color: customColors.slateGrey,
+                    height: 1.6,
+                    fontWeight: FontWeight.w500,
                   ),
                 ),
               ],

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:meal_plan_app/config/theme/app_theme.dart';
 import 'package:meal_plan_app/features/recipes/presentation/providers/favorite_recipes_provider.dart';
 import 'package:meal_plan_app/l10n/app_localizations.dart';
 
@@ -15,6 +16,9 @@ class _SwapRecipeSheetState extends ConsumerState<SwapRecipeSheet> {
 
   @override
   Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+    final customColors = theme.extension<AppCustomColors>()!;
+    final textTheme = theme.textTheme;
     final favoritesAsync = ref.watch(favoriteRecipesProvider);
     final l10n = AppLocalizations.of(context);
 
@@ -25,9 +29,9 @@ class _SwapRecipeSheetState extends ConsumerState<SwapRecipeSheet> {
           top: 16,
           bottom: MediaQuery.of(context).viewInsets.bottom + 16,
         ),
-        decoration: const BoxDecoration(
-          color: Colors.white,
-          borderRadius: BorderRadius.vertical(top: Radius.circular(28)),
+        decoration: BoxDecoration(
+          color: theme.scaffoldBackgroundColor,
+          borderRadius: const BorderRadius.vertical(top: Radius.circular(32)),
         ),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.stretch,
@@ -37,27 +41,30 @@ class _SwapRecipeSheetState extends ConsumerState<SwapRecipeSheet> {
                 width: 40,
                 height: 4,
                 decoration: BoxDecoration(
-                  color: Colors.grey.shade300,
+                  color: customColors.slateGrey?.withValues(alpha: 0.2),
                   borderRadius: BorderRadius.circular(2),
                 ),
               ),
             ),
             const SizedBox(height: 16),
             Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 16),
+              padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 8),
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
-                  const SizedBox(width: 48), // Balance for centering title
+                  const SizedBox(width: 40),
                   Expanded(
                     child: Text(
                       l10n.swapFavoriteTitle,
-                      style: const TextStyle(fontSize: 20, fontWeight: FontWeight.w800),
+                      style: textTheme.titleLarge?.copyWith(
+                        fontWeight: FontWeight.w900,
+                        color: customColors.textDarkBlue,
+                      ),
                       textAlign: TextAlign.center,
                     ),
                   ),
                   IconButton(
-                    icon: const Icon(Icons.close, color: Colors.grey),
+                    icon: Icon(Icons.close_rounded, color: customColors.slateGrey, size: 24),
                     onPressed: () => Navigator.of(context).pop(),
                   ),
                 ],
@@ -67,8 +74,12 @@ class _SwapRecipeSheetState extends ConsumerState<SwapRecipeSheet> {
             Padding(
               padding: const EdgeInsets.symmetric(horizontal: 24),
               child: Text(
-                l10n.myFavoriteRecipes,
-                style: TextStyle(fontSize: 12, fontWeight: FontWeight.w800, color: Colors.grey.shade500, letterSpacing: 1.1),
+                l10n.myFavoriteRecipes.toUpperCase(),
+                style: textTheme.labelSmall?.copyWith(
+                  fontWeight: FontWeight.w900,
+                  color: customColors.darkSage,
+                  letterSpacing: 1.2,
+                ),
               ),
             ),
             const SizedBox(height: 8),
@@ -88,10 +99,10 @@ class _SwapRecipeSheetState extends ConsumerState<SwapRecipeSheet> {
                       return InkWell(
                         onTap: () => setState(() => _selectedRecipeId = recipe.id),
                         child: Container(
-                          padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 16),
+                          padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 20),
                           decoration: BoxDecoration(
-                            border: Border(bottom: BorderSide(color: Colors.grey.shade100)),
-                            color: isSelected ? const Color(0xFFF4F7F5) : Colors.transparent,
+                            border: Border(bottom: BorderSide(color: customColors.slateGrey!.withValues(alpha: 0.05))),
+                            color: isSelected ? customColors.chartTabBackground?.withValues(alpha: 0.5) : Colors.transparent,
                           ),
                           child: Row(
                             crossAxisAlignment: CrossAxisAlignment.start,
@@ -100,7 +111,7 @@ class _SwapRecipeSheetState extends ConsumerState<SwapRecipeSheet> {
                                 value: recipe.id,
                                 groupValue: _selectedRecipeId,
                                 onChanged: (v) => setState(() => _selectedRecipeId = v),
-                                activeColor: const Color(0xFF576F5F),
+                                activeColor: customColors.darkSage,
                                 materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
                               ),
                               const SizedBox(width: 12),
@@ -110,17 +121,19 @@ class _SwapRecipeSheetState extends ConsumerState<SwapRecipeSheet> {
                                   children: [
                                     Text(
                                       recipe.name,
-                                      style: const TextStyle(fontWeight: FontWeight.w800, fontSize: 16, color: Color(0xFF1A1E1B)),
+                                      style: textTheme.bodyLarge?.copyWith(
+                                        fontWeight: FontWeight.w800,
+                                        color: customColors.textDarkBlue,
+                                      ),
                                     ),
-                                    const SizedBox(height: 8),
-                                    Row(
+                                    const SizedBox(height: 12),
+                                    Wrap(
+                                      spacing: 8,
+                                      runSpacing: 4,
                                       children: [
                                         _MacroChip(label: '${recipe.calories?.toStringAsFixed(0) ?? "--"} ${l10n.kcalLabel}', isCalories: true),
-                                        const SizedBox(width: 8),
                                         _MacroChip(label: 'P: ${recipe.proteinGrams?.toStringAsFixed(0) ?? "-"}g'),
-                                        const SizedBox(width: 4),
                                         _MacroChip(label: '${l10n.metricCarbsShort[0]}: ${recipe.carbsGrams?.toStringAsFixed(0) ?? "-"}g'),
-                                        const SizedBox(width: 4),
                                         _MacroChip(label: '${l10n.metricFat[0]}: ${recipe.fatsGrams?.toStringAsFixed(0) ?? "-"}g'),
                                       ],
                                     ),
@@ -139,12 +152,16 @@ class _SwapRecipeSheetState extends ConsumerState<SwapRecipeSheet> {
             Padding(
               padding: const EdgeInsets.fromLTRB(24, 16, 24, 16),
               child: FilledButton.icon(
-                icon: const Icon(Icons.check, color: Colors.white, size: 20),
-                label: Text(l10n.saveSelectionAction, style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold)),
+                icon: const Icon(Icons.check_rounded, color: Colors.white, size: 20),
+                label: Text(
+                  l10n.saveSelectionAction.toUpperCase(),
+                  style: const TextStyle(fontWeight: FontWeight.w900, letterSpacing: 1.1),
+                ),
                 style: FilledButton.styleFrom(
-                  minimumSize: const Size(double.infinity, 56),
-                  backgroundColor: const Color(0xFF576F5F),
-                  shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+                  minimumSize: const Size(double.infinity, 60),
+                  backgroundColor: customColors.darkSage,
+                  shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
+                  elevation: 0,
                 ),
                 onPressed: _selectedRecipeId == null ? null : () {
                   Navigator.of(context).pop(_selectedRecipeId);
@@ -166,18 +183,23 @@ class _MacroChip extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+    final customColors = theme.extension<AppCustomColors>()!;
+    final textTheme = theme.textTheme;
+
     return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+      padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
       decoration: BoxDecoration(
-        color: isCalories ? const Color(0xFFFDF2F2) : const Color(0xFFF4F7F5),
-        borderRadius: BorderRadius.circular(4),
+        color: isCalories 
+            ? theme.colorScheme.errorContainer.withValues(alpha: 0.3) 
+            : customColors.chartTabBackground,
+        borderRadius: BorderRadius.circular(8),
       ),
       child: Text(
         label,
-        style: TextStyle(
-          color: isCalories ? const Color(0xFFE57373) : const Color(0xFF576F5F),
-          fontSize: 11,
-          fontWeight: FontWeight.w800,
+        style: textTheme.labelSmall?.copyWith(
+          color: isCalories ? theme.colorScheme.error : customColors.darkSage,
+          fontWeight: FontWeight.w900,
         ),
       ),
     );

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:meal_plan_app/l10n/app_localizations.dart';
+import 'package:meal_plan_app/config/theme/app_theme.dart';
 
 class RecipeCard extends StatelessWidget {
   final String name;
@@ -32,19 +33,20 @@ class RecipeCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
+    final customColors = theme.extension<AppCustomColors>()!;
+    final textTheme = theme.textTheme;
     final l10n = AppLocalizations.of(context);
     final showNutrition = !hideNutritionValues;
 
     return Container(
       margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
       decoration: BoxDecoration(
-        color: Colors.white,
+        color: theme.cardTheme.color,
         borderRadius: BorderRadius.circular(24),
-        border: Border.all(color: const Color(0xFFF1F4F1)),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withValues(alpha: 0.02),
-            blurRadius: 12,
+            color: Colors.black.withValues(alpha: 0.04), // Keeping subtle shadow for depth
+            blurRadius: 16,
             offset: const Offset(0, 4),
           ),
         ],
@@ -68,16 +70,15 @@ class RecipeCard extends StatelessWidget {
                         return Container(
                           padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
                           decoration: BoxDecoration(
-                            color: const Color(0xFFF2F7F2),
+                            color: customColors.chartTabBackground,
                             borderRadius: BorderRadius.circular(8),
                           ),
                           child: Text(
                             cat.toUpperCase(),
-                            style: const TextStyle(
-                              color: Color(0xFF6A8773),
-                              fontSize: 10,
-                              fontWeight: FontWeight.w800,
-                              letterSpacing: 0.5,
+                            style: textTheme.labelSmall?.copyWith(
+                              color: customColors.darkSage,
+                              fontWeight: FontWeight.w900,
+                              letterSpacing: 0.8,
                             ),
                           ),
                         );
@@ -87,14 +88,14 @@ class RecipeCard extends StatelessWidget {
                   IconButton(
                     icon: Icon(
                       isFavorite ? Icons.favorite_rounded : Icons.favorite_border_rounded,
-                      color: isFavorite ? const Color(0xFF6A8773) : const Color(0xFFBCC6C0),
+                      color: isFavorite ? customColors.darkSage : customColors.slateGrey?.withValues(alpha: 0.3),
                     ),
                     onPressed: onFavoriteTap,
                     visualDensity: VisualDensity.compact,
                   ),
                   if (onAddToGroceryList != null)
                     IconButton(
-                      icon: const Icon(Icons.shopping_cart_outlined, color: Color(0xFFBCC6C0)),
+                      icon: Icon(Icons.shopping_cart_outlined, color: customColors.slateGrey?.withValues(alpha: 0.3)),
                       onPressed: onAddToGroceryList,
                       visualDensity: VisualDensity.compact,
                       tooltip: l10n.menuAddToGrocery,
@@ -106,11 +107,10 @@ class RecipeCard extends StatelessWidget {
               // Recipe Name
               Text(
                 name,
-                style: const TextStyle(
-                  fontSize: 18,
-                  fontWeight: FontWeight.w800,
-                  color: Color(0xFF1A1E1B),
-                  height: 1.3,
+                style: textTheme.titleMedium?.copyWith(
+                  fontWeight: FontWeight.w900,
+                  color: customColors.textDarkBlue,
+                  height: 1.2,
                 ),
               ),
               const SizedBox(height: 24),
@@ -137,19 +137,17 @@ class RecipeCard extends StatelessWidget {
                       children: [
                         Text(
                           '${calories?.toInt() ?? 0}',
-                          style: const TextStyle(
-                            fontSize: 16,
+                          style: textTheme.titleMedium?.copyWith(
                             fontWeight: FontWeight.w900,
-                            color: Color(0xFF1A1E1B),
+                            color: customColors.textDarkBlue,
                           ),
                         ),
-                        const Text(
-                          'KCAL',
-                          style: TextStyle(
-                            fontSize: 10,
-                            fontWeight: FontWeight.w800,
-                            color: Color(0xFFBCC6C0),
-                            letterSpacing: 0.5,
+                        Text(
+                          l10n.kcalLabel.toUpperCase(),
+                          style: textTheme.labelSmall?.copyWith(
+                            fontWeight: FontWeight.w900,
+                            color: customColors.slateGrey?.withValues(alpha: 0.5),
+                            letterSpacing: 1.0,
                           ),
                         ),
                       ],
@@ -172,16 +170,19 @@ class _NutritionItem extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+    final customColors = theme.extension<AppCustomColors>()!;
+    final textTheme = theme.textTheme;
+
     return Column(
       children: [
-        Icon(icon, color: const Color(0xFF6A8773), size: 22),
+        Icon(icon, color: customColors.darkSage, size: 24),
         const SizedBox(height: 8),
         Text(
           value,
-          style: const TextStyle(
-            fontSize: 12,
-            fontWeight: FontWeight.w800,
-            color: Color(0xFFBCC6C0),
+          style: textTheme.bodySmall?.copyWith(
+            fontWeight: FontWeight.w900,
+            color: customColors.slateGrey?.withValues(alpha: 0.6),
           ),
         ),
       ],

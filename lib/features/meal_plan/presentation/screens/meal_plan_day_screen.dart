@@ -17,6 +17,7 @@ import 'package:meal_plan_app/features/meal_plan/presentation/widgets/detail_mea
 import 'package:meal_plan_app/features/meal_plan/presentation/widgets/detail_meal_plan/delete_entry_sheet.dart';
 import 'package:meal_plan_app/features/shared/utils/app_error_localizations.dart';
 import 'package:meal_plan_app/l10n/app_localizations.dart';
+import 'package:meal_plan_app/config/theme/app_theme.dart';
 
 class MealPlanDayScreen extends ConsumerWidget {
   const MealPlanDayScreen({super.key});
@@ -29,6 +30,11 @@ class MealPlanDayScreen extends ConsumerWidget {
     final actionsState = ref.watch(mealPlanEntryActionsProvider);
     final authState = ref.watch(authProvider);
     final l10n = AppLocalizations.of(context);
+    final theme = Theme.of(context);
+    final colors = theme.colorScheme;
+    final textTheme = theme.textTheme;
+    final customColors = theme.extension<AppCustomColors>()!;
+
     final hideNutritionValues =
         authState is AuthenticatedAuthState &&
         authState.user.configurations?['hideNutritionValues'] == true;
@@ -37,23 +43,21 @@ class MealPlanDayScreen extends ConsumerWidget {
         : null;
 
     return Scaffold(
-      backgroundColor: const Color(0xFFF8FAFC),
       appBar: AppBar(
-        backgroundColor: const Color(0xFFF8FAFC),
+        backgroundColor: theme.scaffoldBackgroundColor,
         elevation: 0,
         centerTitle: false,
         leading: IconButton(
-          icon: const Icon(Icons.arrow_back, color: Color(0xFF64748B)),
+          icon: Icon(Icons.arrow_back, color: customColors.textDarkBlue),
           onPressed: () => context.go('/meal-plan/history'),
         ),
         title: Align(
           alignment: Alignment.centerRight,
           child: Text(
             l10n.mealsOfDayTitle,
-            style: const TextStyle(
-              color: Color(0xFF0F172A),
+            style: textTheme.titleLarge?.copyWith(
+              color: customColors.textDarkBlue,
               fontWeight: FontWeight.w900,
-              fontSize: 20,
             ),
           ),
         )
@@ -96,18 +100,18 @@ class MealPlanDayScreen extends ConsumerWidget {
                         Container(
                           padding: const EdgeInsets.symmetric(vertical: 20, horizontal: 16),
                           decoration: BoxDecoration(
-                            color: const Color(0xFFF0F3EF),
+                            color: customColors.chartTabBackground,
                             borderRadius: BorderRadius.circular(24),
                           ),
                           child: Row(
                             mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                             children: [
                               _DailyMacro(label: l10n.metricProtein.toUpperCase(), value: '${totals.protein?.toInt() ?? 0}g'),
-                              Container(width: 1, height: 32, color: const Color(0xFFDCDEDD)),
+                              Container(width: 1, height: 32, color: colors.outlineVariant.withValues(alpha: 0.5)),
                               _DailyMacro(label: l10n.metricFat.toUpperCase(), value: '${totals.fats?.toInt() ?? 0}g'),
-                              Container(width: 1, height: 32, color: const Color(0xFFDCDEDD)),
+                              Container(width: 1, height: 32, color: colors.outlineVariant.withValues(alpha: 0.5)),
                               _DailyMacro(label: l10n.metricCarbsShort.toUpperCase(), value: '${totals.carbs?.toInt() ?? 0}g'),
-                              Container(width: 1, height: 32, color: const Color(0xFFDCDEDD)),
+                              Container(width: 1, height: 32, color: colors.outlineVariant.withValues(alpha: 0.5)),
                               _DailyMacro(label: l10n.kcalLabel.toUpperCase(), value: '${totals.calories?.toInt() ?? 0}'),
                             ],
                           ),
@@ -149,18 +153,18 @@ class MealPlanDayScreen extends ConsumerWidget {
                         Container(
                           padding: const EdgeInsets.symmetric(vertical: 20, horizontal: 16),
                           decoration: BoxDecoration(
-                            color: const Color(0xFFF0F3EF),
+                            color: customColors.chartTabBackground,
                             borderRadius: BorderRadius.circular(24),
                           ),
                           child: Row(
                             mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                             children: [
                               _DailyMacro(label: l10n.metricProtein.toUpperCase(), value: '${totals.protein?.toInt() ?? 0}g'),
-                              Container(width: 1, height: 32, color: const Color(0xFFDCDEDD)),
+                              Container(width: 1, height: 32, color: colors.outlineVariant.withValues(alpha: 0.5)),
                               _DailyMacro(label: l10n.metricFat.toUpperCase(), value: '${totals.fats?.toInt() ?? 0}g'),
-                              Container(width: 1, height: 32, color: const Color(0xFFDCDEDD)),
+                              Container(width: 1, height: 32, color: colors.outlineVariant.withValues(alpha: 0.5)),
                               _DailyMacro(label: l10n.metricCarbsShort.toUpperCase(), value: '${totals.carbs?.toInt() ?? 0}g'),
-                              Container(width: 1, height: 32, color: const Color(0xFFDCDEDD)),
+                              Container(width: 1, height: 32, color: colors.outlineVariant.withValues(alpha: 0.5)),
                               _DailyMacro(label: l10n.kcalLabel.toUpperCase(), value: '${totals.calories?.toInt() ?? 0}'),
                             ],
                           ),
@@ -183,10 +187,9 @@ class MealPlanDayScreen extends ConsumerWidget {
                           padding: const EdgeInsets.only(bottom: 12),
                           child: Text(
                             _formatMealType(l10n, entry.mealType),
-                            style: const TextStyle(
-                              fontSize: 22,
+                            style: textTheme.headlineSmall?.copyWith(
                               fontWeight: FontWeight.w900,
-                              color: Color(0xFF0F172A),
+                              color: customColors.textDarkBlue,
                             ),
                           ),
                         ),
@@ -300,6 +303,10 @@ Future<void> _confirmComplete(
   required DateTime selectedDate,
 }) async {
   final l10n = AppLocalizations.of(context);
+  final theme = Theme.of(context);
+  final textTheme = theme.textTheme;
+  final customColors = theme.extension<AppCustomColors>()!;
+  
   if (entry.recipeId <= 0) {
     CustomSnackbar.showInfo(context, l10n.noRecipeAssociated);
     return;
@@ -307,7 +314,13 @@ Future<void> _confirmComplete(
   final confirmed = await showDialog<bool>(
     context: context,
     builder: (ctx) => AlertDialog(
-      title: Text(l10n.markCompleteDialogTitle),
+      title: Text(
+        l10n.markCompleteDialogTitle,
+        style: textTheme.titleLarge?.copyWith(
+          fontWeight: FontWeight.w900,
+          color: customColors.textDarkBlue,
+        ),
+      ),
       content: Column(
         mainAxisSize: MainAxisSize.min,
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -317,18 +330,20 @@ Future<void> _confirmComplete(
           Container(
             padding: const EdgeInsets.all(12),
             decoration: BoxDecoration(
-              color: Colors.amber.withAlpha(30),
-              borderRadius: BorderRadius.circular(8),
-              border: Border.all(color: Colors.amber),
+              color: customColors.chartTabBackground,
+              borderRadius: BorderRadius.circular(12),
+              border: Border.all(color: customColors.darkSage!.withValues(alpha: 0.3)),
             ),
             child: Row(
               children: [
-                const Icon(Icons.info_outline, color: Colors.amber, size: 18),
+                Icon(Icons.info_outline, color: customColors.darkSage, size: 18),
                 const SizedBox(width: 8),
                 Expanded(
                   child: Text(
                     l10n.markCompleteDeductInfo,
-                    style: const TextStyle(fontSize: 12),
+                    style: textTheme.bodySmall?.copyWith(
+                      color: customColors.slateGrey,
+                    ),
                   ),
                 ),
               ],
@@ -339,13 +354,25 @@ Future<void> _confirmComplete(
       actions: [
         TextButton(
           onPressed: () => Navigator.of(ctx).pop(false),
-          child: Text(l10n.cancel),
+          child: Text(
+            l10n.cancel.toUpperCase(),
+            style: TextStyle(
+              fontWeight: FontWeight.w800,
+              color: customColors.slateGrey,
+            ),
+          ),
         ),
         FilledButton.icon(
           onPressed: () => Navigator.of(ctx).pop(true),
-          icon: const Icon(Icons.check_circle_outline),
-          label: Text(l10n.completeAction),
-          style: FilledButton.styleFrom(backgroundColor: Colors.green),
+          icon: const Icon(Icons.check_circle_outline, size: 20),
+          label: Text(
+            l10n.completeAction.toUpperCase(),
+            style: const TextStyle(fontWeight: FontWeight.w900),
+          ),
+          style: FilledButton.styleFrom(
+            backgroundColor: customColors.darkSage,
+            shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+          ),
         ),
       ],
     ),
@@ -360,7 +387,7 @@ Future<void> _confirmComplete(
         entryId: entry.entryId,
       );
   if (!context.mounted) return;
-
+  
   if (result != null) {
     ref.invalidate(mealPlanDayEntriesProvider(selectedDate));
     ref.read(mealPlanEntryActionsProvider.notifier).reset();
@@ -448,7 +475,7 @@ Future<void> _changeEntryDate(
   final pickedDate = await showModalBottomSheet<DateTime?>(
     context: context,
     isScrollControlled: true,
-    backgroundColor: Colors.white,
+    backgroundColor: Theme.of(context).scaffoldBackgroundColor,
     shape: const RoundedRectangleBorder(
       borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
     ),
@@ -493,7 +520,7 @@ Future<void> _showRegenerateSheet(
     context: context,
     isScrollControlled: true,
     useSafeArea: true,
-    backgroundColor: Colors.white,
+    backgroundColor: Theme.of(context).scaffoldBackgroundColor,
     shape: const RoundedRectangleBorder(
       borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
     ),
@@ -539,19 +566,22 @@ class _MealEntryCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+    final textTheme = theme.textTheme;
     final l10n = AppLocalizations.of(context);
+    final customColors = theme.extension<AppCustomColors>()!;
     final isSkipped = _isSkippedStatus(entry.status);
     final isCompleted = entry.status?.toLowerCase() == 'completed';
 
     return Container(
       decoration: BoxDecoration(
-        color: Colors.white,
+        color: theme.cardTheme.color,
         borderRadius: BorderRadius.circular(24),
-        boxShadow: const [
+        boxShadow: [
           BoxShadow(
-            color: Color(0x0A000000),
-            blurRadius: 10,
-            offset: Offset(0, 4),
+            color: Colors.black.withValues(alpha: 0.04),
+            blurRadius: 16,
+            offset: const Offset(0, 4),
           )
         ],
       ),
@@ -561,17 +591,17 @@ class _MealEntryCard extends StatelessWidget {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Row(
-              crossAxisAlignment: CrossAxisAlignment.start,
+              crossAxisAlignment: CrossAxisAlignment.center,
               children: [
                 Container(
                   width: 56,
                   height: 56,
                   decoration: BoxDecoration(
-                    color: const Color(0xFFE8EFEA),
+                    color: customColors.chartTabBackground,
                     borderRadius: BorderRadius.circular(16),
                   ),
-                  child: const Center(
-                    child: Icon(Icons.restaurant, color: Color(0xFF5C7861), size: 28),
+                  child: Center(
+                    child: Icon(Icons.restaurant, color: customColors.darkSage, size: 28),
                   ),
                 ),
                 const SizedBox(width: 16),
@@ -581,10 +611,9 @@ class _MealEntryCard extends StatelessWidget {
                     children: [
                       Text(
                         entry.name,
-                        style: const TextStyle(
-                          fontSize: 18,
+                        style: theme.textTheme.titleMedium?.copyWith(
                           fontWeight: FontWeight.w800,
-                          color: Color(0xFF0F172A),
+                          color: customColors.textDarkBlue,
                           height: 1.2,
                         ),
                       ),
@@ -592,19 +621,25 @@ class _MealEntryCard extends StatelessWidget {
                       // Time, Servings, KCAL sub-row
                       Row(
                         children: [
-                          const Icon(Icons.person_outline, size: 14, color: Color(0xFF64748B)),
+                          Icon(Icons.person_outline, size: 14, color: customColors.slateGrey),
                           const SizedBox(width: 4),
                           Text(
                             '${_formatInt(entry.servings)} ${l10n.servingsShortLabel}',
-                            style: const TextStyle(fontSize: 12, color: Color(0xFF64748B), fontWeight: FontWeight.w600),
+                            style: textTheme.labelSmall?.copyWith(
+                              color: customColors.slateGrey,
+                              fontWeight: FontWeight.w800,
+                            ),
                           ),
                           const SizedBox(width: 12),
                           if (!hideNutritionValues && entry.calories != null) ...[
-                            const Icon(Icons.bolt, size: 14, color: Color(0xFF64748B)),
+                            Icon(Icons.bolt, size: 14, color: customColors.slateGrey),
                             const SizedBox(width: 4),
                             Text(
-                              '${entry.calories!.toInt()} ${l10n.kcalLabel}',
-                              style: const TextStyle(fontSize: 12, color: Color(0xFF64748B), fontWeight: FontWeight.w600),
+                               '${entry.calories!.toInt()} ${l10n.kcalLabel}',
+                              style: textTheme.labelSmall?.copyWith(
+                                color: customColors.slateGrey,
+                                fontWeight: FontWeight.w800,
+                              ),
                             ),
                           ],
                         ],
@@ -618,14 +653,14 @@ class _MealEntryCard extends StatelessWidget {
                   height: 32,
                   child: IconButton(
                     padding: EdgeInsets.zero,
-                    icon: const Icon(Icons.more_vert, color: Color(0xFFCBD5E1)),
+                    icon: Icon(Icons.more_vert, color: theme.colorScheme.outline),
                     onPressed: isUpdating
                         ? null
                         : () {
                             showModalBottomSheet<void>(
                               context: context,
                               isScrollControlled: true,
-                              backgroundColor: Colors.white,
+                              backgroundColor: theme.scaffoldBackgroundColor,
                               shape: const RoundedRectangleBorder(
                                 borderRadius: BorderRadius.vertical(
                                   top: Radius.circular(20),
@@ -651,18 +686,18 @@ class _MealEntryCard extends StatelessWidget {
               Container(
                 padding: const EdgeInsets.symmetric(vertical: 16, horizontal: 20),
                 decoration: BoxDecoration(
-                  color: const Color(0xFFEFF3F0),
+                  color: customColors.chartTabBackground,
                   borderRadius: BorderRadius.circular(24),
                 ),
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
                     _MiniMacro(label: l10n.metricProtein.toUpperCase(), value: '${entry.proteinGrams?.toStringAsFixed(0) ?? '0'}g'),
-                    Container(width: 1, height: 32, color: const Color(0xFFD4E0D6)),
+                    Container(width: 1, height: 32, color: customColors.slateGrey?.withValues(alpha: 0.1)),
                     _MiniMacro(label: l10n.metricFat.toUpperCase(), value: '${entry.fatsGrams?.toStringAsFixed(0) ?? '0'}g'),
-                    Container(width: 1, height: 32, color: const Color(0xFFD4E0D6)),
+                    Container(width: 1, height: 32, color: customColors.slateGrey?.withValues(alpha: 0.1)),
                     _MiniMacro(label: l10n.metricCarbsShort.toUpperCase(), value: '${entry.carbsGrams?.toStringAsFixed(0) ?? '0'}g'),
-                    Container(width: 1, height: 32, color: const Color(0xFFD4E0D6)),
+                    Container(width: 1, height: 32, color: customColors.slateGrey?.withValues(alpha: 0.1)),
                     _MiniMacro(label: l10n.kcalLabel.toUpperCase(), value: '${entry.calories?.toStringAsFixed(0) ?? '0'}'),
                   ],
                 ),
@@ -685,12 +720,18 @@ class _MealEntryCard extends StatelessWidget {
                   child: OutlinedButton(
                     onPressed: onOpenRecipe,
                     style: OutlinedButton.styleFrom(
-                      foregroundColor: const Color(0xFF5C7861),
-                      side: const BorderSide(color: Color(0xFF5C7861)),
-                      padding: const EdgeInsets.symmetric(vertical: 16),
-                      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+                      foregroundColor: customColors.darkSage,
+                      side: BorderSide(color: customColors.darkSage!),
+                      padding: const EdgeInsets.symmetric(vertical: 20),
+                      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
                     ),
-                    child: Text(l10n.mealPlanActionViewDetails, style: const TextStyle(fontWeight: FontWeight.w700, fontSize: 13)),
+                    child: Text(
+                      l10n.mealPlanActionViewDetails.toUpperCase(),
+                      style: textTheme.labelLarge?.copyWith(
+                        fontWeight: FontWeight.w900,
+                        letterSpacing: 1.1,
+                      ),
+                    ),
                   ),
                 ),
                 const SizedBox(width: 12),
@@ -698,23 +739,27 @@ class _MealEntryCard extends StatelessWidget {
                   child: FilledButton.icon(
                     onPressed: (isUpdating || isCompleted || isSkipped) ? null : onCompleteEntry,
                     style: FilledButton.styleFrom(
-                      backgroundColor: isSkipped ? Colors.grey : (isCompleted ? Colors.green : const Color(0xFF5C7861)),
-                      disabledBackgroundColor: isSkipped ? Colors.grey.shade300 : null,
-                      disabledForegroundColor: isSkipped ? Colors.grey.shade600 : null,
-                      padding: const EdgeInsets.symmetric(vertical: 16),
-                      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
-                      minimumSize: const Size(0, 52), // Uniform height
+                      backgroundColor: isSkipped 
+                          ? theme.disabledColor 
+                          : (isCompleted ? Colors.green.shade700 : customColors.darkSage),
+                      padding: const EdgeInsets.symmetric(vertical: 20),
+                      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
+                      elevation: 0,
                     ),
                     icon: Icon(
                         isSkipped ? Icons.do_not_disturb_on 
                         : (isCompleted ? Icons.check_circle : Icons.check_circle_outline), 
-                        size: 20
+                        size: 22
                     ),
                     label: FittedBox(
                       fit: BoxFit.scaleDown,
                       child: Text(
-                        isSkipped ? l10n.mealSkippedLabel : (isCompleted ? l10n.mealCompletedLabel : l10n.completeAction),
-                        style: const TextStyle(fontWeight: FontWeight.w700, fontSize: 13),
+                        isSkipped ? l10n.mealSkippedLabel.toUpperCase() : (isCompleted ? l10n.mealCompletedLabel.toUpperCase() : l10n.completeAction.toUpperCase()),
+                        style: textTheme.labelLarge?.copyWith(
+                          fontWeight: FontWeight.w900,
+                          color: Colors.white,
+                          letterSpacing: 1.1,
+                        ),
                         maxLines: 1,
                       ),
                     ),
@@ -724,7 +769,7 @@ class _MealEntryCard extends StatelessWidget {
             ),
             if (isUpdating) ...[
               const SizedBox(height: 16),
-              const LinearProgressIndicator(minHeight: 2, color: Color(0xFF5C7861)),
+              LinearProgressIndicator(minHeight: 2, color: customColors.darkSage),
             ],
           ],
         ),
@@ -741,12 +786,19 @@ class _CategoryChip extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
+      padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 8),
       decoration: BoxDecoration(
-        color: Theme.of(context).colorScheme.secondaryContainer,
+        color: Theme.of(context).extension<AppCustomColors>()?.chartTabBackground,
         borderRadius: BorderRadius.circular(12),
       ),
-      child: Text(label, style: Theme.of(context).textTheme.bodySmall),
+      child: Text(
+        label,
+        style: Theme.of(context).textTheme.labelSmall?.copyWith(
+              color: Theme.of(context).extension<AppCustomColors>()?.darkSage,
+              fontWeight: FontWeight.w900,
+              letterSpacing: 0.5,
+            ),
+      ),
     );
   }
 }
@@ -814,6 +866,8 @@ class _DaySelector extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+    final customColors = theme.extension<AppCustomColors>()!;
     final days = List.generate(
       5,
       (index) => selectedDate.add(Duration(days: index - 2)),
@@ -822,7 +876,7 @@ class _DaySelector extends StatelessWidget {
       children: [
         IconButton(
           onPressed: onPrevious,
-          icon: const Icon(Icons.chevron_left, color: Color(0xFF94A3B8), size: 24),
+          icon: Icon(Icons.chevron_left, color: customColors.slateGrey, size: 24),
           padding: EdgeInsets.zero,
           constraints: const BoxConstraints(),
         ),
@@ -844,7 +898,7 @@ class _DaySelector extends StatelessWidget {
         ),
         IconButton(
           onPressed: onNext,
-          icon: const Icon(Icons.chevron_right, color: Color(0xFF94A3B8), size: 24),
+          icon: Icon(Icons.chevron_right, color: customColors.slateGrey, size: 24),
           padding: EdgeInsets.zero,
           constraints: const BoxConstraints(),
         ),
@@ -866,6 +920,8 @@ class _DayChip extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+    final customColors = theme.extension<AppCustomColors>()!;
     final l10n = AppLocalizations.of(context);
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 4),
@@ -875,11 +931,11 @@ class _DayChip extends StatelessWidget {
         child: Container(
           padding: const EdgeInsets.symmetric(vertical: 12),
           decoration: BoxDecoration(
-            color: isSelected ? const Color(0xFF5C7861) : Colors.white,
+            color: isSelected ? theme.colorScheme.primary : theme.cardTheme.color,
             borderRadius: BorderRadius.circular(24),
             boxShadow: isSelected
-                ? const [
-                    BoxShadow(color: Color(0x335C7861), blurRadius: 8, offset: Offset(0, 4))
+                ? [
+                    BoxShadow(color: theme.colorScheme.primary.withValues(alpha: 0.2), blurRadius: 8, offset: const Offset(0, 4))
                   ]
                 : const [
                     BoxShadow(color: Color(0x05000000), blurRadius: 4, offset: Offset(0, 2))
@@ -891,7 +947,7 @@ class _DayChip extends StatelessWidget {
               Text(
                 _weekdayLabel(l10n, date).toUpperCase(),
                 style: TextStyle(
-                  color: isSelected ? Colors.white70 : const Color(0xFF94A3B8),
+                  color: isSelected ? theme.colorScheme.onPrimary.withValues(alpha: 0.7) : customColors.slateGrey,
                   fontSize: 10,
                   fontWeight: FontWeight.w700,
                   letterSpacing: 0.5,
@@ -901,7 +957,7 @@ class _DayChip extends StatelessWidget {
               Text(
                 date.day.toString(),
                 style: TextStyle(
-                  color: isSelected ? Colors.white : const Color(0xFF0F172A),
+                  color: isSelected ? theme.colorScheme.onPrimary : customColors.textDarkBlue,
                   fontSize: 18,
                   fontWeight: FontWeight.w900,
                 ),
@@ -982,20 +1038,22 @@ bool _isSkippedStatus(String? status) {
 }
 
 Future<void> _showSkippedMealDialog(BuildContext context) async {
+  final theme = Theme.of(context);
+  final customColors = theme.extension<AppCustomColors>()!;
   final l10n = AppLocalizations.of(context);
   await showDialog<void>(
     context: context,
     builder: (dialogContext) {
       return AlertDialog(
-        backgroundColor: Colors.white,
+        backgroundColor: theme.dialogTheme.backgroundColor,
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
         title: Text(l10n.skipMealDialogTitle, style: const TextStyle(fontWeight: FontWeight.w700)),
-        content: Text(l10n.skipMealDialogMessage, style: const TextStyle(color: Color(0xFF1A1E1B))),
+        content: Text(l10n.skipMealDialogMessage, style: TextStyle(color: customColors.textDarkBlue)),
         actions: [
           FilledButton(
             style: FilledButton.styleFrom(
-              backgroundColor: const Color(0xFF5C7861),
-              foregroundColor: Colors.white,
+              backgroundColor: theme.colorScheme.primary,
+              foregroundColor: theme.colorScheme.onPrimary,
               shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
             ),
             onPressed: () => Navigator.of(dialogContext).pop(),
@@ -1086,7 +1144,6 @@ String _formatMealType(AppLocalizations l10n, String? mealType) {
   }
 }
 
-// removed _RegenerateDayEntrySheet class that is now handled externally
 class _DailyMacro extends StatelessWidget {
   final String label;
   final String value;
@@ -1095,17 +1152,19 @@ class _DailyMacro extends StatelessWidget {
   
   @override
   Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+    final customColors = theme.extension<AppCustomColors>()!;
     return Column(
       mainAxisSize: MainAxisSize.min,
       children: [
         Text(
           label,
-          style: const TextStyle(color: Color(0xFF94A3B8), fontSize: 10, fontWeight: FontWeight.w700, letterSpacing: 0.5),
+          style: TextStyle(color: customColors.slateGrey, fontSize: 10, fontWeight: FontWeight.w700, letterSpacing: 0.5),
         ),
         const SizedBox(height: 4),
         Text(
           value,
-          style: const TextStyle(color: Color(0xFF0F172A), fontSize: 16, fontWeight: FontWeight.w900),
+          style: TextStyle(color: customColors.textDarkBlue, fontSize: 16, fontWeight: FontWeight.w900),
         ),
       ],
     );
@@ -1120,14 +1179,16 @@ class _MiniMacro extends StatelessWidget {
   
   @override
   Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+    final customColors = theme.extension<AppCustomColors>()!;
     return Column(
       mainAxisSize: MainAxisSize.min,
       crossAxisAlignment: CrossAxisAlignment.center,
       children: [
         Text(
           label,
-          style: const TextStyle(
-            color: Color(0xFF7A9382), 
+          style: TextStyle(
+            color: customColors.darkSage?.withValues(alpha: 0.8), 
             fontSize: 11, 
             fontWeight: FontWeight.w600,
             letterSpacing: 0.5,
@@ -1136,8 +1197,8 @@ class _MiniMacro extends StatelessWidget {
         const SizedBox(height: 4),
         Text(
           value,
-          style: const TextStyle(
-            color: Color(0xFF263238), 
+          style: TextStyle(
+            color: customColors.textDarkBlue, 
             fontSize: 18, 
             fontWeight: FontWeight.w800,
           ),

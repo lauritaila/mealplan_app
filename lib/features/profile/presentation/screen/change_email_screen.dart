@@ -3,6 +3,8 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:meal_plan_app/features/profile/presentation/providers/change_email_provider.dart';
 import 'package:meal_plan_app/features/shared/utils/app_error_localizations.dart';
 import 'package:meal_plan_app/l10n/app_localizations.dart';
+import 'package:meal_plan_app/config/theme/app_theme.dart';
+import 'package:meal_plan_app/features/shared/shared.dart';
 
 class ChangeEmailScreen extends ConsumerStatefulWidget {
   const ChangeEmailScreen({super.key});
@@ -48,25 +50,19 @@ class _ChangeEmailScreenState extends ConsumerState<ChangeEmailScreen> {
     final state = ref.read(changeEmailProvider);
     if (state.error != null) {
       final errorText = localizeAppError(l10n, state.error!);
-      ScaffoldMessenger.of(
-        context,
-      ).showSnackBar(SnackBar(content: Text(errorText)));
+      CustomSnackbar.showInfo(context, errorText);
       return;
     }
 
     if (state.otpRequested) {
-      ScaffoldMessenger.of(
-        context,
-      ).showSnackBar(SnackBar(content: Text(l10n.done)));
+      CustomSnackbar.showInfo(context, l10n.done);
     }
   }
 
   Future<void> _verifyCode() async {
     final l10n = AppLocalizations.of(context);
     if (_codeController.text.trim().length != 6) {
-      ScaffoldMessenger.of(
-        context,
-      ).showSnackBar(SnackBar(content: Text(l10n.errorAuthInvalidOtp)));
+      CustomSnackbar.showInfo(context, l10n.errorAuthInvalidOtp);
       return;
     }
 
@@ -81,15 +77,11 @@ class _ChangeEmailScreenState extends ConsumerState<ChangeEmailScreen> {
     final state = ref.read(changeEmailProvider);
     if (state.error != null) {
       final errorText = localizeAppError(l10n, state.error!);
-      ScaffoldMessenger.of(
-        context,
-      ).showSnackBar(SnackBar(content: Text(errorText)));
+      CustomSnackbar.showInfo(context, errorText);
       return;
     }
 
-    ScaffoldMessenger.of(
-      context,
-    ).showSnackBar(SnackBar(content: Text(l10n.done)));
+    CustomSnackbar.showInfo(context, l10n.done);
     Navigator.of(context).pop();
   }
 
@@ -106,25 +98,23 @@ class _ChangeEmailScreenState extends ConsumerState<ChangeEmailScreen> {
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context);
     final theme = Theme.of(context);
+    final textTheme = theme.textTheme;
+    final customColors = theme.extension<AppCustomColors>()!;
     final state = ref.watch(changeEmailProvider);
-    final primaryGreen = theme.colorScheme.primary;
-    final darkText = theme.colorScheme.onSurface;
-    final secondaryText = theme.colorScheme.onSurfaceVariant;
 
     return Scaffold(
-      backgroundColor: Colors.white,
+      backgroundColor: theme.colorScheme.surface,
       appBar: AppBar(
         title: Text(
           state.otpRequested ? l10n.otpVerifySignIn : l10n.profileChangeEmailLabel,
-          style: TextStyle(fontWeight: FontWeight.bold, color: darkText),
+          style: textTheme.titleLarge?.copyWith(
+            fontWeight: FontWeight.w900,
+            color: customColors.textDarkBlue,
+          ),
         ),
         centerTitle: true,
-        backgroundColor: Colors.white,
+        backgroundColor: Colors.transparent,
         elevation: 0,
-        leading: IconButton(
-          icon: Icon(Icons.arrow_back, color: darkText),
-          onPressed: () => Navigator.of(context).pop(),
-        ),
       ),
       body: SingleChildScrollView(
         padding: const EdgeInsets.symmetric(horizontal: 24),
@@ -138,23 +128,23 @@ class _ChangeEmailScreenState extends ConsumerState<ChangeEmailScreen> {
                 width: 100,
                 height: 100,
                 decoration: BoxDecoration(
-                  color: primaryGreen.withValues(alpha: 0.1),
+                  color: customColors.darkSage?.withValues(alpha: 0.1),
                   shape: BoxShape.circle,
                 ),
                 child: Center(
-                  child: Icon(Icons.email_outlined, size: 48, color: primaryGreen),
+                  child: Icon(Icons.email_outlined, size: 48, color: customColors.darkSage),
                 ),
               ),
               const SizedBox(height: 32),
               Text(
                 state.otpRequested ? l10n.checkYourInbox : l10n.profileChangeEmailLabel,
-                style: TextStyle(
-                  fontSize: 24,
-                  fontWeight: FontWeight.bold,
-                  color: darkText,
+                textAlign: TextAlign.center,
+                style: textTheme.headlineSmall?.copyWith(
+                  fontWeight: FontWeight.w900,
+                  color: customColors.textDarkBlue,
                 ),
               ),
-              const SizedBox(height: 12),
+              const SizedBox(height: 16),
               Padding(
                 padding: const EdgeInsets.symmetric(horizontal: 16),
                 child: Text(
@@ -162,10 +152,10 @@ class _ChangeEmailScreenState extends ConsumerState<ChangeEmailScreen> {
                       ? l10n.otpVerificationMessage
                       : l10n.otpRequestMessage,
                   textAlign: TextAlign.center,
-                  style: TextStyle(
-                    fontSize: 15,
-                    color: secondaryText,
+                  style: textTheme.bodyLarge?.copyWith(
+                    color: customColors.slateGrey,
                     height: 1.5,
+                    fontWeight: FontWeight.w500,
                   ),
                 ),
               ),
@@ -176,35 +166,37 @@ class _ChangeEmailScreenState extends ConsumerState<ChangeEmailScreen> {
                 Align(
                   alignment: Alignment.centerLeft,
                   child: Text(
-                    l10n.newEmailAddressLabel,
-                    style: TextStyle(
-                      fontSize: 14,
-                      fontWeight: FontWeight.bold,
-                      color: darkText.withValues(alpha: 0.8),
+                    l10n.newEmailAddressLabel.toUpperCase(),
+                    style: textTheme.labelSmall?.copyWith(
+                      fontWeight: FontWeight.w900,
+                      letterSpacing: 1.2,
+                      color: customColors.slateGrey?.withValues(alpha: 0.6),
                     ),
                   ),
                 ),
-                const SizedBox(height: 8),
+                const SizedBox(height: 12),
                 TextFormField(
                   controller: _emailController,
                   keyboardType: TextInputType.emailAddress,
+                  style: textTheme.bodyLarge?.copyWith(
+                    fontWeight: FontWeight.w600,
+                    color: customColors.textDarkBlue,
+                  ),
                   decoration: InputDecoration(
                     hintText: l10n.newEmailPlaceholder,
-                    hintStyle: const TextStyle(color: Color(0xFF94A3B8)),
-                    filled: true,
-                    fillColor: Colors.white,
-                    contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
-                    border: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(12),
-                      borderSide: const BorderSide(color: Color(0xFFE2E8F0)),
+                    hintStyle: textTheme.bodyLarge?.copyWith(
+                      color: customColors.slateGrey?.withValues(alpha: 0.3),
                     ),
-                    enabledBorder: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(12),
-                      borderSide: const BorderSide(color: Color(0xFFE2E8F0)),
+                    filled: true,
+                    fillColor: customColors.chartTabBackground,
+                    contentPadding: const EdgeInsets.all(20),
+                    border: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(20),
+                      borderSide: BorderSide.none,
                     ),
                     focusedBorder: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(12),
-                      borderSide: BorderSide(color: primaryGreen, width: 2),
+                      borderRadius: BorderRadius.circular(20),
+                      borderSide: BorderSide(color: customColors.darkSage!, width: 2),
                     ),
                   ),
                   validator: (value) {
@@ -218,9 +210,7 @@ class _ChangeEmailScreenState extends ConsumerState<ChangeEmailScreen> {
                   },
                 ),
               ] else ...[
-                // PIN Input (Simplified for now with 6 boxes but one focus)
-                // In a real app, you might use a dedicated PIN widget.
-                // Here I'll mock the appearance or use space-between text fields.
+                // PIN Input
                 GestureDetector(
                   onTap: () => _codeFocusNode.requestFocus(),
                   child: Row(
@@ -230,24 +220,31 @@ class _ChangeEmailScreenState extends ConsumerState<ChangeEmailScreen> {
                       final isFocused = _codeFocusNode.hasFocus && code.length == index;
                       final char = code.length > index ? code[index] : '';
 
-                      return Container(
-                        width: 45,
-                        height: 55,
+                      return AnimatedContainer(
+                        duration: const Duration(milliseconds: 200),
+                        width: 48,
+                        height: 64,
                         decoration: BoxDecoration(
-                          color: Colors.white,
-                          borderRadius: BorderRadius.circular(8),
+                          color: customColors.chartTabBackground,
+                          borderRadius: BorderRadius.circular(16),
                           border: Border.all(
-                            color: isFocused ? primaryGreen : const Color(0xFFE2E8F0),
-                            width: isFocused ? 2 : 1,
+                            color: isFocused ? customColors.darkSage! : Colors.transparent,
+                            width: 2,
                           ),
+                          boxShadow: isFocused ? [
+                            BoxShadow(
+                              color: customColors.darkSage!.withValues(alpha: 0.2),
+                              blurRadius: 10,
+                              offset: const Offset(0, 4),
+                            )
+                          ] : null,
                         ),
                         child: Center(
                           child: Text(
                             char.isEmpty ? '•' : char,
-                            style: TextStyle(
-                              fontSize: 18,
-                              fontWeight: FontWeight.bold,
-                              color: char.isEmpty ? secondaryText : darkText,
+                            style: textTheme.headlineSmall?.copyWith(
+                              fontWeight: FontWeight.w900,
+                              color: char.isEmpty ? customColors.slateGrey?.withValues(alpha: 0.3) : customColors.textDarkBlue,
                             ),
                           ),
                         ),
@@ -273,41 +270,48 @@ class _ChangeEmailScreenState extends ConsumerState<ChangeEmailScreen> {
                 ),
               ],
 
-              const SizedBox(height: 32),
+              const SizedBox(height: 48),
               SizedBox(
                 width: double.infinity,
+                height: 64,
                 child: FilledButton(
                   onPressed: state.isLoading ? null : _submit,
                   style: FilledButton.styleFrom(
-                    backgroundColor: primaryGreen,
-                    padding: const EdgeInsets.symmetric(vertical: 18),
+                    backgroundColor: customColors.darkSage,
                     shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(12),
+                      borderRadius: BorderRadius.circular(20),
                     ),
+                    elevation: 4,
                   ),
                   child: state.isLoading
                       ? const SizedBox(
-                          height: 20,
-                          width: 20,
-                          child: CircularProgressIndicator(color: Colors.white, strokeWidth: 2),
+                          height: 24,
+                          width: 24,
+                          child: CircularProgressIndicator(color: Colors.white, strokeWidth: 3),
                         )
                       : Text(
                           state.otpRequested ? l10n.otpVerifySignIn : l10n.continueLabel,
-                          style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+                          style: const TextStyle(fontSize: 16, fontWeight: FontWeight.w900),
                         ),
                 ),
               ),
-              const SizedBox(height: 24),
+              const SizedBox(height: 32),
               if (state.otpRequested)
                 Row(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
-                    Text("${l10n.didntReceiveCode} ", style: TextStyle(color: secondaryText)),
+                    Text(
+                      "${l10n.didntReceiveCode} ",
+                      style: textTheme.bodyMedium?.copyWith(color: customColors.slateGrey),
+                    ),
                     GestureDetector(
                       onTap: () => _requestCode(),
                       child: Text(
                         l10n.resendAction,
-                        style: TextStyle(color: primaryGreen, fontWeight: FontWeight.bold),
+                        style: textTheme.bodyMedium?.copyWith(
+                          color: customColors.darkSage,
+                          fontWeight: FontWeight.w900,
+                        ),
                       ),
                     ),
                   ],
@@ -315,7 +319,10 @@ class _ChangeEmailScreenState extends ConsumerState<ChangeEmailScreen> {
               else
                 Text(
                   l10n.secureVerificationNote,
-                  style: const TextStyle(fontSize: 12, color: Color(0xFFCBD5E1)),
+                  style: textTheme.labelSmall?.copyWith(
+                    color: customColors.slateGrey?.withValues(alpha: 0.5),
+                    fontWeight: FontWeight.w600,
+                  ),
                 ),
             ],
           ),

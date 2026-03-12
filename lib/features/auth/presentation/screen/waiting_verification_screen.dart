@@ -101,7 +101,7 @@ class _OtpVerificationScreenState extends ConsumerState<OtpVerificationScreen> {
         children: [
           AuthHeader(
             title: l10n.authVerifyAccountTitle,
-            subtitle: l10n.otpEnterSubtitle.replaceAll('[email]', email),
+            subtitle: l10n.otpEnterSubtitle(email),
             icon: Icons.mail_outline_rounded,
           ),
           const SizedBox(height: 48),
@@ -124,6 +124,7 @@ class _OtpVerificationScreenState extends ConsumerState<OtpVerificationScreen> {
                   ),
                   decoration: InputDecoration(
                     counterText: "",
+                    contentPadding: EdgeInsets.zero,
                     enabledBorder: OutlineInputBorder(
                       borderRadius: BorderRadius.circular(12),
                       borderSide: BorderSide(color: colors.outlineVariant),

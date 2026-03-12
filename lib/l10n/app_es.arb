@@ -196,6 +196,7 @@
   "favoriteUpdateFailed": "No se pudo actualizar favoritos. Inténtalo de nuevo.",
   "favoritesTooltip": "Favoritas",
   "noRecipesAvailable": "No hay recetas disponibles",
+  "noDescriptionProvided": "No se proporcionó descripción",
   "noFavoriteRecipes": "No tienes recetas favoritas",
   "recipeDetailTitle": "Detalle de receta",
   "errorTitle": "Error",
@@ -217,7 +218,12 @@
   "doYouHaveAccount": "¿Ya tienes una cuenta?",
   "verificationCodeSentEmail": "Se ha enviado un código de verificación a tu correo.",
   "otpEnterTitle": "Ingresa el código de verificación",
-  "otpEnterSubtitle": "Ingresa el código de 6 dígitos enviado a:",
+  "otpEnterSubtitle": "Ingresa el código de 6 dígitos enviado a: {email}",
+  "@otpEnterSubtitle": {
+    "placeholders": {
+      "email": {}
+    }
+  },
   "otpVerificationCodeLabel": "Código de verificación",
   "otpResend": "¿No recibiste un código? Enviar de nuevo",
   "otpVerifySignIn": "Verificar e iniciar sesión",
@@ -294,6 +300,7 @@
   "profileChangeEmailLabel": "Cambiar correo",
   "profileLanguageTitle": "Idioma",
   "profileLanguageLabel": "Idioma de la app",
+  "profileLanguageDescription": "Selecciona tu idioma de preferencia para la interfaz de la aplicación.",
   "profileLanguageEnglish": "Inglés",
   "profileLanguageSpanish": "Español",
   "profilePaymentsTitle": "Pagos",
@@ -619,6 +626,7 @@
   "nutritionErrorLoading": "Error al cargar datos nutricionales.",
   "achievementsTitle": "Logros",
   "weeklyActivityTitle": "Actividad Semanal",
+  "dailyTotalsTitle": "Totales Diarios",
   "mondayToSundayLabel": "LUN - DOM",
   "mealPlanActionViewDetails": "Ver Detalles",
   "planDeletedSuccess": "Plan eliminado.",
@@ -701,5 +709,18 @@
   "foodPreferencesSubtitle": "Cuéntanos sobre tus gustos para que podamos personalizar tu experiencia culinaria.",
   "goalsSubtitle": "Selecciona tus principales objetivos nutricionales para optimizar tu plan de comidas.",
   "cookingDetailsSubtitle": "Cuéntanos sobre tu estilo de cocina y el tamaño de tu hogar.",
-  "namePlaceholder": "Tu nombre completo"
+  "namePlaceholder": "Tu nombre completo",
+  "monthJan": "Ene",
+  "monthFeb": "Feb",
+  "monthMar": "Mar",
+  "monthApr": "Abr",
+  "monthMay": "May",
+  "monthJun": "Jun",
+  "monthJul": "Jul",
+  "monthAug": "Ago",
+  "monthSep": "Sep",
+  "monthOct": "Oct",
+  "monthNov": "Nov",
+  "monthDec": "Dic",
+  "breakdownTabCreate": "Crear"
 }

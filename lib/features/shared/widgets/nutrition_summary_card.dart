@@ -6,6 +6,7 @@ class NutritionSummaryCard extends StatelessWidget {
   final double? fats;
   final double? carbs;
   final double? calories;
+  final bool hideNutrition;
 
   const NutritionSummaryCard({
     super.key,
@@ -13,10 +14,13 @@ class NutritionSummaryCard extends StatelessWidget {
     required this.fats,
     required this.carbs,
     required this.calories,
+    this.hideNutrition = false,
   });
 
   @override
   Widget build(BuildContext context) {
+    if (hideNutrition) return const SizedBox.shrink();
+    
     final colorScheme = Theme.of(context).colorScheme;
     final l10n = AppLocalizations.of(context);
 

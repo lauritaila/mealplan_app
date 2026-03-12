@@ -890,6 +890,12 @@ abstract class AppLocalizations {
   /// **'No recipes available'**
   String get noRecipesAvailable;
 
+  /// No description provided for @noDescriptionProvided.
+  ///
+  /// In en, this message translates to:
+  /// **'No description provided'**
+  String get noDescriptionProvided;
+
   /// No description provided for @noFavoriteRecipes.
   ///
   /// In en, this message translates to:
@@ -989,8 +995,8 @@ abstract class AppLocalizations {
   /// No description provided for @otpEnterSubtitle.
   ///
   /// In en, this message translates to:
-  /// **'Enter the 6-digit code sent to:'**
-  String get otpEnterSubtitle;
+  /// **'Enter the 6-digit code sent to: {email}'**
+  String otpEnterSubtitle(Object email);
 
   /// No description provided for @otpVerificationCodeLabel.
   ///
@@ -1411,6 +1417,12 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'App language'**
   String get profileLanguageLabel;
+
+  /// No description provided for @profileLanguageDescription.
+  ///
+  /// In en, this message translates to:
+  /// **'Select your preferred language for the application interface.'**
+  String get profileLanguageDescription;
 
   /// No description provided for @profileLanguageEnglish.
   ///
@@ -2678,6 +2690,12 @@ abstract class AppLocalizations {
   /// **'Weekly Activity'**
   String get weeklyActivityTitle;
 
+  /// No description provided for @dailyTotalsTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Daily Totals'**
+  String get dailyTotalsTitle;
+
   /// No description provided for @mondayToSundayLabel.
   ///
   /// In en, this message translates to:
@@ -3037,6 +3055,84 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Your full name'**
   String get namePlaceholder;
+
+  /// No description provided for @monthJan.
+  ///
+  /// In en, this message translates to:
+  /// **'Jan'**
+  String get monthJan;
+
+  /// No description provided for @monthFeb.
+  ///
+  /// In en, this message translates to:
+  /// **'Feb'**
+  String get monthFeb;
+
+  /// No description provided for @monthMar.
+  ///
+  /// In en, this message translates to:
+  /// **'Mar'**
+  String get monthMar;
+
+  /// No description provided for @monthApr.
+  ///
+  /// In en, this message translates to:
+  /// **'Apr'**
+  String get monthApr;
+
+  /// No description provided for @monthMay.
+  ///
+  /// In en, this message translates to:
+  /// **'May'**
+  String get monthMay;
+
+  /// No description provided for @monthJun.
+  ///
+  /// In en, this message translates to:
+  /// **'Jun'**
+  String get monthJun;
+
+  /// No description provided for @monthJul.
+  ///
+  /// In en, this message translates to:
+  /// **'Jul'**
+  String get monthJul;
+
+  /// No description provided for @monthAug.
+  ///
+  /// In en, this message translates to:
+  /// **'Aug'**
+  String get monthAug;
+
+  /// No description provided for @monthSep.
+  ///
+  /// In en, this message translates to:
+  /// **'Sep'**
+  String get monthSep;
+
+  /// No description provided for @monthOct.
+  ///
+  /// In en, this message translates to:
+  /// **'Oct'**
+  String get monthOct;
+
+  /// No description provided for @monthNov.
+  ///
+  /// In en, this message translates to:
+  /// **'Nov'**
+  String get monthNov;
+
+  /// No description provided for @monthDec.
+  ///
+  /// In en, this message translates to:
+  /// **'Dec'**
+  String get monthDec;
+
+  /// No description provided for @breakdownTabCreate.
+  ///
+  /// In en, this message translates to:
+  /// **'Create'**
+  String get breakdownTabCreate;
 }
 
 class _AppLocalizationsDelegate

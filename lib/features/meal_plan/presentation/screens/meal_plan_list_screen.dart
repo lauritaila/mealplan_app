@@ -8,6 +8,7 @@ import 'package:meal_plan_app/features/meal_plan/domain/domain.dart';
 import 'package:meal_plan_app/features/meal_plan/presentation/providers/provider.dart';
 import 'package:meal_plan_app/l10n/app_localizations.dart';
 import 'package:meal_plan_app/features/meal_plan/presentation/widgets/detail_meal_plan/plan_actions_sheet.dart';
+import 'package:meal_plan_app/config/theme/app_theme.dart';
 
 class MealPlanListScreen extends ConsumerWidget {
   const MealPlanListScreen({super.key});
@@ -17,30 +18,32 @@ class MealPlanListScreen extends ConsumerWidget {
     final plansAsync = ref.watch(mealPlansProvider);
     final l10n = AppLocalizations.of(context);
 
+    final theme = Theme.of(context);
+    final customColors = theme.extension<AppCustomColors>()!;
+    final textTheme = theme.textTheme;
+
     return Scaffold(
-      backgroundColor: const Color(0xFFF8FAFC),
+      backgroundColor: theme.scaffoldBackgroundColor,
       appBar: AppBar(
-        backgroundColor: const Color(0xFFF8FAFC),
+        backgroundColor: theme.scaffoldBackgroundColor,
         elevation: 0,
         automaticallyImplyLeading: false,
         title: Row(
           children: [
-            const Icon(Icons.calendar_month, color: Color(0xFF5C7861), size: 24),
+            Icon(Icons.calendar_month, color: customColors.darkSage, size: 24),
             const SizedBox(width: 12),
             Text(
               l10n.myPlansTitle,
-              style: const TextStyle(
-                fontSize: 20,
-                fontWeight: FontWeight.w800,
-                color: Color(0xFF1E293B),
-                letterSpacing: 0.5,
+              style: textTheme.titleLarge?.copyWith(
+                color: customColors.textDarkBlue,
+                fontWeight: FontWeight.w900,
               ),
             ),
           ],
         ),
         actions: [
           IconButton(
-            icon: const Icon(Icons.calendar_today, color: Color(0xFF5C7861), size: 24),
+            icon: Icon(Icons.calendar_today, color: customColors.darkSage, size: 24),
             onPressed: () => context.go('/meal-plan'),
             tooltip: l10n.mealPlanTitle,
           ),
@@ -52,13 +55,16 @@ class MealPlanListScreen extends ConsumerWidget {
             ? null 
             : FloatingActionButton.extended(
                 onPressed: () => context.push('/meal-plan/new'),
-                backgroundColor: const Color(0xFF7BA082),
+                backgroundColor: customColors.darkSage,
                 foregroundColor: Colors.white,
                 elevation: 0,
                 icon: const Icon(Icons.add, size: 24),
                 label: Text(
                   l10n.createNewPlanTooltip,
-                  style: const TextStyle(fontWeight: FontWeight.bold),
+                  style: textTheme.labelLarge?.copyWith(
+                    color: Colors.white,
+                    fontWeight: FontWeight.w800,
+                  ),
                 ),
               ),
         loading: () => null,
@@ -76,39 +82,37 @@ class MealPlanListScreen extends ConsumerWidget {
                     Container(
                       padding: const EdgeInsets.all(24),
                       decoration: BoxDecoration(
-                        color: const Color(0xFFF1F5F9),
+                        color: customColors.chartTabBackground,
                         shape: BoxShape.circle,
                         border: Border.all(color: Colors.white, width: 4),
                         boxShadow: [
                           BoxShadow(
-                            color: const Color(0xFF94A3B8).withOpacity(0.1),
+                            color: Colors.black.withValues(alpha: 0.04),
                             blurRadius: 10,
                             offset: const Offset(0, 4),
                           ),
                         ],
                       ),
-                      child: const Icon(
+                      child: Icon(
                         Icons.restaurant_menu_rounded,
                         size: 64,
-                        color: Color(0xFF94A3B8),
+                        color: customColors.slateGrey?.withValues(alpha: 0.5),
                       ),
                     ),
                     const SizedBox(height: 24),
                     Text(
                       l10n.noPlansAddedTitle,
-                      style: const TextStyle(
-                        fontSize: 20,
-                        fontWeight: FontWeight.w800,
-                        color: Color(0xFF1E293B),
+                      style: textTheme.headlineSmall?.copyWith(
+                        fontWeight: FontWeight.w900,
+                        color: customColors.textDarkBlue,
                       ),
                     ),
                     const SizedBox(height: 12),
                     Text(
                       l10n.noPlansAddedMessage,
                       textAlign: TextAlign.center,
-                      style: const TextStyle(
-                        fontSize: 15,
-                        color: Color(0xFF64748B),
+                      style: textTheme.bodyMedium?.copyWith(
+                        color: customColors.slateGrey,
                         height: 1.5,
                       ),
                     ),
@@ -118,11 +122,12 @@ class MealPlanListScreen extends ConsumerWidget {
                       icon: const Icon(Icons.add),
                       label: Text(l10n.createNewPlanTooltip),
                       style: FilledButton.styleFrom(
-                        backgroundColor: const Color(0xFF5C7861),
+                        backgroundColor: customColors.darkSage,
                         foregroundColor: Colors.white,
                         padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 16),
                         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
                         elevation: 0,
+                        textStyle: textTheme.labelLarge?.copyWith(fontWeight: FontWeight.w800),
                       ),
                     ),
                   ],
@@ -155,7 +160,7 @@ class MealPlanListScreen extends ConsumerWidget {
             onRefresh: () async {
               ref.invalidate(mealPlansProvider);
             },
-            color: const Color(0xFF5C7861),
+            color: customColors.darkSage,
             child: ListView.separated(
               padding: const EdgeInsets.all(20),
               itemCount: sortedPlans.length,
@@ -171,8 +176,8 @@ class MealPlanListScreen extends ConsumerWidget {
             ),
           );
         },
-        loading: () => const Center(
-          child: CircularProgressIndicator(color: Color(0xFF5C7861)),
+        loading: () => Center(
+          child: CircularProgressIndicator(color: customColors.darkSage),
         ),
         error: (error, _) => Center(
           child: Column(
@@ -190,9 +195,10 @@ class MealPlanListScreen extends ConsumerWidget {
                 icon: const Icon(Icons.refresh),
                 label: Text(AppLocalizations.of(context).tryAgain),
                 style: OutlinedButton.styleFrom(
-                  foregroundColor: const Color(0xFF5C7861),
-                  side: const BorderSide(color: Color(0xFFE2E8F0)),
+                  foregroundColor: customColors.darkSage,
+                  side: BorderSide(color: customColors.darkSage!.withValues(alpha: 0.2)),
                   shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+                  textStyle: textTheme.labelLarge?.copyWith(fontWeight: FontWeight.w700),
                 ),
               ),
             ],
@@ -215,6 +221,9 @@ class _MealPlanCard extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    final theme = Theme.of(context);
+    final customColors = theme.extension<AppCustomColors>()!;
+    final textTheme = theme.textTheme;
     final l10n = AppLocalizations.of(context);
     final localeStr = Localizations.localeOf(context).toString();
     final DateFormat formatter = DateFormat('d MMM', localeStr);
@@ -227,14 +236,9 @@ class _MealPlanCard extends ConsumerWidget {
         borderRadius: BorderRadius.circular(24),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withValues(alpha: 0.03),
+            color: Colors.black.withValues(alpha: 0.04),
             blurRadius: 10,
             offset: const Offset(0, 4),
-          ),
-          BoxShadow(
-            color: Colors.black.withValues(alpha: 0.01),
-            blurRadius: 2,
-            offset: const Offset(0, 1),
           ),
         ],
       ),
@@ -250,32 +254,31 @@ class _MealPlanCard extends ConsumerWidget {
               children: [
                 Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  crossAxisAlignment: CrossAxisAlignment.start,
+                  crossAxisAlignment: CrossAxisAlignment.center,
                   children: [
                     Container(
                       padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
                       decoration: BoxDecoration(
-                        color: plan.generatedByAi ? const Color(0xFFE8F0E8) : const Color(0xFFF4F7F9),
+                        color: plan.generatedByAi ? customColors.chartTabBackground : Colors.grey.shade50,
                         borderRadius: BorderRadius.circular(20),
                       ),
                       child: Row(
                         mainAxisSize: MainAxisSize.min,
                         children: [
-                          Icon(
-                            plan.generatedByAi ? Icons.auto_awesome_rounded : Icons.person_rounded,
-                            size: 14,
-                            color: plan.generatedByAi ? const Color(0xFF4C6B4F) : const Color(0xFF4A729A),
-                          ),
-                          const SizedBox(width: 6),
-                          Text(
-                            plan.generatedByAi ? l10n.planBadgeAI : l10n.planBadgeCustom,
-                            style: TextStyle(
-                              fontSize: 11,
-                              fontWeight: FontWeight.w800,
-                              color: plan.generatedByAi ? const Color(0xFF4C6B4F) : const Color(0xFF4A729A),
-                              letterSpacing: 0.5,
+                            Icon(
+                              plan.generatedByAi ? Icons.auto_awesome_rounded : Icons.person_rounded,
+                              size: 14,
+                              color: plan.generatedByAi ? customColors.darkSage : customColors.slateGrey,
                             ),
-                          ),
+                            const SizedBox(width: 6),
+                            Text(
+                              plan.generatedByAi ? l10n.planBadgeAI : l10n.planBadgeCustom,
+                              style: textTheme.labelSmall?.copyWith(
+                                fontWeight: FontWeight.w800,
+                                color: plan.generatedByAi ? customColors.darkSage : customColors.slateGrey,
+                                letterSpacing: 0.5,
+                              ),
+                            ),
                         ],
                       ),
                     ),
@@ -287,19 +290,18 @@ class _MealPlanCard extends ConsumerWidget {
                         padding: EdgeInsets.zero,
                         constraints: const BoxConstraints(minWidth: 32, minHeight: 32),
                         splashRadius: 24,
-                        color: const Color(0xFFCBD5E1),
+                        color: customColors.slateGrey?.withValues(alpha: 0.3),
                       ),
                     ),
                   ],
                 ),
-                const SizedBox(height: 16),
+                const SizedBox(height: 6),
                 Text(
                   plan.planName,
-                  style: const TextStyle(
-                    fontWeight: FontWeight.w800,
+                  style: textTheme.titleMedium?.copyWith(
+                    fontWeight: FontWeight.w900,
                     letterSpacing: -0.5,
-                    color: Color(0xFF002140),
-                    fontSize: 20,
+                    color: customColors.textDarkBlue,
                   ),
                   maxLines: 2,
                   overflow: TextOverflow.ellipsis,
@@ -307,19 +309,18 @@ class _MealPlanCard extends ConsumerWidget {
                 const SizedBox(height: 16),
                 Row(
                   children: [
-                    const Icon(
+                    Icon(
                       Icons.schedule_rounded,
                       size: 16,
-                      color: Color(0xFF94A3B8),
+                      color: customColors.slateGrey?.withValues(alpha: 0.6),
                     ),
                     const SizedBox(width: 8),
                     Expanded(
                       child: Text(
                         '${formatter.format(plan.startDate).toUpperCase()} - ${yearFormatter.format(plan.endDate).toUpperCase()}',
-                        style: const TextStyle(
-                          fontSize: 13,
-                          fontWeight: FontWeight.w700,
-                          color: Color(0xFF64748B),
+                        style: textTheme.labelMedium?.copyWith(
+                          fontWeight: FontWeight.w800,
+                          color: customColors.slateGrey,
                           letterSpacing: 0.2,
                         ),
                       ),

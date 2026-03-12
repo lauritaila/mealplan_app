@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:meal_plan_app/features/meal_plan/domain/domain.dart';
 import 'package:meal_plan_app/l10n/app_localizations.dart';
+import 'package:meal_plan_app/config/theme/app_theme.dart';
 
 class _ActionRow extends StatelessWidget {
   final IconData icon;
@@ -22,26 +23,34 @@ class _ActionRow extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+    final customColors = theme.extension<AppCustomColors>()!;
+    final textTheme = theme.textTheme;
+
     return InkWell(
       onTap: onTap,
-      borderRadius: BorderRadius.circular(12),
+      borderRadius: BorderRadius.circular(16),
       child: Padding(
-        padding: const EdgeInsets.symmetric(vertical: 12, horizontal: 8),
+        padding: const EdgeInsets.symmetric(vertical: 14, horizontal: 12),
         child: Row(
           children: [
             Container(
-              width: 44,
-              height: 44,
-              decoration: BoxDecoration(color: iconBgColor, shape: BoxShape.circle),
-              child: Icon(icon, color: iconColor),
+              width: 48,
+              height: 48,
+              decoration: BoxDecoration(
+                color: iconBgColor,
+                borderRadius: BorderRadius.circular(16),
+              ),
+              child: Icon(icon, color: iconColor, size: 24),
             ),
-            const SizedBox(width: 16),
+            const SizedBox(width: 20),
             Text(
               label,
-              style: TextStyle(
-                fontSize: 16,
-                fontWeight: FontWeight.w600,
-                color: isDestructive ? const Color(0xFFE57373) : const Color(0xFF1A1E1B),
+              style: textTheme.bodyLarge?.copyWith(
+                fontWeight: FontWeight.w700,
+                color: isDestructive 
+                    ? theme.colorScheme.error 
+                    : customColors.textDarkBlue,
               ),
             ),
           ],
@@ -59,7 +68,6 @@ class EntryActionsSheet extends ConsumerWidget {
   final VoidCallback onRegenerateEntry;
   final VoidCallback onSwapRecipe;
   final VoidCallback onChangeDate;
-
   const EntryActionsSheet({
     super.key,
     required this.entry,
@@ -73,45 +81,50 @@ class EntryActionsSheet extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    final theme = Theme.of(context);
+    final customColors = theme.extension<AppCustomColors>()!;
+    final textTheme = theme.textTheme;
     final l10n = AppLocalizations.of(context);
     final isSkipped = _isSkippedStatus(entry.status);
 
-    return Padding(
-      padding: const EdgeInsets.only(bottom: 24, left: 16, right: 16, top: 16),
+    return Container(
+      decoration: BoxDecoration(
+        color: theme.scaffoldBackgroundColor,
+        borderRadius: const BorderRadius.vertical(top: Radius.circular(32)),
+      ),
+      padding: const EdgeInsets.fromLTRB(20, 16, 20, 32),
       child: Column(
         mainAxisSize: MainAxisSize.min,
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
           Center(
             child: Container(
-              width: 48,
+              width: 40,
               height: 4,
               decoration: BoxDecoration(
-                color: Colors.grey.shade300,
+                color: customColors.slateGrey?.withValues(alpha: 0.2),
                 borderRadius: BorderRadius.circular(2),
               ),
             ),
           ),
-          const SizedBox(height: 24),
+          const SizedBox(height: 32),
           Text(
             entry.name,
             textAlign: TextAlign.center,
-            style: const TextStyle(
-              fontSize: 18,
-              fontWeight: FontWeight.w700,
-              color: Color(0xFF1A1E1B),
+            style: textTheme.titleMedium?.copyWith(
+              fontWeight: FontWeight.w900,
+              color: customColors.textDarkBlue,
             ),
           ),
           if (entry.mealType != null) ...[
-            const SizedBox(height: 4),
+            const SizedBox(height: 8),
             Text(
               entry.mealType!.toUpperCase(),
               textAlign: TextAlign.center,
-              style: TextStyle(
-                color: Colors.grey.shade500,
-                fontSize: 12,
-                fontWeight: FontWeight.w800,
-                letterSpacing: 0.5,
+              style: textTheme.labelSmall?.copyWith(
+                color: customColors.darkSage,
+                fontWeight: FontWeight.w900,
+                letterSpacing: 1.2,
               ),
             ),
           ],
@@ -119,63 +132,62 @@ class EntryActionsSheet extends ConsumerWidget {
           _ActionRow(
             icon: Icons.shopping_cart_outlined,
             label: l10n.menuAddToGrocery,
-            iconBgColor: const Color(0xFFE8F0E8),
-            iconColor: const Color(0xFF5C7861),
+            iconBgColor: customColors.chartTabBackground!,
+            iconColor: customColors.darkSage!,
             onTap: () {
               Navigator.pop(context);
               onImportRecipeToList();
             },
           ),
-          const Divider(color: Color(0xFFF1F1F1)),
           _ActionRow(
             icon: isSkipped ? Icons.replay_circle_filled : Icons.do_not_disturb_on,
             label: isSkipped ? l10n.unskipMealAction : l10n.skipMealAction,
-            iconBgColor: isSkipped ? const Color(0xFFE8F0E8) : const Color(0xFFFFF0F0),
-            iconColor: isSkipped ? const Color(0xFF5C7861) : const Color(0xFFE57373),
+            iconBgColor: isSkipped 
+                ? customColors.chartTabBackground! 
+                : theme.colorScheme.errorContainer.withValues(alpha: 0.3),
+            iconColor: isSkipped 
+                ? customColors.darkSage! 
+                : theme.colorScheme.error,
             onTap: () {
               Navigator.pop(context);
               onToggleSkipped();
             },
           ),
-          const Divider(color: Color(0xFFF1F1F1)),
           _ActionRow(
             icon: Icons.calendar_month_outlined,
             label: l10n.changeMealDateAction,
-            iconBgColor: const Color(0xFFE8F0E8),
-            iconColor: const Color(0xFF5C7861),
+            iconBgColor: customColors.chartTabBackground!,
+            iconColor: customColors.darkSage!,
             onTap: () {
               Navigator.pop(context);
               onChangeDate();
             },
           ),
-          const Divider(color: Color(0xFFF1F1F1)),
           _ActionRow(
             icon: Icons.favorite_border,
             label: l10n.swapFavoriteAction,
-            iconBgColor: const Color(0xFFE8F0E8),
-            iconColor: const Color(0xFF5C7861),
+            iconBgColor: customColors.chartTabBackground!,
+            iconColor: customColors.darkSage!,
             onTap: () {
               Navigator.pop(context);
               onSwapRecipe();
             },
           ),
-          const Divider(color: Color(0xFFF1F1F1)),
           _ActionRow(
             icon: Icons.refresh,
             label: l10n.regenerateRecipeAction,
-            iconBgColor: const Color(0xFFE8F0E8),
-            iconColor: const Color(0xFF5C7861),
+            iconBgColor: customColors.chartTabBackground!,
+            iconColor: customColors.darkSage!,
             onTap: () {
               Navigator.pop(context);
               onRegenerateEntry();
             },
           ),
-          const Divider(color: Color(0xFFF1F1F1)),
           _ActionRow(
             icon: Icons.delete_outline,
             label: l10n.deleteAction,
-            iconBgColor: const Color(0xFFE8F0E8),
-            iconColor: const Color(0xFF5C7861),
+            iconBgColor: customColors.chartTabBackground!,
+            iconColor: customColors.darkSage!,
             isDestructive: true,
             onTap: () {
               Navigator.pop(context);

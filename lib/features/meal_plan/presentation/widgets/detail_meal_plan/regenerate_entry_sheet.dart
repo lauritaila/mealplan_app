@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:meal_plan_app/config/theme/app_theme.dart';
 import 'package:meal_plan_app/features/meal_plan/domain/domain.dart';
 import 'package:meal_plan_app/features/meal_plan/presentation/providers/provider.dart';
 import 'package:meal_plan_app/features/profile/presentation/providers/preferences_details_provider.dart';
@@ -54,6 +55,9 @@ class _RegenerateEntrySheetState extends ConsumerState<RegenerateEntrySheet> {
 
   @override
   Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+    final customColors = theme.extension<AppCustomColors>()!;
+    final textTheme = theme.textTheme;
     final l10n = AppLocalizations.of(context);
 
     return SafeArea(
@@ -71,7 +75,7 @@ class _RegenerateEntrySheetState extends ConsumerState<RegenerateEntrySheet> {
                 width: 40,
                 height: 4,
                 decoration: BoxDecoration(
-                  color: Colors.grey.shade300,
+                  color: customColors.slateGrey?.withValues(alpha: 0.2),
                   borderRadius: BorderRadius.circular(2),
                 ),
               ),
@@ -85,39 +89,51 @@ class _RegenerateEntrySheetState extends ConsumerState<RegenerateEntrySheet> {
                   children: [
                     Text(
                       l10n.regenerateRecipePromptTitle,
-                      style: const TextStyle(fontSize: 22, fontWeight: FontWeight.w800),
+                      style: textTheme.titleLarge?.copyWith(
+                        fontWeight: FontWeight.w900,
+                        color: customColors.textDarkBlue,
+                      ),
                       textAlign: TextAlign.center,
                     ),
                     const SizedBox(height: 8),
                     Text(
                       l10n.regenerateRecipePromptSubtitle,
-                      style: TextStyle(color: Colors.grey.shade600, fontSize: 14),
+                      style: textTheme.bodyMedium?.copyWith(
+                        color: customColors.slateGrey,
+                      ),
                       textAlign: TextAlign.center,
                     ),
                     const SizedBox(height: 16),
                     Container(
-                      padding: const EdgeInsets.all(12),
+                      padding: const EdgeInsets.all(16),
                       decoration: BoxDecoration(
-                        color: const Color(0xFFFBFBFB),
-                        border: Border.all(color: Colors.grey.shade200),
-                        borderRadius: BorderRadius.circular(12),
+                        color: customColors.chartTabBackground,
+                        border: Border.all(color: customColors.darkSage!.withValues(alpha: 0.1)),
+                        borderRadius: BorderRadius.circular(16),
                       ),
                       child: Row(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          const Icon(Icons.info_outline, color: Colors.grey, size: 20),
-                          const SizedBox(width: 8),
+                          Icon(Icons.info_outline, color: customColors.darkSage, size: 20),
+                          const SizedBox(width: 12),
                           Expanded(
                             child: RichText(
                               text: TextSpan(
                                 children: [
                                   TextSpan(
-                                    text: l10n.regenerateRecipeNotePrefix,
-                                    style: const TextStyle(color: Color(0xFF4C6B4F), fontWeight: FontWeight.w700, fontSize: 12, height: 1.4),
+                                    text: '${l10n.regenerateRecipeNotePrefix} ',
+                                    style: textTheme.labelSmall?.copyWith(
+                                      color: customColors.darkSage,
+                                      fontWeight: FontWeight.w900,
+                                      letterSpacing: 0.5,
+                                    ),
                                   ),
                                   TextSpan(
                                     text: l10n.regenerateRecipeNoteText,
-                                    style: TextStyle(color: Colors.grey.shade600, fontSize: 12, height: 1.4),
+                                    style: textTheme.bodySmall?.copyWith(
+                                      color: customColors.slateGrey,
+                                      height: 1.5,
+                                    ),
                                   ),
                                 ],
                               ),
@@ -136,20 +152,24 @@ class _RegenerateEntrySheetState extends ConsumerState<RegenerateEntrySheet> {
                           child: Padding(
                             padding: EdgeInsets.only(right: d == 5 ? 0 : 8),
                             child: ChoiceChip(
-                              label: Center(child: Text(l10n.daysLabel(d), style: TextStyle(fontWeight: FontWeight.w600))),
-                              selected: isSelected,
-                              onSelected: (_) => setState(() => _selectedDuration = d),
-                              selectedColor: const Color(0xFFE8F0E8),
-                              backgroundColor: Colors.white,
-                              labelStyle: TextStyle(color: isSelected ? const Color(0xFF4C6B4F) : Colors.black87),
-                              showCheckmark: false,
-                              shape: RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(12),
-                                side: BorderSide(
-                                  color: isSelected ? const Color(0xFF4C6B4F) : const Color(0xFFE8EEF2),
-                                  width: isSelected ? 1.5 : 1.0,
+                                label: Center(
+                                  child: Text(
+                                    l10n.daysLabel(d).toUpperCase(),
+                                    style: const TextStyle(fontWeight: FontWeight.w900, letterSpacing: 0.5, fontSize: 12),
+                                  ),
                                 ),
-                              ),
+                                selected: isSelected,
+                                onSelected: (_) => setState(() => _selectedDuration = d),
+                                selectedColor: customColors.darkSage,
+                                backgroundColor: customColors.chartTabBackground,
+                                labelStyle: TextStyle(
+                                  color: isSelected ? Colors.white : customColors.slateGrey,
+                                ),
+                              showCheckmark: false,
+                                shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(16),
+                                  side: BorderSide.none,
+                                ),
                             ),
                           ),
                         );
@@ -188,8 +208,18 @@ class _RegenerateEntrySheetState extends ConsumerState<RegenerateEntrySheet> {
                             borderRadius: BorderRadius.circular(24),
                             child: Container(
                               width: 40, height: 40,
-                              decoration: BoxDecoration(shape: BoxShape.circle, color: Colors.white, boxShadow: [BoxShadow(color: Colors.black.withValues(alpha: 0.04), blurRadius: 6, offset: const Offset(0, 2))]),
-                              child: const Icon(Icons.add, size: 22, color: Color(0xFF002140)),
+                              decoration: BoxDecoration(
+                                shape: BoxShape.circle,
+                                color: Colors.white,
+                                boxShadow: [
+                                  BoxShadow(
+                                    color: Colors.black.withValues(alpha: 0.06),
+                                    blurRadius: 10,
+                                    offset: const Offset(0, 4),
+                                  )
+                                ],
+                              ),
+                              child: Icon(Icons.add, size: 24, color: customColors.textDarkBlue),
                             ),
                           ),
                         ],
@@ -201,13 +231,14 @@ class _RegenerateEntrySheetState extends ConsumerState<RegenerateEntrySheet> {
                     TextField(
                       controller: _descController,
                       maxLines: 4,
-                      style: const TextStyle(fontSize: 15, color: Color(0xFF002140)),
+                      style: textTheme.bodyLarge?.copyWith(color: customColors.textDarkBlue),
                       decoration: InputDecoration(
                         filled: true,
-                        fillColor: const Color(0xFFF8FAFB),
-                        border: OutlineInputBorder(borderRadius: BorderRadius.circular(16), borderSide: BorderSide.none),
+                        fillColor: customColors.chartTabBackground,
+                        border: OutlineInputBorder(borderRadius: BorderRadius.circular(20), borderSide: BorderSide.none),
                         hintText: l10n.regenerateNotesHint,
-                        hintStyle: TextStyle(color: Colors.blueGrey.shade300, fontSize: 15),
+                        hintStyle: textTheme.bodyMedium?.copyWith(color: customColors.slateGrey?.withValues(alpha: 0.6)),
+                        contentPadding: const EdgeInsets.all(20),
                       ),
                     ),
                     const SizedBox(height: 24),
@@ -217,9 +248,20 @@ class _RegenerateEntrySheetState extends ConsumerState<RegenerateEntrySheet> {
                           child: Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
-                              Text(l10n.usePantryTitle, style: const TextStyle(fontWeight: FontWeight.w700, fontSize: 15, color: Color(0xFF002140))),
+                              Text(
+                                l10n.usePantryTitle,
+                                style: textTheme.labelLarge?.copyWith(
+                                  fontWeight: FontWeight.w900,
+                                  color: customColors.textDarkBlue,
+                                ),
+                              ),
                               const SizedBox(height: 4),
-                              Text(l10n.usePantrySubtitle, style: TextStyle(color: Colors.blueGrey.shade400, fontSize: 13)),
+                              Text(
+                                l10n.usePantrySubtitle,
+                                style: textTheme.bodySmall?.copyWith(
+                                  color: customColors.slateGrey,
+                                ),
+                              ),
                             ],
                           ),
                         ),
@@ -227,7 +269,7 @@ class _RegenerateEntrySheetState extends ConsumerState<RegenerateEntrySheet> {
                           value: _usePantry,
                           onChanged: (val) => setState(() => _usePantry = val),
                           activeThumbColor: Colors.white,
-                          activeTrackColor: const Color(0xFF4C6B4F),
+                          activeTrackColor: customColors.darkSage,
                         ),
                       ],
                     ),
@@ -246,10 +288,10 @@ class _RegenerateEntrySheetState extends ConsumerState<RegenerateEntrySheet> {
                 width: double.infinity,
                 child: FilledButton(
                   style: FilledButton.styleFrom(
-                    backgroundColor: const Color(0xFF4C6B4F),
+                    backgroundColor: customColors.darkSage,
                     foregroundColor: Colors.white,
-                    padding: const EdgeInsets.symmetric(vertical: 18),
-                    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+                    padding: const EdgeInsets.symmetric(vertical: 20),
+                    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
                     elevation: 0,
                   ),
                   onPressed: _isLoading ? null : _submit,
@@ -259,7 +301,10 @@ class _RegenerateEntrySheetState extends ConsumerState<RegenerateEntrySheet> {
                           width: 20,
                           child: CircularProgressIndicator(color: Colors.white, strokeWidth: 2),
                         )
-                      : Text(l10n.regenerateRecipeButtonTitle, style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold)),
+                      : Text(
+                          l10n.regenerateRecipeButtonTitle.toUpperCase(),
+                          style: const TextStyle(fontWeight: FontWeight.w900, letterSpacing: 1.1),
+                        ),
                 ),
               ),
             ),

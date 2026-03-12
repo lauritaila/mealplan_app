@@ -455,6 +455,9 @@ class AppLocalizationsEn extends AppLocalizations {
   String get noRecipesAvailable => 'No recipes available';
 
   @override
+  String get noDescriptionProvided => 'No description provided';
+
+  @override
   String get noFavoriteRecipes => 'You don\'t have favorite recipes';
 
   @override
@@ -506,7 +509,9 @@ class AppLocalizationsEn extends AppLocalizations {
   String get otpEnterTitle => 'Enter Verification Code';
 
   @override
-  String get otpEnterSubtitle => 'Enter the 6-digit code sent to:';
+  String otpEnterSubtitle(Object email) {
+    return 'Enter the 6-digit code sent to: $email';
+  }
 
   @override
   String get otpVerificationCodeLabel => 'Verification Code';
@@ -720,6 +725,10 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get profileLanguageLabel => 'App language';
+
+  @override
+  String get profileLanguageDescription =>
+      'Select your preferred language for the application interface.';
 
   @override
   String get profileLanguageEnglish => 'English';
@@ -1420,6 +1429,9 @@ class AppLocalizationsEn extends AppLocalizations {
   String get weeklyActivityTitle => 'Weekly Activity';
 
   @override
+  String get dailyTotalsTitle => 'Daily Totals';
+
+  @override
   String get mondayToSundayLabel => 'MON - SUN';
 
   @override
@@ -1620,4 +1632,43 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get namePlaceholder => 'Your full name';
+
+  @override
+  String get monthJan => 'Jan';
+
+  @override
+  String get monthFeb => 'Feb';
+
+  @override
+  String get monthMar => 'Mar';
+
+  @override
+  String get monthApr => 'Apr';
+
+  @override
+  String get monthMay => 'May';
+
+  @override
+  String get monthJun => 'Jun';
+
+  @override
+  String get monthJul => 'Jul';
+
+  @override
+  String get monthAug => 'Aug';
+
+  @override
+  String get monthSep => 'Sep';
+
+  @override
+  String get monthOct => 'Oct';
+
+  @override
+  String get monthNov => 'Nov';
+
+  @override
+  String get monthDec => 'Dec';
+
+  @override
+  String get breakdownTabCreate => 'Create';
 }

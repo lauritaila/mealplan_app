@@ -3,7 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:meal_plan_app/features/grocery_list/domain/entities/grocery_list.dart';
 import 'package:meal_plan_app/features/grocery_list/presentation/providers/provider.dart';
 import 'package:meal_plan_app/l10n/app_localizations.dart';
-
+import 'package:meal_plan_app/config/theme/app_theme.dart';
 import 'package:meal_plan_app/features/grocery_list/presentation/widgets/edit_quantity_bottom_sheet.dart';
 
 class GroceryItemTile extends ConsumerStatefulWidget {
@@ -79,6 +79,8 @@ class _GroceryItemTileState extends ConsumerState<GroceryItemTile>
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
+    final textTheme = theme.textTheme;
+    final customColors = theme.extension<AppCustomColors>()!;
     final l10n = AppLocalizations.of(context);
     final coveredByPantry = widget.item.isCoveredByPantry;
 
@@ -89,27 +91,36 @@ class _GroceryItemTileState extends ConsumerState<GroceryItemTile>
         alignment: Alignment.centerRight,
         padding: const EdgeInsets.only(right: 20),
         decoration: BoxDecoration(
-          color: theme.colorScheme.error,
-          borderRadius: BorderRadius.circular(12),
+          color: Colors.red,
+          borderRadius: BorderRadius.circular(20),
         ),
-        child: const Icon(Icons.delete_outline, color: Colors.white),
+        child: const Icon(Icons.delete_outline, color: Colors.white, size: 24),
       ),
       confirmDismiss: (_) async => true,
       onDismissed: (_) => widget.onDelete?.call(),
-      child: Opacity(
-        opacity: coveredByPantry ? 0.55 : 1.0,
-        child: Card(
-          elevation: 0,
-          color: Colors.white,
+      child: AnimatedOpacity(
+        duration: const Duration(milliseconds: 200),
+        opacity: coveredByPantry ? 0.6 : 1.0,
+        child: Container(
           margin: const EdgeInsets.only(bottom: 12),
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(12),
-            side: BorderSide(color: Colors.grey.shade200),
+          decoration: BoxDecoration(
+            color: theme.cardTheme.color,
+            borderRadius: BorderRadius.circular(20),
+            border: Border.all(
+              color: _checked ? Colors.transparent : theme.dividerColor.withValues(alpha: 0.05),
+            ),
+            boxShadow: [
+              BoxShadow(
+                color: Colors.black.withValues(alpha: 0.01),
+                blurRadius: 10,
+                offset: const Offset(0, 4),
+              ),
+            ],
           ),
           child: ListTile(
-            contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 4),
+            contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
             shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(12),
+              borderRadius: BorderRadius.circular(20),
             ),
             leading: ScaleTransition(
               scale: _scaleAnim,
@@ -117,34 +128,34 @@ class _GroceryItemTileState extends ConsumerState<GroceryItemTile>
                 onTap: _toggleCheck,
                 child: AnimatedContainer(
                   duration: const Duration(milliseconds: 200),
-                  width: 24,
-                  height: 24,
+                  width: 28,
+                  height: 28,
                   decoration: BoxDecoration(
                     color: _checked
-                        ? const Color(0xFF6B8A6B)
-                        : Colors.transparent,
+                        ? customColors.darkSage
+                        : customColors.chartTabBackground,
+                    borderRadius: BorderRadius.circular(10),
                     border: Border.all(
                       color: _checked
-                          ? const Color(0xFF6B8A6B)
-                          : Colors.grey.shade400,
-                      width: _checked ? 0 : 1.5,
+                          ? customColors.darkSage!
+                          : customColors.slateGrey!.withValues(alpha: 0.1),
+                      width: 2,
                     ),
-                    borderRadius: BorderRadius.circular(6),
                   ),
                   child: _checked
-                      ? const Icon(Icons.check, size: 16, color: Colors.white)
+                      ? const Icon(Icons.check, size: 18, color: Colors.white)
                       : null,
                 ),
               ),
             ),
             title: AnimatedDefaultTextStyle(
               duration: const Duration(milliseconds: 200),
-              style: theme.textTheme.bodyMedium!.copyWith(
-                fontWeight: FontWeight.w600,
+              style: textTheme.bodyLarge!.copyWith(
+                fontWeight: FontWeight.w700,
                 decoration: _checked ? TextDecoration.lineThrough : null,
                 color: _checked
-                    ? Colors.blueGrey.shade300
-                    : const Color(0xFF334139),
+                    ? customColors.slateGrey?.withValues(alpha: 0.4)
+                    : customColors.textDarkBlue,
               ),
               child: Text(widget.item.ingredientName),
             ),
@@ -152,26 +163,28 @@ class _GroceryItemTileState extends ConsumerState<GroceryItemTile>
               children: [
                 Text(
                   '${_formatQty(widget.item.quantity)} ${widget.item.unit}',
-                  style: theme.textTheme.bodySmall?.copyWith(
-                    color: Colors.blueGrey.shade400,
+                  style: textTheme.bodySmall?.copyWith(
+                    color: customColors.slateGrey,
+                    fontWeight: FontWeight.w600,
                   ),
                 ),
                 if (coveredByPantry) ...[
                   const SizedBox(width: 8),
                   Container(
                     padding: const EdgeInsets.symmetric(
-                      horizontal: 6,
+                      horizontal: 8,
                       vertical: 2,
                     ),
                     decoration: BoxDecoration(
-                      color: theme.colorScheme.tertiaryContainer,
-                      borderRadius: BorderRadius.circular(6),
+                      color: customColors.darkSage?.withValues(alpha: 0.1),
+                      borderRadius: BorderRadius.circular(8),
                     ),
                     child: Text(
                       l10n.groceryItemInPantry,
-                      style: theme.textTheme.labelSmall?.copyWith(
-                        color: theme.colorScheme.onTertiaryContainer,
-                        fontWeight: FontWeight.w600,
+                      style: textTheme.labelSmall?.copyWith(
+                        color: customColors.darkSage,
+                        fontWeight: FontWeight.w900,
+                        fontSize: 10,
                       ),
                     ),
                   ),
@@ -179,7 +192,11 @@ class _GroceryItemTileState extends ConsumerState<GroceryItemTile>
               ],
             ),
             trailing: IconButton(
-              icon: const Icon(Icons.mode_edit_outline_outlined, size: 18, color: Color(0xFF7BA082)),
+              icon: Icon(
+                Icons.mode_edit_outline_outlined,
+                size: 20,
+                color: customColors.slateGrey?.withValues(alpha: 0.4),
+              ),
               tooltip: l10n.groceryItemEditTooltip,
               onPressed: () => _showEditQuantity(context),
             ),
@@ -220,4 +237,3 @@ class _GroceryItemTileState extends ConsumerState<GroceryItemTile>
     }
   }
 }
-

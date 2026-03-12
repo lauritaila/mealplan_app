@@ -4,6 +4,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:intl/intl.dart';
 import 'package:meal_plan_app/features/grocery_list/presentation/providers/provider.dart';
 import 'package:meal_plan_app/l10n/app_localizations.dart';
+import 'package:meal_plan_app/config/theme/app_theme.dart';
 
 /// Bottom sheet to add an item to a grocery list or the pantry.
 ///
@@ -84,48 +85,66 @@ class _AddItemBottomSheetState extends ConsumerState<AddItemBottomSheet> {
   }
 
   Future<void> _pickDate() async {
+    final theme = Theme.of(context);
+    final customColors = theme.extension<AppCustomColors>()!;
     final picked = await showDatePicker(
       context: context,
       initialDate: _expiryDate ?? DateTime.now().add(const Duration(days: 7)),
       firstDate: DateTime.now(),
       lastDate: DateTime.now().add(const Duration(days: 365 * 2)),
+      builder: (context, child) {
+        return Theme(
+          data: theme.copyWith(
+            colorScheme: theme.colorScheme.copyWith(
+              primary: customColors.darkSage,
+              onPrimary: Colors.white,
+            ),
+          ),
+          child: child!,
+        );
+      },
     );
     if (picked != null && mounted) setState(() => _expiryDate = picked);
   }
 
-  InputDecoration _inputDecoration(String hint, {IconData? prefixIcon, Widget? suffixIcon}) {
+  InputDecoration _inputDecoration(String hint, BuildContext context, {IconData? prefixIcon, Widget? suffixIcon}) {
+    final theme = Theme.of(context);
+    final textTheme = theme.textTheme;
+    final customColors = theme.extension<AppCustomColors>()!;
+    
     return InputDecoration(
       hintText: hint,
-      hintStyle: const TextStyle(color: Color(0xFF9E9E9E), fontSize: 14),
-      prefixIcon: prefixIcon != null ? Icon(prefixIcon, color: const Color(0xFF7BA082)) : null,
+      hintStyle: textTheme.bodyLarge?.copyWith(
+        color: customColors.slateGrey?.withValues(alpha: 0.3),
+      ),
+      prefixIcon: prefixIcon != null ? Icon(prefixIcon, color: customColors.darkSage, size: 20) : null,
       suffixIcon: suffixIcon,
       filled: true,
-      fillColor: Colors.white,
-      contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
+      fillColor: customColors.chartTabBackground,
+      contentPadding: const EdgeInsets.all(20),
       border: OutlineInputBorder(
-        borderRadius: BorderRadius.circular(10),
-        borderSide: const BorderSide(color: Color(0xFFE8ECE7), width: 1),
-      ),
-      enabledBorder: OutlineInputBorder(
-        borderRadius: BorderRadius.circular(10),
-        borderSide: const BorderSide(color: Color(0xFFE8ECE7), width: 1),
+        borderRadius: BorderRadius.circular(20),
+        borderSide: BorderSide.none,
       ),
       focusedBorder: OutlineInputBorder(
-        borderRadius: BorderRadius.circular(10),
-        borderSide: const BorderSide(color: Color(0xFF7BA082), width: 1.5),
+        borderRadius: BorderRadius.circular(20),
+        borderSide: BorderSide(color: customColors.darkSage!, width: 2),
       ),
     );
   }
 
-  Widget _buildLabel(String text) {
+  Widget _buildLabel(String text, BuildContext context) {
+    final theme = Theme.of(context);
+    final textTheme = theme.textTheme;
+    final customColors = theme.extension<AppCustomColors>()!;
     return Padding(
-      padding: const EdgeInsets.only(bottom: 6.0, left: 2.0),
+      padding: const EdgeInsets.only(bottom: 12.0, left: 4.0),
       child: Text(
-        text,
-        style: const TextStyle(
-          fontSize: 13,
-          fontWeight: FontWeight.w600,
-          color: Color(0xFF4A5D4E), // Dark green-grey
+        text.toUpperCase(),
+        style: textTheme.labelSmall?.copyWith(
+          fontWeight: FontWeight.w900,
+          letterSpacing: 1.2,
+          color: customColors.slateGrey?.withValues(alpha: 0.6),
         ),
       ),
     );
@@ -134,73 +153,63 @@ class _AddItemBottomSheetState extends ConsumerState<AddItemBottomSheet> {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
+    final textTheme = theme.textTheme;
+    final customColors = theme.extension<AppCustomColors>()!;
     final l10n = AppLocalizations.of(context);
     
     return Container(
-      decoration: const BoxDecoration(
-        color: Color(0xFFF8F6F6),
-        borderRadius: BorderRadius.vertical(top: Radius.circular(24)),
+      decoration: BoxDecoration(
+        color: theme.colorScheme.surface,
+        borderRadius: const BorderRadius.vertical(top: Radius.circular(32)),
       ),
       child: Padding(
         padding: EdgeInsets.only(
           bottom: MediaQuery.of(context).viewInsets.bottom,
         ),
         child: SingleChildScrollView(
-          padding: const EdgeInsets.fromLTRB(24, 16, 24, 32),
+          padding: const EdgeInsets.fromLTRB(24, 16, 24, 40),
           child: Form(
             key: _formKey,
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               mainAxisSize: MainAxisSize.min,
               children: [
-                // Handle bar
                 Center(
                   child: Container(
-                    width: 36,
-                    height: 4,
-                    margin: const EdgeInsets.only(bottom: 24),
+                    width: 48,
+                    height: 5,
+                    margin: const EdgeInsets.only(bottom: 32),
                     decoration: BoxDecoration(
-                      color: const Color(0xFFC7CEC5),
-                      borderRadius: BorderRadius.circular(2),
+                      color: customColors.slateGrey?.withValues(alpha: 0.1),
+                      borderRadius: BorderRadius.circular(10),
                     ),
                   ),
                 ),
-                // Title and clear button
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    Text(
-                      _isPantryMode ? l10n.addItemTitlePantry : l10n.addItemTitleGrocery,
-                      style: theme.textTheme.titleLarge?.copyWith(
-                        fontWeight: FontWeight.bold,
-                        color: const Color(0xFF2C392D),
-                      ),
-                    ),
-                    if (!_isPantryMode)
-                      IconButton(
-                        onPressed: () => Navigator.pop(context),
-                        icon: const Icon(Icons.close, color: Color(0xFF7BA082)),
-                      ),
-                  ],
+                Text(
+                  _isPantryMode ? l10n.addItemTitlePantry : l10n.addItemTitleGrocery,
+                  style: textTheme.headlineSmall?.copyWith(
+                    fontWeight: FontWeight.w900,
+                    color: customColors.textDarkBlue,
+                  ),
                 ),
-                const SizedBox(height: 20),
+                const SizedBox(height: 32),
                 
-                // Ingredient Name
-                _buildLabel(l10n.addItemIngredientNameLabel),
+                _buildLabel(l10n.addItemIngredientNameLabel, context),
                 TextFormField(
                   controller: _nameCtrl,
                   textCapitalization: TextCapitalization.sentences,
+                  style: textTheme.bodyLarge?.copyWith(fontWeight: FontWeight.w600),
                   decoration: _inputDecoration(
                     _isPantryMode ? l10n.addItemIngredientNamePantryHint : l10n.addItemIngredientNameGroceryHint,
+                    context,
                     prefixIcon: _isPantryMode ? Icons.restaurant_outlined : Icons.shopping_basket_outlined,
                   ),
                   validator: (v) => (v == null || v.trim().isEmpty)
                       ? l10n.addItemIngredientNameRequired
                       : null,
                 ),
-                const SizedBox(height: 16),
+                const SizedBox(height: 24),
                 
-                // Quantity and Unit Row
                 Row(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
@@ -209,13 +218,14 @@ class _AddItemBottomSheetState extends ConsumerState<AddItemBottomSheet> {
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          _buildLabel(l10n.addItemQuantityLabel),
+                          _buildLabel(l10n.addItemQuantityLabel, context),
                           TextFormField(
                             controller: _quantityCtrl,
                             keyboardType: const TextInputType.numberWithOptions(
                               decimal: true,
                             ),
-                            decoration: _inputDecoration('0'),
+                            style: textTheme.bodyLarge?.copyWith(fontWeight: FontWeight.w600),
+                            decoration: _inputDecoration('0', context),
                             validator: (v) {
                               if (v == null || v.trim().isEmpty) {
                                 return l10n.addItemQuantityRequired;
@@ -235,13 +245,15 @@ class _AddItemBottomSheetState extends ConsumerState<AddItemBottomSheet> {
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          _buildLabel(l10n.addItemUnitLabel),
+                          _buildLabel(l10n.addItemUnitLabel, context),
                           TextFormField(
                             controller: _unitCtrl,
                             textCapitalization: TextCapitalization.none,
+                            style: textTheme.bodyLarge?.copyWith(fontWeight: FontWeight.w600),
                             decoration: _inputDecoration(
                               l10n.addItemUnitHint,
-                              suffixIcon: const Icon(Icons.keyboard_arrow_down, color: Color(0xFF7BA082)),
+                              context,
+                              suffixIcon: Icon(Icons.keyboard_arrow_down, color: customColors.darkSage),
                             ),
                           ),
                         ],
@@ -251,89 +263,83 @@ class _AddItemBottomSheetState extends ConsumerState<AddItemBottomSheet> {
                 ),
                 
                 if (_isPantryMode) ...[
-                  const SizedBox(height: 16),
-                  // Category
-                  _buildLabel(l10n.addItemCategoryLabel),
+                  const SizedBox(height: 24),
+                  _buildLabel(l10n.addItemCategoryLabel, context),
                   TextFormField(
                     controller: _categoryCtrl,
                     textCapitalization: TextCapitalization.sentences,
+                    style: textTheme.bodyLarge?.copyWith(fontWeight: FontWeight.w600),
                     decoration: _inputDecoration(
                       l10n.addItemCategoryHint,
-                      suffixIcon: const Icon(Icons.keyboard_arrow_down, color: Color(0xFF7BA082)),
+                      context,
+                      suffixIcon: Icon(Icons.keyboard_arrow_down, color: customColors.darkSage),
                     ),
                   ),
-                  const SizedBox(height: 16),
+                  const SizedBox(height: 24),
                   
-                  // Expiry Date
-                  _buildLabel(l10n.addItemExpiryLabel),
+                  _buildLabel(l10n.addItemExpiryLabel, context),
                   InkWell(
                     onTap: _pickDate,
-                    borderRadius: BorderRadius.circular(10),
+                    borderRadius: BorderRadius.circular(20),
                     child: Container(
                       decoration: BoxDecoration(
-                        color: Colors.white,
-                        borderRadius: BorderRadius.circular(10),
-                        border: Border.all(color: const Color(0xFFE8ECE7), width: 1),
+                        color: customColors.chartTabBackground,
+                        borderRadius: BorderRadius.circular(20),
                       ),
-                      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
+                      padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 20),
                       child: Row(
                         children: [
-                          const Icon(Icons.calendar_today_outlined, color: Color(0xFF7BA082)),
-                          const SizedBox(width: 12),
+                          Icon(Icons.calendar_today_outlined, color: customColors.darkSage, size: 20),
+                          const SizedBox(width: 16),
                           Expanded(
-                            child: Text(
-                              _expiryDate != null
-                                  ? _formatDate(_expiryDate!, context)
-                                  : 'mm/dd/yyyy',
-                              style: TextStyle(
-                                color: _expiryDate != null ? Colors.black87 : const Color(0xFF9E9E9E),
-                                fontSize: 14,
-                              ),
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Text(
+                                  _expiryDate != null
+                                      ? _formatDate(_expiryDate!, context)
+                                      : 'mm/dd/yyyy',
+                                  style: textTheme.bodyLarge?.copyWith(
+                                    color: _expiryDate != null ? customColors.textDarkBlue : customColors.slateGrey?.withValues(alpha: 0.3),
+                                    fontWeight: FontWeight.w600,
+                                  ),
+                                ),
+                              ],
                             ),
                           ),
                           Icon(
-                            _expiryDate != null ? Icons.clear : Icons.calendar_month,
-                            color: const Color(0xFF2C392D),
-                            size: 20,
+                            _expiryDate != null ? Icons.clear : Icons.arrow_forward_ios,
+                            color: customColors.slateGrey?.withValues(alpha: 0.3),
+                            size: 16,
                           ),
                         ],
                       ),
                     ),
                   ),
                 ],
-                const SizedBox(height: 32),
+                const SizedBox(height: 48),
                 
-                // Submit Button
                 SizedBox(
                   width: double.infinity,
+                  height: 64,
                   child: FilledButton(
                     onPressed: _loading ? null : _submit,
                     style: FilledButton.styleFrom(
-                      backgroundColor: const Color(0xFF7BA082),
-                      foregroundColor: Colors.white,
-                      padding: const EdgeInsets.symmetric(vertical: 16),
+                      backgroundColor: customColors.darkSage,
                       shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(12),
+                        borderRadius: BorderRadius.circular(20),
                       ),
+                      elevation: 2,
                     ),
                     child: _loading
                         ? const SizedBox(
-                            width: 20,
-                            height: 20,
-                            child: CircularProgressIndicator(strokeWidth: 2.5, color: Colors.white),
+                            width: 24,
+                            height: 24,
+                            child: CircularProgressIndicator(strokeWidth: 3, color: Colors.white),
                           )
-                        : Row(
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            children: [
-                              if (!_isPantryMode) ...[
-                                const Icon(Icons.add_circle, size: 20),
-                                const SizedBox(width: 8),
-                              ],
-                              Text(
-                                _isPantryMode ? l10n.addItemButtonPantry : l10n.addItemButtonGrocery,
-                                style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
-                              ),
-                            ],
+                        : Text(
+                            _isPantryMode ? l10n.addItemButtonPantry : l10n.addItemButtonGrocery,
+                            style: const TextStyle(fontSize: 16, fontWeight: FontWeight.w900),
                           ),
                   ),
                 ),

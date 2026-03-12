@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import '../../../../config/theme/app_theme.dart';
 
 class HeroConsistencyRing extends StatelessWidget {
   final double consistencyScore;
@@ -7,8 +8,9 @@ class HeroConsistencyRing extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+    final customColors = theme.extension<AppCustomColors>()!;
     final clampedScore = consistencyScore.clamp(0.0, 100.0) / 100.0;
-    final color = const Color(0xFF7BA082); // Muted green from screenshot
 
     return Column(
       mainAxisSize: MainAxisSize.min,
@@ -22,8 +24,10 @@ class HeroConsistencyRing extends StatelessWidget {
               CircularProgressIndicator(
                 value: clampedScore,
                 strokeWidth: 16,
-                backgroundColor: const Color(0xFFE8F0E8),
-                valueColor: AlwaysStoppedAnimation<Color>(color),
+                backgroundColor: customColors.consistencyRingBackground,
+                valueColor: AlwaysStoppedAnimation<Color>(
+                  customColors.consistencyRingActive!,
+                ),
                 strokeCap: StrokeCap.round,
               ),
               Center(
@@ -32,20 +36,19 @@ class HeroConsistencyRing extends StatelessWidget {
                   children: [
                     Text(
                       '${(clampedScore * 100).toStringAsFixed(0)}%',
-                      style: const TextStyle(
+                      style: theme.textTheme.displayLarge?.copyWith(
                         fontSize: 48,
                         fontWeight: FontWeight.w900,
-                        color: Color(0xFF001B3A),
+                        color: customColors.textDarkBlue,
                         letterSpacing: -1.5,
                       ),
                     ),
                     Text(
                       'CONSISTENCY',
-                      style: TextStyle(
-                        fontSize: 12,
+                      style: theme.textTheme.labelSmall?.copyWith(
                         fontWeight: FontWeight.bold,
                         letterSpacing: 1.5,
-                        color: Colors.grey.shade600,
+                        color: theme.colorScheme.onSurfaceVariant,
                       ),
                     ),
                   ],

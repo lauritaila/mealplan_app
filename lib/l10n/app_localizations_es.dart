@@ -458,6 +458,9 @@ class AppLocalizationsEs extends AppLocalizations {
   String get noRecipesAvailable => 'No hay recetas disponibles';
 
   @override
+  String get noDescriptionProvided => 'No se proporcionó descripción';
+
+  @override
   String get noFavoriteRecipes => 'No tienes recetas favoritas';
 
   @override
@@ -509,7 +512,9 @@ class AppLocalizationsEs extends AppLocalizations {
   String get otpEnterTitle => 'Ingresa el código de verificación';
 
   @override
-  String get otpEnterSubtitle => 'Ingresa el código de 6 dígitos enviado a:';
+  String otpEnterSubtitle(Object email) {
+    return 'Ingresa el código de 6 dígitos enviado a: $email';
+  }
 
   @override
   String get otpVerificationCodeLabel => 'Código de verificación';
@@ -723,6 +728,10 @@ class AppLocalizationsEs extends AppLocalizations {
 
   @override
   String get profileLanguageLabel => 'Idioma de la app';
+
+  @override
+  String get profileLanguageDescription =>
+      'Selecciona tu idioma de preferencia para la interfaz de la aplicación.';
 
   @override
   String get profileLanguageEnglish => 'Inglés';
@@ -1426,6 +1435,9 @@ class AppLocalizationsEs extends AppLocalizations {
   String get weeklyActivityTitle => 'Actividad Semanal';
 
   @override
+  String get dailyTotalsTitle => 'Totales Diarios';
+
+  @override
   String get mondayToSundayLabel => 'LUN - DOM';
 
   @override
@@ -1626,4 +1638,43 @@ class AppLocalizationsEs extends AppLocalizations {
 
   @override
   String get namePlaceholder => 'Tu nombre completo';
+
+  @override
+  String get monthJan => 'Ene';
+
+  @override
+  String get monthFeb => 'Feb';
+
+  @override
+  String get monthMar => 'Mar';
+
+  @override
+  String get monthApr => 'Abr';
+
+  @override
+  String get monthMay => 'May';
+
+  @override
+  String get monthJun => 'Jun';
+
+  @override
+  String get monthJul => 'Jul';
+
+  @override
+  String get monthAug => 'Ago';
+
+  @override
+  String get monthSep => 'Sep';
+
+  @override
+  String get monthOct => 'Oct';
+
+  @override
+  String get monthNov => 'Nov';
+
+  @override
+  String get monthDec => 'Dic';
+
+  @override
+  String get breakdownTabCreate => 'Crear';
 }

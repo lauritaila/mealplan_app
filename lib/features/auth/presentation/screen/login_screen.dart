@@ -64,7 +64,7 @@ class LoginScreen extends ConsumerWidget {
       child: Column(
         children: [
           AuthHeader(
-            title: l10n.authWelcomeBackTitle ?? 'Bienvenido de nuevo',
+            title: l10n.authWelcomeBackTitle,
             subtitle: l10n.authLoginSubtitle,
           ),
           const SizedBox(height: 28),
@@ -118,7 +118,7 @@ class LoginScreen extends ConsumerWidget {
           const SizedBox(height: 32),
           CustomTextFormField(
             label: l10n.email,
-            hint: 'nombre@ejemplo.com',
+            hint: l10n.emailPlaceholder,
             keyboardType: TextInputType.emailAddress,
             onChanged: loginFormNotifier.onEmailChanged,
             errorMessage: loginFormState.isFormPosted

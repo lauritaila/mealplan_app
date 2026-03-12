@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:meal_plan_app/l10n/app_localizations.dart';
+import 'package:meal_plan_app/config/theme/app_theme.dart';
 
 class EditQuantityBottomSheet extends StatefulWidget {
   final double initialQuantity;
@@ -46,38 +47,43 @@ class _EditQuantityBottomSheetState extends State<EditQuantityBottomSheet> {
     }
   }
 
-  InputDecoration _inputDecoration(String hint, {IconData? prefixIcon}) {
+  InputDecoration _inputDecoration(String hint, BuildContext context, {IconData? prefixIcon}) {
+    final theme = Theme.of(context);
+    final textTheme = theme.textTheme;
+    final customColors = theme.extension<AppCustomColors>()!;
+    
     return InputDecoration(
       hintText: hint,
-      hintStyle: const TextStyle(color: Color(0xFF9E9E9E), fontSize: 14),
-      prefixIcon: prefixIcon != null ? Icon(prefixIcon, color: const Color(0xFF7BA082)) : null,
-      filled: true,
-      fillColor: Colors.white,
-      contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
-      border: OutlineInputBorder(
-        borderRadius: BorderRadius.circular(10),
-        borderSide: const BorderSide(color: Color(0xFFE8ECE7), width: 1),
+      hintStyle: textTheme.bodyLarge?.copyWith(
+        color: customColors.slateGrey?.withValues(alpha: 0.3),
       ),
-      enabledBorder: OutlineInputBorder(
-        borderRadius: BorderRadius.circular(10),
-        borderSide: const BorderSide(color: Color(0xFFE8ECE7), width: 1),
+      prefixIcon: prefixIcon != null ? Icon(prefixIcon, color: customColors.darkSage, size: 20) : null,
+      filled: true,
+      fillColor: customColors.chartTabBackground,
+      contentPadding: const EdgeInsets.all(20),
+      border: OutlineInputBorder(
+        borderRadius: BorderRadius.circular(20),
+        borderSide: BorderSide.none,
       ),
       focusedBorder: OutlineInputBorder(
-        borderRadius: BorderRadius.circular(10),
-        borderSide: const BorderSide(color: Color(0xFF7BA082), width: 1.5),
+        borderRadius: BorderRadius.circular(20),
+        borderSide: BorderSide(color: customColors.darkSage!, width: 2),
       ),
     );
   }
 
-  Widget _buildLabel(String text) {
+  Widget _buildLabel(String text, BuildContext context) {
+    final theme = Theme.of(context);
+    final textTheme = theme.textTheme;
+    final customColors = theme.extension<AppCustomColors>()!;
     return Padding(
-      padding: const EdgeInsets.only(bottom: 6.0, left: 2.0),
+      padding: const EdgeInsets.only(bottom: 12.0, left: 4.0),
       child: Text(
-        text,
-        style: const TextStyle(
-          fontSize: 13,
-          fontWeight: FontWeight.w600,
-          color: Color(0xFF4A5D4E),
+        text.toUpperCase(),
+        style: textTheme.labelSmall?.copyWith(
+          fontWeight: FontWeight.w900,
+          letterSpacing: 1.2,
+          color: customColors.slateGrey?.withValues(alpha: 0.6),
         ),
       ),
     );
@@ -86,62 +92,50 @@ class _EditQuantityBottomSheetState extends State<EditQuantityBottomSheet> {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
+    final textTheme = theme.textTheme;
+    final customColors = theme.extension<AppCustomColors>()!;
     final l10n = AppLocalizations.of(context);
 
     return Container(
-      decoration: const BoxDecoration(
-        color: Color(0xFFF8F6F6),
-        borderRadius: BorderRadius.vertical(top: Radius.circular(24)),
+      decoration: BoxDecoration(
+        color: theme.colorScheme.surface,
+        borderRadius: const BorderRadius.vertical(top: Radius.circular(32)),
       ),
       child: Padding(
         padding: EdgeInsets.only(
           bottom: MediaQuery.of(context).viewInsets.bottom,
         ),
         child: SingleChildScrollView(
-          padding: const EdgeInsets.fromLTRB(24, 16, 24, 32),
+          padding: const EdgeInsets.fromLTRB(24, 16, 24, 40),
           child: Form(
             key: _formKey,
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               mainAxisSize: MainAxisSize.min,
               children: [
-                // Handle bar
                 Center(
                   child: Container(
-                    width: 36,
-                    height: 4,
-                    margin: const EdgeInsets.only(bottom: 24),
+                    width: 48,
+                    height: 5,
+                    margin: const EdgeInsets.only(bottom: 32),
                     decoration: BoxDecoration(
-                      color: const Color(0xFFC7CEC5),
-                      borderRadius: BorderRadius.circular(2),
+                      color: customColors.slateGrey?.withValues(alpha: 0.1),
+                      borderRadius: BorderRadius.circular(10),
                     ),
                   ),
                 ),
                 
-                // Title
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    Expanded(
-                      child: Text(
-                        widget.ingredientName,
-                        style: theme.textTheme.titleLarge?.copyWith(
-                          fontWeight: FontWeight.bold,
-                          color: const Color(0xFF2C392D),
-                        ),
-                        maxLines: 1,
-                        overflow: TextOverflow.ellipsis,
-                      ),
-                    ),
-                    IconButton(
-                      onPressed: () => Navigator.pop(context),
-                      icon: const Icon(Icons.close, color: Color(0xFF7BA082)),
-                    ),
-                  ],
+                Text(
+                  widget.ingredientName,
+                  style: textTheme.headlineSmall?.copyWith(
+                    fontWeight: FontWeight.w900,
+                    color: customColors.textDarkBlue,
+                  ),
+                  maxLines: 2,
+                  overflow: TextOverflow.ellipsis,
                 ),
-                const SizedBox(height: 20),
+                const SizedBox(height: 32),
 
-                // Quantity Label and Input Row
                 Row(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
@@ -150,18 +144,21 @@ class _EditQuantityBottomSheetState extends State<EditQuantityBottomSheet> {
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          _buildLabel(l10n.addItemQuantityLabel),
+                          _buildLabel(l10n.addItemQuantityLabel, context),
                           TextFormField(
                             controller: _quantityCtrl,
                             autofocus: true,
                             keyboardType: const TextInputType.numberWithOptions(decimal: true),
-                            decoration: _inputDecoration('0'),
+                            style: textTheme.bodyLarge?.copyWith(fontWeight: FontWeight.w600),
+                            decoration: _inputDecoration('0', context),
                             validator: (v) {
                               if (v == null || v.trim().isEmpty) {
                                 return l10n.addItemQuantityRequired;
                               }
                               if (double.tryParse(v.trim()) == null) {
-                                return l10n.addItemQuantityInvalid;
+                                {
+                                  return l10n.addItemQuantityInvalid;
+                                }
                               }
                               return null;
                             },
@@ -175,18 +172,20 @@ class _EditQuantityBottomSheetState extends State<EditQuantityBottomSheet> {
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          _buildLabel(l10n.addItemUnitLabel),
+                          _buildLabel(l10n.addItemUnitLabel, context),
                           Container(
                             width: double.infinity,
-                            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
+                            padding: const EdgeInsets.all(20),
                             decoration: BoxDecoration(
-                              color: Colors.white,
-                              borderRadius: BorderRadius.circular(10),
-                              border: Border.all(color: const Color(0xFFE8ECE7), width: 1),
+                              color: customColors.chartTabBackground,
+                              borderRadius: BorderRadius.circular(20),
                             ),
                             child: Text(
                               widget.unit,
-                              style: const TextStyle(fontSize: 14, color: Color(0xFF4A5D4E)),
+                              style: textTheme.bodyLarge?.copyWith(
+                                color: customColors.textDarkBlue,
+                                fontWeight: FontWeight.w900,
+                              ),
                             ),
                           ),
                         ],
@@ -194,24 +193,23 @@ class _EditQuantityBottomSheetState extends State<EditQuantityBottomSheet> {
                     ),
                   ],
                 ),
-                const SizedBox(height: 32),
+                const SizedBox(height: 48),
 
-                // Save Button
                 SizedBox(
                   width: double.infinity,
+                  height: 64,
                   child: FilledButton(
                     onPressed: _submit,
                     style: FilledButton.styleFrom(
-                      backgroundColor: const Color(0xFF7BA082),
-                      foregroundColor: Colors.white,
-                      padding: const EdgeInsets.symmetric(vertical: 16),
+                      backgroundColor: customColors.darkSage,
                       shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(12),
+                        borderRadius: BorderRadius.circular(20),
                       ),
+                      elevation: 2,
                     ),
                     child: Text(
                       l10n.save,
-                      style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+                      style: const TextStyle(fontSize: 16, fontWeight: FontWeight.w900),
                     ),
                   ),
                 ),
