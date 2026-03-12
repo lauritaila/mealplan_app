@@ -1,3 +1,4 @@
+import 'package:flutter/foundation.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import 'package:meal_plan_app/features/shared/entities/legal_content.dart';
 import 'legal_datasource.dart';
@@ -32,7 +33,7 @@ class SupabaseLegalDatasource implements LegalDatasource {
 
       return LegalContent.fromJson(data);
     } catch (e) {
-      print('DEBUG: Error in SupabaseLegalDatasource: $e');
+      debugPrint('DEBUG: Error in SupabaseLegalDatasource: $e');
       rethrow;
     }
   }

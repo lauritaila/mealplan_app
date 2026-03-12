@@ -26,7 +26,7 @@ class LegalScreen extends ConsumerWidget {
           legalContentAsync.when(
             data: (content) => content?.title ?? fallbackTitle,
             loading: () => fallbackTitle,
-            error: (_, __) => fallbackTitle,
+            error: (_, _) => fallbackTitle,
           ),
           style: textTheme.titleLarge?.copyWith(
             fontWeight: FontWeight.w900,

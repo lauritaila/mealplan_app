@@ -21,7 +21,6 @@ class PlanActionsSheet extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final l10n = AppLocalizations.of(context);
-    final theme = Theme.of(context);
 
     return Padding(
       padding: const EdgeInsets.only(bottom: 24, left: 16, right: 16, top: 16),
@@ -126,7 +125,7 @@ class PlanActionsSheet extends ConsumerWidget {
       builder: (_) => ReusePlanSheet(plan: plan),
     );
     if (result == null || !context.mounted) return;
-    final messenger = ScaffoldMessenger.of(context);
+
     final response = await ref
         .read(mealPlanEntryActionsProvider.notifier)
         .reusePlan(plan.id, result.startDate, name: result.name);
@@ -134,22 +133,18 @@ class PlanActionsSheet extends ConsumerWidget {
     if (response != null) {
       ref.invalidate(mealPlansProvider);
       ref.read(mealPlanEntryActionsProvider.notifier).reset();
-      messenger.showSnackBar(
-        SnackBar(
-          content: Text(
-            l10n.planReusedSuccess(
-                response.newPlanName, response.entriesCloned),
-          ),
-          action: SnackBarAction(
-            label: l10n.planReusedView,
-            onPressed: () => context.push('/meal-plan/${response.newPlanId}'),
-          ),
+      CustomSnackbar.showSuccess(
+        context,
+        l10n.planReusedSuccess(
+            response.newPlanName, response.entriesCloned),
+        action: SnackBarAction(
+          label: l10n.planReusedView,
+          textColor: Colors.white,
+          onPressed: () => context.push('/meal-plan/${response.newPlanId}'),
         ),
       );
     } else {
-      messenger.showSnackBar(
-        SnackBar(content: Text(l10n.planReusedFailed)),
-      );
+      CustomSnackbar.showError(context, l10n.planReusedFailed);
     }
   }
 

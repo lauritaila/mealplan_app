@@ -2,8 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:intl/intl.dart';
-import 'package:meal_plan_app/features/grocery_list/presentation/providers/grocery_actions_provider.dart';
-import 'package:meal_plan_app/features/grocery_list/presentation/widgets/select_grocery_list_sheet.dart';
 import 'package:meal_plan_app/features/meal_plan/domain/domain.dart';
 import 'package:meal_plan_app/features/meal_plan/presentation/providers/provider.dart';
 import 'package:meal_plan_app/l10n/app_localizations.dart';
@@ -68,7 +66,7 @@ class MealPlanListScreen extends ConsumerWidget {
                 ),
               ),
         loading: () => null,
-        error: (_, __) => null,
+        error: (_, _) => null,
       ),
       body: plansAsync.when(
         data: (plansList) {
@@ -179,7 +177,7 @@ class MealPlanListScreen extends ConsumerWidget {
         loading: () => Center(
           child: CircularProgressIndicator(color: customColors.darkSage),
         ),
-        error: (error, _) => Center(
+        error: (_, _) => Center(
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [

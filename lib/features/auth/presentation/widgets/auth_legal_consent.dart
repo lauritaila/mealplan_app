@@ -32,7 +32,7 @@ class LegalConsentRichText extends StatelessWidget {
       textAlign: TextAlign.center,
       text: TextSpan(
         style: textTheme.labelSmall?.copyWith(
-          color: colors.onSurfaceVariant.withOpacity(0.6),
+          color: colors.onSurfaceVariant.withValues(alpha: 0.6),
         ),
         children: [
           const TextSpan(text: 'Al continuar, aceptas nuestros '),
@@ -68,7 +68,7 @@ class LegalConsentRichText extends StatelessWidget {
       textAlign: TextAlign.center,
       text: TextSpan(
         style: textTheme.labelSmall?.copyWith(
-          color: colors.onSurfaceVariant.withOpacity(0.6),
+          color: colors.onSurfaceVariant.withValues(alpha: 0.6),
         ),
         children: [
           const TextSpan(text: 'By continuing, you accept our '),

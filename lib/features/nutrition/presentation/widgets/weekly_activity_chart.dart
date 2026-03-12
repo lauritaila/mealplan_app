@@ -331,6 +331,7 @@ class _WeeklyActivityChartState extends State<WeeklyActivityChart> {
                     }).toList(),
                   ),
                 ),
+              ),
               ],
             ),
           ),

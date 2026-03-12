@@ -28,7 +28,6 @@ class _ReusePlanSheetState extends State<ReusePlanSheet> {
   @override
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context);
-    final theme = Theme.of(context);
     final df = DateFormat('d MMM yyyy', Localizations.localeOf(context).toString());
 
     return Padding(

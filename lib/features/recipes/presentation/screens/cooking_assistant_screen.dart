@@ -176,7 +176,9 @@ class _CookingAssistantScreenState
      final l10n = AppLocalizations.of(context);
      final notifier = ref.read(mealPlanEntryActionsProvider.notifier);
      final result = await notifier.bulkDeduct(widget.recipeId, 1);
-     if (!context.mounted) return;
+     
+     if (!mounted) return;
+     
      if (result != null) {
         CustomSnackbar.showInfo(context, result.missing.isEmpty ? l10n.recipeCompletedSnack : l10n.recipeCompletedMissingSnack(result.missing.length));
      }

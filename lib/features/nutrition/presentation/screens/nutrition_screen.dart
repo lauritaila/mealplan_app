@@ -16,7 +16,6 @@ class NutritionScreen extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final nutritionAsync = ref.watch(currentNutritionSummaryProvider);
-    final daysFilter = ref.watch(nutritionDaysFilterProvider);
     final profileState = ref.watch(profileProvider);
     final hideNutritionValues = profileState.hideNutritionValues;
     final theme = Theme.of(context);

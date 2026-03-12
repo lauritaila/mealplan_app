@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:meal_plan_app/config/theme/app_theme.dart';
 import 'package:meal_plan_app/l10n/app_localizations.dart';
+import 'package:meal_plan_app/features/auth/presentation/provider/provider.dart';
 
 class DailyNutritionSummary extends ConsumerWidget {
   final AsyncValue nutritionAsync;

@@ -26,7 +26,7 @@ class WeeklyAveragesCard extends StatelessWidget {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Text(
-          l10n.dailyTotalsTitle ?? 'Daily Totals', 
+          l10n.dailyTotalsTitle, 
           style: theme.textTheme.titleLarge?.copyWith(
             fontSize: 18,
             fontWeight: FontWeight.w900,

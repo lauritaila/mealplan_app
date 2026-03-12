@@ -91,60 +91,62 @@ class _SwapRecipeSheetState extends ConsumerState<SwapRecipeSheet> {
                   if (favorites.isEmpty) {
                     return Center(child: Text(l10n.noFavoriteRecipes));
                   }
-                  return ListView.builder(
-                    itemCount: favorites.length,
-                    itemBuilder: (context, index) {
-                      final recipe = favorites[index];
-                      final isSelected = _selectedRecipeId == recipe.id;
-                      return InkWell(
-                        onTap: () => setState(() => _selectedRecipeId = recipe.id),
-                        child: Container(
-                          padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 20),
-                          decoration: BoxDecoration(
-                            border: Border(bottom: BorderSide(color: customColors.slateGrey!.withValues(alpha: 0.05))),
-                            color: isSelected ? customColors.chartTabBackground?.withValues(alpha: 0.5) : Colors.transparent,
-                          ),
-                          child: Row(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Radio<int>(
-                                value: recipe.id,
-                                groupValue: _selectedRecipeId,
-                                onChanged: (v) => setState(() => _selectedRecipeId = v),
-                                activeColor: customColors.darkSage,
-                                materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
-                              ),
-                              const SizedBox(width: 12),
-                              Expanded(
-                                child: Column(
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                  children: [
-                                    Text(
-                                      recipe.name,
-                                      style: textTheme.bodyLarge?.copyWith(
-                                        fontWeight: FontWeight.w800,
-                                        color: customColors.textDarkBlue,
-                                      ),
-                                    ),
-                                    const SizedBox(height: 12),
-                                    Wrap(
-                                      spacing: 8,
-                                      runSpacing: 4,
-                                      children: [
-                                        _MacroChip(label: '${recipe.calories?.toStringAsFixed(0) ?? "--"} ${l10n.kcalLabel}', isCalories: true),
-                                        _MacroChip(label: 'P: ${recipe.proteinGrams?.toStringAsFixed(0) ?? "-"}g'),
-                                        _MacroChip(label: '${l10n.metricCarbsShort[0]}: ${recipe.carbsGrams?.toStringAsFixed(0) ?? "-"}g'),
-                                        _MacroChip(label: '${l10n.metricFat[0]}: ${recipe.fatsGrams?.toStringAsFixed(0) ?? "-"}g'),
-                                      ],
-                                    ),
-                                  ],
+                  return RadioGroup<int>(
+                    groupValue: _selectedRecipeId,
+                    onChanged: (v) => setState(() => _selectedRecipeId = v),
+                    child: ListView.builder(
+                      itemCount: favorites.length,
+                      itemBuilder: (context, index) {
+                        final recipe = favorites[index];
+                        final isSelected = _selectedRecipeId == recipe.id;
+                        return InkWell(
+                          onTap: () => setState(() => _selectedRecipeId = recipe.id),
+                          child: Container(
+                            padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 20),
+                            decoration: BoxDecoration(
+                              border: Border(bottom: BorderSide(color: customColors.slateGrey!.withValues(alpha: 0.05))),
+                              color: isSelected ? customColors.chartTabBackground?.withValues(alpha: 0.5) : Colors.transparent,
+                            ),
+                            child: Row(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Radio<int>(
+                                  value: recipe.id,
+                                  activeColor: customColors.darkSage,
+                                  materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
                                 ),
-                              ),
-                            ],
+                                const SizedBox(width: 12),
+                                Expanded(
+                                  child: Column(
+                                    crossAxisAlignment: CrossAxisAlignment.start,
+                                    children: [
+                                      Text(
+                                        recipe.name,
+                                        style: textTheme.bodyLarge?.copyWith(
+                                          fontWeight: FontWeight.w800,
+                                          color: customColors.textDarkBlue,
+                                        ),
+                                      ),
+                                      const SizedBox(height: 12),
+                                      Wrap(
+                                        spacing: 8,
+                                        runSpacing: 4,
+                                        children: [
+                                          _MacroChip(label: '${recipe.calories?.toStringAsFixed(0) ?? "--"} ${l10n.kcalLabel}', isCalories: true),
+                                          _MacroChip(label: 'P: ${recipe.proteinGrams?.toStringAsFixed(0) ?? "-"}g'),
+                                          _MacroChip(label: '${l10n.metricCarbsShort[0]}: ${recipe.carbsGrams?.toStringAsFixed(0) ?? "-"}g'),
+                                          _MacroChip(label: '${l10n.metricFat[0]}: ${recipe.fatsGrams?.toStringAsFixed(0) ?? "-"}g'),
+                                        ],
+                                      ),
+                                    ],
+                                  ),
+                                ),
+                              ],
+                            ),
                           ),
-                        ),
-                      );
-                    },
+                        );
+                      },
+                    ),
                   );
                 },
               ),

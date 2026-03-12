@@ -42,9 +42,6 @@ class PreferenceWizardScreenState
 
   @override
   Widget build(BuildContext context) {
-    final colors = Theme.of(context).colorScheme;
-    final l10n = AppLocalizations.of(context);
-    
     ref.listen(preferencesWizardProvider.select((state) => state.step), (
       previous,
       next,
@@ -61,6 +58,10 @@ class PreferenceWizardScreenState
     final int currentStep = ref.watch(preferencesWizardProvider).step;
 
     return AuthLayout(
+      footer: _NavigationControls(
+        pageIndex: currentStep,
+        totalSteps: _viewRoutes.length,
+      ),
       child: Column(
         children: [
           StepsWizard(
@@ -80,10 +81,6 @@ class PreferenceWizardScreenState
             ),
           ),
         ],
-      ),
-      footer: _NavigationControls(
-        pageIndex: currentStep,
-        totalSteps: _viewRoutes.length,
       ),
     );
   }

@@ -57,7 +57,6 @@ class _FoodPreferencesStepState extends ConsumerState<FoodPreferencesStep> {
 
   @override
   Widget build(BuildContext context) {
-    final colors = Theme.of(context).colorScheme;
     final l10n = AppLocalizations.of(context);
 
     return Column(
@@ -137,7 +136,7 @@ class _PreferenceInputField extends StatelessWidget {
                 maxLines: 4,
                 decoration: InputDecoration(
                   hintText: hint,
-                  hintStyle: TextStyle(color: colors.onSurfaceVariant.withOpacity(0.5)),
+                  hintStyle: TextStyle(color: colors.onSurfaceVariant.withValues(alpha: 0.5)),
                   contentPadding: const EdgeInsets.all(16),
                   border: InputBorder.none,
                 ),
@@ -148,7 +147,7 @@ class _PreferenceInputField extends StatelessWidget {
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.end,
                   children: [
-                    Icon(trailingIcon, color: colors.onSurfaceVariant.withOpacity(0.4), size: 20),
+                    Icon(trailingIcon, color: colors.onSurfaceVariant.withValues(alpha: 0.4), size: 20),
                   ],
                 ),
               ),

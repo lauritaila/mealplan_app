@@ -106,7 +106,7 @@ class LoginScreen extends ConsumerWidget {
                 child: Text(
                   l10n.authLoginDivider,
                   style: textTheme.labelSmall?.copyWith(
-                    color: colors.onSurfaceVariant.withOpacity(0.5),
+                    color: colors.onSurfaceVariant.withValues(alpha: 0.5),
                     fontWeight: FontWeight.bold,
                     letterSpacing: 1.2,
                   ),

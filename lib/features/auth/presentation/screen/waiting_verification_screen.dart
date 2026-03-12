@@ -133,7 +133,7 @@ class _OtpVerificationScreenState extends ConsumerState<OtpVerificationScreen> {
                       borderRadius: BorderRadius.circular(12),
                       borderSide: BorderSide(color: colors.primary, width: 2),
                     ),
-                    fillColor: colors.surfaceContainerHighest.withOpacity(0.1),
+                    fillColor: colors.surfaceContainerHighest.withValues(alpha: 0.1),
                     filled: true,
                   ),
                   onChanged: (value) {

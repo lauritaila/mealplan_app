@@ -6,8 +6,7 @@ import 'package:intl/intl.dart';
 import 'package:meal_plan_app/config/errors/app_errors.dart';
 import 'package:meal_plan_app/features/auth/domain/entities/user.dart';
 import 'package:meal_plan_app/features/auth/presentation/provider/provider.dart';
-import 'package:meal_plan_app/features/grocery_list/presentation/providers/grocery_actions_provider.dart';
-import 'package:meal_plan_app/features/grocery_list/presentation/widgets/select_grocery_list_sheet.dart';
+
 import 'package:meal_plan_app/features/meal_plan/domain/domain.dart';
 import 'package:meal_plan_app/features/meal_plan/presentation/providers/provider.dart';
 import 'package:meal_plan_app/features/shared/utils/app_error_localizations.dart';
@@ -238,81 +237,6 @@ class MealPlanEntriesScreen extends ConsumerWidget {
           );
         },
       ),
-    );
-  }
-  Future<void> _showPlanActionsSheet(
-    BuildContext context,
-    WidgetRef ref,
-    int planId,
-    AppLocalizations l10n,
-  ) async {
-    await showModalBottomSheet(
-      context: context,
-      backgroundColor: Colors.white,
-      shape: const RoundedRectangleBorder(
-        borderRadius: BorderRadius.vertical(top: Radius.circular(28)),
-      ),
-      builder: (context) {
-        return SafeArea(
-          child: Padding(
-            padding: const EdgeInsets.fromLTRB(24, 12, 24, 24),
-            child: Column(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                Container(
-                  width: 40,
-                  height: 4,
-                  decoration: BoxDecoration(
-                    color: Colors.grey.shade200,
-                    borderRadius: BorderRadius.circular(2),
-                  ),
-                ),
-                const SizedBox(height: 32),
-                _ActionRow(
-                  icon: Icons.refresh_rounded,
-                  label: l10n.retry, // localized refresh essentially
-                  iconBgColor: const Color(0xFFF4F7F5),
-                  iconColor: const Color(0xFF576F5F),
-                  onTap: () {
-                    Navigator.pop(context);
-                    ref.invalidate(mealPlanEntriesProvider(planId));
-                  },
-                ),
-                const Divider(color: Color(0xFFF1F1F1)),
-                _ActionRow(
-                  icon: Icons.shopping_cart_outlined,
-                  label: l10n.menuSaveIngredients,
-                  iconBgColor: const Color(0xFFF4F7F5),
-                  iconColor: const Color(0xFF576F5F),
-                  onTap: () async {
-                    Navigator.pop(context);
-                    final messenger = ScaffoldMessenger.of(context);
-                    final selected = await showSelectOrCreateGroceryListSheet(
-                      context: context,
-                      title: l10n.saveIngredientsSheetTitle, // Or similar string
-                    );
-                    if (selected == null) return;
-                    final ok = await ref
-                        .read(groceryActionsProvider.notifier)
-                        .importMealPlan(selected.id, planId);
-                    if (context.mounted) {
-                      messenger.showSnackBar(
-                        SnackBar(
-                          content: Text(
-                              ok
-                                ? l10n.savedIngredientsSuccess(selected.name)
-                                : l10n.savedIngredientsFailed, // Or corresponding strings
-                          ),
-                        ),
-                      );
-                    }
-                  },
-                ),
-              ],
-            ),
-          ),
-        );
-      },
     );
   }
 }
@@ -723,7 +647,7 @@ Future<void> _confirmComplete(
     ),
   );
   if (confirmed != true || !context.mounted) return;
-  final messenger = ScaffoldMessenger.of(context);
+
   final result = await ref
       .read(mealPlanEntryActionsProvider.notifier)
       .bulkDeduct(
@@ -736,20 +660,14 @@ Future<void> _confirmComplete(
   if (result != null) {
     ref.invalidate(mealPlanEntriesProvider(planId));
     ref.read(mealPlanEntryActionsProvider.notifier).reset();
-    messenger.showSnackBar(
-      SnackBar(
-        content: Text(
-          result.missing.isEmpty
-              ? l10n.mealCompletedSuccess(result.deducted.length)
-              : l10n.mealCompletedMissing(result.missing.length),
-        ),
-        duration: const Duration(seconds: 4),
-      ),
+    CustomSnackbar.showSuccess(
+      context,
+      result.missing.isEmpty
+          ? l10n.mealCompletedSuccess(result.deducted.length)
+          : l10n.mealCompletedMissing(result.missing.length),
     );
   } else {
-    messenger.showSnackBar(
-      SnackBar(content: Text(l10n.mealCompletedError)),
-    );
+    CustomSnackbar.showError(context, l10n.mealCompletedError);
   }
 }
 
@@ -908,50 +826,4 @@ String _formatInt(int? value) {
   return value.toString();
 }
 
-class _ActionRow extends StatelessWidget {
-  final IconData icon;
-  final String label;
-  final Color iconBgColor;
-  final Color iconColor;
-  final VoidCallback onTap;
 
-  const _ActionRow({
-    required this.icon,
-    required this.label,
-    required this.iconBgColor,
-    required this.iconColor,
-    required this.onTap,
-  });
-
-  @override
-  Widget build(BuildContext context) {
-    final theme = Theme.of(context);
-    final customColors = theme.extension<AppCustomColors>()!;
-    final textTheme = theme.textTheme;
-
-    return InkWell(
-      onTap: onTap,
-      child: Padding(
-        padding: const EdgeInsets.symmetric(vertical: 12),
-        child: Row(
-          children: [
-            Container(
-              width: 44,
-              height: 44,
-              decoration: BoxDecoration(color: iconBgColor, shape: BoxShape.circle),
-              child: Icon(icon, color: iconColor),
-            ),
-            const SizedBox(width: 16),
-            Text(
-              label,
-              style: textTheme.bodyLarge?.copyWith(
-                fontWeight: FontWeight.w600,
-                color: customColors.textDarkBlue,
-              ),
-            ),
-          ],
-        ),
-      ),
-    );
-  }
-}

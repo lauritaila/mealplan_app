@@ -1,4 +1,3 @@
-import 'package:meal_plan_app/features/shared/shared.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:meal_plan_app/features/grocery_list/presentation/providers/provider.dart';

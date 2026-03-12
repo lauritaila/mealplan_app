@@ -48,9 +48,7 @@ class _PreferencesDetailsScreenState
             e is AppError ? e.code : null,
             fallback: e is AppError ? e.message : null,
           );
-          ScaffoldMessenger.of(
-            context,
-          ).showSnackBar(SnackBar(content: Text(message)));
+          CustomSnackbar.showError(context, message);
         }
       }
 
@@ -195,7 +193,7 @@ class _PreferencesDetailsScreenState
                               Switch.adaptive(
                                 value: preferencesState.hideNutritionValues,
                                 onChanged: preferencesNotifier.setHideNutritionValues,
-                                activeColor: customColors.darkSage,
+                                activeTrackColor: customColors.darkSage,
                               ),
                             ],
                           ),

@@ -26,7 +26,7 @@ class StepsWizard extends StatelessWidget {
           decoration: BoxDecoration(
             color: isActive 
                 ? colors.primary 
-                : colors.primary.withOpacity(0.2),
+                : colors.primary.withValues(alpha: 0.2),
             borderRadius: BorderRadius.circular(4),
           ),
         );

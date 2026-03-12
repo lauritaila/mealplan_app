@@ -4,7 +4,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:meal_plan_app/features/grocery_list/presentation/providers/provider.dart';
 // unused
-import 'package:meal_plan_app/features/shared/widgets/select_list_sheet.dart';
+
 import 'package:meal_plan_app/l10n/app_localizations.dart';
 
 class SaveIngredientsFlow {
@@ -122,8 +122,8 @@ class SaveIngredientsFlow {
         isScrollControlled: true,
         backgroundColor: Colors.transparent,
         builder: (context) => SelectListSheet(
-          title: l10n.selectListTitle ?? 'Seleccionar Lista',
-          subtitle: l10n.selectListSubtitle ?? 'Elige dónde guardar tus artículos',
+        title: l10n.selectListTitle,
+        subtitle: l10n.selectListSubtitle,
         ),
       );
 

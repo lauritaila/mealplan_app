@@ -7,7 +7,7 @@ import 'package:meal_plan_app/features/profile/presentation/providers/delete_acc
 import 'package:meal_plan_app/features/shared/utils/app_error_localizations.dart';
 import 'package:meal_plan_app/l10n/app_localizations.dart';
 import 'package:go_router/go_router.dart';
-import 'package:meal_plan_app/config/theme/app_theme.dart';
+
 
 Future<void> _showDeleteAccountModal(
   BuildContext context,

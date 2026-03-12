@@ -109,7 +109,7 @@ class HomeScreen extends ConsumerWidget {
                       return const Column(
                         children: [
                           HomeEmptyPlanWidget(),
-                          const SizedBox(height: 24),
+                          SizedBox(height: 24),
                         ],
                       );
                     }

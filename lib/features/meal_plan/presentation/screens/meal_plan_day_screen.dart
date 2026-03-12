@@ -5,8 +5,6 @@ import 'package:go_router/go_router.dart';
 import 'package:meal_plan_app/config/errors/app_errors.dart';
 import 'package:meal_plan_app/features/auth/domain/entities/user.dart';
 import 'package:meal_plan_app/features/auth/presentation/provider/provider.dart';
-import 'package:meal_plan_app/features/grocery_list/presentation/providers/grocery_actions_provider.dart';
-import 'package:meal_plan_app/features/grocery_list/presentation/widgets/select_grocery_list_sheet.dart';
 import 'package:meal_plan_app/features/meal_plan/domain/domain.dart';
 import 'package:meal_plan_app/features/meal_plan/presentation/providers/provider.dart';
 import 'package:meal_plan_app/features/meal_plan/presentation/widgets/swap_recipe_sheet.dart';
@@ -378,7 +376,7 @@ Future<void> _confirmComplete(
     ),
   );
   if (confirmed != true || !context.mounted) return;
-  final messenger = ScaffoldMessenger.of(context);
+
   final result = await ref
       .read(mealPlanEntryActionsProvider.notifier)
       .bulkDeduct(
@@ -391,20 +389,14 @@ Future<void> _confirmComplete(
   if (result != null) {
     ref.invalidate(mealPlanDayEntriesProvider(selectedDate));
     ref.read(mealPlanEntryActionsProvider.notifier).reset();
-    messenger.showSnackBar(
-      SnackBar(
-        content: Text(
-          result.missing.isEmpty
-              ? l10n.mealCompletedSuccess(result.deducted.length)
-              : l10n.mealCompletedMissing(result.missing.length),
-        ),
-        duration: const Duration(seconds: 4),
-      ),
+    CustomSnackbar.showSuccess(
+      context,
+      result.missing.isEmpty
+          ? l10n.mealCompletedSuccess(result.deducted.length)
+          : l10n.mealCompletedMissing(result.missing.length),
     );
   } else {
-    messenger.showSnackBar(
-      SnackBar(content: Text(l10n.mealCompletedError)),
-    );
+    CustomSnackbar.showError(context, l10n.mealCompletedError);
   }
 }
 
@@ -698,7 +690,7 @@ class _MealEntryCard extends StatelessWidget {
                     Container(width: 1, height: 32, color: customColors.slateGrey?.withValues(alpha: 0.1)),
                     _MiniMacro(label: l10n.metricCarbsShort.toUpperCase(), value: '${entry.carbsGrams?.toStringAsFixed(0) ?? '0'}g'),
                     Container(width: 1, height: 32, color: customColors.slateGrey?.withValues(alpha: 0.1)),
-                    _MiniMacro(label: l10n.kcalLabel.toUpperCase(), value: '${entry.calories?.toStringAsFixed(0) ?? '0'}'),
+                    _MiniMacro(label: l10n.kcalLabel.toUpperCase(), value: entry.calories?.toStringAsFixed(0) ?? '0'),
                   ],
                 ),
               ),
@@ -798,28 +790,6 @@ class _CategoryChip extends StatelessWidget {
               fontWeight: FontWeight.w900,
               letterSpacing: 0.5,
             ),
-      ),
-    );
-  }
-}
-
-class _MetricChip extends StatelessWidget {
-  final String label;
-  final String value;
-
-  const _MetricChip({required this.label, required this.value});
-
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
-      decoration: BoxDecoration(
-        color: Theme.of(context).colorScheme.surfaceContainerHighest,
-        borderRadius: BorderRadius.circular(12),
-      ),
-      child: Text(
-        '$label: $value',
-        style: Theme.of(context).textTheme.bodySmall,
       ),
     );
   }
@@ -1106,26 +1076,6 @@ double? _sumNullable(Iterable<double?> values) {
     }
   }
   return hasValue ? total : null;
-}
-
-IconData _mealTypeIcon(String? mealType) {
-  final value = (mealType ?? '').toLowerCase();
-  switch (value) {
-    case 'breakfast':
-    case 'desayuno':
-      return Icons.wb_sunny_outlined;
-    case 'lunch':
-    case 'almuerzo':
-      return Icons.lunch_dining;
-    case 'dinner':
-    case 'cena':
-      return Icons.dinner_dining;
-    case 'snack':
-    case 'merienda':
-      return Icons.fastfood;
-    default:
-      return Icons.restaurant;
-  }
 }
 
 String _formatMealType(AppLocalizations l10n, String? mealType) {

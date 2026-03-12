@@ -53,9 +53,8 @@ class _AllergiesStepState extends ConsumerState<AllergiesStep> {
   Widget build(BuildContext context) {
     final configAsync = ref.watch(preferencesConfigurationProvider);
     final selectedAllergies = ref.watch(preferencesWizardProvider).allergies;
-    final colors = Theme.of(context).colorScheme;
-    final textTheme = Theme.of(context).textTheme;
     final l10n = AppLocalizations.of(context);
+    final colors = Theme.of(context).colorScheme;
     final localeCode = Localizations.localeOf(context).languageCode;
 
     return configAsync.when(
@@ -179,7 +178,7 @@ class _CustomAllergyInputField extends StatelessWidget {
             onChanged: onChanged,
             decoration: InputDecoration(
               hintText: hint,
-              hintStyle: TextStyle(color: colors.onSurfaceVariant.withOpacity(0.5)),
+              hintStyle: TextStyle(color: colors.onSurfaceVariant.withValues(alpha: 0.5)),
               contentPadding: const EdgeInsets.all(16),
               border: InputBorder.none,
             ),

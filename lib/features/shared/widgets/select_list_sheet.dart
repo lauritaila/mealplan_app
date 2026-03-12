@@ -169,7 +169,7 @@ class _SelectListSheetState extends ConsumerState<SelectListSheet> {
                       child: ListView.separated(
                         shrinkWrap: true,
                         itemCount: lists.length,
-                        separatorBuilder: (_, __) => const SizedBox(height: 12),
+                        separatorBuilder: (_, _) => const SizedBox(height: 12),
                         itemBuilder: (context, index) {
                           final list = lists[index];
                           final isSelected = _selectedListId == list.id;
@@ -239,7 +239,7 @@ class _SelectListSheetState extends ConsumerState<SelectListSheet> {
                     );
                   },
                   loading: () => const Center(child: CircularProgressIndicator()),
-                  error: (_, __) => Text(l10n.genericError),
+                  error: (_, _) => Text(l10n.genericError),
                 ),
               ),
 

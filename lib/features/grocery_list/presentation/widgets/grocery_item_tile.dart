@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:meal_plan_app/features/shared/shared.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:meal_plan_app/features/grocery_list/domain/entities/grocery_list.dart';
 import 'package:meal_plan_app/features/grocery_list/presentation/providers/provider.dart';
@@ -62,7 +63,6 @@ class _GroceryItemTileState extends ConsumerState<GroceryItemTile>
     setState(() => _checked = newVal);
     _animController.forward().then((_) => _animController.reverse());
 
-    final messenger = ScaffoldMessenger.of(context);
     final errorMsg = AppLocalizations.of(context).savedIngredientsFailed;
 
     try {
@@ -72,7 +72,7 @@ class _GroceryItemTileState extends ConsumerState<GroceryItemTile>
     } catch (e) {
       if (!mounted) return;
       setState(() => _checked = oldVal);
-      messenger.showSnackBar(SnackBar(content: Text(errorMsg)));
+      CustomSnackbar.showError(context, errorMsg);
     }
   }
 
@@ -198,7 +198,7 @@ class _GroceryItemTileState extends ConsumerState<GroceryItemTile>
                 color: customColors.slateGrey?.withValues(alpha: 0.4),
               ),
               tooltip: l10n.groceryItemEditTooltip,
-              onPressed: () => _showEditQuantity(context),
+              onPressed: _showEditQuantity,
             ),
           ),
         ),
@@ -210,7 +210,10 @@ class _GroceryItemTileState extends ConsumerState<GroceryItemTile>
     return q == q.roundToDouble() ? q.toInt().toString() : q.toStringAsFixed(1);
   }
 
-  Future<void> _showEditQuantity(BuildContext context) async {
+  Future<void> _showEditQuantity() async {
+    final l10n = AppLocalizations.of(context);
+
+
     final result = await showModalBottomSheet<double>(
       context: context,
       isScrollControlled: true,
@@ -223,8 +226,6 @@ class _GroceryItemTileState extends ConsumerState<GroceryItemTile>
     );
 
     if (result != null && mounted) {
-      final l10n = AppLocalizations.of(context);
-      final messenger = ScaffoldMessenger.of(context);
       final errorMsg = l10n.savedIngredientsFailed;
       try {
         await ref
@@ -232,7 +233,7 @@ class _GroceryItemTileState extends ConsumerState<GroceryItemTile>
             .updateItem(widget.listId, widget.item.id, quantity: result);
       } catch (e) {
         if (!mounted) return;
-        messenger.showSnackBar(SnackBar(content: Text(errorMsg)));
+        CustomSnackbar.showError(context, errorMsg);
       }
     }
   }

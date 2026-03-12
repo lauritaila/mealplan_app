@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:meal_plan_app/features/auth/presentation/provider/provider.dart';
-import 'package:meal_plan_app/features/grocery_list/presentation/providers/grocery_actions_provider.dart';
+
 import 'package:meal_plan_app/features/grocery_list/presentation/providers/provider.dart';
 import 'package:meal_plan_app/features/meal_plan/presentation/providers/provider.dart';
 import 'package:meal_plan_app/features/recipes/presentation/providers/providers.dart';
@@ -13,7 +13,7 @@ import 'package:meal_plan_app/features/recipes/presentation/widgets/recipe_nutri
 import 'package:meal_plan_app/features/recipes/presentation/widgets/recipe_ingredient_tile.dart';
 import 'package:meal_plan_app/features/recipes/presentation/widgets/recipe_instruction_step.dart';
 import 'package:meal_plan_app/features/recipes/presentation/widgets/recipe_bottom_action_button.dart';
-import 'package:meal_plan_app/features/shared/widgets/select_list_sheet.dart';
+
 import 'package:meal_plan_app/features/shared/widgets/widgets.dart';
 import 'package:meal_plan_app/l10n/app_localizations.dart';
 import 'package:meal_plan_app/config/theme/app_theme.dart';
@@ -305,7 +305,7 @@ class _RecipeDetailScreenState extends ConsumerState<RecipeDetailScreen> {
             children: [
               RecipeBottomActionButton(
                 icon: Icons.shopping_cart_outlined,
-                onPressed: () => _onAddToGroceryList(context, ref, recipe.id),
+                onPressed: () => _onAddToGroceryList(ref, recipe.id),
               ),
               const SizedBox(width: 12),
 
@@ -339,7 +339,7 @@ class _RecipeDetailScreenState extends ConsumerState<RecipeDetailScreen> {
 
                 Expanded(
                   child: FilledButton.icon(
-                    onPressed: () => _completeFromDetail(context, ref, recipe),
+                    onPressed: () => _completeFromDetail(ref, recipe),
                     style: FilledButton.styleFrom(
                       backgroundColor: customColors.darkSage,
                       padding: const EdgeInsets.symmetric(vertical: 20),
@@ -366,8 +366,10 @@ class _RecipeDetailScreenState extends ConsumerState<RecipeDetailScreen> {
     );
   }
 
-  Future<void> _completeFromDetail(BuildContext context, WidgetRef ref, dynamic recipe) async {
+  Future<void> _completeFromDetail(WidgetRef ref, dynamic recipe) async {
     final l10n = AppLocalizations.of(context);
+    final navigator = Navigator.of(context);
+
     final confirmed = await showDialog<bool>(
       context: context,
       builder: (ctx) => AlertDialog(
@@ -410,9 +412,8 @@ class _RecipeDetailScreenState extends ConsumerState<RecipeDetailScreen> {
       ),
     );
 
-    if (confirmed != true || !context.mounted) return;
+    if (confirmed != true || !mounted) return;
 
-    final messenger = ScaffoldMessenger.of(context);
     final result = await ref
         .read(mealPlanEntryActionsProvider.notifier)
         .bulkDeduct(
@@ -421,7 +422,7 @@ class _RecipeDetailScreenState extends ConsumerState<RecipeDetailScreen> {
           entryId: widget.entryId,
         );
     
-    if (!context.mounted) return;
+    if (!mounted) return;
 
     if (result != null) {
       setState(() {
@@ -431,22 +432,17 @@ class _RecipeDetailScreenState extends ConsumerState<RecipeDetailScreen> {
       if (widget.entryId != null) {
         ref.invalidate(mealPlanEntriesProvider);
       }
-      messenger.showSnackBar(
-        SnackBar(
-          content: Text(
-            result.missing.isEmpty
-                ? l10n.mealCompletedSuccess(result.deducted.length)
-                : l10n.mealCompletedMissing(result.missing.length),
-          ),
-        ),
+      CustomSnackbar.showSuccess(
+        context,
+        result.missing.isEmpty
+            ? l10n.mealCompletedSuccess(result.deducted.length)
+            : l10n.mealCompletedMissing(result.missing.length),
       );
       Future.delayed(const Duration(seconds: 1), () {
-        if (mounted) context.pop();
+        if (mounted) navigator.pop();
       });
     } else {
-      messenger.showSnackBar(
-        SnackBar(content: Text(l10n.mealCompletedError)),
-      );
+      CustomSnackbar.showError(context, l10n.mealCompletedError);
     }
   }
 
@@ -459,7 +455,7 @@ class _RecipeDetailScreenState extends ConsumerState<RecipeDetailScreen> {
     }).toList();
   }
 
-  Future<void> _onAddToGroceryList(BuildContext context, WidgetRef ref, int recipeId) async {
+  Future<void> _onAddToGroceryList(WidgetRef ref, int recipeId) async {
     final l10n = AppLocalizations.of(context);
     final selectedId = await showModalBottomSheet<int?>(
       context: context,
@@ -471,13 +467,13 @@ class _RecipeDetailScreenState extends ConsumerState<RecipeDetailScreen> {
       ),
     );
 
-    if (selectedId == null || !context.mounted) return;
+    if (selectedId == null || !mounted) return;
 
     final ok = await ref
         .read(groceryActionsProvider.notifier)
         .importRecipe(selectedId, recipeId);
 
-    if (!context.mounted) return;
+    if (!mounted) return;
 
     String? listName;
     final lists = ref.read(groceryListsProvider).asData?.value;
