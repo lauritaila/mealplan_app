@@ -132,6 +132,7 @@ Future<void> _showDeleteAccountModal(
 
                     if (!context.mounted) return;
                     await ref.read(authProvider.notifier).logOut();
+                    if (context.mounted) context.go('/init');
                   },
                   style: FilledButton.styleFrom(
                     backgroundColor: primaryGreen,
@@ -311,13 +312,13 @@ class ProfileScreen extends ConsumerWidget {
                   title: l10n.profileSubscriptionTitle,
                   onTap: () => context.push('/profile/subscription'),
                 ),
-                _buildDivider(),
-                _buildSettingsTile(
-                  context,
-                  icon: Icons.notifications_none_outlined,
-                  title: l10n.profileNotificationsTitle,
-                  onTap: () {},
-                ),
+                // _buildDivider(),
+                // _buildSettingsTile(
+                //   context,
+                //   icon: Icons.notifications_none_outlined,
+                //   title: l10n.profileNotificationsTitle,
+                //   onTap: () {},
+                // ),
                 _buildDivider(),
                 _buildSettingsTile(
                   context,
@@ -336,7 +337,10 @@ class ProfileScreen extends ConsumerWidget {
           SizedBox(
             width: double.infinity,
             child: OutlinedButton(
-              onPressed: () => ref.read(authProvider.notifier).logOut(),
+              onPressed: () async {
+                await ref.read(authProvider.notifier).logOut();
+                if (context.mounted) context.go('/init');
+              },
               style: OutlinedButton.styleFrom(
                 foregroundColor: primaryGreen,
                 side: BorderSide(color: primaryGreen, width: 1.5),

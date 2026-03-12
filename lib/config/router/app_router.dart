@@ -258,7 +258,7 @@ final appRouterProvider = Provider<GoRouter>((ref) {
           return '/login';
         }
         if (!publicRoutes.contains(currentLocation)) {
-          return '/login';
+          return '/init';
         }
       }
       return null;

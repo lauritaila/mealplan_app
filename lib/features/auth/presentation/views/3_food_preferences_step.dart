@@ -1,8 +1,8 @@
 // ignore_for_file: file_names
-
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:meal_plan_app/features/auth/presentation/provider/provider.dart';
+import 'package:meal_plan_app/features/auth/presentation/widgets/widgets_auth.dart';
 import 'package:meal_plan_app/l10n/app_localizations.dart';
 
 class FoodPreferencesStep extends ConsumerStatefulWidget {
@@ -55,96 +55,107 @@ class _FoodPreferencesStepState extends ConsumerState<FoodPreferencesStep> {
     ref.read(preferencesWizardProvider.notifier).updateLikedFoods(liked);
   }
 
-  String _localizedTitle(
-    Map<String, String> titles,
-    String locale,
-    String fallback,
-  ) {
-    return titles[locale] ?? titles['en'] ?? fallback;
+  @override
+  Widget build(BuildContext context) {
+    final colors = Theme.of(context).colorScheme;
+    final l10n = AppLocalizations.of(context);
+
+    return Column(
+      children: [
+        AuthHeader(
+          title: l10n.foodPreferencesTitle,
+          subtitle: l10n.foodPreferencesSubtitle,
+          icon: Icons.restaurant_rounded,
+        ),
+        const SizedBox(height: 32),
+        _PreferenceInputField(
+          label: l10n.likedFoodsTitle.toUpperCase(),
+          hint: l10n.likedFoodsHint,
+          controller: _likedController,
+          focusNode: _likedFocus,
+          trailingIcon: Icons.sentiment_satisfied_alt_rounded,
+        ),
+        const SizedBox(height: 24),
+        _PreferenceInputField(
+          label: l10n.dislikedFoodsTitle.toUpperCase(),
+          hint: l10n.dislikedFoodsHint,
+          controller: _dislikedController,
+          focusNode: _dislikedFocus,
+          trailingIcon: Icons.sentiment_dissatisfied_rounded,
+        ),
+      ],
+    );
   }
+}
+
+class _PreferenceInputField extends StatelessWidget {
+  final String label;
+  final String hint;
+  final TextEditingController controller;
+  final FocusNode focusNode;
+  final IconData trailingIcon;
+
+  const _PreferenceInputField({
+    required this.label,
+    required this.hint,
+    required this.controller,
+    required this.focusNode,
+    required this.trailingIcon,
+  });
 
   @override
   Widget build(BuildContext context) {
-    final configAsync = ref.watch(preferencesConfigurationProvider);
+    final colors = Theme.of(context).colorScheme;
     final textTheme = Theme.of(context).textTheme;
-    final l10n = AppLocalizations.of(context);
-    final localeCode = Localizations.localeOf(context).languageCode;
 
-    return configAsync.when(
-      loading: () => const Center(child: CircularProgressIndicator()),
-      error: (error, _) => Center(child: Text(error.toString())),
-      data: (config) {
-        final showDisliked = config.textFields.foodPreferencesDisliked;
-        final showLiked = config.textFields.foodPreferencesLiked;
-        final foodPreferencesTitle = _localizedTitle(
-          config.foodPreferencesTitles,
-          localeCode,
-          l10n.foodPreferencesTitle,
-        );
-        final dislikedTitle = _localizedTitle(
-          config.foodPreferencesDislikedTitles,
-          localeCode,
-          l10n.dislikedFoodsTitle,
-        );
-        final dislikedHint = _localizedTitle(
-          config.foodPreferencesDislikedHints,
-          localeCode,
-          l10n.dislikedFoodsHint,
-        );
-        final likedTitle = _localizedTitle(
-          config.foodPreferencesLikedTitles,
-          localeCode,
-          l10n.likedFoodsTitle,
-        );
-        final likedHint = _localizedTitle(
-          config.foodPreferencesLikedHints,
-          localeCode,
-          l10n.likedFoodsHint,
-        );
-
-        return SingleChildScrollView(
-          padding: const EdgeInsets.symmetric(horizontal: 24.0),
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Padding(
+          padding: const EdgeInsets.only(left: 4),
+          child: Text(
+            label,
+            style: textTheme.labelLarge?.copyWith(
+              fontWeight: FontWeight.bold,
+              color: colors.onSurface,
+              letterSpacing: 0.5,
+            ),
+          ),
+        ),
+        const SizedBox(height: 8),
+        Container(
+          decoration: BoxDecoration(
+            color: colors.surface,
+            borderRadius: BorderRadius.circular(16),
+            border: Border.all(color: colors.outlineVariant),
+          ),
           child: Column(
             children: [
-              const Icon(Icons.fastfood_outlined, size: 48, color: Colors.grey),
-              const SizedBox(height: 16),
-              Text(
-                foodPreferencesTitle,
-                style: textTheme.headlineSmall,
-                textAlign: TextAlign.center,
+              TextFormField(
+                controller: controller,
+                focusNode: focusNode,
+                maxLines: 4,
+                decoration: InputDecoration(
+                  hintText: hint,
+                  hintStyle: TextStyle(color: colors.onSurfaceVariant.withOpacity(0.5)),
+                  contentPadding: const EdgeInsets.all(16),
+                  border: InputBorder.none,
+                ),
+                style: textTheme.bodyLarge?.copyWith(color: colors.onSurfaceVariant),
               ),
-              const SizedBox(height: 24),
-              if (showDisliked) ...[
-                Text(dislikedTitle, style: textTheme.titleMedium),
-                const SizedBox(height: 8),
-                TextFormField(
-                  controller: _dislikedController,
-                  focusNode: _dislikedFocus,
-                  decoration: InputDecoration(
-                    hintText: dislikedHint,
-                    border: const OutlineInputBorder(),
-                  ),
-                  maxLines: 4,
+              Padding(
+                padding: const EdgeInsets.all(8.0),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.end,
+                  children: [
+                    Icon(trailingIcon, color: colors.onSurfaceVariant.withOpacity(0.4), size: 20),
+                  ],
                 ),
-              ],
-              if (showDisliked && showLiked) const SizedBox(height: 24),
-              if (showLiked) ...[
-                Text(likedTitle, style: textTheme.titleMedium),
-                const SizedBox(height: 8),
-                TextFormField(
-                  controller: _likedController,
-                  focusNode: _likedFocus,
-                  decoration: InputDecoration(
-                    hintText: likedHint,
-                    border: const OutlineInputBorder(),
-                  ),
-                  maxLines: 4,
-                ),
-              ],
+              ),
             ],
           ),
-        );
-      },
+        ),
+      ],
     );
   }
 }

@@ -681,5 +681,23 @@
     }
   },
   "servingShort": "porción",
-  "organizeFavoritesSubtitle": "Organiza tus recetas e ingredientes favoritos"
+  "organizeFavoritesSubtitle": "Organiza tus recetas e ingredientes favoritos",
+  "medicalDisclaimer": "Esta aplicación no constituye un consejo médico profesional. La IA puede cometer errores en las recetas y el usuario es responsable de verificar los ingredientes frente a sus alergias.",
+  "authWelcomeTitle": "Bienvenido a tu nueva alimentación",
+  "authWelcomeSubtitle": "Nutrición personalizada y planificación de comidas simple para un estilo de vida saludable.",
+  "authLegalConsent": "Al continuar, aceptas nuestros Términos de Servicio y Política de Privacidad.",
+  "authSignUpSubtitle": "Introduce tus datos para comenzar tu plan nutricional personalizado",
+  "authLoginSubtitle": "Tu camino hacia una mejor nutrición comienza aquí",
+  "authLoginDivider": "O USA TU CORREO",
+  "authVerifyAccountTitle": "Verifica tu cuenta",
+  "authWelcome": "Bienvenido",
+  "authWelcomeBackTitle": "Bienvenido de nuevo",
+  "authResendCode": "Enviar de nuevo",
+  "otpVerifyNotReceived": "¿No recibiste el código?",
+  "dietarySubtitle": "Selecciona tu estilo de alimentación principal para que podamos adaptar tus recetas.",
+  "allergiesSubtitle": "Cuéntanos sobre cualquier alergia o intolerancia que debamos evitar.",
+  "foodPreferencesSubtitle": "Cuéntanos sobre tus gustos para que podamos personalizar tu experiencia culinaria.",
+  "goalsSubtitle": "Selecciona tus principales objetivos nutricionales para optimizar tu plan de comidas.",
+  "cookingDetailsSubtitle": "Cuéntanos sobre tu estilo de cocina y el tamaño de tu hogar.",
+  "namePlaceholder": "Tu nombre completo"
 }

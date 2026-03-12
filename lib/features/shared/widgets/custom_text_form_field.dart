@@ -31,7 +31,12 @@ class CustomTextFormField extends StatelessWidget {
     final colors = Theme.of(context).colorScheme;
 
     final border = OutlineInputBorder(
-      borderSide: const BorderSide(color: Colors.transparent, width: 2),
+      borderSide: BorderSide(color: colors.primary.withOpacity(0.35), width: 1.5),
+      borderRadius: BorderRadius.circular(12),
+    );
+
+    final focusBorder = OutlineInputBorder(
+      borderSide: BorderSide(color: colors.primary, width: 2),
       borderRadius: BorderRadius.circular(12),
     );
 
@@ -53,11 +58,7 @@ class CustomTextFormField extends StatelessWidget {
         ),
         SizedBox(height: 10),
         Container(
-          padding: const EdgeInsets.symmetric(vertical: 3),
           decoration: BoxDecoration(
-            color: Theme.of(context).brightness == Brightness.light 
-                ? Colors.white 
-                : const Color(0xFF252A26),
             borderRadius: const BorderRadius.all(borderRadius),
           ),
           child: TextFormField(
@@ -70,19 +71,22 @@ class CustomTextFormField extends StatelessWidget {
             autofillHints: autofillHints,
             style: TextStyle(fontSize: 14, color: colors.primary),
             decoration: InputDecoration(
-              // floatingLabelStyle: TextStyle(color: colors.primary, fontWeight: FontWeight.bold, fontSize: 14),
+              filled: true,
+              fillColor: Theme.of(context).brightness == Brightness.light 
+                  ? Colors.white 
+                  : const Color(0xFF252A26),
               enabledBorder: border,
-              focusedBorder: border,
-              errorBorder: border,
-              focusedErrorBorder: border,
+              focusedBorder: focusBorder,
+              errorBorder: border.copyWith(
+                borderSide: BorderSide(color: Colors.red.shade900, width: 1.5),
+              ),
+              focusedErrorBorder: focusBorder.copyWith(
+                borderSide: BorderSide(color: Colors.red.shade900, width: 2),
+              ),
               isDense: true,
-              // filled: true,
-              // fillColor: Colors.white,
-              // label: label != null ? Text(label!) : null,
+              contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
               hintText: hint,
-              // errorText: errorMessage,
-              // focusColor: colors.primary,
-              // icon: Icon( Icons.supervised_user_circle_outlined, color: colors.primary, )
+              hintStyle: TextStyle(color: colors.onSurfaceVariant.withOpacity(0.5)),
             ),
           ),
         ),

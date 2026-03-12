@@ -1556,4 +1556,68 @@ class AppLocalizationsEs extends AppLocalizations {
   @override
   String get organizeFavoritesSubtitle =>
       'Organiza tus recetas e ingredientes favoritos';
+
+  @override
+  String get medicalDisclaimer =>
+      'Esta aplicación no constituye un consejo médico profesional. La IA puede cometer errores en las recetas y el usuario es responsable de verificar los ingredientes frente a sus alergias.';
+
+  @override
+  String get authWelcomeTitle => 'Bienvenido a tu nueva alimentación';
+
+  @override
+  String get authWelcomeSubtitle =>
+      'Nutrición personalizada y planificación de comidas simple para un estilo de vida saludable.';
+
+  @override
+  String get authLegalConsent =>
+      'Al continuar, aceptas nuestros Términos de Servicio y Política de Privacidad.';
+
+  @override
+  String get authSignUpSubtitle =>
+      'Introduce tus datos para comenzar tu plan nutricional personalizado';
+
+  @override
+  String get authLoginSubtitle =>
+      'Tu camino hacia una mejor nutrición comienza aquí';
+
+  @override
+  String get authLoginDivider => 'O USA TU CORREO';
+
+  @override
+  String get authVerifyAccountTitle => 'Verifica tu cuenta';
+
+  @override
+  String get authWelcome => 'Bienvenido';
+
+  @override
+  String get authWelcomeBackTitle => 'Bienvenido de nuevo';
+
+  @override
+  String get authResendCode => 'Enviar de nuevo';
+
+  @override
+  String get otpVerifyNotReceived => '¿No recibiste el código?';
+
+  @override
+  String get dietarySubtitle =>
+      'Selecciona tu estilo de alimentación principal para que podamos adaptar tus recetas.';
+
+  @override
+  String get allergiesSubtitle =>
+      'Cuéntanos sobre cualquier alergia o intolerancia que debamos evitar.';
+
+  @override
+  String get foodPreferencesSubtitle =>
+      'Cuéntanos sobre tus gustos para que podamos personalizar tu experiencia culinaria.';
+
+  @override
+  String get goalsSubtitle =>
+      'Selecciona tus principales objetivos nutricionales para optimizar tu plan de comidas.';
+
+  @override
+  String get cookingDetailsSubtitle =>
+      'Cuéntanos sobre tu estilo de cocina y el tamaño de tu hogar.';
+
+  @override
+  String get namePlaceholder => 'Tu nombre completo';
 }

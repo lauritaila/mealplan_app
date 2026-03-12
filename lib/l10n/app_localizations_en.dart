@@ -1551,4 +1551,67 @@ class AppLocalizationsEn extends AppLocalizations {
   @override
   String get organizeFavoritesSubtitle =>
       'Organize your favorite recipes and ingredients';
+
+  @override
+  String get medicalDisclaimer =>
+      'This app is not professional medical advice. AI may make errors in recipes, and the user is responsible for verifying ingredients against their allergies.';
+
+  @override
+  String get authWelcomeTitle => 'Welcome to your new nutrition';
+
+  @override
+  String get authWelcomeSubtitle =>
+      'Personalized nutrition and simple meal planning for a healthy lifestyle.';
+
+  @override
+  String get authLegalConsent =>
+      'By continuing, you accept our Terms of Service and Privacy Policy.';
+
+  @override
+  String get authSignUpSubtitle =>
+      'Enter your details to start your personalized nutritional plan';
+
+  @override
+  String get authLoginSubtitle => 'Your path to better nutrition starts here';
+
+  @override
+  String get authLoginDivider => 'OR USE YOUR EMAIL';
+
+  @override
+  String get authVerifyAccountTitle => 'Verify your account';
+
+  @override
+  String get authWelcome => 'Welcome';
+
+  @override
+  String get authWelcomeBackTitle => 'Welcome back';
+
+  @override
+  String get authResendCode => 'Send again';
+
+  @override
+  String get otpVerifyNotReceived => 'Didn\'t receive the code?';
+
+  @override
+  String get dietarySubtitle =>
+      'Select your primary dietary style to help us tailor your recipes.';
+
+  @override
+  String get allergiesSubtitle =>
+      'Let us know about any allergies or intolerances we should avoid.';
+
+  @override
+  String get foodPreferencesSubtitle =>
+      'Tell us about your palette so we can personalize your culinary journey.';
+
+  @override
+  String get goalsSubtitle =>
+      'Select your main nutritional goals to optimize your meal plan.';
+
+  @override
+  String get cookingDetailsSubtitle =>
+      'Tell us about your cooking style and household size.';
+
+  @override
+  String get namePlaceholder => 'Your full name';
 }

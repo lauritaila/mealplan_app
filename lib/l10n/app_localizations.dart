@@ -2917,6 +2917,114 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Organize your favorite recipes and ingredients'**
   String get organizeFavoritesSubtitle;
+
+  /// No description provided for @medicalDisclaimer.
+  ///
+  /// In en, this message translates to:
+  /// **'This app is not professional medical advice. AI may make errors in recipes, and the user is responsible for verifying ingredients against their allergies.'**
+  String get medicalDisclaimer;
+
+  /// No description provided for @authWelcomeTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Welcome to your new nutrition'**
+  String get authWelcomeTitle;
+
+  /// No description provided for @authWelcomeSubtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Personalized nutrition and simple meal planning for a healthy lifestyle.'**
+  String get authWelcomeSubtitle;
+
+  /// No description provided for @authLegalConsent.
+  ///
+  /// In en, this message translates to:
+  /// **'By continuing, you accept our Terms of Service and Privacy Policy.'**
+  String get authLegalConsent;
+
+  /// No description provided for @authSignUpSubtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Enter your details to start your personalized nutritional plan'**
+  String get authSignUpSubtitle;
+
+  /// No description provided for @authLoginSubtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Your path to better nutrition starts here'**
+  String get authLoginSubtitle;
+
+  /// No description provided for @authLoginDivider.
+  ///
+  /// In en, this message translates to:
+  /// **'OR USE YOUR EMAIL'**
+  String get authLoginDivider;
+
+  /// No description provided for @authVerifyAccountTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Verify your account'**
+  String get authVerifyAccountTitle;
+
+  /// No description provided for @authWelcome.
+  ///
+  /// In en, this message translates to:
+  /// **'Welcome'**
+  String get authWelcome;
+
+  /// No description provided for @authWelcomeBackTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Welcome back'**
+  String get authWelcomeBackTitle;
+
+  /// No description provided for @authResendCode.
+  ///
+  /// In en, this message translates to:
+  /// **'Send again'**
+  String get authResendCode;
+
+  /// No description provided for @otpVerifyNotReceived.
+  ///
+  /// In en, this message translates to:
+  /// **'Didn\'t receive the code?'**
+  String get otpVerifyNotReceived;
+
+  /// No description provided for @dietarySubtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Select your primary dietary style to help us tailor your recipes.'**
+  String get dietarySubtitle;
+
+  /// No description provided for @allergiesSubtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Let us know about any allergies or intolerances we should avoid.'**
+  String get allergiesSubtitle;
+
+  /// No description provided for @foodPreferencesSubtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Tell us about your palette so we can personalize your culinary journey.'**
+  String get foodPreferencesSubtitle;
+
+  /// No description provided for @goalsSubtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Select your main nutritional goals to optimize your meal plan.'**
+  String get goalsSubtitle;
+
+  /// No description provided for @cookingDetailsSubtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Tell us about your cooking style and household size.'**
+  String get cookingDetailsSubtitle;
+
+  /// No description provided for @namePlaceholder.
+  ///
+  /// In en, this message translates to:
+  /// **'Your full name'**
+  String get namePlaceholder;
 }
 
 class _AppLocalizationsDelegate

@@ -683,5 +683,23 @@
     }
   },
   "servingShort": "serving",
-  "organizeFavoritesSubtitle": "Organize your favorite recipes and ingredients"
+  "organizeFavoritesSubtitle": "Organize your favorite recipes and ingredients",
+  "medicalDisclaimer": "This app is not professional medical advice. AI may make errors in recipes, and the user is responsible for verifying ingredients against their allergies.",
+  "authWelcomeTitle": "Welcome to your new nutrition",
+  "authWelcomeSubtitle": "Personalized nutrition and simple meal planning for a healthy lifestyle.",
+  "authLegalConsent": "By continuing, you accept our Terms of Service and Privacy Policy.",
+  "authSignUpSubtitle": "Enter your details to start your personalized nutritional plan",
+  "authLoginSubtitle": "Your path to better nutrition starts here",
+  "authLoginDivider": "OR USE YOUR EMAIL",
+  "authVerifyAccountTitle": "Verify your account",
+  "authWelcome": "Welcome",
+  "authWelcomeBackTitle": "Welcome back",
+  "authResendCode": "Send again",
+  "otpVerifyNotReceived": "Didn't receive the code?",
+  "dietarySubtitle": "Select your primary dietary style to help us tailor your recipes.",
+  "allergiesSubtitle": "Let us know about any allergies or intolerances we should avoid.",
+  "foodPreferencesSubtitle": "Tell us about your palette so we can personalize your culinary journey.",
+  "goalsSubtitle": "Select your main nutritional goals to optimize your meal plan.",
+  "cookingDetailsSubtitle": "Tell us about your cooking style and household size.",
+  "namePlaceholder": "Your full name"
 }

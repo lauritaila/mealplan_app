@@ -188,6 +188,39 @@ class _LoadingMealPlanScreenState extends ConsumerState<LoadingMealPlanScreen> {
                 icon: const Icon(Icons.close),
                 label: Text(l10n.cancelAndGoBack),
               ),
+              const Spacer(),
+              Container(
+                padding: const EdgeInsets.all(16),
+                decoration: BoxDecoration(
+                  color: Theme.of(context)
+                      .colorScheme
+                      .surfaceContainerHighest
+                      .withOpacity(0.3),
+                  borderRadius: BorderRadius.circular(12),
+                  border: Border.all(
+                    color: Theme.of(context).colorScheme.outlineVariant,
+                  ),
+                ),
+                child: Row(
+                  children: [
+                    Icon(
+                      Icons.warning_amber_rounded,
+                      color: Theme.of(context).colorScheme.secondary,
+                      size: 20,
+                    ),
+                    const SizedBox(width: 12),
+                    Expanded(
+                      child: Text(
+                        l10n.medicalDisclaimer,
+                        style: Theme.of(context).textTheme.labelSmall?.copyWith(
+                              color: Theme.of(context).colorScheme.onSurfaceVariant,
+                              fontSize: 11,
+                            ),
+                      ),
+                    ),
+                  ],
+                ),
+              ),
             ],
           ),
         ),
