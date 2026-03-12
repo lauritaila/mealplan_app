@@ -173,6 +173,8 @@
   "deleteAccount": "Delete account",
   "profileNotificationsTitle": "Notifications",
   "profileTermsTitle": "Terms and Conditions",
+  "profilePrivacyTitle": "Privacy Policy",
+  "lastUpdatedLabel": "Last updated",
   "unableToLoadPlanStatus": "Unable to load plan status: {error}",
   "@unableToLoadPlanStatus": {
     "placeholders": {

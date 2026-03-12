@@ -87,13 +87,10 @@ class SignUpScreen extends ConsumerWidget {
                 : null,
           ),
           const SizedBox(height: 14),
-          Text(
-            l10n.authLegalConsent,
-            textAlign: TextAlign.center,
-            style: textTheme.labelSmall?.copyWith(
-              color: colors.onSurfaceVariant.withOpacity(0.6),
-              fontSize: 11,
-            ),
+          LegalConsentRichText(
+            textTheme: textTheme,
+            colors: colors,
+            l10n: l10n,
           ),
           const SizedBox(height: 18),
           SizedBox(

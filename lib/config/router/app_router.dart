@@ -94,6 +94,15 @@ final appRouterProvider = Provider<GoRouter>((ref) {
         },
       ),
 
+      GoRoute(
+        path: '/privacy-policy',
+        builder: (context, state) => const LegalScreen(name: 'privacy_policy'),
+      ),
+      GoRoute(
+        path: '/terms-and-conditions',
+        builder: (context, state) => const LegalScreen(name: 'terms_and_conditions'),
+      ),
+
       // --- Rutas Principales con Barra de Navegación (ShellRoute) ---
       ShellRoute(
         builder: (context, state, child) {
@@ -232,7 +241,9 @@ final appRouterProvider = Provider<GoRouter>((ref) {
     redirect: (context, state) {
       final authState = ref.read(authProvider);
       final currentLocation = state.matchedLocation;
-      final publicRoutes = ['/login', '/signup', '/init'];
+      final authRoutes = ['/login', '/signup', '/init'];
+      final legalRoutes = ['/privacy-policy', '/terms-and-conditions'];
+      final publicRoutes = [...authRoutes, ...legalRoutes];
 
       if (authState is LoadingAuthState || authState is InitialAuthState) {
         return null;
@@ -247,7 +258,7 @@ final appRouterProvider = Provider<GoRouter>((ref) {
               ? null
               : '/preferences-wizard';
         }
-        if (publicRoutes.contains(currentLocation) ||
+        if (authRoutes.contains(currentLocation) ||
             currentLocation == '/preferences-wizard' ||
             currentLocation == '/verify-otp') {
           return '/home';

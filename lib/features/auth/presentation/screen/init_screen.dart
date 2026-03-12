@@ -16,12 +16,10 @@ class InitScreen extends ConsumerWidget {
     final textTheme = Theme.of(context).textTheme;
 
     return AuthLayout(
-      footer: Text(
-        l10n.authLegalConsent,
-        textAlign: TextAlign.center,
-        style: textTheme.labelSmall?.copyWith(
-          color: colors.onSurfaceVariant.withOpacity(0.6),
-        ),
+      footer: LegalConsentRichText(
+        textTheme: textTheme,
+        colors: colors,
+        l10n: l10n,
       ),
       child: Column(
         children: [

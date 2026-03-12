@@ -324,8 +324,15 @@ class ProfileScreen extends ConsumerWidget {
                   context,
                   icon: Icons.description_outlined,
                   title: l10n.profileTermsTitle,
+                  onTap: () => context.push('/terms-and-conditions'),
+                ),
+                _buildDivider(),
+                _buildSettingsTile(
+                  context,
+                  icon: Icons.privacy_tip_outlined,
+                  title: l10n.profilePrivacyTitle,
                   showDivider: false,
-                  onTap: () {},
+                  onTap: () => context.push('/privacy-policy'),
                 ),
               ],
             ),
@@ -369,6 +376,16 @@ class ProfileScreen extends ConsumerWidget {
             ),
           ),
           const SizedBox(height: 32),
+          Center(
+            child: Text(
+              '© 2026 Meal Plan App',
+              style: theme.textTheme.labelSmall?.copyWith(
+                color: theme.colorScheme.onSurfaceVariant.withValues(alpha: 0.6),
+                fontStyle: FontStyle.italic,
+              ),
+            ),
+          ),
+          const SizedBox(height: 16),
         ],
       ),
     );

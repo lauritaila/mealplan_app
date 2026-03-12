@@ -19,11 +19,11 @@ class PreferencesSupabaseDatasourceImpl implements PreferencesDatasource {
     final response = await _supabaseClient
         .from('configurations')
         .select()
-        .eq('name', 'dietaryPreferences')
+        .eq('name', 'dietary_preferences')
         .maybeSingle();
 
     if (response == null) {
-      throw const ConfigAppError.missing('dietaryPreferences');
+      throw const ConfigAppError.missing('dietary_preferences');
     }
 
     return PreferencesConfigurationMapper.fromRow(response);

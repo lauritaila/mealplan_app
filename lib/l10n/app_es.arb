@@ -171,6 +171,8 @@
   "deleteAccount": "Eliminar cuenta",
   "profileNotificationsTitle": "Notificaciones",
   "profileTermsTitle": "Términos y condiciones",
+  "profilePrivacyTitle": "Política de privacidad",
+  "lastUpdatedLabel": "Última actualización",
   "unableToLoadPlanStatus": "No se pudo cargar el estado del plan: {error}",
   "@unableToLoadPlanStatus": {
     "placeholders": {

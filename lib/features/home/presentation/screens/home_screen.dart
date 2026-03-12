@@ -905,44 +905,117 @@ class _GraceWelcomeDialogState extends State<_GraceWelcomeDialog> {
 
   @override
   Widget build(BuildContext context) {
-    return AlertDialog(
-      content: Stack(
-        alignment: Alignment.topCenter,
-        children: [
-          Padding(
-            padding: const EdgeInsets.only(top: 36),
-            child: Column(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                Text(
-                  AppLocalizations.of(context).graceWelcomeTitle,
-                  textAlign: TextAlign.center,
-                  style: const TextStyle(fontWeight: FontWeight.bold),
+    final theme = Theme.of(context);
+    final l10n = AppLocalizations.of(context);
+
+    return Dialog(
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(28)),
+      backgroundColor: theme.colorScheme.surface,
+      elevation: 8,
+      child: ClipRRect(
+        borderRadius: BorderRadius.circular(28),
+        child: Stack(
+          alignment: Alignment.topCenter,
+          children: [
+            // Decorative background element
+            Positioned(
+              top: -40,
+              right: -40,
+              child: Container(
+                width: 120,
+                height: 120,
+                decoration: BoxDecoration(
+                  color: theme.colorScheme.primary.withValues(alpha: 0.1),
+                  shape: BoxShape.circle,
                 ),
-                const SizedBox(height: 12),
-                Text(
-                  AppLocalizations.of(context).graceWelcomeMessage,
-                  textAlign: TextAlign.center,
-                ),
-                const SizedBox(height: 16),
-                ElevatedButton(
-                  onPressed: () => Navigator.of(context).pop(),
-                  child: Text(AppLocalizations.of(context).continueLabel),
-                ),
+              ),
+            ),
+            
+            Padding(
+              padding: const EdgeInsets.fromLTRB(24, 40, 24, 24),
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  // Decorative Icon/Emoji
+                  Container(
+                    width: 72,
+                    height: 72,
+                    decoration: BoxDecoration(
+                      color: theme.colorScheme.primaryContainer.withValues(alpha: 0.4),
+                      shape: BoxShape.circle,
+                    ),
+                    child: Center(
+                      child: Text(
+                        '🧑‍🍳', // Chef emoji to match meal theme
+                        style: const TextStyle(fontSize: 40),
+                      ),
+                    ),
+                  ),
+                  const SizedBox(height: 24),
+                  
+                  Text(
+                    l10n.graceWelcomeTitle,
+                    textAlign: TextAlign.center,
+                    style: theme.textTheme.headlineSmall?.copyWith(
+                      fontWeight: FontWeight.bold,
+                      color: theme.colorScheme.onSurface,
+                    ),
+                  ),
+                  const SizedBox(height: 12),
+                  
+                  Text(
+                    l10n.graceWelcomeMessage,
+                    textAlign: TextAlign.center,
+                    style: theme.textTheme.bodyMedium?.copyWith(
+                      color: theme.colorScheme.onSurfaceVariant,
+                      height: 1.5,
+                    ),
+                  ),
+                  const SizedBox(height: 32),
+                  
+                  SizedBox(
+                    width: double.infinity,
+                    height: 56,
+                    child: FilledButton(
+                      onPressed: () => Navigator.of(context).pop(),
+                      style: FilledButton.styleFrom(
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(16),
+                        ),
+                        elevation: 0,
+                      ),
+                      child: Text(
+                        l10n.continueLabel,
+                        style: const TextStyle(
+                          fontSize: 16,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+            ),
+            
+            // Celebration effect
+            ConfettiWidget(
+              confettiController: _confettiController,
+              blastDirectionality: BlastDirectionality.explosive,
+              shouldLoop: false,
+              emissionFrequency: 0.04,
+              numberOfParticles: 15,
+              gravity: 0.2,
+              maxBlastForce: 12,
+              minBlastForce: 6,
+              colors: [
+                theme.colorScheme.primary,
+                theme.colorScheme.secondary,
+                theme.colorScheme.tertiary,
+                theme.colorScheme.primaryContainer,
               ],
             ),
-          ),
-          ConfettiWidget(
-            confettiController: _confettiController,
-            blastDirectionality: BlastDirectionality.explosive,
-            shouldLoop: false,
-            emissionFrequency: 0.04,
-            numberOfParticles: 12,
-            gravity: 0.2,
-            maxBlastForce: 12,
-            minBlastForce: 6,
-          ),
-        ],
+          ],
+        ),
       ),
     );
   }

@@ -806,6 +806,18 @@ abstract class AppLocalizations {
   /// **'Terms and Conditions'**
   String get profileTermsTitle;
 
+  /// No description provided for @profilePrivacyTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Privacy Policy'**
+  String get profilePrivacyTitle;
+
+  /// No description provided for @lastUpdatedLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Last updated'**
+  String get lastUpdatedLabel;
+
   /// No description provided for @unableToLoadPlanStatus.
   ///
   /// In en, this message translates to:

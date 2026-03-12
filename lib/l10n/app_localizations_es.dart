@@ -408,6 +408,12 @@ class AppLocalizationsEs extends AppLocalizations {
   String get profileTermsTitle => 'Términos y condiciones';
 
   @override
+  String get profilePrivacyTitle => 'Política de privacidad';
+
+  @override
+  String get lastUpdatedLabel => 'Última actualización';
+
+  @override
   String unableToLoadPlanStatus(Object error) {
     return 'No se pudo cargar el estado del plan: $error';
   }
