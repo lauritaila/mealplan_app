@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
-import 'package:meal_plan_app/l10n/app_localizations.dart';
 
 class StepsWizard extends StatelessWidget {
   final int currentStep;
   final int totalSteps;
+  
   const StepsWizard({
     super.key,
     required this.currentStep,
@@ -12,20 +12,25 @@ class StepsWizard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final l10n = AppLocalizations.of(context);
+    final colors = Theme.of(context).colorScheme;
+
     return Row(
       mainAxisAlignment: MainAxisAlignment.center,
-      crossAxisAlignment: CrossAxisAlignment.center,
-      children: [
-        Expanded(child: Container(height: 2.0, color: Colors.grey[300])),
-        const SizedBox(width: 8.0),
-        Text(
-          l10n.stepOf(currentStep, totalSteps),
-          style: const TextStyle(fontSize: 16.0, fontWeight: FontWeight.w500),
-        ),
-        const SizedBox(width: 8.0),
-        Expanded(child: Container(height: 2.0, color: Colors.grey[300])),
-      ],
+      children: List.generate(totalSteps, (index) {
+        final bool isActive = index == currentStep - 1;
+        return AnimatedContainer(
+          duration: const Duration(milliseconds: 300),
+          margin: const EdgeInsets.symmetric(horizontal: 4),
+          width: isActive ? 32 : 8,
+          height: 8,
+          decoration: BoxDecoration(
+            color: isActive 
+                ? colors.primary 
+                : colors.primary.withValues(alpha: 0.2),
+            borderRadius: BorderRadius.circular(4),
+          ),
+        );
+      }),
     );
   }
 }

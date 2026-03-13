@@ -1,8 +1,11 @@
 import 'package:flutter/material.dart';
+import 'package:meal_plan_app/features/shared/shared.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:meal_plan_app/features/grocery_list/domain/entities/grocery_list.dart';
 import 'package:meal_plan_app/features/grocery_list/presentation/providers/provider.dart';
 import 'package:meal_plan_app/l10n/app_localizations.dart';
+import 'package:meal_plan_app/config/theme/app_theme.dart';
+import 'package:meal_plan_app/features/grocery_list/presentation/widgets/edit_quantity_bottom_sheet.dart';
 
 class GroceryItemTile extends ConsumerStatefulWidget {
   final GroceryListItem item;
@@ -60,7 +63,6 @@ class _GroceryItemTileState extends ConsumerState<GroceryItemTile>
     setState(() => _checked = newVal);
     _animController.forward().then((_) => _animController.reverse());
 
-    final messenger = ScaffoldMessenger.of(context);
     final errorMsg = AppLocalizations.of(context).savedIngredientsFailed;
 
     try {
@@ -70,13 +72,15 @@ class _GroceryItemTileState extends ConsumerState<GroceryItemTile>
     } catch (e) {
       if (!mounted) return;
       setState(() => _checked = oldVal);
-      messenger.showSnackBar(SnackBar(content: Text(errorMsg)));
+      CustomSnackbar.showError(context, errorMsg);
     }
   }
 
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
+    final textTheme = theme.textTheme;
+    final customColors = theme.extension<AppCustomColors>()!;
     final l10n = AppLocalizations.of(context);
     final coveredByPantry = widget.item.isCoveredByPantry;
 
@@ -87,90 +91,115 @@ class _GroceryItemTileState extends ConsumerState<GroceryItemTile>
         alignment: Alignment.centerRight,
         padding: const EdgeInsets.only(right: 20),
         decoration: BoxDecoration(
-          color: theme.colorScheme.error,
-          borderRadius: BorderRadius.circular(12),
+          color: Colors.red,
+          borderRadius: BorderRadius.circular(20),
         ),
-        child: const Icon(Icons.delete_outline, color: Colors.white),
+        child: const Icon(Icons.delete_outline, color: Colors.white, size: 24),
       ),
       confirmDismiss: (_) async => true,
       onDismissed: (_) => widget.onDelete?.call(),
-      child: Opacity(
-        opacity: coveredByPantry ? 0.55 : 1.0,
-        child: ListTile(
-          contentPadding: const EdgeInsets.symmetric(horizontal: 12),
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(12),
-          ),
-          leading: ScaleTransition(
-            scale: _scaleAnim,
-            child: GestureDetector(
-              onTap: _toggleCheck,
-              child: AnimatedContainer(
-                duration: const Duration(milliseconds: 200),
-                width: 26,
-                height: 26,
-                decoration: BoxDecoration(
-                  color: _checked
-                      ? theme.colorScheme.primary
-                      : Colors.transparent,
-                  border: Border.all(
-                    color: _checked
-                        ? theme.colorScheme.primary
-                        : theme.colorScheme.outline,
-                    width: 2,
-                  ),
-                  borderRadius: BorderRadius.circular(8),
-                ),
-                child: _checked
-                    ? const Icon(Icons.check, size: 16, color: Colors.white)
-                    : null,
-              ),
+      child: AnimatedOpacity(
+        duration: const Duration(milliseconds: 200),
+        opacity: coveredByPantry ? 0.6 : 1.0,
+        child: Container(
+          margin: const EdgeInsets.only(bottom: 12),
+          decoration: BoxDecoration(
+            color: theme.cardTheme.color,
+            borderRadius: BorderRadius.circular(20),
+            border: Border.all(
+              color: _checked ? Colors.transparent : theme.dividerColor.withValues(alpha: 0.05),
             ),
-          ),
-          title: AnimatedDefaultTextStyle(
-            duration: const Duration(milliseconds: 200),
-            style: theme.textTheme.bodyLarge!.copyWith(
-              decoration: _checked ? TextDecoration.lineThrough : null,
-              color: _checked
-                  ? theme.colorScheme.onSurface.withValues(alpha: 0.45)
-                  : theme.colorScheme.onSurface,
-            ),
-            child: Text(widget.item.ingredientName),
-          ),
-          subtitle: Row(
-            children: [
-              Text(
-                '${_formatQty(widget.item.quantity)} ${widget.item.unit}',
-                style: theme.textTheme.bodySmall?.copyWith(
-                  color: theme.colorScheme.onSurfaceVariant,
-                ),
+            boxShadow: [
+              BoxShadow(
+                color: Colors.black.withValues(alpha: 0.01),
+                blurRadius: 10,
+                offset: const Offset(0, 4),
               ),
-              if (coveredByPantry) ...[
-                const SizedBox(width: 8),
-                Container(
-                  padding: const EdgeInsets.symmetric(
-                    horizontal: 6,
-                    vertical: 2,
-                  ),
-                  decoration: BoxDecoration(
-                    color: theme.colorScheme.tertiaryContainer,
-                    borderRadius: BorderRadius.circular(6),
-                  ),
-                  child: Text(
-                    l10n.groceryItemInPantry,
-                    style: theme.textTheme.labelSmall?.copyWith(
-                      color: theme.colorScheme.onTertiaryContainer,
-                      fontWeight: FontWeight.w600,
-                    ),
-                  ),
-                ),
-              ],
             ],
           ),
-          trailing: IconButton(
-            icon: const Icon(Icons.edit_outlined, size: 18),
-            tooltip: l10n.groceryItemEditTooltip,
-            onPressed: () => _showEditQuantity(context),
+          child: ListTile(
+            contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(20),
+            ),
+            leading: ScaleTransition(
+              scale: _scaleAnim,
+              child: GestureDetector(
+                onTap: _toggleCheck,
+                child: AnimatedContainer(
+                  duration: const Duration(milliseconds: 200),
+                  width: 28,
+                  height: 28,
+                  decoration: BoxDecoration(
+                    color: _checked
+                        ? customColors.darkSage
+                        : customColors.chartTabBackground,
+                    borderRadius: BorderRadius.circular(10),
+                    border: Border.all(
+                      color: _checked
+                          ? customColors.darkSage!
+                          : customColors.slateGrey!.withValues(alpha: 0.1),
+                      width: 2,
+                    ),
+                  ),
+                  child: _checked
+                      ? const Icon(Icons.check, size: 18, color: Colors.white)
+                      : null,
+                ),
+              ),
+            ),
+            title: AnimatedDefaultTextStyle(
+              duration: const Duration(milliseconds: 200),
+              style: textTheme.bodyLarge!.copyWith(
+                fontWeight: FontWeight.w700,
+                decoration: _checked ? TextDecoration.lineThrough : null,
+                color: _checked
+                    ? customColors.slateGrey?.withValues(alpha: 0.4)
+                    : customColors.textDarkBlue,
+              ),
+              child: Text(widget.item.ingredientName),
+            ),
+            subtitle: Row(
+              children: [
+                Text(
+                  '${_formatQty(widget.item.quantity)} ${widget.item.unit}',
+                  style: textTheme.bodySmall?.copyWith(
+                    color: customColors.slateGrey,
+                    fontWeight: FontWeight.w600,
+                  ),
+                ),
+                if (coveredByPantry) ...[
+                  const SizedBox(width: 8),
+                  Container(
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 8,
+                      vertical: 2,
+                    ),
+                    decoration: BoxDecoration(
+                      color: customColors.darkSage?.withValues(alpha: 0.1),
+                      borderRadius: BorderRadius.circular(8),
+                    ),
+                    child: Text(
+                      l10n.groceryItemInPantry,
+                      style: textTheme.labelSmall?.copyWith(
+                        color: customColors.darkSage,
+                        fontWeight: FontWeight.w900,
+                        fontSize: 10,
+                      ),
+                    ),
+                  ),
+                ],
+              ],
+            ),
+            trailing: IconButton(
+              icon: Icon(
+                Icons.mode_edit_outline_outlined,
+                size: 20,
+                color: customColors.slateGrey?.withValues(alpha: 0.4),
+              ),
+              tooltip: l10n.groceryItemEditTooltip,
+              onPressed: _showEditQuantity,
+            ),
           ),
         ),
       ),
@@ -181,13 +210,21 @@ class _GroceryItemTileState extends ConsumerState<GroceryItemTile>
     return q == q.roundToDouble() ? q.toInt().toString() : q.toStringAsFixed(1);
   }
 
-  Future<void> _showEditQuantity(BuildContext context) async {
+  Future<void> _showEditQuantity() async {
     final l10n = AppLocalizations.of(context);
-    final messenger = ScaffoldMessenger.of(context);
-    final result = await showDialog<double>(
+
+
+    final result = await showModalBottomSheet<double>(
       context: context,
-      builder: (_) => _EditQuantityDialog(initial: widget.item.quantity),
+      isScrollControlled: true,
+      backgroundColor: Colors.transparent,
+      builder: (_) => EditQuantityBottomSheet(
+        initialQuantity: widget.item.quantity,
+        ingredientName: widget.item.ingredientName,
+        unit: widget.item.unit,
+      ),
     );
+
     if (result != null && mounted) {
       final errorMsg = l10n.savedIngredientsFailed;
       try {
@@ -196,62 +233,8 @@ class _GroceryItemTileState extends ConsumerState<GroceryItemTile>
             .updateItem(widget.listId, widget.item.id, quantity: result);
       } catch (e) {
         if (!mounted) return;
-        messenger.showSnackBar(SnackBar(content: Text(errorMsg)));
+        CustomSnackbar.showError(context, errorMsg);
       }
     }
-  }
-}
-
-class _EditQuantityDialog extends StatefulWidget {
-  final double initial;
-  const _EditQuantityDialog({required this.initial});
-
-  @override
-  State<_EditQuantityDialog> createState() => _EditQuantityDialogState();
-}
-
-class _EditQuantityDialogState extends State<_EditQuantityDialog> {
-  late final TextEditingController _ctrl;
-
-  @override
-  void initState() {
-    super.initState();
-    _ctrl = TextEditingController(
-      text: widget.initial == widget.initial.roundToDouble()
-          ? widget.initial.toInt().toString()
-          : widget.initial.toStringAsFixed(1),
-    );
-  }
-
-  @override
-  void dispose() {
-    _ctrl.dispose();
-    super.dispose();
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    return AlertDialog(
-      title: Text(AppLocalizations.of(context).editQuantityDialogTitle),
-      content: TextField(
-        controller: _ctrl,
-        autofocus: true,
-        keyboardType: const TextInputType.numberWithOptions(decimal: true),
-        decoration: InputDecoration(labelText: AppLocalizations.of(context).addItemQuantityLabel),
-      ),
-      actions: [
-        TextButton(
-          onPressed: () => Navigator.pop(context),
-          child: Text(AppLocalizations.of(context).cancel),
-        ),
-        FilledButton(
-          onPressed: () {
-            final val = double.tryParse(_ctrl.text.trim());
-            if (val != null && val > 0) Navigator.pop(context, val);
-          },
-          child: Text(AppLocalizations.of(context).save),
-        ),
-      ],
-    );
   }
 }

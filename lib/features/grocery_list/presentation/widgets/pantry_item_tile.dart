@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:intl/intl.dart';
 import 'package:meal_plan_app/features/grocery_list/domain/entities/pantry_item.dart';
 import 'package:meal_plan_app/l10n/app_localizations.dart';
 
@@ -25,16 +24,6 @@ class PantryItemTile extends StatelessWidget {
         item.expiresAt != null &&
         !isExpired &&
         item.expiresAt!.difference(now).inDays <= 3;
-
-    Color chipColor = theme.colorScheme.primaryContainer;
-    Color chipTextColor = theme.colorScheme.onPrimaryContainer;
-    if (isExpired) {
-      chipColor = theme.colorScheme.errorContainer;
-      chipTextColor = theme.colorScheme.onErrorContainer;
-    } else if (expiringSoon) {
-      chipColor = theme.colorScheme.tertiaryContainer;
-      chipTextColor = theme.colorScheme.onTertiaryContainer;
-    }
 
     return Dismissible(
       key: Key('pantry-${item.id}'),
@@ -68,74 +57,86 @@ class PantryItemTile extends StatelessWidget {
         );
       },
       onDismissed: (_) => onDelete?.call(),
-      child: ListTile(
-        contentPadding: const EdgeInsets.symmetric(horizontal: 12),
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
-        leading: Container(
-          width: 42,
-          height: 42,
-          decoration: BoxDecoration(
-            color: theme.colorScheme.secondaryContainer,
-            borderRadius: BorderRadius.circular(10),
-          ),
-          child: Icon(
-            Icons.kitchen_outlined,
-            color: theme.colorScheme.onSecondaryContainer,
-            size: 20,
-          ),
+      child: Card(
+        elevation: 0,
+        color: Colors.white,
+        margin: EdgeInsets.zero,
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(16),
+          side: BorderSide(color: Colors.grey.shade200),
         ),
-        title: Text(
-          item.ingredientName,
-          style: theme.textTheme.bodyLarge?.copyWith(
-            fontWeight: FontWeight.w500,
-          ),
-        ),
-        subtitle: Row(
-          children: [
-            Text(
-              '${_formatQty(item.quantity)} ${item.unit}',
-              style: theme.textTheme.bodySmall?.copyWith(
-                color: theme.colorScheme.onSurfaceVariant,
-              ),
+        child: ListTile(
+          contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+          onTap: onEdit,
+          leading: Container(
+            width: 48,
+            height: 48,
+            decoration: BoxDecoration(
+              color: const Color(0xFFF0F5F1), // Light greenish background
+              borderRadius: BorderRadius.circular(12),
             ),
-            if (item.category != null && item.category!.isNotEmpty) ...[
-              const SizedBox(width: 6),
-              Text(
-                '· ${item.category}',
-                style: theme.textTheme.bodySmall?.copyWith(
-                  color: theme.colorScheme.onSurfaceVariant,
-                ),
-              ),
-            ],
-          ],
-        ),
-        trailing: Row(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            if (item.expiresAt != null)
-              Container(
-                padding: const EdgeInsets.symmetric(horizontal: 7, vertical: 3),
-                decoration: BoxDecoration(
-                  color: chipColor,
-                  borderRadius: BorderRadius.circular(8),
-                ),
-                child: Text(
-                  isExpired
-                      ? AppLocalizations.of(context).pantryItemExpired
-                      : _formatDate(context, item.expiresAt!),
-                  style: theme.textTheme.labelSmall?.copyWith(
-                    color: chipTextColor,
-                    fontWeight: FontWeight.w600,
+            child: const Icon(
+              Icons.eco_outlined, // Generic food icon
+              color: Color(0xFF5A7258),
+              size: 24,
+            ),
+          ),
+          title: Text(
+            item.ingredientName,
+            style: const TextStyle(
+              fontSize: 16,
+              fontWeight: FontWeight.bold,
+              color: Color(0xFF151B26),
+            ),
+          ),
+          subtitle: Padding(
+            padding: const EdgeInsets.only(top: 4.0),
+            child: Row(
+              children: [
+                if (isExpired)
+                  Text(
+                    AppLocalizations.of(context).pantryItemExpired,
+                    style: TextStyle(
+                      fontSize: 13,
+                      color: theme.colorScheme.error,
+                      fontWeight: FontWeight.w500,
+                    ),
+                  )
+                else if (expiringSoon)
+                  Text(
+                    AppLocalizations.of(context).pantryExpiringSoon,
+                    style: const TextStyle(
+                      fontSize: 13,
+                      color: Colors.orange,
+                      fontWeight: FontWeight.w500,
+                    ),
+                  )
+                else
+                  Text(
+                    AppLocalizations.of(context).pantryStatusValid,
+                    style: TextStyle(
+                      fontSize: 13,
+                      color: Colors.blueGrey.shade400,
+                    ),
                   ),
-                ),
-              ),
-            const SizedBox(width: 4),
-            IconButton(
-              icon: const Icon(Icons.edit_outlined, size: 18),
-              tooltip: AppLocalizations.of(context).editAction,
-              onPressed: onEdit,
+              ],
             ),
-          ],
+          ),
+          trailing: Container(
+            padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
+            decoration: BoxDecoration(
+              color: const Color(0xFFF4F7F9),
+              borderRadius: BorderRadius.circular(8),
+            ),
+            child: Text(
+              '${_formatQty(item.quantity)} ${item.unit}',
+              style: const TextStyle(
+                fontWeight: FontWeight.w600,
+                color: Color(0xFF334139),
+              ),
+            ),
+          ),
         ),
       ),
     );
@@ -143,10 +144,5 @@ class PantryItemTile extends StatelessWidget {
 
   String _formatQty(double q) {
     return q == q.roundToDouble() ? q.toInt().toString() : q.toStringAsFixed(1);
-  }
-
-  String _formatDate(BuildContext context, DateTime date) {
-    return DateFormat('d MMM', Localizations.localeOf(context).toString())
-        .format(date);
   }
 }

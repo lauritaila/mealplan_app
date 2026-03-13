@@ -11,13 +11,14 @@ import 'package:meal_plan_app/features/shared/screens/main_layout.dart';
 import 'package:meal_plan_app/features/shared/shared.dart';
 
 import 'package:meal_plan_app/features/grocery_list/grocery_list.dart';
+import 'package:meal_plan_app/features/nutrition/nutrition.dart';
 
 import '../../features/meal_plan/meal_plan.dart';
 import 'package:meal_plan_app/features/meal_plan/domain/domain.dart';
 import 'package:meal_plan_app/features/meal_plan/presentation/screens/loading_meal_plan_screen.dart';
 import 'package:meal_plan_app/features/meal_plan/presentation/screens/meal_plan_list_screen.dart';
 import 'package:meal_plan_app/features/meal_plan/presentation/screens/meal_plan_entries_screen.dart';
-import 'package:meal_plan_app/features/nutrition/presentation/screens/nutrition_screen.dart';
+
 
 // --- Configuración del Router ---
 class GoRouterNotifier extends ChangeNotifier {
@@ -70,7 +71,7 @@ final appRouterProvider = Provider<GoRouter>((ref) {
             mealTypes: List<String>.from(
               extra['mealTypes'] as List? ?? const [],
             ),
-            usePantry: (extra['usePantry'] as bool?) ?? false,
+            usePantry: (extra['usePantry'] as bool?) ?? true,
           );
         },
       ),
@@ -93,6 +94,15 @@ final appRouterProvider = Provider<GoRouter>((ref) {
         },
       ),
 
+      GoRoute(
+        path: '/privacy-policy',
+        builder: (context, state) => const LegalScreen(name: 'privacy_policy'),
+      ),
+      GoRoute(
+        path: '/terms-and-conditions',
+        builder: (context, state) => const LegalScreen(name: 'terms_and_conditions'),
+      ),
+
       // --- Rutas Principales con Barra de Navegación (ShellRoute) ---
       ShellRoute(
         builder: (context, state, child) {
@@ -105,15 +115,11 @@ final appRouterProvider = Provider<GoRouter>((ref) {
           ),
           GoRoute(
             path: '/meal-plan',
-            builder: (context, state) => const MealPlanListScreen(),
+            builder: (context, state) => const MealPlanDayScreen(),
             routes: [
               GoRoute(
                 path: 'history',
                 builder: (context, state) => const MealPlanListScreen(),
-              ),
-              GoRoute(
-                path: 'current',
-                builder: (context, state) => const MealPlanDayScreen(),
               ),
               GoRoute(
                 path: ':id',
@@ -146,12 +152,21 @@ final appRouterProvider = Provider<GoRouter>((ref) {
                 path: ':id',
                 builder: (context, state) {
                   final idParam = state.pathParameters['id'];
+                  final queryParams = state.uri.queryParameters;
+                  final entryIdParam = queryParams['entryId'];
+                  final status = queryParams['status'];
                   final parsedId = int.tryParse(idParam ?? '');
+                  final entryId = int.tryParse(entryIdParam ?? '');
+                  
                   if (parsedId == null || parsedId <= 0) {
                     // Invalid ID: show recipes list or error screen
                     return const RecipesListScreen();
                   }
-                  return RecipeDetailScreen(recipeId: parsedId);
+                  return RecipeDetailScreen(
+                    recipeId: parsedId,
+                    entryId: entryId,
+                    status: status,
+                  );
                 },
                 routes: [
                   GoRoute(
@@ -226,7 +241,9 @@ final appRouterProvider = Provider<GoRouter>((ref) {
     redirect: (context, state) {
       final authState = ref.read(authProvider);
       final currentLocation = state.matchedLocation;
-      final publicRoutes = ['/login', '/signup', '/init'];
+      final authRoutes = ['/login', '/signup', '/init'];
+      final legalRoutes = ['/privacy-policy', '/terms-and-conditions'];
+      final publicRoutes = [...authRoutes, ...legalRoutes];
 
       if (authState is LoadingAuthState || authState is InitialAuthState) {
         return null;
@@ -241,7 +258,7 @@ final appRouterProvider = Provider<GoRouter>((ref) {
               ? null
               : '/preferences-wizard';
         }
-        if (publicRoutes.contains(currentLocation) ||
+        if (authRoutes.contains(currentLocation) ||
             currentLocation == '/preferences-wizard' ||
             currentLocation == '/verify-otp') {
           return '/home';
@@ -252,7 +269,7 @@ final appRouterProvider = Provider<GoRouter>((ref) {
           return '/login';
         }
         if (!publicRoutes.contains(currentLocation)) {
-          return '/login';
+          return '/init';
         }
       }
       return null;

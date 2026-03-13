@@ -1,37 +1,28 @@
-// lib/features/auth/presentation/screens/signup_screen.dart
-
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
-
+import 'package:meal_plan_app/features/auth/presentation/provider/provider.dart';
+import 'package:meal_plan_app/features/auth/presentation/widgets/widgets_auth.dart';
 import 'package:meal_plan_app/features/shared/shared.dart';
 import 'package:meal_plan_app/l10n/app_localizations.dart';
 import 'package:meal_plan_app/features/shared/utils/app_error_localizations.dart';
-import '../provider/provider.dart';
 
-class SignUpScreen extends StatelessWidget {
+class SignUpScreen extends ConsumerWidget {
   const SignUpScreen({super.key});
 
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(body: _SignUpForm());
-  }
-}
-
-class _SignUpForm extends ConsumerWidget {
-  const _SignUpForm();
-
-  void showSnackbar(BuildContext context, String message) {
-    ScaffoldMessenger.of(context).hideCurrentSnackBar();
-    ScaffoldMessenger.of(
-      context,
-    ).showSnackBar(SnackBar(content: Text(message)));
+  void showSnackbar(BuildContext context, String message, {bool isError = false}) {
+    if (isError) {
+      CustomSnackbar.showError(context, message);
+    } else {
+      CustomSnackbar.showInfo(context, message);
+    }
   }
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final colors = Theme.of(context).colorScheme;
     final l10n = AppLocalizations.of(context);
+    final textTheme = Theme.of(context).textTheme;
     final signupFormState = ref.watch(signupFormProvider);
     final signupFormNotifier = ref.read(signupFormProvider.notifier);
 
@@ -40,6 +31,7 @@ class _SignUpForm extends ConsumerWidget {
         showSnackbar(
           context,
           localizeErrorCode(l10n, next.code, fallback: next.message),
+          isError: true,
         );
       }
       if (previous is LoadingAuthState && next is AwaitingOtpInputState) {
@@ -47,84 +39,90 @@ class _SignUpForm extends ConsumerWidget {
       }
     });
 
-    return SingleChildScrollView(
-      child: Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 50, vertical: 80),
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            Text(
-              l10n.signUp,
+    return AuthLayout(
+      // appBarTitle: l10n.register, // "Crear cuenta"
+      onBack: () => context.pop(),
+      footer: Row(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          Text(
+            l10n.doYouHaveAccount,
+            style: textTheme.bodyMedium?.copyWith(color: colors.onSurfaceVariant),
+          ),
+          TextButton(
+            onPressed: () => context.pushReplacement('/login'),
+            child: Text(
+              l10n.login,
               style: TextStyle(
-                fontSize: 30,
                 fontWeight: FontWeight.bold,
                 color: colors.primary,
               ),
             ),
-            const SizedBox(height: 30),
-            ElevatedButton.icon(
-              icon: Image.asset(
-                'assets/images/google_logo.png',
-                width: 24,
-                height: 24,
-                semanticLabel: 'Google logo',
-              ),
-              label: Text(l10n.signInWithGoogle),
-              onPressed: () {
-                ref.read(authProvider.notifier).signInWithGoogle();
-              },
-              style: ElevatedButton.styleFrom(
-                foregroundColor: Colors.black,
-                backgroundColor: Colors.white,
+          ),
+        ],
+      ),
+      child: Column(
+        children: [
+          AuthHeader(
+            title: l10n.authWelcome, // "Welcome" / "Bienvenido"
+            subtitle: l10n.authSignUpSubtitle,
+          ),
+          const SizedBox(height: 28),
+          CustomTextFormField(
+            label: l10n.name,
+            hint: l10n.namePlaceholder,
+            onChanged: signupFormNotifier.onNameChanged,
+            errorMessage: signupFormState.isFormPosted
+                ? signupFormState.name.getErrorMessage(l10n)
+                : null,
+          ),
+          const SizedBox(height: 14),
+          CustomTextFormField(
+            label: l10n.email,
+            hint: l10n.emailPlaceholder,
+            keyboardType: TextInputType.emailAddress,
+            onChanged: signupFormNotifier.onEmailChanged,
+            errorMessage: signupFormState.isFormPosted
+                ? signupFormState.email.getErrorMessage(l10n)
+                : null,
+          ),
+          const SizedBox(height: 14),
+          LegalConsentRichText(
+            textTheme: textTheme,
+            colors: colors,
+            l10n: l10n,
+          ),
+          const SizedBox(height: 18),
+          SizedBox(
+            width: double.infinity,
+            height: 56,
+            child: FilledButton(
+              onPressed: signupFormState.isPosting
+                  ? null
+                  : signupFormNotifier.onFormSubmitted,
+              style: FilledButton.styleFrom(
+                backgroundColor: colors.primary,
                 shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(8.0),
-                  side: const BorderSide(color: Colors.grey),
+                  borderRadius: BorderRadius.circular(16),
                 ),
               ),
-            ),
-            const SizedBox(height: 16),
-            CustomTextFormField(
-              label: l10n.name,
-              onChanged: signupFormNotifier.onNameChanged,
-              errorMessage: signupFormState.isFormPosted
-                  ? signupFormState.name.getErrorMessage(l10n)
-                  : null,
-            ),
-            const SizedBox(height: 15),
-            CustomTextFormField(
-              label: l10n.email,
-              keyboardType: TextInputType.emailAddress,
-              onChanged: signupFormNotifier.onEmailChanged,
-              errorMessage: signupFormState.isFormPosted
-                  ? signupFormState.email.getErrorMessage(l10n)
-                  : null,
-            ),
-            const SizedBox(height: 30),
-            SizedBox(
-              width: double.infinity,
-              height: 40,
-              child: CustomFilledButton(
-                text: l10n.sendOtp,
-                buttonColor: colors.primary,
-                onPressed: signupFormState.isPosting
-                    ? null
-                    : signupFormNotifier.onFormSubmitted,
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Text(
+                    l10n.sendOtp, // "Enviar OTP"
+                    style: const TextStyle(
+                      fontWeight: FontWeight.bold,
+                      fontSize: 16,
+                    ),
+                  ),
+                  const SizedBox(width: 8),
+                  const Icon(Icons.arrow_forward, size: 20),
+                ],
               ),
             ),
-            const SizedBox(height: 30),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                Text(l10n.doYouHaveAccount),
-                const SizedBox(width: 5),
-                TextButton(
-                  onPressed: () => context.go('/login'),
-                  child: Text(l10n.login),
-                ),
-              ],
-            ),
-          ],
-        ),
+          ),
+        ],
       ),
     );
   }

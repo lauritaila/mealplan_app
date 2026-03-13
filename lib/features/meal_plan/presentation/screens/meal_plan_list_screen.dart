@@ -2,11 +2,11 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:intl/intl.dart';
-import 'package:meal_plan_app/features/grocery_list/presentation/providers/grocery_actions_provider.dart';
-import 'package:meal_plan_app/features/grocery_list/presentation/widgets/select_grocery_list_sheet.dart';
 import 'package:meal_plan_app/features/meal_plan/domain/domain.dart';
 import 'package:meal_plan_app/features/meal_plan/presentation/providers/provider.dart';
 import 'package:meal_plan_app/l10n/app_localizations.dart';
+import 'package:meal_plan_app/features/meal_plan/presentation/widgets/detail_meal_plan/plan_actions_sheet.dart';
+import 'package:meal_plan_app/config/theme/app_theme.dart';
 
 class MealPlanListScreen extends ConsumerWidget {
   const MealPlanListScreen({super.key});
@@ -16,80 +16,192 @@ class MealPlanListScreen extends ConsumerWidget {
     final plansAsync = ref.watch(mealPlansProvider);
     final l10n = AppLocalizations.of(context);
 
+    final theme = Theme.of(context);
+    final customColors = theme.extension<AppCustomColors>()!;
+    final textTheme = theme.textTheme;
+
     return Scaffold(
+      backgroundColor: theme.scaffoldBackgroundColor,
       appBar: AppBar(
-        title: Text(l10n.myPlansTitle),
+        backgroundColor: theme.scaffoldBackgroundColor,
+        elevation: 0,
+        automaticallyImplyLeading: false,
+        title: Row(
+          children: [
+            Icon(Icons.calendar_month, color: customColors.darkSage, size: 24),
+            const SizedBox(width: 12),
+            Text(
+              l10n.myPlansTitle,
+              style: textTheme.titleLarge?.copyWith(
+                color: customColors.textDarkBlue,
+                fontWeight: FontWeight.w900,
+              ),
+            ),
+          ],
+        ),
         actions: [
           IconButton(
-            icon: const Icon(Icons.today),
-            onPressed: () => context.push('/meal-plan/current'),
+            icon: Icon(Icons.calendar_today, color: customColors.darkSage, size: 24),
+            onPressed: () => context.go('/meal-plan'),
+            tooltip: l10n.mealPlanTitle,
           ),
-          IconButton(
-            icon: const Icon(Icons.refresh),
-            onPressed: () => ref.invalidate(mealPlansProvider),
-          ),
+          const SizedBox(width: 8),
         ],
       ),
-      floatingActionButton: FloatingActionButton.extended(
-        onPressed: () => context.push('/meal-plan/new'),
-        icon: const Icon(Icons.add),
-        label: Text(l10n.newPlan),
+      floatingActionButton: plansAsync.when(
+        data: (plansList) => plansList.isEmpty 
+            ? null 
+            : FloatingActionButton.extended(
+                onPressed: () => context.push('/meal-plan/new'),
+                backgroundColor: customColors.darkSage,
+                foregroundColor: Colors.white,
+                elevation: 0,
+                icon: const Icon(Icons.add, size: 24),
+                label: Text(
+                  l10n.createNewPlanTooltip,
+                  style: textTheme.labelLarge?.copyWith(
+                    color: Colors.white,
+                    fontWeight: FontWeight.w800,
+                  ),
+                ),
+              ),
+        loading: () => null,
+        error: (_, _) => null,
       ),
       body: plansAsync.when(
-        loading: () => const Center(child: CircularProgressIndicator()),
-        error: (e, _) => Center(
+        data: (plansList) {
+          if (plansList.isEmpty) {
+            return Center(
+              child: Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 32),
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Container(
+                      padding: const EdgeInsets.all(24),
+                      decoration: BoxDecoration(
+                        color: customColors.chartTabBackground,
+                        shape: BoxShape.circle,
+                        border: Border.all(color: Colors.white, width: 4),
+                        boxShadow: [
+                          BoxShadow(
+                            color: Colors.black.withValues(alpha: 0.04),
+                            blurRadius: 10,
+                            offset: const Offset(0, 4),
+                          ),
+                        ],
+                      ),
+                      child: Icon(
+                        Icons.restaurant_menu_rounded,
+                        size: 64,
+                        color: customColors.slateGrey?.withValues(alpha: 0.5),
+                      ),
+                    ),
+                    const SizedBox(height: 24),
+                    Text(
+                      l10n.noPlansAddedTitle,
+                      style: textTheme.headlineSmall?.copyWith(
+                        fontWeight: FontWeight.w900,
+                        color: customColors.textDarkBlue,
+                      ),
+                    ),
+                    const SizedBox(height: 12),
+                    Text(
+                      l10n.noPlansAddedMessage,
+                      textAlign: TextAlign.center,
+                      style: textTheme.bodyMedium?.copyWith(
+                        color: customColors.slateGrey,
+                        height: 1.5,
+                      ),
+                    ),
+                    const SizedBox(height: 32),
+                    FilledButton.icon(
+                      onPressed: () => context.push('/meal-plan/new'),
+                      icon: const Icon(Icons.add),
+                      label: Text(l10n.createNewPlanTooltip),
+                      style: FilledButton.styleFrom(
+                        backgroundColor: customColors.darkSage,
+                        foregroundColor: Colors.white,
+                        padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 16),
+                        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+                        elevation: 0,
+                        textStyle: textTheme.labelLarge?.copyWith(fontWeight: FontWeight.w800),
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            );
+          }
+
+          int getDaysDifference(DateTime start, DateTime end) {
+            final st = DateTime(start.year, start.month, start.day);
+            final ed = DateTime(end.year, end.month, end.day);
+            return ed.difference(st).inDays + 1;
+          }
+
+          final now = DateTime.now();
+          final today = DateTime(now.year, now.month, now.day);
+          
+          final sortedPlans = List<MealPlanSummary>.from(plansList);
+          sortedPlans.sort((a, b) {
+            final aEnd = DateTime(a.endDate.year, a.endDate.month, a.endDate.day);
+            final bEnd = DateTime(b.endDate.year, b.endDate.month, b.endDate.day);
+            final aIsFuture = aEnd.isAfter(today) || aEnd.isAtSameMomentAs(today);
+            final bIsFuture = bEnd.isAfter(today) || bEnd.isAtSameMomentAs(today);
+            if (aIsFuture && !bIsFuture) return -1;
+            if (!aIsFuture && bIsFuture) return 1;
+            return b.endDate.compareTo(a.endDate);
+          });
+
+          return RefreshIndicator(
+            onRefresh: () async {
+              ref.invalidate(mealPlansProvider);
+            },
+            color: customColors.darkSage,
+            child: ListView.separated(
+              padding: const EdgeInsets.all(20),
+              itemCount: sortedPlans.length,
+              separatorBuilder: (context, index) => const SizedBox(height: 16),
+              itemBuilder: (context, index) {
+                final plan = sortedPlans[index];
+                return _MealPlanCard(
+                  key: ValueKey(plan.id),
+                  plan: plan,
+                  daysCount: getDaysDifference(plan.startDate, plan.endDate),
+                );
+              },
+            ),
+          );
+        },
+        loading: () => Center(
+          child: CircularProgressIndicator(color: customColors.darkSage),
+        ),
+        error: (_, _) => Center(
           child: Column(
-            mainAxisSize: MainAxisSize.min,
+            mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              const Icon(Icons.error_outline, size: 48, color: Colors.red),
-              const SizedBox(height: 12),
-              Text(e.toString()),
-              const SizedBox(height: 12),
-              FilledButton(
+              const Icon(Icons.error_outline, size: 48, color: Color(0xFFEF4444)),
+              const SizedBox(height: 16),
+              Text(
+                AppLocalizations.of(context).genericError,
+                style: const TextStyle(fontSize: 16, color: Color(0xFF64748B)),
+              ),
+              const SizedBox(height: 16),
+              OutlinedButton.icon(
                 onPressed: () => ref.invalidate(mealPlansProvider),
-                child: Text(l10n.retry),
+                icon: const Icon(Icons.refresh),
+                label: Text(AppLocalizations.of(context).tryAgain),
+                style: OutlinedButton.styleFrom(
+                  foregroundColor: customColors.darkSage,
+                  side: BorderSide(color: customColors.darkSage!.withValues(alpha: 0.2)),
+                  shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+                  textStyle: textTheme.labelLarge?.copyWith(fontWeight: FontWeight.w700),
+                ),
               ),
             ],
           ),
         ),
-        data: (plans) {
-          if (plans.isEmpty) {
-            return Center(
-              child: Column(
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  Icon(
-                    Icons.calendar_today_outlined,
-                    size: 64,
-                    color: Theme.of(context).colorScheme.outlineVariant,
-                  ),
-                  const SizedBox(height: 16),
-                  Text(
-                    l10n.noSavedPlans,
-                    style: Theme.of(context).textTheme.titleMedium,
-                  ),
-                  const SizedBox(height: 8),
-                  Text(l10n.createFirstPlan),
-                  const SizedBox(height: 24),
-                  FilledButton.icon(
-                    onPressed: () => context.push('/meal-plan/new'),
-                    icon: const Icon(Icons.add),
-                    label: Text(l10n.newPlan),
-                  ),
-                ],
-              ),
-            );
-          }
-          return ListView.separated(
-            padding: const EdgeInsets.fromLTRB(16, 16, 16, 100),
-            itemCount: plans.length,
-            separatorBuilder: (context, index) => const SizedBox(height: 8),
-            itemBuilder: (context, index) {
-              final plan = plans[index];
-              return _MealPlanCard(plan: plan);
-            },
-          );
-        },
       ),
     );
   }
@@ -97,382 +209,149 @@ class MealPlanListScreen extends ConsumerWidget {
 
 class _MealPlanCard extends ConsumerWidget {
   final MealPlanSummary plan;
-  const _MealPlanCard({required this.plan});
+  final int daysCount;
+
+  const _MealPlanCard({
+    super.key,
+    required this.plan,
+    required this.daysCount,
+  });
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final theme = Theme.of(context);
+    final customColors = theme.extension<AppCustomColors>()!;
+    final textTheme = theme.textTheme;
     final l10n = AppLocalizations.of(context);
-    final df = DateFormat('d MMM', Localizations.localeOf(context).toString());
-    final dateRange =
-        '${df.format(plan.startDate)} – ${df.format(plan.endDate)} ${plan.endDate.year}';
+    final localeStr = Localizations.localeOf(context).toString();
+    final DateFormat formatter = DateFormat('d MMM', localeStr);
+    final DateFormat yearFormatter = DateFormat('d MMM yyyy', localeStr);
 
-    return Card(
-      elevation: 0,
-      shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(14),
-        side: BorderSide(color: theme.colorScheme.outlineVariant, width: 0.8),
+    return Container(
+      margin: const EdgeInsets.only(bottom: 16),
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(24),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withValues(alpha: 0.04),
+            blurRadius: 10,
+            offset: const Offset(0, 4),
+          ),
+        ],
       ),
-      child: InkWell(
-        borderRadius: BorderRadius.circular(14),
-        onTap: () => context.push('/meal-plan/${plan.id}'),
-        child: Padding(
-          padding: const EdgeInsets.fromLTRB(16, 14, 8, 14),
-          child: Row(
-            children: [
-              Expanded(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
+      child: Material(
+        color: Colors.transparent,
+        child: InkWell(
+          borderRadius: BorderRadius.circular(24),
+          onTap: () => context.push('/meal-plan/${plan.id}'),
+          child: Padding(
+            padding: const EdgeInsets.all(20),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  crossAxisAlignment: CrossAxisAlignment.center,
                   children: [
-                    Row(
-                      children: [
-                        Expanded(
-                          child: Text(
-                            plan.planName,
-                            style: theme.textTheme.titleSmall?.copyWith(
-                              fontWeight: FontWeight.w700,
+                    Container(
+                      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+                      decoration: BoxDecoration(
+                        color: plan.generatedByAi ? customColors.chartTabBackground : Colors.grey.shade50,
+                        borderRadius: BorderRadius.circular(20),
+                      ),
+                      child: Row(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                            Icon(
+                              plan.generatedByAi ? Icons.auto_awesome_rounded : Icons.person_rounded,
+                              size: 14,
+                              color: plan.generatedByAi ? customColors.darkSage : customColors.slateGrey,
                             ),
-                          ),
-                        ),
-                        if (plan.generatedByAi)
-                          Container(
-                            padding: const EdgeInsets.symmetric(
-                              horizontal: 8,
-                              vertical: 2,
+                            const SizedBox(width: 6),
+                            Text(
+                              plan.generatedByAi ? l10n.planBadgeAI : l10n.planBadgeCustom,
+                              style: textTheme.labelSmall?.copyWith(
+                                fontWeight: FontWeight.w800,
+                                color: plan.generatedByAi ? customColors.darkSage : customColors.slateGrey,
+                                letterSpacing: 0.5,
+                              ),
                             ),
-                            decoration: BoxDecoration(
-                              color: theme.colorScheme.secondaryContainer,
-                              borderRadius: BorderRadius.circular(20),
-                            ),
-                            child: Row(
-                              mainAxisSize: MainAxisSize.min,
-                              children: [
-                                Icon(
-                                  Icons.auto_awesome,
-                                  size: 12,
-                                  color: theme.colorScheme.onSecondaryContainer,
-                                ),
-                                const SizedBox(width: 4),
-                                Text(
-                                  l10n.ai,
-                                  style: theme.textTheme.labelSmall?.copyWith(
-                                    color:
-                                        theme.colorScheme.onSecondaryContainer,
-                                  ),
-                                ),
-                              ],
-                            ),
-                          ),
-                      ],
+                        ],
+                      ),
                     ),
-                    const SizedBox(height: 4),
-                    Text(
-                      dateRange,
-                      style: theme.textTheme.bodySmall?.copyWith(
-                        color: theme.colorScheme.onSurfaceVariant,
+                    Material(
+                      color: Colors.transparent,
+                      child: IconButton(
+                        onPressed: () => _showPlanActionsSheet(context, ref, l10n),
+                        icon: const Icon(Icons.more_vert_rounded),
+                        padding: EdgeInsets.zero,
+                        constraints: const BoxConstraints(minWidth: 32, minHeight: 32),
+                        splashRadius: 24,
+                        color: customColors.slateGrey?.withValues(alpha: 0.3),
                       ),
                     ),
                   ],
                 ),
-              ),
-              PopupMenuButton<String>(
-                icon: const Icon(Icons.more_vert),
-                onSelected: (value) => _onMenuAction(context, ref, value),
-                itemBuilder: (_) => [
-                  PopupMenuItem(
-                    value: 'view',
-                    child: ListTile(
-                      leading: const Icon(Icons.calendar_view_week_outlined),
-                      title: Text(l10n.menuViewEntries),
-                      contentPadding: EdgeInsets.zero,
-                    ),
+                const SizedBox(height: 6),
+                Text(
+                  plan.planName,
+                  style: textTheme.titleMedium?.copyWith(
+                    fontWeight: FontWeight.w900,
+                    letterSpacing: -0.5,
+                    color: customColors.textDarkBlue,
                   ),
-                  PopupMenuItem(
-                    value: 'import',
-                    child: ListTile(
-                      leading: const Icon(Icons.shopping_cart_outlined),
-                      title: Text(l10n.menuSaveIngredients),
-                      contentPadding: EdgeInsets.zero,
+                  maxLines: 2,
+                  overflow: TextOverflow.ellipsis,
+                ),
+                const SizedBox(height: 16),
+                Row(
+                  children: [
+                    Icon(
+                      Icons.schedule_rounded,
+                      size: 16,
+                      color: customColors.slateGrey?.withValues(alpha: 0.6),
                     ),
-                  ),
-                  PopupMenuItem(
-                    value: 'reuse',
-                    child: ListTile(
-                      leading: const Icon(Icons.replay_outlined),
-                      title: Text(l10n.menuReusePlan),
-                      contentPadding: EdgeInsets.zero,
-                    ),
-                  ),
-                  PopupMenuItem(
-                    value: 'delete',
-                    child: ListTile(
-                      leading: const Icon(Icons.delete_outline, color: Colors.red),
-                      title: Text(
-                        l10n.deleteAction,
-                        style: const TextStyle(color: Colors.red),
+                    const SizedBox(width: 8),
+                    Expanded(
+                      child: Text(
+                        '${formatter.format(plan.startDate).toUpperCase()} - ${yearFormatter.format(plan.endDate).toUpperCase()}',
+                        style: textTheme.labelMedium?.copyWith(
+                          fontWeight: FontWeight.w800,
+                          color: customColors.slateGrey,
+                          letterSpacing: 0.2,
+                        ),
                       ),
-                      contentPadding: EdgeInsets.zero,
                     ),
-                  ),
-                ],
-              ),
-            ],
+                  ],
+                ),
+              ],
+            ),
           ),
         ),
       ),
     );
   }
 
-  Future<void> _onMenuAction(
-    BuildContext context,
-    WidgetRef ref,
-    String value,
-  ) async {
-    final l10n = AppLocalizations.of(context);
-    switch (value) {
-      case 'view':
-        context.push('/meal-plan/${plan.id}');
-      case 'import':
-        await _importToList(context, ref, l10n);
-      case 'reuse':
-        await _showReusePlanSheet(context, ref, l10n);
-      case 'delete':
-        await _showDeletePlanDialog(context, ref, l10n);
-    }
-  }
-
-  Future<void> _importToList(BuildContext context, WidgetRef ref, AppLocalizations l10n) async {
-    final messenger = ScaffoldMessenger.of(context);
-    final selected = await showSelectOrCreateGroceryListSheet(
-      context: context,
-      title: l10n.saveIngredientsSheetTitle,
-    );
-    if (selected == null) return;
-    final ok = await ref
-        .read(groceryActionsProvider.notifier)
-        .importMealPlan(selected.id, plan.id);
-    messenger.showSnackBar(
-      SnackBar(
-        content: Text(
-            ok
-              ? l10n.savedIngredientsSuccess(selected.name)
-              : l10n.savedIngredientsFailed,
-        ),
-      ),
-    );
-  }
-
-  Future<void> _showReusePlanSheet(BuildContext context, WidgetRef ref, AppLocalizations l10n) async {
-    final result =
-        await showModalBottomSheet<({String startDate, String? name})>(
-          context: context,
-          isScrollControlled: true,
-          useSafeArea: true,
-          shape: const RoundedRectangleBorder(
-            borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
-          ),
-          builder: (_) => _ReusePlanSheet(plan: plan),
-        );
-    if (result == null || !context.mounted) return;
-    final messenger = ScaffoldMessenger.of(context);
-    final response = await ref
-        .read(mealPlanEntryActionsProvider.notifier)
-        .reusePlan(plan.id, result.startDate, name: result.name);
-    if (!context.mounted) return;
-    if (response != null) {
-      ref.invalidate(mealPlansProvider);
-      ref.read(mealPlanEntryActionsProvider.notifier).reset();
-      messenger.showSnackBar(
-        SnackBar(
-          content: Text(
-              l10n.planReusedSuccess(response.newPlanName, response.entriesCloned),
-          ),
-          action: SnackBarAction(
-            label: l10n.planReusedView,
-            onPressed: () => context.push('/meal-plan/${response.newPlanId}'),
-          ),
-        ),
-      );
-    } else {
-      messenger.showSnackBar(
-        SnackBar(content: Text(l10n.planReusedFailed)),
-      );
-    }
-  }
-
-  Future<void> _showDeletePlanDialog(
+  Future<void> _showPlanActionsSheet(
     BuildContext context,
     WidgetRef ref,
     AppLocalizations l10n,
   ) async {
-    bool removeShoppingList = false;
-    final confirmed = await showDialog<bool>(
+    await showModalBottomSheet(
       context: context,
-      builder: (ctx) => StatefulBuilder(
-        builder: (ctx, setLocalState) => AlertDialog(
-          title: Text(l10n.deletePlanDialogTitle),
-          content: Column(
-            mainAxisSize: MainAxisSize.min,
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Text(l10n.deletePlanDialogMessage),
-              const SizedBox(height: 12),
-              CheckboxListTile(
-                contentPadding: EdgeInsets.zero,
-                value: removeShoppingList,
-                onChanged: (v) =>
-                    setLocalState(() => removeShoppingList = v ?? false),
-                title: Text(l10n.deletePlanAlsoRemoveGrocery),
-                controlAffinity: ListTileControlAffinity.leading,
-              ),
-            ],
-          ),
-          actions: [
-            TextButton(
-              onPressed: () => Navigator.of(ctx).pop(false),
-              child: Text(l10n.cancel),
-            ),
-            FilledButton(
-              style: FilledButton.styleFrom(backgroundColor: Colors.red),
-              onPressed: () => Navigator.of(ctx).pop(true),
-              child: Text(l10n.deleteAction),
-            ),
-          ],
-        ),
+      isScrollControlled: true,
+      backgroundColor: Colors.white,
+      shape: const RoundedRectangleBorder(
+        borderRadius: BorderRadius.vertical(top: Radius.circular(28)),
       ),
+      builder: (context) {
+        return SafeArea(
+          child: SingleChildScrollView(
+            child: PlanActionsSheet(plan: plan),
+          ),
+        );
+      },
     );
-    if (confirmed != true || !context.mounted) return;
-    final messenger = ScaffoldMessenger.of(context);
-    await ref
-        .read(mealPlanEntryActionsProvider.notifier)
-        .deletePlan(plan.id, removeShoppingList: removeShoppingList);
-    if (!context.mounted) return;
-    final state = ref.read(mealPlanEntryActionsProvider);
-    if (state.status == MealPlanEntryActionStatus.success) {
-      ref.invalidate(mealPlansProvider);
-      ref.read(mealPlanEntryActionsProvider.notifier).reset();
-      messenger.showSnackBar(SnackBar(content: Text(l10n.planDeletedSuccess)));
-    } else {
-      messenger.showSnackBar(
-        SnackBar(
-          content: Text(state.errorMessage ?? l10n.planDeleteFailed),
-        ),
-      );
-      ref.read(mealPlanEntryActionsProvider.notifier).reset();
-    }
-  }
-}
-
-// ── Reuse Plan Bottom Sheet ──────────────────────────────────────────────────
-
-class _ReusePlanSheet extends StatefulWidget {
-  final MealPlanSummary plan;
-  const _ReusePlanSheet({required this.plan});
-
-  @override
-  State<_ReusePlanSheet> createState() => _ReusePlanSheetState();
-}
-
-class _ReusePlanSheetState extends State<_ReusePlanSheet> {
-  DateTime? _selectedDate;
-  final _nameController = TextEditingController();
-
-  @override
-  void dispose() {
-    _nameController.dispose();
-    super.dispose();
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    final theme = Theme.of(context);
-    final l10n = AppLocalizations.of(context);
-    final df = DateFormat('d MMM yyyy', Localizations.localeOf(context).toString());
-
-    return Padding(
-      padding: EdgeInsets.fromLTRB(
-        24,
-        24,
-        24,
-        24 + MediaQuery.of(context).viewInsets.bottom,
-      ),
-      child: Column(
-        mainAxisSize: MainAxisSize.min,
-        crossAxisAlignment: CrossAxisAlignment.stretch,
-        children: [
-          Row(
-            children: [
-              Expanded(
-                child: Text(
-                  l10n.reusePlanSheetTitle,
-                  style: theme.textTheme.titleLarge,
-                ),
-              ),
-              IconButton(
-                icon: const Icon(Icons.close),
-                onPressed: () => Navigator.of(context).pop(),
-              ),
-            ],
-          ),
-          const SizedBox(height: 4),
-          Text(
-            '"${widget.plan.planName}"',
-            style: theme.textTheme.bodyMedium?.copyWith(
-              color: theme.colorScheme.onSurfaceVariant,
-            ),
-          ),
-          const SizedBox(height: 20),
-          Text(
-            l10n.reusePlanStartDateLabel,
-            style: theme.textTheme.labelLarge,
-          ),
-          const SizedBox(height: 8),
-          OutlinedButton.icon(
-            onPressed: () async {
-              final picked = await showDatePicker(
-                context: context,
-                initialDate: DateTime.now(),
-                firstDate: DateTime.now(),
-                lastDate: DateTime.now().add(const Duration(days: 365 * 2)),
-              );
-              if (picked != null) setState(() => _selectedDate = picked);
-            },
-            icon: const Icon(Icons.calendar_today_outlined),
-            label: Text(
-              _selectedDate == null
-                  ? l10n.reusePlanSelectDate
-                  : df.format(_selectedDate!),
-            ),
-          ),
-          const SizedBox(height: 16),
-          TextField(
-            controller: _nameController,
-            decoration: InputDecoration(
-              labelText: l10n.reusePlanNameLabel,
-              hintText: l10n.reusePlanNameHint,
-              border: const OutlineInputBorder(),
-            ),
-          ),
-          const SizedBox(height: 24),
-          FilledButton.icon(
-            onPressed: _selectedDate == null ? null : _onConfirm,
-            icon: const Icon(Icons.replay_outlined),
-            label: Text(l10n.menuReusePlan),
-          ),
-        ],
-      ),
-    );
-  }
-
-  void _onConfirm() {
-    if (_selectedDate == null) return;
-    final dateStr =
-        '${_selectedDate!.year.toString().padLeft(4, '0')}-${_selectedDate!.month.toString().padLeft(2, '0')}-${_selectedDate!.day.toString().padLeft(2, '0')}';
-    Navigator.of(context).pop((
-      startDate: dateStr,
-      name: _nameController.text.trim().isEmpty
-          ? null
-          : _nameController.text.trim(),
-    ));
   }
 }

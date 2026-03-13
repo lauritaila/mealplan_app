@@ -1,20 +1,12 @@
 // ignore_for_file: file_names
-
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:meal_plan_app/features/auth/presentation/provider/provider.dart';
+import 'package:meal_plan_app/features/auth/presentation/widgets/widgets_auth.dart';
 import 'package:meal_plan_app/l10n/app_localizations.dart';
 
 class CookingDetailsStep extends ConsumerWidget {
   const CookingDetailsStep({super.key});
-
-  String _localizedTitle(
-    Map<String, String> titles,
-    String locale,
-    String fallback,
-  ) {
-    return titles[locale] ?? titles['en'] ?? fallback;
-  }
 
   String _localizedOption(
     Map<String, Map<String, String>> labels,
@@ -30,6 +22,7 @@ class CookingDetailsStep extends ConsumerWidget {
     final configAsync = ref.watch(preferencesConfigurationProvider);
     final state = ref.watch(preferencesWizardProvider);
     final notifier = ref.read(preferencesWizardProvider.notifier);
+    final colors = Theme.of(context).colorScheme;
     final textTheme = Theme.of(context).textTheme;
     final l10n = AppLocalizations.of(context);
     final localeCode = Localizations.localeOf(context).languageCode;
@@ -42,117 +35,164 @@ class CookingDetailsStep extends ConsumerWidget {
         final timeOptions = config.timeOptions;
         final minSize = config.householdSize.min;
         final maxSize = config.householdSize.max;
-        final cookingTitle = _localizedTitle(
-          config.cookingTitles,
-          localeCode,
-          l10n.cookingDetailsTitle,
-        );
-        final cookingSkillTitle = _localizedTitle(
-          config.cookingSkillTitles,
-          localeCode,
-          l10n.cookingSkillTitle,
-        );
-        final cookingTimeTitle = _localizedTitle(
-          config.cookingTimeTitles,
-          localeCode,
-          l10n.timeAvailabilityTitle,
-        );
-        final householdTitle = _localizedTitle(
-          config.cookingHouseholdTitles,
-          localeCode,
-          l10n.householdSizeTitle,
-        );
 
-        return SingleChildScrollView(
-          padding: const EdgeInsets.symmetric(horizontal: 24.0),
-          child: Column(
-            children: [
-              const Icon(
-                Icons.soup_kitchen_outlined,
-                size: 48,
-                color: Colors.grey,
-              ),
-              const SizedBox(height: 16),
-              Text(
-                cookingTitle,
-                style: textTheme.headlineSmall,
-                textAlign: TextAlign.center,
-              ),
-              const SizedBox(height: 24),
-
-              Text(cookingSkillTitle, style: textTheme.titleMedium),
-              const SizedBox(height: 8),
-              Wrap(
-                spacing: 12.0,
-                alignment: WrapAlignment.center,
+        return Column(
+          children: [
+            AuthHeader(
+              title: l10n.cookingDetailsTitle,
+              subtitle: l10n.cookingDetailsSubtitle,
+              icon: Icons.soup_kitchen_rounded,
+            ),
+            const SizedBox(height: 32),
+            
+            _DetailsSection(
+              title: l10n.cookingSkillTitle.toUpperCase(),
+              child: Wrap(
+                spacing: 10.0,
+                runSpacing: 10.0,
                 children: skillLevels.map((level) {
+                  final isSelected = state.cookingSkillLevel == level;
                   return ChoiceChip(
                     label: Text(
-                      _localizedOption(
-                        config.cookingOptionLabels,
-                        localeCode,
-                        level,
+                      _localizedOption(config.cookingOptionLabels, localeCode, level),
+                      style: TextStyle(
+                        color: isSelected ? colors.onPrimary : colors.onSurface,
+                        fontWeight: isSelected ? FontWeight.bold : FontWeight.normal,
                       ),
                     ),
-                    selected: state.cookingSkillLevel == level,
+                    selected: isSelected,
                     onSelected: (_) => notifier.updateCookingSkillLevel(level),
-                  );
-                }).toList(),
-              ),
-              const SizedBox(height: 24),
-
-              Text(cookingTimeTitle, style: textTheme.titleMedium),
-              const SizedBox(height: 8),
-              Wrap(
-                spacing: 12.0,
-                alignment: WrapAlignment.center,
-                children: timeOptions.map((time) {
-                  return ChoiceChip(
-                    label: Text(
-                      _localizedOption(
-                        config.cookingOptionLabels,
-                        localeCode,
-                        time,
+                    backgroundColor: colors.surface,
+                    selectedColor: colors.primary,
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(12),
+                      side: BorderSide(
+                        color: isSelected ? colors.primary : colors.outlineVariant,
                       ),
                     ),
-                    selected: state.timeAvailability == time,
-                    onSelected: (_) => notifier.updateTimeAvailability(time),
                   );
                 }).toList(),
               ),
-              const SizedBox(height: 24),
-
-              Text(householdTitle, style: textTheme.titleMedium),
-              const SizedBox(height: 8),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  IconButton(
-                    icon: const Icon(Icons.remove_circle_outline),
-                    onPressed: state.householdSize > minSize
-                        ? () => notifier.updateHouseholdSize(
-                            state.householdSize - 1,
-                          )
-                        : null,
-                  ),
-                  Text(
-                    state.householdSize.toString(),
-                    style: textTheme.titleLarge,
-                  ),
-                  IconButton(
-                    icon: const Icon(Icons.add_circle_outline),
-                    onPressed: state.householdSize < maxSize
-                        ? () => notifier.updateHouseholdSize(
-                            state.householdSize + 1,
-                          )
-                        : null,
-                  ),
-                ],
+            ),
+            
+            const SizedBox(height: 24),
+            
+            _DetailsSection(
+              title: l10n.timeAvailabilityTitle.toUpperCase(),
+              child: Wrap(
+                spacing: 10.0,
+                runSpacing: 10.0,
+                children: timeOptions.map((time) {
+                  final isSelected = state.timeAvailability == time;
+                  return ChoiceChip(
+                    label: Text(
+                      _localizedOption(config.cookingOptionLabels, localeCode, time),
+                      style: TextStyle(
+                        color: isSelected ? colors.onPrimary : colors.onSurface,
+                        fontWeight: isSelected ? FontWeight.bold : FontWeight.normal,
+                      ),
+                    ),
+                    selected: isSelected,
+                    onSelected: (_) => notifier.updateTimeAvailability(time),
+                    backgroundColor: colors.surface,
+                    selectedColor: colors.primary,
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(12),
+                      side: BorderSide(
+                        color: isSelected ? colors.primary : colors.outlineVariant,
+                      ),
+                    ),
+                  );
+                }).toList(),
               ),
-            ],
-          ),
+            ),
+            
+            const SizedBox(height: 24),
+            
+            _DetailsSection(
+              title: l10n.householdSizeTitle.toUpperCase(),
+              child: Container(
+                padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                decoration: BoxDecoration(
+                  color: colors.surface,
+                  borderRadius: BorderRadius.circular(16),
+                  border: Border.all(color: colors.outlineVariant),
+                ),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    IconButton.filledTonal(
+                      icon: const Icon(Icons.remove),
+                      onPressed: state.householdSize > minSize
+                          ? () => notifier.updateHouseholdSize(state.householdSize - 1)
+                          : null,
+                      style: IconButton.styleFrom(
+                        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+                      ),
+                    ),
+                    Column(
+                      children: [
+                        Text(
+                          state.householdSize.toString(),
+                          style: textTheme.headlineMedium?.copyWith(
+                            fontWeight: FontWeight.bold,
+                            color: colors.primary,
+                          ),
+                        ),
+                        Text(
+                          l10n.peopleLabel,
+                          style: textTheme.labelSmall?.copyWith(color: colors.onSurfaceVariant),
+                        ),
+                      ],
+                    ),
+                    IconButton.filledTonal(
+                      icon: const Icon(Icons.add),
+                      onPressed: state.householdSize < maxSize
+                          ? () => notifier.updateHouseholdSize(state.householdSize + 1)
+                          : null,
+                      style: IconButton.styleFrom(
+                        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ),
+          ],
         );
       },
+    );
+  }
+}
+
+class _DetailsSection extends StatelessWidget {
+  final String title;
+  final Widget child;
+
+  const _DetailsSection({required this.title, required this.child});
+
+  @override
+  Widget build(BuildContext context) {
+    final colors = Theme.of(context).colorScheme;
+    final textTheme = Theme.of(context).textTheme;
+
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Padding(
+          padding: const EdgeInsets.only(left: 4),
+          child: Text(
+            title,
+            style: textTheme.labelLarge?.copyWith(
+              fontWeight: FontWeight.bold,
+              color: colors.onSurface,
+              letterSpacing: 0.5,
+            ),
+          ),
+        ),
+        const SizedBox(height: 12),
+        child,
+      ],
     );
   }
 }

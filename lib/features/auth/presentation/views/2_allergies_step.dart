@@ -1,8 +1,8 @@
 // ignore_for_file: file_names
-
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:meal_plan_app/features/auth/presentation/provider/provider.dart';
+import 'package:meal_plan_app/features/auth/presentation/widgets/widgets_auth.dart';
 import 'package:meal_plan_app/l10n/app_localizations.dart';
 
 class AllergiesStep extends ConsumerStatefulWidget {
@@ -19,8 +19,7 @@ class _AllergiesStepState extends ConsumerState<AllergiesStep> {
   @override
   void initState() {
     super.initState();
-    final customAllergy =
-        ref.read(preferencesWizardProvider).customAllergy ?? '';
+    final customAllergy = ref.read(preferencesWizardProvider).customAllergy ?? '';
     _customAllergyController = TextEditingController(text: customAllergy);
 
     _customAllergySubscription = ref.listenManual<String?>(
@@ -41,14 +40,6 @@ class _AllergiesStepState extends ConsumerState<AllergiesStep> {
     super.dispose();
   }
 
-  String _localizedTitle(
-    Map<String, String> titles,
-    String locale,
-    String fallback,
-  ) {
-    return titles[locale] ?? titles['en'] ?? fallback;
-  }
-
   String _localizedOption(
     Map<String, Map<String, String>> labels,
     String locale,
@@ -62,101 +53,139 @@ class _AllergiesStepState extends ConsumerState<AllergiesStep> {
   Widget build(BuildContext context) {
     final configAsync = ref.watch(preferencesConfigurationProvider);
     final selectedAllergies = ref.watch(preferencesWizardProvider).allergies;
-    final textTheme = Theme.of(context).textTheme;
     final l10n = AppLocalizations.of(context);
+    final colors = Theme.of(context).colorScheme;
     final localeCode = Localizations.localeOf(context).languageCode;
 
     return configAsync.when(
       loading: () => const Center(child: CircularProgressIndicator()),
-      error: (error, _) => Center(child: Text(error.toString())),
+      error: (error, _) => Center(child: Text(l10n.errorLoadingConfiguration)),
       data: (config) {
         final allergyOptions = config.allergyOptions;
         final showOther = config.textFields.allergiesOther;
-        final allergiesTitle = _localizedTitle(
-          config.allergyTitles,
-          localeCode,
-          l10n.allergiesTitle,
-        );
-        final otherTitle = _localizedTitle(
-          config.allergyOtherTitles,
-          localeCode,
-          l10n.allergiesOtherTitle,
-        );
-        final otherHint = _localizedTitle(
-          config.allergyOtherHints,
-          localeCode,
-          l10n.allergiesOtherHint,
-        );
 
-        return SingleChildScrollView(
-          padding: const EdgeInsets.symmetric(horizontal: 24.0),
-          child: Column(
-            children: [
-              const Icon(
-                Icons.warning_amber_rounded,
-                size: 48,
-                color: Colors.grey,
-              ),
-              const SizedBox(height: 16),
-              Text(
-                allergiesTitle,
-                style: textTheme.headlineSmall,
-                textAlign: TextAlign.center,
-              ),
-              const SizedBox(height: 24),
-              Wrap(
-                spacing: 12.0,
-                runSpacing: 12.0,
-                alignment: WrapAlignment.center,
-                children: allergyOptions.map((allergy) {
-                  final isSelected = selectedAllergies.contains(allergy);
-                  return FilterChip(
-                    label: Text(
-                      _localizedOption(
-                        config.allergyOptionLabels,
-                        localeCode,
-                        allergy,
-                      ),
+        return Column(
+          children: [
+            AuthHeader(
+              title: l10n.allergiesTitle,
+              subtitle: l10n.allergiesSubtitle,
+              icon: Icons.warning_amber_rounded,
+            ),
+            const SizedBox(height: 32),
+            Wrap(
+              spacing: 10.0,
+              runSpacing: 10.0,
+              alignment: WrapAlignment.start,
+              children: allergyOptions.map((allergy) {
+                final isSelected = selectedAllergies.contains(allergy);
+                return FilterChip(
+                  label: Text(
+                    _localizedOption(
+                      config.allergyOptionLabels,
+                      localeCode,
+                      allergy,
                     ),
-                    selected: isSelected,
-                    onSelected: (selected) {
-                      final currentSelection = List<String>.from(
-                        selectedAllergies,
-                      );
-                      if (selected) {
-                        currentSelection.add(allergy);
-                      } else {
-                        currentSelection.remove(allergy);
-                      }
-                      ref
-                          .read(preferencesWizardProvider.notifier)
-                          .updateAllergies(currentSelection);
-                    },
-                  );
-                }).toList(),
-              ),
-              if (showOther) ...[
-                const SizedBox(height: 24),
-                Text(otherTitle, style: textTheme.titleMedium),
-                const SizedBox(height: 8),
-                TextFormField(
-                  controller: _customAllergyController,
-                  decoration: InputDecoration(
-                    hintText: otherHint,
-                    border: const OutlineInputBorder(),
+                    style: TextStyle(
+                      color: isSelected ? colors.onPrimary : colors.onSurface,
+                      fontWeight: isSelected ? FontWeight.bold : FontWeight.normal,
+                    ),
                   ),
-                  maxLines: 3,
-                  onChanged: (value) {
+                  selected: isSelected,
+                  onSelected: (selected) {
+                    final currentSelection = List<String>.from(selectedAllergies);
+                    if (selected) {
+                      currentSelection.add(allergy);
+                    } else {
+                      currentSelection.remove(allergy);
+                    }
                     ref
                         .read(preferencesWizardProvider.notifier)
-                        .updateCustomAllergy(value);
+                        .updateAllergies(currentSelection);
                   },
-                ),
-              ],
+                  backgroundColor: colors.surface,
+                  selectedColor: colors.primary,
+                  checkmarkColor: colors.onPrimary,
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(12),
+                    side: BorderSide(
+                      color: isSelected ? colors.primary : colors.outlineVariant,
+                    ),
+                  ),
+                  padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+                );
+              }).toList(),
+            ),
+            if (showOther) ...[
+              const SizedBox(height: 32),
+              _CustomAllergyInputField(
+                label: l10n.allergiesOtherTitle.toUpperCase(),
+                hint: l10n.allergiesOtherHint,
+                controller: _customAllergyController,
+                onChanged: (value) {
+                  ref.read(preferencesWizardProvider.notifier).updateCustomAllergy(value);
+                },
+              ),
             ],
-          ),
+          ],
         );
       },
+    );
+  }
+}
+
+class _CustomAllergyInputField extends StatelessWidget {
+  final String label;
+  final String hint;
+  final TextEditingController controller;
+  final ValueChanged<String> onChanged;
+
+  const _CustomAllergyInputField({
+    required this.label,
+    required this.hint,
+    required this.controller,
+    required this.onChanged,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    final colors = Theme.of(context).colorScheme;
+    final textTheme = Theme.of(context).textTheme;
+
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Padding(
+          padding: const EdgeInsets.only(left: 4),
+          child: Text(
+            label,
+            style: textTheme.labelLarge?.copyWith(
+              fontWeight: FontWeight.bold,
+              color: colors.onSurface,
+              letterSpacing: 0.5,
+            ),
+          ),
+        ),
+        const SizedBox(height: 8),
+        Container(
+          decoration: BoxDecoration(
+            color: colors.surface,
+            borderRadius: BorderRadius.circular(16),
+            border: Border.all(color: colors.outlineVariant),
+          ),
+          child: TextFormField(
+            controller: controller,
+            maxLines: 3,
+            onChanged: onChanged,
+            decoration: InputDecoration(
+              hintText: hint,
+              hintStyle: TextStyle(color: colors.onSurfaceVariant.withValues(alpha: 0.5)),
+              contentPadding: const EdgeInsets.all(16),
+              border: InputBorder.none,
+            ),
+            style: textTheme.bodyLarge?.copyWith(color: colors.onSurfaceVariant),
+          ),
+        ),
+      ],
     );
   }
 }

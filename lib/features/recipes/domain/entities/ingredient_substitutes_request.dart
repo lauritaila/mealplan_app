@@ -13,7 +13,7 @@ class IngredientSubstitutesRequest {
 
   Map<String, dynamic> toJson() {
     return {
-      'ingredient_original': ingredientOriginal,
+      'ingredientOriginal': ingredientOriginal,
       if (quantity != null) 'quantity': quantity,
       if (unit.trim().isNotEmpty) 'unit': unit.trim(),
       if (context.trim().isNotEmpty) 'context': context.trim(),

@@ -6,6 +6,7 @@ class CookingAssistantStep {
   final List<RecipeIngredient> ingredientsUsed;
   final List<String> toolsNeeded;
   final int estimatedTimeSeconds;
+  final bool isTimerNecessary;
 
   const CookingAssistantStep({
     required this.stepNumber,
@@ -13,5 +14,6 @@ class CookingAssistantStep {
     required this.ingredientsUsed,
     required this.toolsNeeded,
     required this.estimatedTimeSeconds,
+    required this.isTimerNecessary,
   });
 }
