@@ -105,7 +105,7 @@ class PantryItemTile extends StatelessWidget {
                   )
                 else if (expiringSoon)
                   Text(
-                    AppLocalizations.of(context).pantryStockLow, // Using 'Low stock' as proxy for soon to expire based on UI
+                    AppLocalizations.of(context).pantryExpiringSoon,
                     style: const TextStyle(
                       fontSize: 13,
                       color: Colors.orange,
@@ -114,7 +114,7 @@ class PantryItemTile extends StatelessWidget {
                   )
                 else
                   Text(
-                    AppLocalizations.of(context).pantryStockNormal,
+                    AppLocalizations.of(context).pantryStatusValid,
                     style: TextStyle(
                       fontSize: 13,
                       color: Colors.blueGrey.shade400,

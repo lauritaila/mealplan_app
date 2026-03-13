@@ -1,3 +1,4 @@
+import 'package:flutter/services.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:meal_plan_app/features/auth/presentation/provider/provider.dart';
@@ -15,22 +16,24 @@ class OtpVerificationScreen extends ConsumerStatefulWidget {
 }
 
 class _OtpVerificationScreenState extends ConsumerState<OtpVerificationScreen> {
-  final List<TextEditingController> _controllers =
-      List.generate(6, (_) => TextEditingController());
-  final List<FocusNode> _focusNodes = List.generate(6, (_) => FocusNode());
+  final _codeController = TextEditingController();
+  final _codeFocusNode = FocusNode();
+
+  @override
+  void initState() {
+    super.initState();
+    _codeController.addListener(() => setState(() {}));
+    _codeFocusNode.addListener(() => setState(() {}));
+  }
 
   @override
   void dispose() {
-    for (var controller in _controllers) {
-      controller.dispose();
-    }
-    for (var node in _focusNodes) {
-      node.dispose();
-    }
+    _codeController.dispose();
+    _codeFocusNode.dispose();
     super.dispose();
   }
 
-  String get _otpCode => _controllers.map((c) => c.text).join();
+  String get _otpCode => _codeController.text;
 
   void _onSubmit() {
     final authState = ref.read(authProvider);
@@ -63,10 +66,8 @@ class _OtpVerificationScreenState extends ConsumerState<OtpVerificationScreen> {
           context,
           localizeErrorCode(l10n, next.code, fallback: next.message),
         );
-        for (var c in _controllers) {
-          c.clear();
-        }
-        _focusNodes[0].requestFocus();
+        _codeController.clear();
+        _codeFocusNode.requestFocus();
       }
     });
 
@@ -105,50 +106,77 @@ class _OtpVerificationScreenState extends ConsumerState<OtpVerificationScreen> {
             icon: Icons.mail_outline_rounded,
           ),
           const SizedBox(height: 48),
-          // OTP Input Row
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: List.generate(6, (index) {
-              return SizedBox(
-                width: 48,
-                height: 56,
-                child: TextFormField(
-                  controller: _controllers[index],
-                  focusNode: _focusNodes[index],
-                  textAlign: TextAlign.center,
-                  keyboardType: TextInputType.number,
-                  maxLength: 1,
-                  style: textTheme.headlineSmall?.copyWith(
-                    fontWeight: FontWeight.bold,
-                    color: colors.primary,
-                  ),
-                  decoration: InputDecoration(
-                    counterText: "",
-                    contentPadding: EdgeInsets.zero,
-                    enabledBorder: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(12),
-                      borderSide: BorderSide(color: colors.outlineVariant),
+          // PIN Input with Overlay TextField
+          Stack(
+            children: [
+              // Visual Boxes
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: List.generate(6, (index) {
+                  final code = _codeController.text;
+                  final isFocused = _codeFocusNode.hasFocus && 
+                      (code.length == index || (code.length == 6 && index == 5));
+                  final char = code.length > index ? code[index] : '';
+
+                  return AnimatedContainer(
+                    duration: const Duration(milliseconds: 200),
+                    width: 48,
+                    height: 64,
+                    decoration: BoxDecoration(
+                      color: colors.surfaceContainerHighest.withValues(alpha: 0.1),
+                      borderRadius: BorderRadius.circular(16),
+                      border: Border.all(
+                        color: isFocused ? colors.primary : Colors.transparent,
+                        width: 2,
+                      ),
+                      boxShadow: isFocused ? [
+                        BoxShadow(
+                          color: colors.primary.withValues(alpha: 0.2),
+                          blurRadius: 10,
+                          offset: const Offset(0, 4),
+                        )
+                      ] : null,
                     ),
-                    focusedBorder: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(12),
-                      borderSide: BorderSide(color: colors.primary, width: 2),
+                    child: Center(
+                      child: Text(
+                        char.isEmpty ? '•' : char,
+                        style: textTheme.headlineSmall?.copyWith(
+                          fontWeight: FontWeight.bold,
+                          color: char.isEmpty ? colors.onSurfaceVariant.withValues(alpha: 0.3) : colors.primary,
+                        ),
+                      ),
                     ),
-                    fillColor: colors.surfaceContainerHighest.withValues(alpha: 0.1),
-                    filled: true,
+                  );
+                }),
+              ),
+              
+              // Invisible TextFormField overlaying the boxes
+              Positioned.fill(
+                child: Opacity(
+                  opacity: 0,
+                  child: TextFormField(
+                    controller: _codeController,
+                    focusNode: _codeFocusNode,
+                    keyboardType: TextInputType.number,
+                    maxLength: 6,
+                    autofocus: true,
+                    buildCounter: (context, {required currentLength, required isFocused, maxLength}) => null,
+                    decoration: const InputDecoration(
+                      border: InputBorder.none,
+                      enabledBorder: InputBorder.none,
+                      focusedBorder: InputBorder.none,
+                      counterText: '',
+                    ),
+                    inputFormatters: [
+                      FilteringTextInputFormatter.digitsOnly,
+                    ],
+                    onChanged: (val) {
+                      if (val.length == 6) _onSubmit();
+                    },
                   ),
-                  onChanged: (value) {
-                    if (value.isNotEmpty && index < 5) {
-                      _focusNodes[index + 1].requestFocus();
-                    } else if (value.isEmpty && index > 0) {
-                      _focusNodes[index - 1].requestFocus();
-                    }
-                    if (_otpCode.length == 6) {
-                      _onSubmit();
-                    }
-                  },
                 ),
-              );
-            }),
+              ),
+            ],
           ),
           const SizedBox(height: 48),
           SizedBox(

@@ -50,19 +50,20 @@ class _ChangeEmailScreenState extends ConsumerState<ChangeEmailScreen> {
     final state = ref.read(changeEmailProvider);
     if (state.error != null) {
       final errorText = localizeAppError(l10n, state.error!);
-      CustomSnackbar.showInfo(context, errorText);
+      CustomSnackbar.showError(context, errorText);
       return;
     }
 
-    if (state.otpRequested) {
-      CustomSnackbar.showInfo(context, l10n.done);
-    }
+    // Success feedback removed as per user request "solo usalos para errores"
   }
 
   Future<void> _verifyCode() async {
+    final state = ref.read(changeEmailProvider);
+    if (state.isLoading) return;
+
     final l10n = AppLocalizations.of(context);
     if (_codeController.text.trim().length != 6) {
-      CustomSnackbar.showInfo(context, l10n.errorAuthInvalidOtp);
+      CustomSnackbar.showError(context, l10n.errorAuthInvalidOtp);
       return;
     }
 
@@ -74,14 +75,14 @@ class _ChangeEmailScreenState extends ConsumerState<ChangeEmailScreen> {
         );
 
     if (!mounted) return;
-    final state = ref.read(changeEmailProvider);
-    if (state.error != null) {
-      final errorText = localizeAppError(l10n, state.error!);
-      CustomSnackbar.showInfo(context, errorText);
+    final resultState = ref.read(changeEmailProvider);
+    if (resultState.error != null) {
+      final errorText = localizeAppError(l10n, resultState.error!);
+      CustomSnackbar.showError(context, errorText);
       return;
     }
 
-    CustomSnackbar.showInfo(context, l10n.done);
+    // Success feedback removed
     Navigator.of(context).pop();
   }
 
@@ -122,7 +123,7 @@ class _ChangeEmailScreenState extends ConsumerState<ChangeEmailScreen> {
           key: _formKey,
           child: Column(
             children: [
-              const SizedBox(height: 40),
+              const SizedBox(height: 20),
               // Icon Circle
               Container(
                 width: 100,
@@ -135,7 +136,7 @@ class _ChangeEmailScreenState extends ConsumerState<ChangeEmailScreen> {
                   child: Icon(Icons.email_outlined, size: 48, color: customColors.darkSage),
                 ),
               ),
-              const SizedBox(height: 32),
+              const SizedBox(height: 22),
               Text(
                 state.otpRequested ? l10n.checkYourInbox : l10n.profileChangeEmailLabel,
                 textAlign: TextAlign.center,
@@ -159,7 +160,7 @@ class _ChangeEmailScreenState extends ConsumerState<ChangeEmailScreen> {
                   ),
                 ),
               ),
-              const SizedBox(height: 48),
+              const SizedBox(height: 28),
 
               if (!state.otpRequested) ...[
                 // Email Field
@@ -210,63 +211,74 @@ class _ChangeEmailScreenState extends ConsumerState<ChangeEmailScreen> {
                   },
                 ),
               ] else ...[
-                // PIN Input
-                GestureDetector(
-                  onTap: () => _codeFocusNode.requestFocus(),
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: List.generate(6, (index) {
-                      final code = _codeController.text;
-                      final isFocused = _codeFocusNode.hasFocus && code.length == index;
-                      final char = code.length > index ? code[index] : '';
+                // PIN Input with Overlay TextField
+                Stack(
+                  children: [
+                    // Visual Boxes
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: List.generate(6, (index) {
+                        final code = _codeController.text;
+                        final isFocused = _codeFocusNode.hasFocus && 
+                            (code.length == index || (code.length == 6 && index == 5));
+                        final char = code.length > index ? code[index] : '';
 
-                      return AnimatedContainer(
-                        duration: const Duration(milliseconds: 200),
-                        width: 48,
-                        height: 64,
-                        decoration: BoxDecoration(
-                          color: customColors.chartTabBackground,
-                          borderRadius: BorderRadius.circular(16),
-                          border: Border.all(
-                            color: isFocused ? customColors.darkSage! : Colors.transparent,
-                            width: 2,
+                        return AnimatedContainer(
+                          duration: const Duration(milliseconds: 200),
+                          width: 48,
+                          height: 64,
+                          decoration: BoxDecoration(
+                            color: customColors.chartTabBackground,
+                            borderRadius: BorderRadius.circular(16),
+                            border: Border.all(
+                              color: isFocused ? customColors.darkSage! : Colors.transparent,
+                              width: 2,
+                            ),
+                            boxShadow: isFocused ? [
+                              BoxShadow(
+                                color: customColors.darkSage!.withValues(alpha: 0.2),
+                                blurRadius: 10,
+                                offset: const Offset(0, 4),
+                              )
+                            ] : null,
                           ),
-                          boxShadow: isFocused ? [
-                            BoxShadow(
-                              color: customColors.darkSage!.withValues(alpha: 0.2),
-                              blurRadius: 10,
-                              offset: const Offset(0, 4),
-                            )
-                          ] : null,
-                        ),
-                        child: Center(
-                          child: Text(
-                            char.isEmpty ? '•' : char,
-                            style: textTheme.headlineSmall?.copyWith(
-                              fontWeight: FontWeight.w900,
-                              color: char.isEmpty ? customColors.slateGrey?.withValues(alpha: 0.3) : customColors.textDarkBlue,
+                          child: Center(
+                            child: Text(
+                              char.isEmpty ? '•' : char,
+                              style: textTheme.headlineSmall?.copyWith(
+                                fontWeight: FontWeight.w900,
+                                color: char.isEmpty ? customColors.slateGrey?.withValues(alpha: 0.3) : customColors.textDarkBlue,
+                              ),
                             ),
                           ),
+                        );
+                      }),
+                    ),
+                    
+                    // Invisible TextFormField overlaying the boxes
+                    Positioned.fill(
+                      child: Opacity(
+                        opacity: 0,
+                        child: TextFormField(
+                          controller: _codeController,
+                          focusNode: _codeFocusNode,
+                          keyboardType: TextInputType.number,
+                          maxLength: 6,
+                          autofocus: true,
+                          buildCounter: (context, {required currentLength, required isFocused, maxLength}) => null,
+                          decoration: const InputDecoration(
+                            border: InputBorder.none,
+                            enabledBorder: InputBorder.none,
+                            focusedBorder: InputBorder.none,
+                            counterText: '',
+                          ),
+                          onChanged: (val) {
+                            if (val.length == 6) _verifyCode();
+                          },
                         ),
-                      );
-                    }),
-                  ),
-                ),
-                const SizedBox(height: 16),
-                // Hidden TextFormField to catch input
-                SizedBox(
-                  height: 0,
-                  width: 0,
-                  child: TextFormField(
-                    controller: _codeController,
-                    focusNode: _codeFocusNode,
-                    keyboardType: TextInputType.number,
-                    maxLength: 6,
-                    autofocus: true,
-                    onChanged: (val) {
-                      if (val.length == 6) _verifyCode();
-                    },
-                  ),
+                      ),
+                    ),
+                  ],
                 ),
               ],
 

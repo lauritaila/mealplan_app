@@ -497,6 +497,9 @@ class _DetailMealPlanScreenState extends ConsumerState<DetailMealPlanScreen> {
     });
 
     ref.read(mealPlanEntryActionsProvider.notifier).reset();
+    
+    // Invalidate the library list
+    ref.invalidate(mealPlansProvider);
 
     CustomSnackbar.showInfo(context, AppLocalizations.of(context).datesUpdatedSuccess);
   }
@@ -709,6 +712,7 @@ class _DetailMealPlanScreenState extends ConsumerState<DetailMealPlanScreen> {
         planId: planId,
         actionsNotifier: ref.read(mealPlanEntryActionsProvider.notifier),
         onDeleted: () {
+          ref.invalidate(mealPlansProvider);
           if (mounted) context.go('/home');
         },
       ),

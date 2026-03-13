@@ -187,7 +187,7 @@ class _GroceryListsTab extends ConsumerWidget {
                       return true;
                     } catch (e) {
                       if (!context.mounted) return false;
-                      CustomSnackbar.showInfo(context, l10n.genericDeleteError);
+                      CustomSnackbar.showError(context, l10n.genericDeleteError);
                       return false;
                     }
                   },

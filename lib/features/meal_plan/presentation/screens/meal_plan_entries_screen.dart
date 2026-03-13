@@ -600,31 +600,40 @@ Future<void> _confirmComplete(
     CustomSnackbar.showInfo(context, l10n.noRecipeAssociated);
     return;
   }
+  final customColors = Theme.of(context).extension<AppCustomColors>()!;
   final confirmed = await showDialog<bool>(
     context: context,
     builder: (ctx) => AlertDialog(
-      title: Text(l10n.markCompleteDialogTitle),
+      backgroundColor: Colors.white,
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(24)),
+      title: Text(
+        l10n.markCompleteDialogTitle,
+        style: TextStyle(fontWeight: FontWeight.w900, color: customColors.textDarkBlue),
+      ),
       content: Column(
         mainAxisSize: MainAxisSize.min,
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Text(l10n.markCompleteQuestion(entry.name)),
-          const SizedBox(height: 12),
+          Text(
+            l10n.markCompleteQuestion(entry.name),
+            style: TextStyle(color: customColors.slateGrey, fontWeight: FontWeight.w500),
+          ),
+          const SizedBox(height: 16),
           Container(
-            padding: const EdgeInsets.all(12),
+            padding: const EdgeInsets.all(16),
             decoration: BoxDecoration(
-              color: Colors.amber.withAlpha(30),
-              borderRadius: BorderRadius.circular(8),
-              border: Border.all(color: Colors.amber),
+              color: Colors.amber.withValues(alpha: 0.1),
+              borderRadius: BorderRadius.circular(16),
+              border: Border.all(color: Colors.amber.withValues(alpha: 0.3)),
             ),
             child: Row(
               children: [
-                const Icon(Icons.info_outline, color: Colors.amber, size: 18),
-                const SizedBox(width: 8),
+                const Icon(Icons.info_outline, color: Colors.amber, size: 20),
+                const SizedBox(width: 12),
                 Expanded(
                   child: Text(
                     l10n.markCompleteDeductInfo,
-                    style: const TextStyle(fontSize: 12),
+                    style: TextStyle(fontSize: 13, color: Colors.amber.shade900, fontWeight: FontWeight.w600),
                   ),
                 ),
               ],
@@ -635,13 +644,21 @@ Future<void> _confirmComplete(
       actions: [
         TextButton(
           onPressed: () => Navigator.of(ctx).pop(false),
-          child: Text(l10n.cancel),
+          child: Text(
+            l10n.cancel.toUpperCase(),
+            style: TextStyle(fontWeight: FontWeight.w800, color: customColors.slateGrey),
+          ),
         ),
-        FilledButton.icon(
+        FilledButton(
           onPressed: () => Navigator.of(ctx).pop(true),
-          icon: const Icon(Icons.check_circle_outline),
-          label: Text(l10n.completeAction),
-          style: FilledButton.styleFrom(backgroundColor: Colors.green),
+          style: FilledButton.styleFrom(
+            backgroundColor: customColors.darkSage,
+            shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+          ),
+          child: Text(
+            l10n.completeAction.toUpperCase(),
+            style: const TextStyle(fontWeight: FontWeight.w900),
+          ),
         ),
       ],
     ),

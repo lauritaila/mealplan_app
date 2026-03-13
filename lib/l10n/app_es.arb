@@ -432,6 +432,7 @@
   },
   "savedIngredientsFailed": "Error al guardar ingredientes",
   "deletePlanAlsoRemoveGrocery": "También eliminar ingredientes de la lista de compras",
+  "copySuffix": "Copia",
   "planReusedSuccess": "Plan '{planName}' reutilizado con {count} recetas",
   "@planReusedSuccess": {
     "placeholders": {
@@ -532,8 +533,8 @@
   "pantryExpiryLabel": "Fecha de Caducidad",
   "save": "Guardar",
   "pantryItemExpired": "Caducado",
-  "pantryStockLow": "Pocas existencias",
-  "pantryStockNormal": "Stock adecuado",
+  "pantryExpiringSoon": "Próximo a vencer",
+  "pantryStatusValid": "Vigente",
   "pantryDeleteDialogTitle": "Eliminar Artículo",
   "pantryDeleteDialogMessage": "¿Estás seguro de que deseas eliminar {ingredientName} de tu despensa?",
   "@pantryDeleteDialogMessage": {

@@ -80,7 +80,7 @@ class _AddItemBottomSheetState extends ConsumerState<AddItemBottomSheet> {
     if (ok) {
       Navigator.pop(context, true);
     } else {
-      CustomSnackbar.showInfo(context, l10n.addItemErrorAdding);
+      CustomSnackbar.showError(context, l10n.addItemErrorAdding);
     }
   }
 
@@ -253,7 +253,6 @@ class _AddItemBottomSheetState extends ConsumerState<AddItemBottomSheet> {
                             decoration: _inputDecoration(
                               l10n.addItemUnitHint,
                               context,
-                              suffixIcon: Icon(Icons.keyboard_arrow_down, color: customColors.darkSage),
                             ),
                           ),
                         ],
@@ -272,7 +271,6 @@ class _AddItemBottomSheetState extends ConsumerState<AddItemBottomSheet> {
                     decoration: _inputDecoration(
                       l10n.addItemCategoryHint,
                       context,
-                      suffixIcon: Icon(Icons.keyboard_arrow_down, color: customColors.darkSage),
                     ),
                   ),
                   const SizedBox(height: 24),
@@ -319,29 +317,49 @@ class _AddItemBottomSheetState extends ConsumerState<AddItemBottomSheet> {
                 ],
                 const SizedBox(height: 48),
                 
-                SizedBox(
-                  width: double.infinity,
-                  height: 64,
-                  child: FilledButton(
-                    onPressed: _loading ? null : _submit,
-                    style: FilledButton.styleFrom(
-                      backgroundColor: customColors.darkSage,
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(20),
+                Row(
+                  children: [
+                    Expanded(
+                      child: TextButton(
+                        onPressed: _loading ? null : () => Navigator.pop(context),
+                        style: TextButton.styleFrom(
+                          padding: const EdgeInsets.symmetric(vertical: 20),
+                          foregroundColor: customColors.slateGrey,
+                        ),
+                        child: Text(
+                          l10n.cancel.toUpperCase(),
+                          style: const TextStyle(fontWeight: FontWeight.w800, letterSpacing: 1.1),
+                        ),
                       ),
-                      elevation: 2,
                     ),
-                    child: _loading
-                        ? const SizedBox(
-                            width: 24,
-                            height: 24,
-                            child: CircularProgressIndicator(strokeWidth: 3, color: Colors.white),
-                          )
-                        : Text(
-                            _isPantryMode ? l10n.addItemButtonPantry : l10n.addItemButtonGrocery,
-                            style: const TextStyle(fontSize: 16, fontWeight: FontWeight.w900),
+                    const SizedBox(width: 16),
+                    Expanded(
+                      flex: 2,
+                      child: SizedBox(
+                        height: 64,
+                        child: FilledButton(
+                          onPressed: _loading ? null : _submit,
+                          style: FilledButton.styleFrom(
+                            backgroundColor: customColors.darkSage,
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(20),
+                            ),
+                            elevation: 0,
                           ),
-                  ),
+                          child: _loading
+                              ? const SizedBox(
+                                  width: 24,
+                                  height: 24,
+                                  child: CircularProgressIndicator(strokeWidth: 3, color: Colors.white),
+                                )
+                              : Text(
+                                  _isPantryMode ? l10n.addItemButtonPantry : l10n.addItemButtonGrocery,
+                                  style: const TextStyle(fontSize: 16, fontWeight: FontWeight.w900),
+                                ),
+                        ),
+                      ),
+                    ),
+                  ],
                 ),
               ],
             ),

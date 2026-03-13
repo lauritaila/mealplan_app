@@ -82,7 +82,7 @@ class RecipesListScreen extends ConsumerWidget {
                           .toggle(recipe.id);
                     } catch (e) {
                       if (!context.mounted) return;
-                      CustomSnackbar.showInfo(context, l10n.favoriteUpdateFailed);
+                      CustomSnackbar.showError(context, l10n.favoriteUpdateFailed);
                     }
                   },
                   onAddToGroceryList: () async {

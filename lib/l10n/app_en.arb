@@ -431,8 +431,9 @@
     }
   },
   "savedIngredientsFailed": "Failed to save ingredients",
-  "deletePlanAlsoRemoveGrocery": "Also remove ingredients from grocery list",
-  "planReusedSuccess": "Plan '{planName}' reused with {count} entries",
+  "deletePlanAlsoRemoveGrocery": "Also remove grocery items when deleting plan",
+  "copySuffix": "Copy",
+  "planReusedSuccess": "Plan '{planName}' reused with {count} recipes",
   "@planReusedSuccess": {
     "placeholders": {
       "planName": {},
@@ -532,8 +533,8 @@
   "pantryExpiryLabel": "Expiry Date",
   "save": "Save",
   "pantryItemExpired": "Expired",
-  "pantryStockLow": "Low stock",
-  "pantryStockNormal": "Adequate stock",
+  "pantryExpiringSoon": "Expiring soon",
+  "pantryStatusValid": "Valid",
   "pantryDeleteDialogTitle": "Delete Item",
   "pantryDeleteDialogMessage": "Are you sure you want to delete {ingredientName} from your pantry?",
   "@pantryDeleteDialogMessage": {

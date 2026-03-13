@@ -4,6 +4,7 @@ import 'package:meal_plan_app/features/grocery_list/domain/entities/grocery_list
 import 'package:meal_plan_app/features/grocery_list/presentation/providers/provider.dart';
 import 'package:meal_plan_app/features/grocery_list/presentation/widgets/create_list_dialog.dart';
 import 'package:meal_plan_app/l10n/app_localizations.dart';
+import 'package:meal_plan_app/config/theme/app_theme.dart';
 
 class SelectListSheet extends ConsumerStatefulWidget {
   final String title;
@@ -24,18 +25,21 @@ class _SelectListSheetState extends ConsumerState<SelectListSheet> {
 
   @override
   Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+    final customColors = theme.extension<AppCustomColors>()!;
+    final textTheme = theme.textTheme;
     final l10n = AppLocalizations.of(context);
     final listsAsync = ref.watch(groceryListsProvider);
 
     return Container(
-      decoration: const BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.vertical(top: Radius.circular(32)),
+      decoration: BoxDecoration(
+        color: theme.scaffoldBackgroundColor,
+        borderRadius: const BorderRadius.vertical(top: Radius.circular(32)),
       ),
       child: SafeArea(
         top: false,
         child: Padding(
-          padding: const EdgeInsets.fromLTRB(24, 12, 24, 24),
+          padding: EdgeInsets.fromLTRB(24, 12, 24, 24 + MediaQuery.of(context).viewInsets.bottom),
           child: Column(
             mainAxisSize: MainAxisSize.min,
             crossAxisAlignment: CrossAxisAlignment.stretch,
@@ -45,7 +49,7 @@ class _SelectListSheetState extends ConsumerState<SelectListSheet> {
                   width: 40,
                   height: 4,
                   decoration: BoxDecoration(
-                    color: Colors.grey.shade200,
+                    color: customColors.slateGrey?.withValues(alpha: 0.2),
                     borderRadius: BorderRadius.circular(2),
                   ),
                 ),
@@ -54,10 +58,9 @@ class _SelectListSheetState extends ConsumerState<SelectListSheet> {
               Text(
                 widget.title,
                 textAlign: TextAlign.center,
-                style: const TextStyle(
-                  fontSize: 22,
-                  fontWeight: FontWeight.w800,
-                  color: Color(0xFF33414B),
+                style: textTheme.titleLarge?.copyWith(
+                  fontWeight: FontWeight.w900,
+                  color: customColors.textDarkBlue,
                 ),
               ),
               if (widget.subtitle != null) ...[
@@ -65,10 +68,8 @@ class _SelectListSheetState extends ConsumerState<SelectListSheet> {
                 Text(
                   widget.subtitle!,
                   textAlign: TextAlign.center,
-                  style: TextStyle(
-                    color: Colors.blueGrey.shade300,
-                    fontSize: 14,
-                    fontWeight: FontWeight.w500,
+                  style: textTheme.bodyMedium?.copyWith(
+                    color: customColors.slateGrey,
                   ),
                 ),
               ],
@@ -81,7 +82,7 @@ class _SelectListSheetState extends ConsumerState<SelectListSheet> {
                     context: context,
                     isScrollControlled: true,
                     useSafeArea: true,
-                    backgroundColor: Colors.white,
+                    backgroundColor: theme.scaffoldBackgroundColor,
                     shape: const RoundedRectangleBorder(
                       borderRadius: BorderRadius.vertical(top: Radius.circular(24)),
                     ),
@@ -94,17 +95,17 @@ class _SelectListSheetState extends ConsumerState<SelectListSheet> {
                 child: Container(
                   padding: const EdgeInsets.all(16),
                   decoration: BoxDecoration(
-                    color: const Color(0xFFF7F9F7),
+                    color: customColors.chartTabBackground,
                     borderRadius: BorderRadius.circular(20),
-                    border: Border.all(color: const Color(0xFFEDF2ED)),
+                    border: Border.all(color: (customColors.darkSage ?? AppTheme.primarySage).withValues(alpha: 0.1)),
                   ),
                   child: Row(
                     children: [
                       Container(
                         width: 48,
                         height: 48,
-                        decoration: const BoxDecoration(
-                          color: Color(0xFFA6BCAC),
+                        decoration: BoxDecoration(
+                          color: customColors.darkSage,
                           shape: BoxShape.circle,
                         ),
                         child: const Icon(Icons.add, color: Colors.white, size: 28),
@@ -116,23 +117,21 @@ class _SelectListSheetState extends ConsumerState<SelectListSheet> {
                           children: [
                             Text(
                               l10n.createNewListAction,
-                              style: const TextStyle(
-                                color: Color(0xFF33414B),
-                                fontSize: 16,
-                                fontWeight: FontWeight.w700,
+                              style: textTheme.titleMedium?.copyWith(
+                                color: customColors.textDarkBlue,
+                                fontWeight: FontWeight.w800,
                               ),
                             ),
                             Text(
                               l10n.addCustomName,
-                              style: TextStyle(
-                                color: Colors.blueGrey.shade300,
-                                fontSize: 13,
+                              style: textTheme.bodySmall?.copyWith(
+                                color: customColors.slateGrey,
                               ),
                             ),
                           ],
                         ),
                       ),
-                      Icon(Icons.chevron_right_rounded, color: Colors.grey.shade400),
+                      Icon(Icons.chevron_right_rounded, color: customColors.slateGrey?.withValues(alpha: 0.5)),
                     ],
                   ),
                 ),
@@ -141,9 +140,8 @@ class _SelectListSheetState extends ConsumerState<SelectListSheet> {
               const SizedBox(height: 32),
               Text(
                 l10n.existingListsLabel.toUpperCase(),
-                style: TextStyle(
-                  color: Colors.blueGrey.shade200,
-                  fontSize: 11,
+                style: textTheme.labelSmall?.copyWith(
+                  color: customColors.slateGrey?.withValues(alpha: 0.6),
                   fontWeight: FontWeight.w800,
                   letterSpacing: 1.1,
                 ),
@@ -158,13 +156,13 @@ class _SelectListSheetState extends ConsumerState<SelectListSheet> {
                         padding: const EdgeInsets.symmetric(vertical: 16),
                         child: Text(
                           l10n.noExistingLists,
-                          style: TextStyle(color: Colors.grey.shade400, fontSize: 13),
+                          style: textTheme.bodyMedium?.copyWith(color: customColors.slateGrey?.withValues(alpha: 0.5)),
                         ),
                       );
                     }
                     return ConstrainedBox(
                       constraints: BoxConstraints(
-                        maxHeight: MediaQuery.of(context).size.height * 0.3,
+                        maxHeight: MediaQuery.of(context).size.height * 0.4,
                       ),
                       child: ListView.separated(
                         shrinkWrap: true,
@@ -174,9 +172,7 @@ class _SelectListSheetState extends ConsumerState<SelectListSheet> {
                           final list = lists[index];
                           final isSelected = _selectedListId == list.id;
                           
-                          // Mocking icons/counts for design fidelity
                           final icon = index % 3 == 0 ? Icons.folder_rounded : (index % 3 == 1 ? Icons.restaurant_rounded : Icons.bakery_dining_rounded);
-                          final itemCount = (index + 1) * 4;
 
                           return InkWell(
                             onTap: () => setState(() => _selectedListId = list.id),
@@ -189,32 +185,19 @@ class _SelectListSheetState extends ConsumerState<SelectListSheet> {
                                     width: 44,
                                     height: 44,
                                     decoration: BoxDecoration(
-                                      color: const Color(0xFFF2F6F9),
+                                      color: customColors.chartTabBackground,
                                       borderRadius: BorderRadius.circular(12),
                                     ),
-                                    child: Icon(icon, color: const Color(0xFF5D6B78), size: 22),
+                                    child: Icon(icon, color: customColors.darkSage, size: 22),
                                   ),
                                   const SizedBox(width: 16),
                                   Expanded(
-                                    child: Column(
-                                      crossAxisAlignment: CrossAxisAlignment.start,
-                                      children: [
-                                        Text(
-                                          list.name,
-                                          style: const TextStyle(
-                                            fontSize: 16,
-                                            fontWeight: FontWeight.w700,
-                                            color: Color(0xFF33414B),
-                                          ),
-                                        ),
-                                        Text(
-                                          l10n.savedRecipesCount(itemCount),
-                                          style: TextStyle(
-                                            color: Colors.blueGrey.shade300,
-                                            fontSize: 12,
-                                          ),
-                                        ),
-                                      ],
+                                    child: Text(
+                                      list.name,
+                                      style: textTheme.titleMedium?.copyWith(
+                                        fontWeight: FontWeight.w700,
+                                        color: customColors.textDarkBlue,
+                                      ),
                                     ),
                                   ),
                                   Container(
@@ -222,9 +205,11 @@ class _SelectListSheetState extends ConsumerState<SelectListSheet> {
                                     height: 24,
                                     decoration: BoxDecoration(
                                       shape: BoxShape.circle,
-                                      color: isSelected ? const Color(0xFFA6BCAC) : Colors.white,
+                                      color: isSelected ? customColors.darkSage : Colors.transparent,
                                       border: Border.all(
-                                        color: isSelected ? const Color(0xFFA6BCAC) : Colors.grey.shade200,
+                                        color: isSelected 
+                                          ? (customColors.darkSage ?? AppTheme.primarySage) 
+                                          : (customColors.slateGrey ?? const Color(0xFF64748B)).withValues(alpha: 0.2),
                                         width: 1.5,
                                       ),
                                     ),
@@ -249,17 +234,17 @@ class _SelectListSheetState extends ConsumerState<SelectListSheet> {
                     ? null
                     : () => Navigator.pop(context, _selectedListId),
                 style: FilledButton.styleFrom(
-                  backgroundColor: const Color(0xFFA6BCAC),
+                  backgroundColor: customColors.darkSage,
                   foregroundColor: Colors.white,
-                  padding: const EdgeInsets.symmetric(vertical: 18),
+                  padding: const EdgeInsets.symmetric(vertical: 20),
                   shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(20),
                   ),
                   elevation: 0,
                 ),
                 child: Text(
-                  l10n.saveSelectionAction,
-                  style: const TextStyle(fontSize: 18, fontWeight: FontWeight.w800),
+                  l10n.saveSelectionAction.toUpperCase(),
+                  style: const TextStyle(fontWeight: FontWeight.w900, letterSpacing: 1.1),
                 ),
               ),
               const SizedBox(height: 8),

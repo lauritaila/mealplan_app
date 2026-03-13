@@ -993,11 +993,14 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get deletePlanAlsoRemoveGrocery =>
-      'Also remove ingredients from grocery list';
+      'Also remove grocery items when deleting plan';
+
+  @override
+  String get copySuffix => 'Copy';
 
   @override
   String planReusedSuccess(Object planName, Object count) {
-    return 'Plan \'$planName\' reused with $count entries';
+    return 'Plan \'$planName\' reused with $count recipes';
   }
 
   @override
@@ -1208,10 +1211,10 @@ class AppLocalizationsEn extends AppLocalizations {
   String get pantryItemExpired => 'Expired';
 
   @override
-  String get pantryStockLow => 'Low stock';
+  String get pantryExpiringSoon => 'Expiring soon';
 
   @override
-  String get pantryStockNormal => 'Adequate stock';
+  String get pantryStatusValid => 'Valid';
 
   @override
   String get pantryDeleteDialogTitle => 'Delete Item';

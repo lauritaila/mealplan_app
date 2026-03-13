@@ -999,6 +999,9 @@ class AppLocalizationsEs extends AppLocalizations {
       'También eliminar ingredientes de la lista de compras';
 
   @override
+  String get copySuffix => 'Copia';
+
+  @override
   String planReusedSuccess(Object planName, Object count) {
     return 'Plan \'$planName\' reutilizado con $count recetas';
   }
@@ -1212,10 +1215,10 @@ class AppLocalizationsEs extends AppLocalizations {
   String get pantryItemExpired => 'Caducado';
 
   @override
-  String get pantryStockLow => 'Pocas existencias';
+  String get pantryExpiringSoon => 'Próximo a vencer';
 
   @override
-  String get pantryStockNormal => 'Stock adecuado';
+  String get pantryStatusValid => 'Vigente';
 
   @override
   String get pantryDeleteDialogTitle => 'Eliminar Artículo';

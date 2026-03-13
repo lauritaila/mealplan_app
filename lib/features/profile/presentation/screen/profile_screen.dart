@@ -76,13 +76,13 @@ Future<void> _showDeleteAccountModal(
                     final normalizedInput = confirmationEmail.toLowerCase();
                     final normalizedAccount = email.trim().toLowerCase();
 
-                    if (normalizedInput.isEmpty || normalizedInput != normalizedAccount) {
-                      final errorText = normalizedInput.isEmpty
-                          ? l10n.errorFieldRequired
-                          : l10n.errorEmailConfirmationMismatch;
-                      CustomSnackbar.showInfo(context, errorText);
-                      return;
-                    }
+                      if (normalizedInput.isEmpty || normalizedInput != normalizedAccount) {
+                        final errorText = normalizedInput.isEmpty
+                            ? l10n.errorFieldRequired
+                            : l10n.errorEmailConfirmationMismatch;
+                        CustomSnackbar.showError(context, errorText);
+                        return;
+                      }
 
                     Navigator.of(dialogContext).pop();
 
@@ -137,7 +137,7 @@ Future<void> _showDeleteAccountModal(
 
                     if (appError != null) {
                       final errorText = localizeAppError(l10n, appError);
-                      CustomSnackbar.showInfo(context, errorText);
+                      CustomSnackbar.showError(context, errorText);
                       return;
                     }
 

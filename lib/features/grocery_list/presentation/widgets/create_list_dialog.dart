@@ -34,7 +34,7 @@ class _CreateListDialogState extends ConsumerState<CreateListDialog> {
     if (result != null) {
       Navigator.of(context).pop(result);
     } else {
-      CustomSnackbar.showInfo(context, AppLocalizations.of(context).createListErrorCreate);
+      CustomSnackbar.showError(context, AppLocalizations.of(context).createListErrorCreate);
     }
   }
 

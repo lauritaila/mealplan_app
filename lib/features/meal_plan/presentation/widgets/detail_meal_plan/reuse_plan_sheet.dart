@@ -1,14 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
+import 'package:meal_plan_app/config/theme/app_theme.dart';
 import 'package:meal_plan_app/l10n/app_localizations.dart';
-import 'package:meal_plan_app/features/meal_plan/domain/domain.dart';
 
 class ReusePlanSheet extends StatefulWidget {
-  final MealPlanSummary plan;
+  final String? initialName;
 
   const ReusePlanSheet({
     super.key,
-    required this.plan,
+    this.initialName,
   });
 
   @override
@@ -17,7 +17,24 @@ class ReusePlanSheet extends StatefulWidget {
 
 class _ReusePlanSheetState extends State<ReusePlanSheet> {
   DateTime? _selectedDate;
-  final _nameController = TextEditingController();
+  late TextEditingController _nameController;
+
+  @override
+  void initState() {
+    super.initState();
+    _nameController = TextEditingController();
+  }
+
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    if (_nameController.text.isEmpty) {
+      final l10n = AppLocalizations.of(context);
+      _nameController.text = widget.initialName != null 
+          ? '${widget.initialName} (${l10n.copySuffix})' 
+          : '';
+    }
+  }
 
   @override
   void dispose() {
@@ -27,204 +44,218 @@ class _ReusePlanSheetState extends State<ReusePlanSheet> {
 
   @override
   Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+    final customColors = theme.extension<AppCustomColors>()!;
+    final textTheme = theme.textTheme;
     final l10n = AppLocalizations.of(context);
-    final df = DateFormat('d MMM yyyy', Localizations.localeOf(context).toString());
+    final locale = Localizations.localeOf(context).toString();
 
-    return Padding(
-      padding: EdgeInsets.fromLTRB(
-        24,
-        32,
-        24,
-        24 + MediaQuery.of(context).viewInsets.bottom,
+    return Container(
+      decoration: BoxDecoration(
+        color: theme.scaffoldBackgroundColor,
+        borderRadius: const BorderRadius.vertical(top: Radius.circular(32)),
       ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.stretch,
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          Center(
-            child: Container(
-              width: 72,
-              height: 72,
-              decoration: const BoxDecoration(
-                color: Color(0xFFE8F0E8),
-                shape: BoxShape.circle,
-              ),
-              child: const Icon(
-                Icons.replay_rounded,
-                color: Color(0xFF5C7861),
-                size: 32,
-              ),
+      child: SafeArea(
+        top: false,
+        child: SingleChildScrollView(
+          child: Padding(
+            padding: EdgeInsets.fromLTRB(
+              24,
+              12,
+              24,
+              24 + MediaQuery.of(context).viewInsets.bottom,
             ),
-          ),
-          const SizedBox(height: 24),
-          Text(
-            l10n.reusePlanSheetTitle, // Needs to be added to l10n if missing, wait it exists reusePlanSheetTitle
-            textAlign: TextAlign.center,
-            style: const TextStyle(
-              fontSize: 22,
-              fontWeight: FontWeight.w800,
-              color: Color(0xFF1A1E1B),
-            ),
-          ),
-          const SizedBox(height: 8),
-          Text(
-            widget.plan.planName,
-            textAlign: TextAlign.center,
-            style: const TextStyle(
-              fontSize: 15,
-              fontWeight: FontWeight.w600,
-              color: Color(0xFF576F5F),
-            ),
-          ),
-          const SizedBox(height: 32),
-          Text(
-            l10n.reusePlanStartDateLabel,
-            style: const TextStyle(
-              fontSize: 14,
-              fontWeight: FontWeight.w700,
-              color: Color(0xFF1A1E1B),
-            ),
-          ),
-          const SizedBox(height: 8),
-          InkWell(
-            onTap: () async {
-              final picked = await showDatePicker(
-                context: context,
-                initialDate: DateTime.now(),
-                firstDate: DateTime.now(),
-                lastDate: DateTime.now().add(const Duration(days: 365 * 2)),
-                builder: (context, child) {
-                  return Theme(
-                    data: Theme.of(context).copyWith(
-                      colorScheme: const ColorScheme.light(
-                        primary: Color(0xFF5C7861), // header background color
-                        onPrimary: Colors.white, // header text color
-                        onSurface: Color(0xFF1A1E1B), // body text color
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              crossAxisAlignment: CrossAxisAlignment.stretch,
+              children: [
+                Center(
+                  child: Container(
+                    width: 40,
+                    height: 4,
+                    decoration: BoxDecoration(
+                      color: customColors.slateGrey?.withValues(alpha: 0.2),
+                      borderRadius: BorderRadius.circular(2),
+                    ),
+                  ),
+                ),
+                const SizedBox(height: 32),
+                Text(
+                  l10n.reusePlanSheetTitle,
+                  style: textTheme.titleLarge?.copyWith(
+                    fontWeight: FontWeight.w900,
+                    color: customColors.textDarkBlue,
+                  ),
+                ),
+                const SizedBox(height: 8),
+                Text(
+                  l10n.configurePlanSubtitle,
+                  style: textTheme.bodyMedium?.copyWith(
+                    color: customColors.slateGrey,
+                  ),
+                ),
+                const SizedBox(height: 24),
+                
+                // Date Picker Interaction
+                InkWell(
+                  onTap: () => _showDatePicker(context),
+                  borderRadius: BorderRadius.circular(16),
+                  child: Container(
+                    padding: const EdgeInsets.all(20),
+                    decoration: BoxDecoration(
+                      color: customColors.chartTabBackground,
+                      borderRadius: BorderRadius.circular(16),
+                      border: Border.all(
+                        color: _selectedDate == null 
+                          ? Colors.transparent 
+                          : (customColors.darkSage ?? AppTheme.primarySage).withValues(alpha: 0.3),
                       ),
-                      textButtonTheme: TextButtonThemeData(
-                        style: TextButton.styleFrom(
-                          foregroundColor: const Color(0xFF5C7861), // button text color
+                    ),
+                    child: Row(
+                      children: [
+                        Icon(
+                          Icons.calendar_today_rounded,
+                          color: customColors.darkSage,
+                          size: 24,
                         ),
-                      ),
-                    ),
-                    child: child!,
-                  );
-                },
-              );
-              if (picked != null) {
-                setState(() => _selectedDate = picked);
-              }
-            },
-            borderRadius: BorderRadius.circular(16),
-            child: Container(
-              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
-              decoration: BoxDecoration(
-                color: const Color(0xFFF8FAFB),
-                borderRadius: BorderRadius.circular(16),
-                border: Border.all(color: Colors.grey.shade200),
-              ),
-              child: Row(
-                children: [
-                  const Icon(
-                    Icons.calendar_today_rounded,
-                    color: Color(0xFF5C7861),
-                    size: 20,
-                  ),
-                  const SizedBox(width: 12),
-                  Expanded(
-                    child: Text(
-                      _selectedDate == null
-                          ? l10n.reusePlanSelectDate
-                          : df.format(_selectedDate!),
-                      style: TextStyle(
-                        fontSize: 15,
-                        fontWeight: FontWeight.w600,
-                        color: _selectedDate == null
-                            ? Colors.grey.shade500
-                            : const Color(0xFF1A1E1B),
-                      ),
+                        const SizedBox(width: 16),
+                        Expanded(
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Text(
+                                l10n.reusePlanStartDateLabel,
+                                style: textTheme.labelSmall?.copyWith(
+                                  color: customColors.slateGrey,
+                                  fontWeight: FontWeight.w700,
+                                ),
+                              ),
+                              const SizedBox(height: 4),
+                              Text(
+                                _selectedDate == null
+                                    ? l10n.reusePlanSelectDate
+                                    : DateFormat('EEEE, d MMMM yyyy', locale)
+                                        .format(_selectedDate!),
+                                style: textTheme.bodyLarge?.copyWith(
+                                  fontWeight: FontWeight.w800,
+                                  color: customColors.textDarkBlue,
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                        if (_selectedDate != null)
+                          Icon(
+                            Icons.check_circle,
+                            color: customColors.darkSage,
+                            size: 20,
+                          ),
+                      ],
                     ),
                   ),
-                  Icon(
-                    Icons.chevron_right_rounded,
-                    color: Colors.grey.shade400,
-                    size: 20,
+                ),
+                
+                const SizedBox(height: 16),
+                
+                // New Name Field (Optional)
+                Text(
+                  l10n.reusePlanNameLabel,
+                  style: textTheme.labelLarge?.copyWith(
+                    color: customColors.textDarkBlue,
+                    fontWeight: FontWeight.w800,
                   ),
-                ],
-              ),
+                ),
+                const SizedBox(height: 8),
+                TextField(
+                  controller: _nameController,
+                  decoration: InputDecoration(
+                    hintText: l10n.reusePlanNameHint,
+                    filled: true,
+                    fillColor: Colors.white,
+                    contentPadding: const EdgeInsets.all(20),
+                    border: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(16),
+                      borderSide: BorderSide(color: customColors.slateGrey!.withValues(alpha: 0.1)),
+                    ),
+                    enabledBorder: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(16),
+                      borderSide: BorderSide(color: (customColors.slateGrey ?? const Color(0xFF64748B)).withValues(alpha: 0.1)),
+                    ),
+                    focusedBorder: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(16),
+                      borderSide: BorderSide(color: customColors.darkSage ?? AppTheme.primarySage, width: 2),
+                    ),
+                  ),
+                ),
+                
+                const SizedBox(height: 32),
+                FilledButton(
+                  onPressed: _selectedDate == null ? null : _onConfirm,
+                  style: FilledButton.styleFrom(
+                    backgroundColor: customColors.darkSage,
+                    foregroundColor: Colors.white,
+                    padding: const EdgeInsets.symmetric(vertical: 20),
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(20),
+                    ),
+                    elevation: 0,
+                  ),
+                  child: Text(
+                    l10n.reusePlanSheetTitle.toUpperCase(),
+                    style: const TextStyle(fontWeight: FontWeight.w900, letterSpacing: 1.1),
+                  ),
+                ),
+                const SizedBox(height: 12),
+                TextButton(
+                  onPressed: () => Navigator.pop(context),
+                  child: Text(
+                    l10n.cancel.toUpperCase(),
+                    style: TextStyle(
+                      fontWeight: FontWeight.w800,
+                      color: customColors.slateGrey,
+                      letterSpacing: 1.1,
+                    ),
+                  ),
+                ),
+              ],
             ),
           ),
-          const SizedBox(height: 24),
-          Text(
-            l10n.reusePlanNameLabel,
-            style: const TextStyle(
-              fontSize: 14,
-              fontWeight: FontWeight.w700,
-              color: Color(0xFF1A1E1B),
-            ),
-          ),
-          const SizedBox(height: 8),
-          TextField(
-            controller: _nameController,
-            style: const TextStyle(
-              fontSize: 15,
-              fontWeight: FontWeight.w500,
-              color: Color(0xFF1A1E1B),
-            ),
-            decoration: InputDecoration(
-              hintText: l10n.reusePlanNameHint,
-              hintStyle: TextStyle(
-                color: Colors.grey.shade400,
-                fontSize: 15,
-                fontWeight: FontWeight.w500,
-              ),
-              filled: true,
-              fillColor: const Color(0xFFF8FAFB),
-              contentPadding:
-                  const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
-              border: OutlineInputBorder(
-                borderRadius: BorderRadius.circular(16),
-                borderSide: BorderSide(color: Colors.grey.shade200),
-              ),
-              enabledBorder: OutlineInputBorder(
-                borderRadius: BorderRadius.circular(16),
-                borderSide: BorderSide(color: Colors.grey.shade200),
-              ),
-              focusedBorder: OutlineInputBorder(
-                borderRadius: BorderRadius.circular(16),
-                borderSide: const BorderSide(color: Color(0xFF5C7861), width: 2),
-              ),
-            ),
-          ),
-          const SizedBox(height: 32),
-          FilledButton(
-            style: FilledButton.styleFrom(
-              backgroundColor: const Color(0xFF5C7861),
-              foregroundColor: Colors.white,
-              padding: const EdgeInsets.symmetric(vertical: 18),
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(16),
-              ),
-               ),
-            onPressed: _selectedDate == null ? null : _onConfirm,
-            child: Text(
-              l10n.menuReusePlan,
-              style: const TextStyle(
-                fontWeight: FontWeight.w800,
-                fontSize: 16,
-              ),
-            ),
-          ),
-          const SizedBox(height: 16),
-        ],
+        ),
       ),
     );
   }
 
+  Future<void> _showDatePicker(BuildContext context) async {
+    final customColors = Theme.of(context).extension<AppCustomColors>()!;
+    final picked = await showDatePicker(
+      context: context,
+      initialDate: _selectedDate ?? DateTime.now(),
+      firstDate: DateTime.now().subtract(const Duration(days: 365)),
+      lastDate: DateTime.now().add(const Duration(days: 365)),
+      builder: (context, child) {
+        return Theme(
+          data: Theme.of(context).copyWith(
+            colorScheme: ColorScheme.light(
+              primary: customColors.darkSage!,
+              onPrimary: Colors.white,
+              onSurface: customColors.textDarkBlue!,
+            ),
+          ),
+          child: child!,
+        );
+      },
+    );
+    if (picked != null) {
+      setState(() => _selectedDate = picked);
+    }
+  }
+
   void _onConfirm() {
     if (_selectedDate == null) return;
-    final dateStr =
-        '${_selectedDate!.year.toString().padLeft(4, '0')}-${_selectedDate!.month.toString().padLeft(2, '0')}-${_selectedDate!.day.toString().padLeft(2, '0')}';
+    
+    // Normalize date to YYYY-MM-DD
+    final dateStr = DateFormat('yyyy-MM-dd').format(_selectedDate!);
+    
     Navigator.of(context).pop((
       startDate: dateStr,
       name: _nameController.text.trim().isEmpty

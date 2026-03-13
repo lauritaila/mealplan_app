@@ -1889,13 +1889,19 @@ abstract class AppLocalizations {
   /// No description provided for @deletePlanAlsoRemoveGrocery.
   ///
   /// In en, this message translates to:
-  /// **'Also remove ingredients from grocery list'**
+  /// **'Also remove grocery items when deleting plan'**
   String get deletePlanAlsoRemoveGrocery;
+
+  /// No description provided for @copySuffix.
+  ///
+  /// In en, this message translates to:
+  /// **'Copy'**
+  String get copySuffix;
 
   /// No description provided for @planReusedSuccess.
   ///
   /// In en, this message translates to:
-  /// **'Plan \'{planName}\' reused with {count} entries'**
+  /// **'Plan \'{planName}\' reused with {count} recipes'**
   String planReusedSuccess(Object planName, Object count);
 
   /// No description provided for @planReusedView.
@@ -2276,17 +2282,17 @@ abstract class AppLocalizations {
   /// **'Expired'**
   String get pantryItemExpired;
 
-  /// No description provided for @pantryStockLow.
+  /// No description provided for @pantryExpiringSoon.
   ///
   /// In en, this message translates to:
-  /// **'Low stock'**
-  String get pantryStockLow;
+  /// **'Expiring soon'**
+  String get pantryExpiringSoon;
 
-  /// No description provided for @pantryStockNormal.
+  /// No description provided for @pantryStatusValid.
   ///
   /// In en, this message translates to:
-  /// **'Adequate stock'**
-  String get pantryStockNormal;
+  /// **'Valid'**
+  String get pantryStatusValid;
 
   /// No description provided for @pantryDeleteDialogTitle.
   ///

@@ -1,8 +1,8 @@
-import 'package:meal_plan_app/features/shared/shared.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:meal_plan_app/l10n/app_localizations.dart';
+import 'package:meal_plan_app/features/shared/shared.dart';
 
 import 'package:meal_plan_app/features/meal_plan/domain/domain.dart';
 import 'package:meal_plan_app/features/meal_plan/presentation/providers/provider.dart';
@@ -40,7 +40,7 @@ class PlanActionsSheet extends ConsumerWidget {
           ),
           const SizedBox(height: 24),
           Text(
-            l10n.planActionsTitle, // Wait, this might not exist. I'll use planName or something generic.
+            l10n.mealPlanActionViewDetails,
             textAlign: TextAlign.center,
             style: const TextStyle(
               fontSize: 18,
@@ -89,10 +89,7 @@ class PlanActionsSheet extends ConsumerWidget {
             label: l10n.menuReusePlan,
             iconBgColor: const Color(0xFFE8F0E8),
             iconColor: const Color(0xFF4C6B4F),
-            onTap: () async {
-              Navigator.pop(context);
-              await _showReusePlanSheet(context, ref, l10n);
-            },
+            onTap: () => _showReusePlanSheet(context, ref, l10n),
           ),
           const Divider(color: Color(0xFFF1F1F1)),
           _ActionRow(
@@ -101,10 +98,7 @@ class PlanActionsSheet extends ConsumerWidget {
             iconBgColor: const Color(0xFFE8F0E8),
             iconColor: const Color(0xFF4C6B4F),
             isDestructive: true,
-            onTap: () async {
-              Navigator.pop(context);
-              await _showDeletePlanDialog(context, ref, l10n);
-            },
+            onTap: () => _showDeletePlanDialog(context, ref, l10n),
           ),
         ],
       ),
@@ -122,29 +116,29 @@ class PlanActionsSheet extends ConsumerWidget {
       shape: const RoundedRectangleBorder(
         borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
       ),
-      builder: (_) => ReusePlanSheet(plan: plan),
+      builder: (_) => ReusePlanSheet(initialName: plan.planName),
     );
+    
     if (result == null || !context.mounted) return;
 
-    final response = await ref
+    // We trigger the API call while context is still mounted to be safe
+    final future = ref
         .read(mealPlanEntryActionsProvider.notifier)
         .reusePlan(plan.id, result.startDate, name: result.name);
-    if (!context.mounted) return;
-    if (response != null) {
-      ref.invalidate(mealPlansProvider);
-      ref.read(mealPlanEntryActionsProvider.notifier).reset();
-      CustomSnackbar.showSuccess(
-        context,
-        l10n.planReusedSuccess(
-            response.newPlanName, response.entriesCloned),
-        action: SnackBarAction(
-          label: l10n.planReusedView,
-          textColor: Colors.white,
-          onPressed: () => context.push('/meal-plan/${response.newPlanId}'),
-        ),
-      );
-    } else {
-      CustomSnackbar.showError(context, l10n.planReusedFailed);
+
+    final response = await future;
+    
+    if (context.mounted) {
+      if (response != null) {
+        Navigator.pop(context);
+        // Invalidate and force refresh to ensure the list is updated
+        ref.invalidate(mealPlansProvider);
+        await ref.read(mealPlansProvider.future);
+        ref.read(mealPlanEntryActionsProvider.notifier).reset();
+      } else {
+        Navigator.pop(context);
+        CustomSnackbar.showError(context, l10n.genericError);
+      }
     }
   }
 
@@ -153,7 +147,8 @@ class PlanActionsSheet extends ConsumerWidget {
     WidgetRef ref,
     AppLocalizations l10n,
   ) async {
-    showModalBottomSheet<void>(
+    // We don't pop first. We show the next sheet over it.
+    await showModalBottomSheet<void>(
       context: context,
       isScrollControlled: true,
       backgroundColor: Colors.white,
@@ -165,8 +160,15 @@ class PlanActionsSheet extends ConsumerWidget {
         actionsNotifier: ref.read(mealPlanEntryActionsProvider.notifier),
         showRemoveIngredientsCheckbox: true,
         onDeleted: () {
+          // Inside the callback, ctx is the sheet's context.
+          // We need to pop BOTH sheets.
+          // Closing DeletePlanSheet:
+          Navigator.pop(ctx);
+          // Closing PlanActionsSheet:
+          if (context.mounted) Navigator.pop(context);
+          
           ref.invalidate(mealPlansProvider);
-          CustomSnackbar.showInfo(context, l10n.planDeletedSuccess);
+          // Success toast disabled.
         },
       ),
     );

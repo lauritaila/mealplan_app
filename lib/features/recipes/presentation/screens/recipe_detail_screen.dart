@@ -1,3 +1,4 @@
+import 'package:collection/collection.dart';
 import 'package:meal_plan_app/features/shared/shared.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -84,7 +85,7 @@ class _RecipeDetailScreenState extends ConsumerState<RecipeDetailScreen> {
                       .toggle(widget.recipeId);
                 } catch (e) {
                   if (!context.mounted) return;
-                  CustomSnackbar.showInfo(context, l10n.favoriteUpdateFailed);
+                  CustomSnackbar.showError(context, l10n.favoriteUpdateFailed);
                 }
               },
             ),
@@ -370,37 +371,59 @@ class _RecipeDetailScreenState extends ConsumerState<RecipeDetailScreen> {
     final l10n = AppLocalizations.of(context);
     final navigator = Navigator.of(context);
 
+    final customColors = Theme.of(context).extension<AppCustomColors>()!;
     final confirmed = await showDialog<bool>(
       context: context,
       builder: (ctx) => AlertDialog(
+        backgroundColor: Colors.white,
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(24)),
         title: Text(
           l10n.markCompleteDialogTitle,
-          style: Theme.of(context).textTheme.titleLarge?.copyWith(
-            fontWeight: FontWeight.w900,
-            color: Theme.of(context).extension<AppCustomColors>()?.textDarkBlue,
-          ),
+          style: TextStyle(fontWeight: FontWeight.w900, color: customColors.textDarkBlue),
         ),
-        content: Text(
-          l10n.markCompleteQuestion(recipe.name),
-          style: Theme.of(context).textTheme.bodyLarge?.copyWith(
-            color: Theme.of(context).extension<AppCustomColors>()?.slateGrey,
-          ),
+        content: Column(
+          mainAxisSize: MainAxisSize.min,
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text(
+              l10n.markCompleteQuestion(recipe.name),
+              style: TextStyle(color: customColors.slateGrey, fontWeight: FontWeight.w500),
+            ),
+            const SizedBox(height: 16),
+            Container(
+              padding: const EdgeInsets.all(16),
+              decoration: BoxDecoration(
+                color: Colors.amber.withValues(alpha: 0.1),
+                borderRadius: BorderRadius.circular(16),
+                border: Border.all(color: Colors.amber.withValues(alpha: 0.3)),
+              ),
+              child: Row(
+                children: [
+                  const Icon(Icons.info_outline, color: Colors.amber, size: 20),
+                  const SizedBox(width: 12),
+                  Expanded(
+                    child: Text(
+                      l10n.markCompleteDeductInfo,
+                      style: TextStyle(fontSize: 13, color: Colors.amber.shade900, fontWeight: FontWeight.w600),
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ],
         ),
         actions: [
           TextButton(
-            onPressed: () => Navigator.pop(ctx, false),
+            onPressed: () => Navigator.of(ctx).pop(false),
             child: Text(
               l10n.cancel.toUpperCase(),
-              style: TextStyle(
-                fontWeight: FontWeight.w800,
-                color: Theme.of(context).extension<AppCustomColors>()?.slateGrey,
-              ),
+              style: TextStyle(fontWeight: FontWeight.w800, color: customColors.slateGrey),
             ),
           ),
           FilledButton(
-            onPressed: () => Navigator.pop(ctx, true),
+            onPressed: () => Navigator.of(ctx).pop(true),
             style: FilledButton.styleFrom(
-              backgroundColor: Theme.of(context).extension<AppCustomColors>()?.darkSage,
+              backgroundColor: customColors.darkSage,
               shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
             ),
             child: Text(
@@ -478,7 +501,7 @@ class _RecipeDetailScreenState extends ConsumerState<RecipeDetailScreen> {
     String? listName;
     final lists = ref.read(groceryListsProvider).asData?.value;
     if (lists != null) {
-      listName = lists.firstWhere((l) => l.id == selectedId).name;
+      listName = lists.firstWhereOrNull((l) => l.id == selectedId)?.name;
     }
 
     CustomSnackbar.showInfo(context, 
