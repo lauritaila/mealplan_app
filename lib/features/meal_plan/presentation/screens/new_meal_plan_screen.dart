@@ -4,6 +4,7 @@ import 'package:go_router/go_router.dart';
 import 'package:meal_plan_app/features/meal_plan/presentation/providers/provider.dart';
 import 'package:meal_plan_app/l10n/app_localizations.dart';
 import 'package:meal_plan_app/features/profile/presentation/providers/preferences_details_provider.dart';
+import 'package:meal_plan_app/config/theme/app_theme.dart';
 
 class NewMealPlanScreen extends ConsumerStatefulWidget {
   const NewMealPlanScreen({super.key});
@@ -97,24 +98,38 @@ class _NewMealPlanScreenState extends ConsumerState<NewMealPlanScreen> {
       _selectedMealTypes.add(availableMealTypes.first);
     }
 
+    final theme = Theme.of(context);
+    final customColors = theme.extension<AppCustomColors>()!;
+    final textTheme = theme.textTheme;
+
     return Scaffold(
+      backgroundColor: theme.scaffoldBackgroundColor,
       appBar: AppBar(
-        title: Text(l10n.newPlanTitle, style: const TextStyle(fontWeight: FontWeight.w700, fontSize: 18, color: Color(0xFF002140))),
+        title: Text(
+          l10n.newPlanTitle,
+          style: textTheme.titleLarge?.copyWith(
+            fontWeight: FontWeight.w900,
+            color: customColors.textDarkBlue,
+          ),
+        ),
         centerTitle: true,
-        backgroundColor: Colors.white,
+        backgroundColor: theme.scaffoldBackgroundColor,
         elevation: 0,
-        iconTheme: const IconThemeData(color: Color(0xFF002140)),
+        iconTheme: IconThemeData(color: customColors.textDarkBlue),
         actions: [
           TextButton(
             onPressed: _resetForm,
             child: Text(
-              l10n.clear,
-              style: const TextStyle(color: Color(0xFF4C6B4F), fontWeight: FontWeight.w600, fontSize: 16),
+              l10n.clear.toUpperCase(),
+              style: textTheme.labelLarge?.copyWith(
+                color: customColors.darkSage,
+                fontWeight: FontWeight.w800,
+                letterSpacing: 1.1,
+              ),
             ),
           ),
         ],
       ),
-      backgroundColor: Colors.white,
       body: SafeArea(
         child: Stack(
           children: [
@@ -126,19 +141,18 @@ class _NewMealPlanScreenState extends ConsumerState<NewMealPlanScreen> {
                   const SizedBox(height: 12),
                   Text(
                     l10n.configurePlanTitle,
-                    style: const TextStyle(
-                      fontSize: 26,
-                      fontWeight: FontWeight.w800,
-                      color: Color(0xFF002140),
+                    style: textTheme.headlineMedium?.copyWith(
+                      fontWeight: FontWeight.w900,
+                      color: customColors.textDarkBlue,
                       letterSpacing: -0.5,
+                      height: 1.1,
                     ),
                   ),
                   const SizedBox(height: 8),
                   Text(
                     l10n.configurePlanSubtitle,
-                    style: TextStyle(
-                      fontSize: 15,
-                      color: Colors.blueGrey.shade400,
+                    style: textTheme.bodyMedium?.copyWith(
+                      color: customColors.slateGrey,
                     ),
                   ),
                   const SizedBox(height: 24),
@@ -161,9 +175,9 @@ class _NewMealPlanScreenState extends ConsumerState<NewMealPlanScreen> {
                   _Section(
                     title: l10n.dinersTitle,
                     child: Container(
-                      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
+                      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
                       decoration: BoxDecoration(
-                        color: const Color(0xFFF8FAFB),
+                        color: customColors.chartTabBackground,
                         borderRadius: BorderRadius.circular(20),
                       ),
                       child: Row(
@@ -180,10 +194,9 @@ class _NewMealPlanScreenState extends ConsumerState<NewMealPlanScreen> {
                             child: Center(
                               child: Text(
                                 l10n.peopleCount(_peopleCount),
-                                style: const TextStyle(
-                                  fontSize: 18,
-                                  fontWeight: FontWeight.w700,
-                                  color: Color(0xFF002140),
+                                style: textTheme.titleMedium?.copyWith(
+                                  fontWeight: FontWeight.w800,
+                                  color: customColors.textDarkBlue,
                                 ),
                               ),
                             ),
@@ -235,16 +248,18 @@ class _NewMealPlanScreenState extends ConsumerState<NewMealPlanScreen> {
                     child: TextField(
                       controller: _descriptionController,
                       maxLines: 4,
-                      style: const TextStyle(fontSize: 15, color: Color(0xFF002140)),
+                      style: textTheme.bodyLarge?.copyWith(color: customColors.textDarkBlue),
                       decoration: InputDecoration(
                         filled: true,
-                        fillColor: const Color(0xFFF8FAFB),
+                        fillColor: customColors.chartTabBackground,
                         border: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(16),
+                          borderRadius: BorderRadius.circular(20),
                           borderSide: BorderSide.none,
                         ),
                         hintText: l10n.notesHint,
-                        hintStyle: TextStyle(color: Colors.blueGrey.shade300, fontSize: 15),
+                        hintStyle: textTheme.bodyMedium?.copyWith(
+                          color: customColors.slateGrey?.withValues(alpha: 0.5),
+                        ),
                       ),
                     ),
                   ),
@@ -254,8 +269,8 @@ class _NewMealPlanScreenState extends ConsumerState<NewMealPlanScreen> {
                     child: Container(
                       padding: const EdgeInsets.all(20),
                       decoration: BoxDecoration(
-                        color: const Color(0xFFF8FAFB),
-                        borderRadius: BorderRadius.circular(16),
+                        color: customColors.chartTabBackground,
+                        borderRadius: BorderRadius.circular(20),
                       ),
                       child: Row(
                         children: [
@@ -265,12 +280,17 @@ class _NewMealPlanScreenState extends ConsumerState<NewMealPlanScreen> {
                               children: [
                                 Text(
                                   l10n.usePantryLabel,
-                                  style: const TextStyle(fontWeight: FontWeight.w700, fontSize: 15, color: Color(0xFF002140)),
+                                  style: textTheme.titleSmall?.copyWith(
+                                    fontWeight: FontWeight.w800,
+                                    color: customColors.textDarkBlue,
+                                  ),
                                 ),
                                 const SizedBox(height: 4),
                                 Text(
                                   l10n.usePantrySubtitle,
-                                  style: TextStyle(color: Colors.blueGrey.shade400, fontSize: 13),
+                                  style: textTheme.bodySmall?.copyWith(
+                                    color: customColors.slateGrey,
+                                  ),
                                 ),
                               ],
                             ),
@@ -283,7 +303,7 @@ class _NewMealPlanScreenState extends ConsumerState<NewMealPlanScreen> {
                               });
                             },
                             activeThumbColor: Colors.white,
-                            activeTrackColor: const Color(0xFF4C6B4F),
+                            activeTrackColor: customColors.darkSage,
                           ),
                         ],
                       ),
@@ -295,24 +315,28 @@ class _NewMealPlanScreenState extends ConsumerState<NewMealPlanScreen> {
                     child: ElevatedButton(
                       onPressed: isLoading ? null : _onGenerate,
                       style: ElevatedButton.styleFrom(
-                        backgroundColor: const Color(0xFF4C6B4F),
+                        backgroundColor: customColors.darkSage,
                         foregroundColor: Colors.white,
-                        padding: const EdgeInsets.symmetric(vertical: 18),
+                        padding: const EdgeInsets.symmetric(vertical: 20),
                         shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(16),
+                          borderRadius: BorderRadius.circular(20),
                         ),
                         elevation: 0,
+                        textStyle: textTheme.labelLarge?.copyWith(
+                          fontWeight: FontWeight.w900,
+                          letterSpacing: 0.5,
+                        ),
                       ),
                       child: isLoading
                           ? SizedBox(
                               height: 20,
                               width: 20,
                               child: CircularProgressIndicator(
-                                color: Theme.of(context).colorScheme.onPrimary,
+                                color: theme.colorScheme.onPrimary,
                                 strokeWidth: 2,
                               ),
                             )
-                          : Text(l10n.continueLabel),
+                          : Text(l10n.continueLabel.toUpperCase()),
                     ),
                   ),
                   const SizedBox(height: 12),
@@ -361,6 +385,9 @@ class _Section extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     if (title.isEmpty) return Padding(padding: const EdgeInsets.symmetric(vertical: 10), child: child);
+    final theme = Theme.of(context);
+    final customColors = theme.extension<AppCustomColors>()!;
+    final textTheme = theme.textTheme;
 
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 12),
@@ -369,11 +396,10 @@ class _Section extends StatelessWidget {
         children: [
           Text(
             title.toUpperCase(),
-            style: TextStyle(
-              fontSize: 13,
+            style: textTheme.labelSmall?.copyWith(
               fontWeight: FontWeight.w800,
-              color: Colors.blueGrey.shade300,
-              letterSpacing: 0.5,
+              color: customColors.darkSage,
+              letterSpacing: 1.2,
             ),
           ),
           const SizedBox(height: 16),
@@ -397,25 +423,28 @@ class _PillOption extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+    final customColors = theme.extension<AppCustomColors>()!;
+    final textTheme = theme.textTheme;
+
     return GestureDetector(
       onTap: onTap,
       child: AnimatedContainer(
         duration: const Duration(milliseconds: 150),
         padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
         decoration: BoxDecoration(
-          color: selected ? const Color(0xFFE8F0E8) : Colors.white,
+          color: selected ? customColors.chartTabBackground : Colors.white,
           border: Border.all(
-            color: selected ? const Color(0xFF4C6B4F) : const Color(0xFFE8EEF2),
+            color: selected ? customColors.darkSage! : Colors.grey.shade200,
             width: selected ? 1.5 : 1.0,
           ),
-          borderRadius: BorderRadius.circular(14),
+          borderRadius: BorderRadius.circular(16),
         ),
         child: Text(
           label,
-          style: TextStyle(
-            fontWeight: FontWeight.w600,
-            fontSize: 15,
-            color: const Color(0xFF002140),
+          style: textTheme.bodyLarge?.copyWith(
+            fontWeight: FontWeight.w800,
+            color: selected ? customColors.darkSage : customColors.textDarkBlue,
           ),
         ),
       ),
@@ -431,24 +460,27 @@ class _IconCircleButton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+    final customColors = theme.extension<AppCustomColors>()!;
+
     return InkWell(
       onTap: onTap,
       borderRadius: BorderRadius.circular(24),
       child: Container(
-        width: 40,
-        height: 40,
+        width: 44,
+        height: 44,
         decoration: BoxDecoration(
           shape: BoxShape.circle,
           color: Colors.white,
           boxShadow: [
             BoxShadow(
-              color: const Color.fromRGBO(0, 0, 0, 0.04),
-              blurRadius: 6,
+              color: Colors.black.withValues(alpha: 0.08),
+              blurRadius: 8,
               offset: const Offset(0, 2),
             )
           ]
         ),
-        child: Icon(icon, size: 22, color: const Color(0xFF002140)),
+        child: Icon(icon, size: 24, color: customColors.textDarkBlue),
       ),
     );
   }
@@ -467,25 +499,28 @@ class _MealTypePill extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+    final customColors = theme.extension<AppCustomColors>()!;
+    final textTheme = theme.textTheme;
+
     return GestureDetector(
       onTap: onTap,
       child: AnimatedContainer(
         duration: const Duration(milliseconds: 150),
-        padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
+        padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 14),
         decoration: BoxDecoration(
-          color: selected ? const Color(0xFF4C6B4F) : Colors.white,
+          color: selected ? customColors.darkSage : Colors.white,
           border: Border.all(
-            color: selected ? const Color(0xFF4C6B4F) : const Color(0xFFE8EEF2),
+            color: selected ? customColors.darkSage! : Colors.grey.shade200,
             width: 1.0,
           ),
-          borderRadius: BorderRadius.circular(18),
+          borderRadius: BorderRadius.circular(20),
         ),
         child: Text(
           label,
-          style: TextStyle(
-            fontWeight: selected ? FontWeight.w600 : FontWeight.w500,
-            fontSize: 14,
-            color: selected ? Colors.white : const Color(0xFF002140),
+          style: textTheme.labelLarge?.copyWith(
+            fontWeight: FontWeight.w800,
+            color: selected ? Colors.white : customColors.textDarkBlue,
           ),
         ),
       ),

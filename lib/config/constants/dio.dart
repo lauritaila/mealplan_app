@@ -2,6 +2,7 @@ import 'package:dio/dio.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:meal_plan_app/config/config.dart';
 import 'package:meal_plan_app/config/constants/storage_keys.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
 class DioFactory {
@@ -45,6 +46,10 @@ class DioFactory {
               );
             }
 
+            final prefs = await SharedPreferences.getInstance();
+            final storedLangCode = prefs.getString('app_language_code');
+            options.headers['Accept-Language'] = storedLangCode ?? 'en';
+
             // If caller explicitly opted out of auth check, continue.
             final skipAuth = options.extra['skipAuth'] == true;
             if (!skipAuth) {
@@ -61,7 +66,7 @@ class DioFactory {
               }
             }
           } catch (_) {
-            // ignore storage errors and continue without token
+            // ignore storage errors and continue without token or language
           }
           handler.next(options);
         },

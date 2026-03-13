@@ -1,12 +1,15 @@
+import 'package:meal_plan_app/features/shared/shared.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:meal_plan_app/features/auth/presentation/provider/provider.dart';
-import 'package:meal_plan_app/features/grocery_list/presentation/providers/grocery_actions_provider.dart';
-import 'package:meal_plan_app/features/grocery_list/presentation/widgets/select_grocery_list_sheet.dart';
+
+
+import 'package:meal_plan_app/features/grocery_list/presentation/providers/provider.dart';
 import 'package:meal_plan_app/features/recipes/presentation/providers/providers.dart';
 import 'package:meal_plan_app/features/recipes/presentation/widgets/recipe_card.dart';
 import 'package:meal_plan_app/l10n/app_localizations.dart';
+import 'package:meal_plan_app/config/theme/app_theme.dart';
 
 class RecipesListScreen extends ConsumerWidget {
   const RecipesListScreen({super.key});
@@ -14,6 +17,8 @@ class RecipesListScreen extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final recipesAsync = ref.watch(recipesListProvider);
+    final theme = Theme.of(context);
+    final customColors = theme.extension<AppCustomColors>()!;
     final l10n = AppLocalizations.of(context);
     final authState = ref.watch(authProvider);
     final hideNutritionValues =
@@ -21,11 +26,22 @@ class RecipesListScreen extends ConsumerWidget {
         authState.user.configurations?['hideNutritionValues'] == true;
 
     return Scaffold(
+      backgroundColor: theme.scaffoldBackgroundColor,
       appBar: AppBar(
-        title: Text(l10n.recipesTitle),
+        backgroundColor: theme.scaffoldBackgroundColor,
+        elevation: 0,
+        title: Text(
+          l10n.recipesTitle,
+          style: theme.textTheme.titleLarge?.copyWith(
+            fontWeight: FontWeight.w900,
+            color: customColors.textDarkBlue,
+          ),
+        ),
+        centerTitle: true,
+        iconTheme: IconThemeData(color: customColors.textDarkBlue),
         actions: [
           IconButton(
-            icon: const Icon(Icons.favorite),
+            icon: Icon(Icons.favorite, color: customColors.darkSage),
             onPressed: () => context.push('/recipes/favorites'),
             tooltip: l10n.favoritesTooltip,
           ),
@@ -34,7 +50,11 @@ class RecipesListScreen extends ConsumerWidget {
       body: recipesAsync.when(
         data: (recipes) {
           if (recipes.isEmpty) {
-            return Center(child: Text(l10n.noRecipesAvailable));
+            return AppEmptyState(
+              title: l10n.noRecipesAvailable,
+              subtitle: l10n.noDescriptionProvided, // Or a more suitable subtitle
+              icon: Icons.restaurant_menu_outlined,
+            );
           }
 
           return RefreshIndicator(
@@ -62,53 +82,50 @@ class RecipesListScreen extends ConsumerWidget {
                           .toggle(recipe.id);
                     } catch (e) {
                       if (!context.mounted) return;
-                      ScaffoldMessenger.of(context).showSnackBar(
-                        SnackBar(
-                          content: Text(l10n.favoriteUpdateFailed),
-                        ),
-                      );
+                      CustomSnackbar.showError(context, l10n.favoriteUpdateFailed);
                     }
                   },
                   onAddToGroceryList: () async {
-                    final selected = await showSelectOrCreateGroceryListSheet(
+                    final selectedId = await showModalBottomSheet<int?>(
                       context: context,
-                      title: l10n.addRecipeToListTitle,
-                    );
-                    if (selected == null || !context.mounted) return;
-                    final ok = await ref
-                        .read(groceryActionsProvider.notifier)
-                        .importRecipe(selected.id, recipe.id);
-                    if (!context.mounted) return;
-                    ScaffoldMessenger.of(context).showSnackBar(
-                      SnackBar(
-                        content: Text(
-                          ok
-                              ? l10n.recipeAddedToList(selected.name)
-                              : l10n.recipeAddFailed,
-                        ),
+                      isScrollControlled: true,
+                      backgroundColor: Colors.transparent,
+                      builder: (context) => SelectListSheet(
+                        title: l10n.addRecipeToListTitle,
+                        subtitle: l10n.organizeFavoritesSubtitle,
                       ),
                     );
+                    if (selectedId == null || !context.mounted) return;
+                    final ok = await ref
+                        .read(groceryActionsProvider.notifier)
+                        .importRecipe(selectedId, recipe.id);
+                    if (!context.mounted) return;
+                    
+                    String? listName;
+                    final lists = ref.read(groceryListsProvider).asData?.value;
+                    if (lists != null) {
+                      listName = lists.firstWhere((l) => l.id == selectedId).name;
+                    }
+
+                    CustomSnackbar.showInfo(context, 
+                          ok
+                              ? l10n.recipeAddedToList(listName ?? l10n.groceryTitle)
+                              : l10n.recipeAddFailed,
+                        );
                   },
                 );
               },
             ),
           );
         },
-        loading: () => const Center(child: CircularProgressIndicator()),
-        error: (error, stack) => Center(
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              const Icon(Icons.error_outline, size: 48, color: Colors.red),
-              const SizedBox(height: 16),
-              Text(l10n.errorOccurred(error.toString())),
-              const SizedBox(height: 16),
-              ElevatedButton(
-                onPressed: () => ref.invalidate(recipesListProvider),
-                child: Text(l10n.retry),
-              ),
-            ],
+        loading: () => Center(
+          child: CircularProgressIndicator(
+            color: customColors.darkSage,
           ),
+        ),
+        error: (error, stack) => AppErrorState(
+          message: error.toString(),
+          onRetry: () => ref.invalidate(recipesListProvider),
         ),
       ),
     );

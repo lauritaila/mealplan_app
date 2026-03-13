@@ -4,6 +4,7 @@ import 'package:meal_plan_app/features/auth/presentation/provider/provider.dart'
 import 'package:meal_plan_app/features/meal_plan/presentation/providers/provider.dart';
 import 'package:meal_plan_app/l10n/app_localizations.dart';
 import 'package:go_router/go_router.dart';
+import 'package:meal_plan_app/config/theme/app_theme.dart';
 
 class SubscriptionScreen extends ConsumerWidget {
   const SubscriptionScreen({super.key});
@@ -20,6 +21,8 @@ class SubscriptionScreen extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final theme = Theme.of(context);
+    final textTheme = theme.textTheme;
+    final customColors = theme.extension<AppCustomColors>()!;
     final l10n = AppLocalizations.of(context);
     final authState = ref.watch(authProvider);
     final localeCode = Localizations.localeOf(context).languageCode;
@@ -40,63 +43,109 @@ class SubscriptionScreen extends ConsumerWidget {
     final includes = _subscriptionIncludes(permissionsDescription, localeCode);
 
     return Scaffold(
-      appBar: AppBar(title: Text(l10n.profileSubscriptionTitle)),
-      body: Padding(
-        padding: const EdgeInsets.all(16),
-        child: Card(
-          child: Padding(
-            padding: const EdgeInsets.all(16),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(
-                  l10n.profileSubscriptionCurrentLabel,
-                  style: theme.textTheme.titleSmall,
-                ),
-                const SizedBox(height: 6),
-                Text(planName, style: theme.textTheme.bodyLarge),
-                const SizedBox(height: 16),
-                _PlanStatusCard(
-                  statusAsync: statusAsync,
-                  totalAllowed: totalAllowed,
-                  isFreePlan: isFreePlan,
-                ),
-                const SizedBox(height: 16),
-                Text(
-                  l10n.profileSubscriptionIncludesLabel,
-                  style: theme.textTheme.titleSmall,
-                ),
-                const SizedBox(height: 8),
-                if (includes.isEmpty)
-                  Text(
-                    l10n.profileNoIncludes,
-                    style: theme.textTheme.bodyMedium?.copyWith(
-                      color: theme.colorScheme.onSurfaceVariant,
-                    ),
-                  )
-                else
-                  Column(
-                    children: includes
-                        .map(
-                          (item) => Padding(
-                            padding: const EdgeInsets.only(bottom: 6),
-                            child: Row(
-                              children: [
-                                const Icon(
-                                  Icons.check_circle_outline,
-                                  size: 18,
-                                ),
-                                const SizedBox(width: 8),
-                                Expanded(child: Text(item)),
-                              ],
-                            ),
-                          ),
-                        )
-                        .toList(),
-                  ),
-              ],
-            ),
+      appBar: AppBar(
+        title: Text(
+          l10n.profileSubscriptionTitle,
+          style: textTheme.titleLarge?.copyWith(
+            fontWeight: FontWeight.w900,
+            color: customColors.textDarkBlue,
           ),
+        ),
+        centerTitle: true,
+        backgroundColor: Colors.transparent,
+        elevation: 0,
+      ),
+      body: SingleChildScrollView(
+        padding: const EdgeInsets.all(24),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.stretch,
+          children: [
+            Container(
+              padding: const EdgeInsets.all(32),
+              decoration: BoxDecoration(
+                color: theme.cardTheme.color,
+                borderRadius: BorderRadius.circular(28),
+                border: Border.all(color: theme.dividerColor.withValues(alpha: 0.05)),
+                boxShadow: [
+                  BoxShadow(
+                    color: Colors.black.withValues(alpha: 0.03),
+                    blurRadius: 10,
+                    offset: const Offset(0, 4),
+                  ),
+                ],
+              ),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    l10n.profileSubscriptionCurrentLabel.toUpperCase(),
+                    style: textTheme.labelSmall?.copyWith(
+                      fontWeight: FontWeight.w900,
+                      letterSpacing: 1.5,
+                      color: customColors.slateGrey?.withValues(alpha: 0.6),
+                    ),
+                  ),
+                  const SizedBox(height: 12),
+                  Text(
+                    planName,
+                    style: textTheme.headlineSmall?.copyWith(
+                      fontWeight: FontWeight.w900,
+                      color: customColors.textDarkBlue,
+                    ),
+                  ),
+                  const SizedBox(height: 32),
+                  _PlanStatusCard(
+                    statusAsync: statusAsync,
+                    totalAllowed: totalAllowed,
+                    isFreePlan: isFreePlan,
+                  ),
+                  const SizedBox(height: 32),
+                  Text(
+                    l10n.profileSubscriptionIncludesLabel.toUpperCase(),
+                    style: textTheme.labelSmall?.copyWith(
+                      fontWeight: FontWeight.w900,
+                      letterSpacing: 1.5,
+                      color: customColors.slateGrey?.withValues(alpha: 0.6),
+                    ),
+                  ),
+                  const SizedBox(height: 16),
+                  if (includes.isEmpty)
+                    Text(
+                      l10n.profileNoIncludes,
+                      style: textTheme.bodyMedium?.copyWith(
+                        color: customColors.slateGrey,
+                        fontWeight: FontWeight.w600,
+                      ),
+                    )
+                  else
+                    ...includes.map(
+                      (item) => Padding(
+                        padding: const EdgeInsets.only(bottom: 12),
+                        child: Row(
+                          children: [
+                            Icon(
+                              Icons.check_circle,
+                              size: 20,
+                              color: customColors.darkSage,
+                            ),
+                            const SizedBox(width: 12),
+                            Expanded(
+                              child: Text(
+                                item,
+                                style: textTheme.bodyMedium?.copyWith(
+                                  fontWeight: FontWeight.w600,
+                                  color: customColors.textDarkBlue,
+                                ),
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                    ),
+                ],
+              ),
+            ),
+          ],
         ),
       ),
     );
@@ -117,18 +166,20 @@ class _PlanStatusCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
+    final textTheme = theme.textTheme;
+    final customColors = theme.extension<AppCustomColors>()!;
     final l10n = AppLocalizations.of(context);
 
-    // No extra Card since it's already inside a Card in SubscriptionScreen
     return statusAsync.when(
-      loading: () => const Center(child: CircularProgressIndicator()),
+      loading: () => Center(child: CircularProgressIndicator(color: customColors.darkSage)),
       error: (error, stack) => Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Text(
             l10n.unableToLoadPlanStatus(l10n.genericError),
-            style: theme.textTheme.bodyMedium?.copyWith(
-              color: theme.colorScheme.error,
+            style: textTheme.bodyMedium?.copyWith(
+              color: Colors.red,
+              fontWeight: FontWeight.w600,
             ),
           ),
         ],
@@ -142,43 +193,102 @@ class _PlanStatusCard extends StatelessWidget {
         return Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Text(
-              l10n.plansLeftThisWeek(remaining, total),
-              style: theme.textTheme.bodyMedium,
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Text(
+                  l10n.plansLeftThisWeek(remaining, total),
+                  style: textTheme.bodyMedium?.copyWith(
+                    fontWeight: FontWeight.w800,
+                    color: customColors.textDarkBlue,
+                  ),
+                ),
+                Text(
+                  '${(progress * 100).toStringAsFixed(0)}%',
+                  style: textTheme.labelLarge?.copyWith(
+                    fontWeight: FontWeight.w900,
+                    color: customColors.darkSage,
+                  ),
+                ),
+              ],
             ),
-            const SizedBox(height: 8),
-            LinearProgressIndicator(
-              value: progress,
-              color: theme.colorScheme.primary,
-              borderRadius: BorderRadius.circular(4),
+            const SizedBox(height: 12),
+            ClipRRect(
+              borderRadius: BorderRadius.circular(8),
+              child: LinearProgressIndicator(
+                value: progress,
+                minHeight: 8,
+                backgroundColor: customColors.chartTabBackground,
+                valueColor: AlwaysStoppedAnimation<Color>(customColors.darkSage!),
+              ),
             ),
             if (!status.canGenerate && status.reason != null) ...[
-              const SizedBox(height: 8),
-              Text(
-                status.reason!,
-                style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                  color: Theme.of(context).colorScheme.error,
+              const SizedBox(height: 16),
+              Container(
+                padding: const EdgeInsets.all(12),
+                decoration: BoxDecoration(
+                  color: Colors.red.withValues(alpha: 0.05),
+                  borderRadius: BorderRadius.circular(12),
+                  border: Border.all(color: Colors.red.withValues(alpha: 0.1)),
+                ),
+                child: Row(
+                  children: [
+                    const Icon(Icons.error_outline, color: Colors.red, size: 20),
+                    const SizedBox(width: 12),
+                    Expanded(
+                      child: Text(
+                        status.reason!,
+                        style: textTheme.bodySmall?.copyWith(
+                          color: Colors.red,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                    ),
+                  ],
                 ),
               ),
             ],
             if (isFreePlan) ...[
-              const SizedBox(height: 12),
-              Text(
-                l10n.goPremiumUnlockMorePlans,
-                style: Theme.of(context).textTheme.bodyMedium,
-              ),
-              const SizedBox(height: 8),
-              Align(
-                alignment: Alignment.centerLeft,
-                child: OutlinedButton(
-                  onPressed: () => context.go(
-                    '/premium',
-                    extra: {
-                      'title': l10n.goPremiumTitle,
-                      'message': l10n.freePlanLimitedGenerations,
-                    },
-                  ),
-                  child: Text(l10n.goPremiumTitle),
+              const SizedBox(height: 32),
+              Container(
+                padding: const EdgeInsets.all(20),
+                decoration: BoxDecoration(
+                  color: customColors.chartTabBackground,
+                  borderRadius: BorderRadius.circular(20),
+                ),
+                child: Column(
+                  children: [
+                    Text(
+                      l10n.goPremiumUnlockMorePlans,
+                      textAlign: TextAlign.center,
+                      style: textTheme.bodyMedium?.copyWith(
+                        fontWeight: FontWeight.w600,
+                        color: customColors.textDarkBlue,
+                      ),
+                    ),
+                    const SizedBox(height: 20),
+                    SizedBox(
+                      width: double.infinity,
+                      height: 52,
+                      child: FilledButton(
+                        onPressed: () => context.go(
+                          '/premium',
+                          extra: {
+                            'title': l10n.goPremiumTitle,
+                            'message': l10n.freePlanLimitedGenerations,
+                          },
+                        ),
+                        style: FilledButton.styleFrom(
+                          backgroundColor: customColors.darkSage,
+                          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+                        ),
+                        child: Text(
+                          l10n.goPremiumTitle,
+                          style: const TextStyle(fontWeight: FontWeight.w900, fontSize: 16),
+                        ),
+                      ),
+                    ),
+                  ],
                 ),
               ),
             ],

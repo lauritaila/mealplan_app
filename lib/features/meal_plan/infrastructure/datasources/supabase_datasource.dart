@@ -375,7 +375,7 @@ class SupabaseMealPlanDatasource extends MealPlanDatasource {
 
       final body = <String, dynamic>{
         if (deleteDescription != null && deleteDescription.isNotEmpty)
-          'delete_description': deleteDescription,
+          'deleteDescription': deleteDescription,
         if (removeShoppingList == true) 'removeShoppingList': true,
       };
 

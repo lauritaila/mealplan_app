@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 
+import '../../../../config/theme/app_theme.dart';
 import '../../../../l10n/app_localizations.dart';
 import '../../domain/entities/weekly_average.dart';
 
@@ -15,47 +16,61 @@ class WeeklyAveragesCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    if (hideNutritionValues) return const SizedBox.shrink();
+    
+    final theme = Theme.of(context);
+    final customColors = theme.extension<AppCustomColors>()!;
     final l10n = AppLocalizations.of(context);
+    
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Text(
-          l10n.weeklyAveragesTitle,
-          style: Theme.of(
-            context,
-          ).textTheme.titleLarge?.copyWith(fontWeight: FontWeight.bold),
+          l10n.dailyTotalsTitle, 
+          style: theme.textTheme.titleLarge?.copyWith(
+            fontSize: 18,
+            fontWeight: FontWeight.w900,
+            color: customColors.textDarkBlue,
+          ),
         ),
         const SizedBox(height: 16),
         Row(
-          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
           children: [
-            if (!hideNutritionValues)
-              _MacroCard(
-                label: l10n.metricCalories,
-                value: '${weeklyAverage.calories.toStringAsFixed(0)} ${l10n.metricKcal}',
-                color: Colors.orange.shade300,
-                icon: Icons.local_fire_department,
+            Expanded(
+              child: _MacroCard(
+                label: l10n.metricCalories.toUpperCase(),
+                value: weeklyAverage.calories.toStringAsFixed(0),
+                unit: l10n.metricKcal.toUpperCase(),
               ),
-            _MacroCard(
-              label: l10n.metricProtein,
-              value: '${weeklyAverage.protein.toStringAsFixed(0)} g',
-              color: Colors.red.shade300,
-              icon: Icons.fitness_center,
             ),
-            if (!hideNutritionValues) ...[
-              _MacroCard(
-                label: l10n.metricCarbs,
-                value: '${weeklyAverage.carbs.toStringAsFixed(0)} g',
-                color: Colors.amber.shade300,
-                icon: Icons.grass,
+            const SizedBox(width: 12),
+            Expanded(
+              child: _MacroCard(
+                label: l10n.metricProtein.toUpperCase(),
+                value: weeklyAverage.protein.toStringAsFixed(0),
+                unit: 'G',
               ),
-              _MacroCard(
-                label: l10n.metricFat,
-                value: '${weeklyAverage.fats.toStringAsFixed(0)} g',
-                color: Colors.blue.shade300,
-                icon: Icons.water_drop,
+            ),
+          ],
+        ),
+        const SizedBox(height: 12),
+        Row(
+          children: [
+            Expanded(
+              child: _MacroCard(
+                label: l10n.metricCarbs.toUpperCase(),
+                value: weeklyAverage.carbs.toStringAsFixed(0),
+                unit: 'G',
               ),
-            ],
+            ),
+            const SizedBox(width: 12),
+            Expanded(
+              child: _MacroCard(
+                label: l10n.metricFat.toUpperCase(),
+                value: weeklyAverage.fats.toStringAsFixed(0),
+                unit: 'G',
+              ),
+            ),
           ],
         ),
       ],
@@ -66,51 +81,63 @@ class WeeklyAveragesCard extends StatelessWidget {
 class _MacroCard extends StatelessWidget {
   final String label;
   final String value;
-  final Color color;
-  final IconData icon;
+  final String unit;
 
   const _MacroCard({
     required this.label,
     required this.value,
-    required this.color,
-    required this.icon,
+    required this.unit,
   });
 
   @override
   Widget build(BuildContext context) {
-    return Expanded(
-      child: Container(
-        margin: const EdgeInsets.symmetric(horizontal: 4),
-        padding: const EdgeInsets.all(12),
-        decoration: BoxDecoration(
-          color: color.withValues(alpha: 0.1),
-          borderRadius: BorderRadius.circular(16),
-          border: Border.all(color: color.withValues(alpha: 0.3)),
-        ),
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            Icon(icon, color: color, size: 24),
-            const SizedBox(height: 8),
-            Text(
-              value,
-              style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 13),
-              textAlign: TextAlign.center,
+    final theme = Theme.of(context);
+    final textTheme = theme.textTheme;
+    final customColors = theme.extension<AppCustomColors>()!;
+
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
+      decoration: BoxDecoration(
+        color: theme.cardTheme.color,
+        borderRadius: BorderRadius.circular(20),
+        border: Border.all(color: theme.dividerColor.withValues(alpha: 0.05)),
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Text(
+            label,
+            style: textTheme.labelSmall?.copyWith(
+              fontWeight: FontWeight.w900,
+              letterSpacing: 1.2,
+              color: customColors.slateGrey?.withValues(alpha: 0.6),
             ),
-            const SizedBox(height: 4),
-            Text(
-              label,
-              style: TextStyle(
-                fontSize: 12,
-                color: Theme.of(context).colorScheme.onSurfaceVariant,
-                fontWeight: FontWeight.w600,
+          ),
+          const SizedBox(height: 8),
+          Row(
+            crossAxisAlignment: CrossAxisAlignment.baseline,
+            textBaseline: TextBaseline.alphabetic,
+            children: [
+              Text(
+                value,
+                style: textTheme.headlineSmall?.copyWith(
+                  fontSize: 24,
+                  fontWeight: FontWeight.w900,
+                  color: customColors.textDarkBlue,
+                  letterSpacing: -0.5,
+                ),
               ),
-              textAlign: TextAlign.center,
-              maxLines: 1,
-              overflow: TextOverflow.ellipsis,
-            ),
-          ],
-        ),
+              const SizedBox(width: 4),
+              Text(
+                unit,
+                style: textTheme.bodySmall?.copyWith(
+                  fontWeight: FontWeight.w800,
+                  color: customColors.slateGrey,
+                ),
+              ),
+            ],
+          ),
+        ],
       ),
     );
   }
