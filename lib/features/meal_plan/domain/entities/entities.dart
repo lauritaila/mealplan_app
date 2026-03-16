@@ -7,3 +7,6 @@ export 'meal_plan_summary.dart';
 export 'reuse_meal_plan_response.dart';
 export 'bulk_deduct_result.dart';
 export 'update_meal_plan_dates_response.dart';
+export 'meal_plan_cooking_assistant_response_dto.dart';
+export 'generate_meal_plan_request.dart';
+export 'can_generate_meal_plan_response.dart';

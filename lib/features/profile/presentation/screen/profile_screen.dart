@@ -3,10 +3,13 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:meal_plan_app/config/config.dart';
 import 'package:meal_plan_app/features/auth/presentation/provider/provider.dart';
+import 'package:meal_plan_app/features/meal_plan/domain/entities/entities.dart';
+import 'package:meal_plan_app/features/meal_plan/presentation/providers/provider.dart';
 import 'package:meal_plan_app/features/profile/presentation/providers/delete_account_provider.dart';
 import 'package:meal_plan_app/features/shared/utils/app_error_localizations.dart';
 import 'package:meal_plan_app/l10n/app_localizations.dart';
 import 'package:go_router/go_router.dart';
+import 'package:meal_plan_app/features/feedback/presentation/widgets/feedback_bottom_sheet.dart';
 
 
 Future<void> _showDeleteAccountModal(
@@ -213,6 +216,13 @@ class ProfileScreen extends ConsumerWidget {
         centerTitle: true,
         backgroundColor: Colors.transparent,
         elevation: 0,
+        actions: [
+          IconButton(
+            onPressed: () => FeedbackBottomSheet.show(context),
+            icon: Icon(Icons.feedback_outlined, color: customColors.textDarkBlue),
+          ),
+          const SizedBox(width: 8),
+        ],
       ),
       body: ListView(
         padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 16),
@@ -265,7 +275,19 @@ class ProfileScreen extends ConsumerWidget {
               ],
             ),
           ),
-          const SizedBox(height: 40),
+          const SizedBox(height: 16),
+          
+          // Usage Summary Bar
+          Consumer(
+            builder: (context, ref, child) {
+              final canGenAsync = ref.watch(canGenerateMealPlanProvider);
+              return canGenAsync.maybeWhen(
+                data: (canGen) => _ProfileUsageSummary(canGen: canGen),
+                orElse: () => const SizedBox.shrink(),
+              );
+            },
+          ),
+          const SizedBox(height: 24),
 
           // Settings Section
           Padding(
@@ -439,6 +461,94 @@ class ProfileScreen extends ConsumerWidget {
       indent: 20,
       endIndent: 20,
       color: theme.dividerColor.withValues(alpha: 0.05),
+    );
+  }
+}
+
+class _ProfileUsageSummary extends StatelessWidget {
+  final CanGenerateMealPlanResponse canGen;
+
+  const _ProfileUsageSummary({required this.canGen});
+
+  @override
+  Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+    final customColors = theme.extension<AppCustomColors>()!;
+    final l10n = AppLocalizations.of(context);
+
+    return Container(
+      padding: const EdgeInsets.all(16),
+      decoration: BoxDecoration(
+        color: customColors.chartTabBackground?.withValues(alpha: 0.3),
+        borderRadius: BorderRadius.circular(20),
+      ),
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.spaceAround,
+        children: [
+          _UsageSummaryTile(
+            label: l10n.mealPlansLabel,
+            remaining: canGen.mealPlanGenerateRemaining,
+            limit: canGen.mealPlanGenerateLimit,
+            icon: Icons.auto_awesome_rounded,
+          ),
+          _UsageSummaryTile(
+            label: l10n.substitutesLabel,
+            remaining: canGen.substituteRemaining,
+            limit: canGen.substituteLimit,
+            icon: Icons.rebase_edit,
+          ),
+           _UsageSummaryTile(
+            label: l10n.cookingAssistantLabel,
+            remaining: canGen.recipeAssistantRemaining,
+            limit: canGen.recipeAssistantLimit,
+            icon: Icons.restaurant_menu_rounded,
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+class _UsageSummaryTile extends StatelessWidget {
+  final String label;
+  final int remaining;
+  final int limit;
+  final IconData icon;
+
+  const _UsageSummaryTile({
+    required this.label,
+    required this.remaining,
+    required this.limit,
+    required this.icon,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+    final customColors = theme.extension<AppCustomColors>()!;
+    final bool isExhausted = limit > 0 && remaining <= 0;
+
+    return Column(
+      children: [
+        Icon(icon, size: 16, color: isExhausted ? Colors.red : customColors.darkSage),
+        const SizedBox(height: 4),
+        Text(
+          label,
+          style: theme.textTheme.labelSmall?.copyWith(
+            fontSize: 10,
+            color: isExhausted ? Colors.red.withAlpha(180) : customColors.darkSage!.withAlpha(180),
+          ),
+          textAlign: TextAlign.center,
+        ),
+        const SizedBox(height: 2),
+        Text(
+          '$remaining/$limit',
+          style: theme.textTheme.labelSmall?.copyWith(
+            fontWeight: FontWeight.w900,
+            color: isExhausted ? Colors.red : customColors.darkSage,
+          ),
+        ),
+      ],
     );
   }
 }

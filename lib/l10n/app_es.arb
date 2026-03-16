@@ -107,9 +107,44 @@
   "cookingCombosMessage": "Preparando combinaciones ricas y saludables para ti...",
   "cancelAndGoBack": "Cancelar y volver",
   "planLimitReachedTitle": "Límite de planes alcanzado",
-  "planLimitReachedMessage": "Has agotado las generaciones de planes esta semana.",
+  "planLimitReachedMessage": "Has agotado tus intentos de generación esta semana.",
+  "generationLimitReached": "Límite de generación alcanzado",
+  "generationsRemainingWarning": "Quedan {remaining} de {limit}",
+  "@generationsRemainingWarning": {
+    "placeholders": {
+      "remaining": {},
+      "limit": {}
+    }
+  },
+  "premiumFeatureTitle": "Característica Premium",
+  "pantryGenerationPremiumMessage": "Generar planes de comidas con tu despensa es una característica premium. ¡Pásate a Pro para desbloquearlo!",
+  "choosePlanLabel": "Elige tu plan",
+  "currentPlanBadge": "Actual",
+  "recommendedBadge": "Recomendado",
+  "freePriceLabel": "Gratis",
+  "perMonthLabel": "por mes",
+  "contactSalesMessage": "Contáctenos para soluciones empresariales personalizadas.",
+  "stayFreeLabel": "Continuar con Plan Gratis",
+  "upgradeToLabel": "Cambiar a {plan}",
+  "@upgradeToLabel": {
+    "placeholders": {
+      "plan": {
+        "type": "Object"
+      }
+    }
+  },
+  "cookingAssistantPremiumMessage": "El Asistente de Cocina es una función pro que te ayuda con guía paso a paso y sustituciones. ¡Pásate a Pro para desbloquearlo!",
+  "mealPlansLabel": "Planes de Comidas",
+  "substitutesLabel": "Sustitutos de Ingredientes",
+  "regenerationsLabel": "Regeneraciones de Recetas",
+  "cookingAssistantLabel": "Asistente de Cocina",
+  "substituteLimitReachedMessage": "Has alcanzado tu límite de sustituciones de ingredientes. ¡Pásate a un plan premium para obtener ayuda ilimitada con tus recetas!",
+  "cookingToolsLabel": "Utensilios",
   "newPlanTitle": "Nuevo plan",
   "clear": "Limpiar",
+  "close": "Cerrar",
+  "startDateLabel": "Fecha de inicio",
+  "selectDateOptional": "Seleccionar fecha (opcional)",
   "configurePlanTitle": "Configura tu plan",
   "configurePlanSubtitle": "Define duración, personas y comidas base.",
   "durationTitle": "Duración",

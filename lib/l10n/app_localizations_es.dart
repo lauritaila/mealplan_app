@@ -240,13 +240,87 @@ class AppLocalizationsEs extends AppLocalizations {
 
   @override
   String get planLimitReachedMessage =>
-      'Has agotado las generaciones de planes esta semana.';
+      'Has agotado tus intentos de generación esta semana.';
+
+  @override
+  String get generationLimitReached => 'Límite de generación alcanzado';
+
+  @override
+  String generationsRemainingWarning(Object remaining, Object limit) {
+    return 'Quedan $remaining de $limit';
+  }
+
+  @override
+  String get premiumFeatureTitle => 'Característica Premium';
+
+  @override
+  String get pantryGenerationPremiumMessage =>
+      'Generar planes de comidas con tu despensa es una característica premium. ¡Pásate a Pro para desbloquearlo!';
+
+  @override
+  String get choosePlanLabel => 'Elige tu plan';
+
+  @override
+  String get currentPlanBadge => 'Actual';
+
+  @override
+  String get recommendedBadge => 'Recomendado';
+
+  @override
+  String get freePriceLabel => 'Gratis';
+
+  @override
+  String get contactSalesMessage =>
+      'Contáctenos para soluciones empresariales personalizadas.';
+
+  @override
+  String get stayFreeLabel => 'Continuar con Plan Gratis';
+
+  @override
+  String upgradeToLabel(Object plan) {
+    return 'Cambiar a $plan';
+  }
+
+  @override
+  String get perMonthLabel => 'por mes';
+
+  @override
+  String get cookingAssistantPremiumMessage =>
+      'El Asistente de Cocina es una función pro que te ayuda con guía paso a paso y sustituciones. ¡Pásate a Pro para desbloquearlo!';
+
+  @override
+  String get mealPlansLabel => 'Planes de Comidas';
+
+  @override
+  String get substitutesLabel => 'Sustitutos de Ingredientes';
+
+  @override
+  String get regenerationsLabel => 'Regeneraciones de Recetas';
+
+  @override
+  String get cookingAssistantLabel => 'Asistente de Cocina';
+
+  @override
+  String get substituteLimitReachedMessage =>
+      'Has alcanzado tu límite de sustituciones de ingredientes. ¡Pásate a un plan premium para obtener ayuda ilimitada con tus recetas!';
+
+  @override
+  String get cookingToolsLabel => 'Utensilios';
 
   @override
   String get newPlanTitle => 'Nuevo plan';
 
   @override
   String get clear => 'Limpiar';
+
+  @override
+  String get close => 'Cerrar';
+
+  @override
+  String get startDateLabel => 'Fecha de inicio';
+
+  @override
+  String get selectDateOptional => 'Seleccionar fecha (opcional)';
 
   @override
   String get configurePlanTitle => 'Configura tu plan';

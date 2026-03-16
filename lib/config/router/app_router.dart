@@ -16,6 +16,7 @@ import 'package:meal_plan_app/features/nutrition/nutrition.dart';
 import '../../features/meal_plan/meal_plan.dart';
 import 'package:meal_plan_app/features/meal_plan/domain/domain.dart';
 import 'package:meal_plan_app/features/meal_plan/presentation/screens/loading_meal_plan_screen.dart';
+import 'package:meal_plan_app/features/meal_plan/presentation/screens/meal_plan_cooking_assistant_screen.dart';
 import 'package:meal_plan_app/features/meal_plan/presentation/screens/meal_plan_list_screen.dart';
 import 'package:meal_plan_app/features/meal_plan/presentation/screens/meal_plan_entries_screen.dart';
 
@@ -72,6 +73,7 @@ final appRouterProvider = Provider<GoRouter>((ref) {
               extra['mealTypes'] as List? ?? const [],
             ),
             usePantry: (extra['usePantry'] as bool?) ?? true,
+            startDate: extra['startDate'] as String?,
           );
         },
       ),
@@ -137,6 +139,20 @@ final appRouterProvider = Provider<GoRouter>((ref) {
                     planName: planName,
                   );
                 },
+                routes: [
+                  GoRoute(
+                    path: 'assistant',
+                    builder: (context, state) {
+                      final planId = int.tryParse(
+                        state.pathParameters['id'] ?? '',
+                      );
+                      if (planId == null || planId <= 0) {
+                        return const MealPlanDayScreen();
+                      }
+                      return MealPlanCookingAssistantScreen(planId: planId);
+                    },
+                  ),
+                ],
               ),
             ],
           ),

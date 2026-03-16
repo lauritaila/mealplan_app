@@ -52,10 +52,11 @@ class _RecipeDetailScreenState extends ConsumerState<RecipeDetailScreen> {
     final textTheme = theme.textTheme;
     final customColors = theme.extension<AppCustomColors>()!;
     final l10n = AppLocalizations.of(context);
+    final isFree = authState is AuthenticatedAuthState &&
+        (authState.user.planName?.toLowerCase().contains('free') ?? true);
     final hideNutritionValues =
         authState is AuthenticatedAuthState &&
         authState.user.configurations?['hideNutritionValues'] == true;
-
     final isCompleted = _currentStatus?.toLowerCase() == 'completed';
 
     return Scaffold(
@@ -310,34 +311,57 @@ class _RecipeDetailScreenState extends ConsumerState<RecipeDetailScreen> {
               ),
               const SizedBox(width: 12),
 
-              if (widget.entryId == null || isCompleted)
-                Expanded(
-                  child: FilledButton.icon(
-                    onPressed: () => context.push('/recipes/${widget.recipeId}/assistant'),
-                    style: FilledButton.styleFrom(
-                      backgroundColor: customColors.darkSage,
-                      padding: const EdgeInsets.symmetric(vertical: 20),
-                      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
-                      elevation: 0,
+              if (!isFree) ...[
+                if (widget.entryId == null || isCompleted)
+                  Expanded(
+                    child: FilledButton.icon(
+                      onPressed: () => context.push('/recipes/${widget.recipeId}/assistant'),
+                      style: FilledButton.styleFrom(
+                        backgroundColor: customColors.darkSage,
+                        padding: const EdgeInsets.symmetric(vertical: 20),
+                        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
+                        elevation: 0,
+                      ),
+                      icon: const Icon(Icons.smart_toy_outlined, size: 24),
+                      label: Text(
+                        l10n.cookingAssistantTitle.toUpperCase(),
+                        style: textTheme.labelLarge?.copyWith(
+                          fontWeight: FontWeight.w900,
+                          color: Colors.white,
+                          letterSpacing: 1.1,
+                        ),
+                      ),
                     ),
-                    icon: const Icon(Icons.smart_toy_outlined, size: 24),
-                    label: Text(
-                      l10n.cookingAssistantTitle.toUpperCase(),
-                      style: textTheme.labelLarge?.copyWith(
-                        fontWeight: FontWeight.w900,
-                        color: Colors.white,
-                        letterSpacing: 1.1,
+                  )
+                else ...[
+                  RecipeBottomActionButton(
+                    icon: Icons.smart_toy_outlined,
+                    onPressed: () => context.push('/recipes/${widget.recipeId}/assistant'),
+                  ),
+                  const SizedBox(width: 12),
+
+                  Expanded(
+                    child: FilledButton.icon(
+                      onPressed: () => _completeFromDetail(ref, recipe),
+                      style: FilledButton.styleFrom(
+                        backgroundColor: customColors.darkSage,
+                        padding: const EdgeInsets.symmetric(vertical: 20),
+                        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
+                        elevation: 0,
+                      ),
+                      icon: const Icon(Icons.check_circle, size: 24),
+                      label: Text(
+                        l10n.completeAction.toUpperCase(),
+                        style: textTheme.labelLarge?.copyWith(
+                          fontWeight: FontWeight.w900,
+                          color: Colors.white,
+                          letterSpacing: 1.1,
+                        ),
                       ),
                     ),
                   ),
-                )
-              else ...[
-                RecipeBottomActionButton(
-                  icon: Icons.smart_toy_outlined,
-                  onPressed: () => context.push('/recipes/${widget.recipeId}/assistant'),
-                ),
-                const SizedBox(width: 12),
-
+                ],
+              ] else if (widget.entryId != null && !isCompleted)
                 Expanded(
                   child: FilledButton.icon(
                     onPressed: () => _completeFromDetail(ref, recipe),
@@ -358,7 +382,6 @@ class _RecipeDetailScreenState extends ConsumerState<RecipeDetailScreen> {
                     ),
                   ),
                 ),
-              ],
             ],
           ),
         ),

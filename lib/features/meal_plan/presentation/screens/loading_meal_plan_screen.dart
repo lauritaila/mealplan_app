@@ -15,6 +15,7 @@ class LoadingMealPlanScreen extends ConsumerStatefulWidget {
   final int quantityOfPeople;
   final List<String> mealTypes;
   final bool usePantry;
+  final String? startDate;
 
   const LoadingMealPlanScreen({
     super.key,
@@ -23,6 +24,7 @@ class LoadingMealPlanScreen extends ConsumerStatefulWidget {
     required this.quantityOfPeople,
     required this.mealTypes,
     required this.usePantry,
+    this.startDate,
   });
 
   @override
@@ -89,6 +91,7 @@ class _LoadingMealPlanScreenState extends ConsumerState<LoadingMealPlanScreen> {
             quantityOfPeople: widget.quantityOfPeople,
             mealTypes: widget.mealTypes,
             usePantry: widget.usePantry,
+            startDate: widget.startDate,
           );
     });
   }

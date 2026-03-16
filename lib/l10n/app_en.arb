@@ -108,8 +108,43 @@
   "cancelAndGoBack": "Cancel and go back",
   "planLimitReachedTitle": "Plan limit reached",
   "planLimitReachedMessage": "You have run out of plan generations this week.",
+  "generationLimitReached": "Generation limit reached",
+  "generationsRemainingWarning": "{remaining} of {limit} left",
+  "@generationsRemainingWarning": {
+    "placeholders": {
+      "remaining": {},
+      "limit": {}
+    }
+  },
+  "premiumFeatureTitle": "Premium Feature",
+  "pantryGenerationPremiumMessage": "Generating meal plans with your pantry is a premium feature. Upgrade to Pro to unlock it!",
+  "choosePlanLabel": "Choose your plan",
+  "currentPlanBadge": "Current",
+  "recommendedBadge": "Recommended",
+  "freePriceLabel": "Free",
+  "contactSalesMessage": "Upgrade flow coming soon! Contact support for early access.",
+  "stayFreeLabel": "Stay with Free",
+  "upgradeToLabel": "Upgrade to {plan}",
+  "@upgradeToLabel": {
+    "placeholders": {
+      "plan": {
+        "type": "Object"
+      }
+    }
+  },
+  "perMonthLabel": "month",
+  "cookingAssistantPremiumMessage": "The Cooking Assistant is a pro feature that helps you with step-by-step guidance and substitutions. Upgrade to Pro to unlock it!",
+  "mealPlansLabel": "Meal Plans",
+  "substitutesLabel": "Ingredient Substitutes",
+  "regenerationsLabel": "Recipe Regenerations",
+  "cookingAssistantLabel": "Cooking Assistant",
+  "substituteLimitReachedMessage": "You've reached your ingredient substitution limit. Upgrade to a premium plan for unlimited help with your recipes!",
+  "cookingToolsLabel": "Required Tools",
   "newPlanTitle": "New Plan",
   "clear": "Clear",
+  "close": "Close",
+  "startDateLabel": "Start Date",
+  "selectDateOptional": "Select date (optional)",
   "configurePlanTitle": "Configure your plan",
   "configurePlanSubtitle": "Define duration, people and base meals.",
   "durationTitle": "Duration",

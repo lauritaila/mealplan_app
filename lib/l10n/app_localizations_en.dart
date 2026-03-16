@@ -241,10 +241,84 @@ class AppLocalizationsEn extends AppLocalizations {
       'You have run out of plan generations this week.';
 
   @override
+  String get generationLimitReached => 'Generation limit reached';
+
+  @override
+  String generationsRemainingWarning(Object remaining, Object limit) {
+    return '$remaining of $limit left';
+  }
+
+  @override
+  String get premiumFeatureTitle => 'Premium Feature';
+
+  @override
+  String get pantryGenerationPremiumMessage =>
+      'Generating meal plans with your pantry is a premium feature. Upgrade to Pro to unlock it!';
+
+  @override
+  String get choosePlanLabel => 'Choose your plan';
+
+  @override
+  String get currentPlanBadge => 'Current';
+
+  @override
+  String get recommendedBadge => 'Recommended';
+
+  @override
+  String get freePriceLabel => 'Free';
+
+  @override
+  String get contactSalesMessage =>
+      'Upgrade flow coming soon! Contact support for early access.';
+
+  @override
+  String get stayFreeLabel => 'Stay with Free';
+
+  @override
+  String upgradeToLabel(Object plan) {
+    return 'Upgrade to $plan';
+  }
+
+  @override
+  String get perMonthLabel => 'month';
+
+  @override
+  String get cookingAssistantPremiumMessage =>
+      'The Cooking Assistant is a pro feature that helps you with step-by-step guidance and substitutions. Upgrade to Pro to unlock it!';
+
+  @override
+  String get mealPlansLabel => 'Meal Plans';
+
+  @override
+  String get substitutesLabel => 'Ingredient Substitutes';
+
+  @override
+  String get regenerationsLabel => 'Recipe Regenerations';
+
+  @override
+  String get cookingAssistantLabel => 'Cooking Assistant';
+
+  @override
+  String get substituteLimitReachedMessage =>
+      'You\'ve reached your ingredient substitution limit. Upgrade to a premium plan for unlimited help with your recipes!';
+
+  @override
+  String get cookingToolsLabel => 'Required Tools';
+
+  @override
   String get newPlanTitle => 'New Plan';
 
   @override
   String get clear => 'Clear';
+
+  @override
+  String get close => 'Close';
+
+  @override
+  String get startDateLabel => 'Start Date';
+
+  @override
+  String get selectDateOptional => 'Select date (optional)';
 
   @override
   String get configurePlanTitle => 'Configure your plan';

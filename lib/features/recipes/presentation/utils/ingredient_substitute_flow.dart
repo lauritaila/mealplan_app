@@ -3,9 +3,11 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:meal_plan_app/config/errors/app_errors.dart';
+import 'package:meal_plan_app/features/auth/presentation/provider/provider.dart';
 import 'package:meal_plan_app/features/recipes/domain/domain.dart';
 import 'package:meal_plan_app/features/recipes/presentation/providers/recipe_repository_provider.dart';
 import 'package:meal_plan_app/features/recipes/presentation/widgets/ingredient_substitutes_sheet.dart';
+import 'package:meal_plan_app/features/meal_plan/presentation/providers/provider.dart';
 import 'package:meal_plan_app/features/shared/utils/app_error_localizations.dart';
 import 'package:meal_plan_app/l10n/app_localizations.dart';
 
@@ -18,6 +20,40 @@ Future<void> showIngredientSubstituteFlow({
   required String contextHint,
 }) async {
   final l10n = AppLocalizations.of(context);
+  final authState = ref.read(authProvider);
+  
+  bool isFree = true;
+  if (authState is AuthenticatedAuthState) {
+    final planName = authState.user.planName?.toLowerCase() ?? 'free';
+    isFree = planName == 'free';
+  }
+
+  if (isFree) {
+    if (!context.mounted) return;
+    context.push(
+      '/premium',
+      extra: {
+        'title': l10n.premiumFeatureTitle,
+        'message': l10n.cookingAssistantPremiumMessage,
+      },
+    );
+    return;
+  }
+
+  // Check substitution limits
+  final canGen = await ref.read(canGenerateMealPlanProvider.future);
+  if (!context.mounted) return;
+
+  if (canGen.substituteRemaining <= 0) {
+    context.push(
+      '/premium',
+      extra: {
+        'title': l10n.premiumFeatureTitle,
+        'message': l10n.substituteLimitReachedMessage,
+      },
+    );
+    return;
+  }
 
   final selected = await showModalBottomSheet<IngredientSubstitute>(
     context: context,
@@ -66,7 +102,7 @@ Future<void> showIngredientSubstituteFlow({
               style: const TextStyle(color: Color(0xFF5A6B5A)),
             ),
             if (!hideNutritionValues) ...[
-              const SizedBox(height: 12),
+              const SizedBox(height: 12), // Corrected: Reverted to original SizedBox
               Text(
                 l10n.substituteConfirmNutritionWarning,
                 style: const TextStyle(
@@ -87,7 +123,7 @@ Future<void> showIngredientSubstituteFlow({
               style: const TextStyle(color: Color(0xFF8A9A8A), fontWeight: FontWeight.bold),
             ),
           ),
-          const SizedBox(width: 8),
+          const SizedBox(width: 8), // Corrected: Removed `error: (error, stack) => const SizedBox.shrink(),`
           FilledButton(
             onPressed: () => Navigator.of(dialogContext).pop(true),
             style: FilledButton.styleFrom(

@@ -35,4 +35,6 @@ abstract class MealPlanDatasource {
     String startDate,
     String endDate,
   );
+  Future<MealPlanCookingAssistantResponseDto> getMealPlanCookingAssistant(int planId);
+  Future<CanGenerateMealPlanResponse> canGenerateMealPlan();
 }

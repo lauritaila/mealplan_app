@@ -107,4 +107,14 @@ class MealPlanRepositoryImpl extends MealPlanRepository {
       entryId: entryId,
     );
   }
+
+  @override
+  Future<MealPlanCookingAssistantResponseDto> getMealPlanCookingAssistant(int planId) {
+    return datasource.getMealPlanCookingAssistant(planId);
+  }
+
+  @override
+  Future<CanGenerateMealPlanResponse> canGenerateMealPlan() {
+    return datasource.canGenerateMealPlan();
+  }
 }

@@ -1,3 +1,4 @@
+import 'package:flutter/foundation.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:meal_plan_app/features/auth/presentation/provider/provider.dart';
 import 'package:meal_plan_app/config/errors/app_errors.dart';
@@ -85,6 +86,7 @@ class MealPlanGenerator extends _$MealPlanGenerator {
     required int quantityOfPeople,
     required List<String> mealTypes,
     required bool usePantry,
+    String? startDate,
   }) async {
     state = state.copyWith(
       status: MealPlanGeneratorStatus.loading,
@@ -110,32 +112,48 @@ class MealPlanGenerator extends _$MealPlanGenerator {
       }
 
       final mealPlansState = ref.read(mealPlansProvider);
-      DateTime startDate = DateTime.now();
-
-      final List<dynamic> currentPlans;
-      if (mealPlansState is AsyncData) {
-        currentPlans = mealPlansState.value!;
-      } else if (mealPlansState is AsyncLoading) {
-        // Option A: wait for it
-        currentPlans = await ref.read(mealPlansProvider.future);
-      } else {
-        // Error or other: assume empty or propagate error
-        currentPlans = [];
-      }
-
-      if (currentPlans.isNotEmpty) {
-        DateTime latestEndDate = currentPlans
-            .map((p) => p.endDate)
-            .reduce((a, b) => a.isAfter(b) ? a : b);
-        if (latestEndDate.isAfter(
-          startDate.subtract(const Duration(days: 1)),
-        )) {
-          startDate = latestEndDate.add(const Duration(days: 1));
+      String startDateStr;
+      
+      bool isDateValid = false;
+      if (startDate != null && startDate.isNotEmpty) {
+        try {
+          // Validate YYYY-MM-DD format
+          final date = DateTime.parse(startDate);
+          isDateValid = true;
+          debugPrint('Valid startDate received: $date');
+        } catch (_) {
+          isDateValid = false;
         }
       }
 
-      final startDateStr =
-          '${startDate.year.toString().padLeft(4, '0')}-${startDate.month.toString().padLeft(2, '0')}-${startDate.day.toString().padLeft(2, '0')}';
+      if (isDateValid && startDate != null) {
+        startDateStr = startDate;
+      } else {
+        DateTime chosenStartDate = DateTime.now();
+
+        final List<dynamic> currentPlans;
+        if (mealPlansState is AsyncData) {
+          currentPlans = mealPlansState.value!;
+        } else if (mealPlansState is AsyncLoading) {
+          currentPlans = await ref.read(mealPlansProvider.future);
+        } else {
+          currentPlans = [];
+        }
+
+        if (currentPlans.isNotEmpty) {
+          DateTime latestEndDate = currentPlans
+              .map((p) => p.endDate)
+              .reduce((a, b) => a.isAfter(b) ? a : b);
+          if (latestEndDate.isAfter(
+            chosenStartDate.subtract(const Duration(days: 1)),
+          )) {
+            chosenStartDate = latestEndDate.add(const Duration(days: 1));
+          }
+        }
+
+        startDateStr =
+            '${chosenStartDate.year.toString().padLeft(4, '0')}-${chosenStartDate.month.toString().padLeft(2, '0')}-${chosenStartDate.day.toString().padLeft(2, '0')}';
+      }
 
       final request = NewMealPlanRequest(
         numberOfDays: numberOfDays,

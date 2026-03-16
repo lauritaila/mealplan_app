@@ -488,6 +488,120 @@ abstract class AppLocalizations {
   /// **'You have run out of plan generations this week.'**
   String get planLimitReachedMessage;
 
+  /// No description provided for @generationLimitReached.
+  ///
+  /// In en, this message translates to:
+  /// **'Generation limit reached'**
+  String get generationLimitReached;
+
+  /// No description provided for @generationsRemainingWarning.
+  ///
+  /// In en, this message translates to:
+  /// **'{remaining} of {limit} left'**
+  String generationsRemainingWarning(Object remaining, Object limit);
+
+  /// No description provided for @premiumFeatureTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Premium Feature'**
+  String get premiumFeatureTitle;
+
+  /// No description provided for @pantryGenerationPremiumMessage.
+  ///
+  /// In en, this message translates to:
+  /// **'Generating meal plans with your pantry is a premium feature. Upgrade to Pro to unlock it!'**
+  String get pantryGenerationPremiumMessage;
+
+  /// No description provided for @choosePlanLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Choose your plan'**
+  String get choosePlanLabel;
+
+  /// No description provided for @currentPlanBadge.
+  ///
+  /// In en, this message translates to:
+  /// **'Current'**
+  String get currentPlanBadge;
+
+  /// No description provided for @recommendedBadge.
+  ///
+  /// In en, this message translates to:
+  /// **'Recommended'**
+  String get recommendedBadge;
+
+  /// No description provided for @freePriceLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Free'**
+  String get freePriceLabel;
+
+  /// No description provided for @contactSalesMessage.
+  ///
+  /// In en, this message translates to:
+  /// **'Upgrade flow coming soon! Contact support for early access.'**
+  String get contactSalesMessage;
+
+  /// No description provided for @stayFreeLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Stay with Free'**
+  String get stayFreeLabel;
+
+  /// No description provided for @upgradeToLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Upgrade to {plan}'**
+  String upgradeToLabel(Object plan);
+
+  /// No description provided for @perMonthLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'month'**
+  String get perMonthLabel;
+
+  /// No description provided for @cookingAssistantPremiumMessage.
+  ///
+  /// In en, this message translates to:
+  /// **'The Cooking Assistant is a pro feature that helps you with step-by-step guidance and substitutions. Upgrade to Pro to unlock it!'**
+  String get cookingAssistantPremiumMessage;
+
+  /// No description provided for @mealPlansLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Meal Plans'**
+  String get mealPlansLabel;
+
+  /// No description provided for @substitutesLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Ingredient Substitutes'**
+  String get substitutesLabel;
+
+  /// No description provided for @regenerationsLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Recipe Regenerations'**
+  String get regenerationsLabel;
+
+  /// No description provided for @cookingAssistantLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Cooking Assistant'**
+  String get cookingAssistantLabel;
+
+  /// No description provided for @substituteLimitReachedMessage.
+  ///
+  /// In en, this message translates to:
+  /// **'You\'ve reached your ingredient substitution limit. Upgrade to a premium plan for unlimited help with your recipes!'**
+  String get substituteLimitReachedMessage;
+
+  /// No description provided for @cookingToolsLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Required Tools'**
+  String get cookingToolsLabel;
+
   /// No description provided for @newPlanTitle.
   ///
   /// In en, this message translates to:
@@ -499,6 +613,24 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Clear'**
   String get clear;
+
+  /// No description provided for @close.
+  ///
+  /// In en, this message translates to:
+  /// **'Close'**
+  String get close;
+
+  /// No description provided for @startDateLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Start Date'**
+  String get startDateLabel;
+
+  /// No description provided for @selectDateOptional.
+  ///
+  /// In en, this message translates to:
+  /// **'Select date (optional)'**
+  String get selectDateOptional;
 
   /// No description provided for @configurePlanTitle.
   ///

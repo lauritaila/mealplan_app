@@ -735,4 +735,96 @@ class SupabaseMealPlanDatasource extends MealPlanDatasource {
       throw const NetworkAppError.serverError();
     }
   }
+
+  @override
+  Future<MealPlanCookingAssistantResponseDto> getMealPlanCookingAssistant(
+    int planId,
+  ) async {
+    try {
+      if (_mealPlanApiBaseUrl.startsWith('No configure')) {
+        throw const ConfigAppError.missing('API_BASE_URL');
+      }
+
+      final response = await _dio.get(
+        '/api/meal-plan/$planId/cooking-assistant',
+        options: Options(headers: {'Content-Type': 'application/json'}),
+      );
+
+      final status = response.statusCode ?? 200;
+      if (status < 200 || status >= 300) {
+        _throwByStatus(status);
+      }
+
+      final data = response.data;
+      if (data == null || data is! Map<String, dynamic>) {
+        throw const DataAppError.mappingError();
+      }
+
+      return MealPlanCookingAssistantResponseDto.fromJson(
+        Map<String, dynamic>.from(data),
+      );
+    } on DioException catch (e) {
+      if (e.type == DioExceptionType.connectionTimeout ||
+          e.type == DioExceptionType.sendTimeout ||
+          e.type == DioExceptionType.receiveTimeout) {
+        throw const NetworkAppError.timeout();
+      }
+      if (e.type == DioExceptionType.badResponse) {
+        _throwByStatus(e.response?.statusCode ?? -1);
+      }
+      if (e.type == DioExceptionType.connectionError) {
+        throw const NetworkAppError.unreachableHost();
+      }
+      throw const NetworkAppError.serverError();
+    } on AppError {
+      rethrow;
+    } catch (_) {
+      throw const NetworkAppError.serverError();
+    }
+  }
+
+  @override
+  Future<CanGenerateMealPlanResponse> canGenerateMealPlan() async {
+    try {
+      if (_mealPlanApiBaseUrl.startsWith('No configure')) {
+        throw const ConfigAppError.missing('API_BASE_URL');
+      }
+
+      final response = await _dio.get(
+        '/api/meal-plan/can-generate',
+        options: Options(headers: {'Content-Type': 'application/json'}),
+      );
+
+      final status = response.statusCode ?? 200;
+      if (status < 200 || status >= 300) {
+        _throwByStatus(status);
+      }
+
+      final data = response.data;
+      if (data == null || data is! Map<String, dynamic>) {
+        throw const DataAppError.mappingError();
+      }
+
+      return CanGenerateMealPlanResponse.fromJson(
+        Map<String, dynamic>.from(data),
+      );
+    } on DioException catch (e) {
+      if (e.type == DioExceptionType.connectionTimeout ||
+          e.type == DioExceptionType.sendTimeout ||
+          e.type == DioExceptionType.receiveTimeout) {
+        throw const NetworkAppError.timeout();
+      }
+      if (e.type == DioExceptionType.badResponse) {
+        _throwByStatus(e.response?.statusCode ?? -1);
+      }
+      if (e.type == DioExceptionType.connectionError) {
+        throw const NetworkAppError.unreachableHost();
+      }
+      throw const NetworkAppError.serverError();
+    } on AppError {
+      rethrow;
+    } catch (_) {
+      throw const NetworkAppError.serverError();
+    }
+  }
 }

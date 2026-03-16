@@ -63,6 +63,10 @@ class UserMapper {
               ?.map((e) => e as int)
               .toList() ??
           [],
+      mealPlanGenerateLimit: (permJson?['mealPlanGenerateLimit'] as int?) ?? 0,
+      substituteLimit: (permJson?['substituteLimit'] as int?) ?? 0,
+      regenerateRecipeLimit: (permJson?['regenerateRecipeLimit'] as int?) ?? 0,
+      recipeAssistantLimit: (permJson?['recipeAssistantLimit'] as int?) ?? 0,
     );
 
     return Permissions(
@@ -81,6 +85,10 @@ class UserMapper {
         'mealPlanGenerate': permissions.permissions.mealPlanGenerate,
         'mealPlanTypeFood': permissions.permissions.mealPlanTypeFood,
         'mealPlanTime': permissions.permissions.mealPlanTime,
+        'mealPlanGenerateLimit': permissions.permissions.mealPlanGenerateLimit,
+        'substituteLimit': permissions.permissions.substituteLimit,
+        'regenerateRecipeLimit': permissions.permissions.regenerateRecipeLimit,
+        'recipeAssistantLimit': permissions.permissions.recipeAssistantLimit,
       },
     };
   }

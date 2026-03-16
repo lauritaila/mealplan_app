@@ -12,23 +12,58 @@ class Permissions extends Equatable {
 
 class PermissionDetails extends Equatable {
   final List<int> mealPlanDays;
-  final int? mealPlanGenerate;
   final List<String> mealPlanTypeFood;
+  final int? mealPlanGenerate;
   final List<int> mealPlanTime;
+  final int mealPlanGenerateLimit;
+  final int substituteLimit;
+  final int regenerateRecipeLimit;
+  final int recipeAssistantLimit;
 
   const PermissionDetails({
     required this.mealPlanDays,
-    required this.mealPlanGenerate,
     required this.mealPlanTypeFood,
-    required this.mealPlanTime,
+    this.mealPlanGenerate,
+    this.mealPlanTime = const [],
+    this.mealPlanGenerateLimit = 0,
+    this.substituteLimit = 0,
+    this.regenerateRecipeLimit = 0,
+    this.recipeAssistantLimit = 0,
   });
+
+  factory PermissionDetails.fromJson(Map<String, dynamic> json) =>
+      PermissionDetails(
+        mealPlanDays: List<int>.from(json['meal_plan_days'] ?? []),
+        mealPlanTypeFood: List<String>.from(json['meal_plan_type_food'] ?? []),
+        mealPlanGenerate: json['meal_plan_generate'],
+        mealPlanTime: List<int>.from(json['meal_plan_time'] ?? []),
+        mealPlanGenerateLimit: json['meal_plan_generate_limit'] ?? 0,
+        substituteLimit: json['substitute_limit'] ?? 0,
+        regenerateRecipeLimit: json['regenerate_recipe_limit'] ?? 0,
+        recipeAssistantLimit: json['recipe_assistant_limit'] ?? 0,
+      );
+
+  Map<String, dynamic> toJson() => {
+        'meal_plan_days': mealPlanDays,
+        'meal_plan_type_food': mealPlanTypeFood,
+        'meal_plan_generate': mealPlanGenerate,
+        'meal_plan_time': mealPlanTime,
+        'meal_plan_generate_limit': mealPlanGenerateLimit,
+        'substitute_limit': substituteLimit,
+        'regenerate_recipe_limit': regenerateRecipeLimit,
+        'recipe_assistant_limit': recipeAssistantLimit,
+      };
 
   @override
   List<Object?> get props => [
     mealPlanDays,
-    mealPlanGenerate,
     mealPlanTypeFood,
+    mealPlanGenerate,
     mealPlanTime,
+    mealPlanGenerateLimit,
+    substituteLimit,
+    regenerateRecipeLimit,
+    recipeAssistantLimit,
   ];
 }
 

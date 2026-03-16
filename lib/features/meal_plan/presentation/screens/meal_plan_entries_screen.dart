@@ -130,12 +130,20 @@ class MealPlanEntriesScreen extends ConsumerWidget {
                         ),
                       ),
                       const SizedBox(height: 12),
-                      Text(
-                        l10n.configurePlanSubtitle, // Using a generic localized description for now
-                        style: textTheme.bodyMedium?.copyWith(
-                          color: customColors.slateGrey,
-                          height: 1.4,
-                        ),
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          Expanded(
+                            child: Text(
+                              l10n.configurePlanSubtitle,
+                              style: textTheme.bodyMedium?.copyWith(
+                                color: customColors.slateGrey,
+                                height: 1.4,
+                              ),
+                            ),
+                          ),
+                          _CookingAssistantTrigger(planId: planId),
+                        ],
                       ),
                     ],
                   ),
@@ -841,6 +849,50 @@ bool _isSkippedStatus(String? status) {
 String _formatInt(int? value) {
   if (value == null) return '--';
   return value.toString();
+}
+
+class _CookingAssistantTrigger extends ConsumerWidget {
+  final int planId;
+  const _CookingAssistantTrigger({required this.planId});
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final authState = ref.watch(authProvider);
+    final theme = Theme.of(context);
+    final customColors = theme.extension<AppCustomColors>()!;
+    final l10n = AppLocalizations.of(context);
+
+    final bool isFree = authState is AuthenticatedAuthState &&
+        (authState.user.planName?.toLowerCase().contains('free') ?? true);
+
+    if (isFree) return const SizedBox.shrink();
+
+    return Padding(
+      padding: const EdgeInsets.only(left: 16),
+      child: FilledButton.icon(
+        onPressed: () => context.push('/meal-plan/$planId/assistant'),
+        style: FilledButton.styleFrom(
+          backgroundColor: customColors.darkSage,
+          foregroundColor: Colors.white,
+          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+          elevation: 0,
+        ),
+        icon: const Icon(
+          Icons.auto_fix_high_rounded, 
+          size: 18,
+          color: Colors.white,
+        ),
+        label: Text(
+          l10n.cookingAssistantTitle,
+          style: theme.textTheme.labelLarge?.copyWith(
+            color: Colors.white,
+            fontWeight: FontWeight.bold,
+          ),
+        ),
+      ),
+    );
+  }
 }
 
 

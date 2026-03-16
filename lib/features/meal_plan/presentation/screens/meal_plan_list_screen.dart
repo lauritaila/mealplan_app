@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:intl/intl.dart';
+import 'package:meal_plan_app/features/auth/presentation/provider/provider.dart';
 import 'package:meal_plan_app/features/meal_plan/domain/domain.dart';
 import 'package:meal_plan_app/features/meal_plan/presentation/providers/provider.dart';
 import 'package:meal_plan_app/l10n/app_localizations.dart';
@@ -280,16 +281,23 @@ class _MealPlanCard extends ConsumerWidget {
                         ],
                       ),
                     ),
-                    Material(
-                      color: Colors.transparent,
-                      child: IconButton(
-                        onPressed: () => _showPlanActionsSheet(context, ref, l10n),
-                        icon: const Icon(Icons.more_vert_rounded),
-                        padding: EdgeInsets.zero,
-                        constraints: const BoxConstraints(minWidth: 32, minHeight: 32),
-                        splashRadius: 24,
-                        color: customColors.slateGrey?.withValues(alpha: 0.3),
-                      ),
+                    Row(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        if (plan.generatedByAi)
+                          _AssistantButton(planId: plan.id),
+                        Material(
+                          color: Colors.transparent,
+                          child: IconButton(
+                            onPressed: () => _showPlanActionsSheet(context, ref, l10n),
+                            icon: const Icon(Icons.more_vert_rounded),
+                            padding: EdgeInsets.zero,
+                            constraints: const BoxConstraints(minWidth: 32, minHeight: 32),
+                            splashRadius: 24,
+                            color: customColors.slateGrey?.withValues(alpha: 0.3),
+                          ),
+                        ),
+                      ],
                     ),
                   ],
                 ),
@@ -352,6 +360,38 @@ class _MealPlanCard extends ConsumerWidget {
           ),
         );
       },
+    );
+  }
+}
+
+class _AssistantButton extends ConsumerWidget {
+  final int planId;
+  const _AssistantButton({required this.planId});
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final authState = ref.watch(authProvider);
+    final theme = Theme.of(context);
+    final customColors = theme.extension<AppCustomColors>()!;
+    final l10n = AppLocalizations.of(context);
+    
+    // Only show for authenticated users
+    if (authState is! AuthenticatedAuthState) return const SizedBox.shrink();
+    
+    final user = authState.user;
+    final planName = user.planName?.toLowerCase() ?? 'free';
+    
+    // Explicitly hide for free plan users
+    if (planName == 'free') return const SizedBox.shrink();
+
+    return IconButton(
+      onPressed: () => context.push('/meal-plan/$planId/assistant'),
+      icon: Icon(
+        Icons.auto_fix_high_rounded, 
+        color: customColors.darkSage, 
+        size: 20
+      ),
+      tooltip: l10n.cookingAssistantTitle,
     );
   }
 }
