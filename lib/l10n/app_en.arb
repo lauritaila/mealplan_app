@@ -758,5 +758,12 @@
   "monthOct": "Oct",
   "monthNov": "Nov",
   "monthDec": "Dec",
-  "breakdownTabCreate": "Create"
+  "breakdownTabCreate": "Create",
+  "promoCodeLabel": "Promotion Code",
+  "promoCodeHint": "Enter code (e.g. MEAL15)",
+  "validateAction": "Validate",
+  "invalidPromoCode": "Invalid or expired promotion code.",
+  "promoCodeApplied": "Promotion code applied!",
+  "havePromoCode": "Do you have a promotion code?",
+  "enterPromoCode": "Enter Promotion Code"
 }

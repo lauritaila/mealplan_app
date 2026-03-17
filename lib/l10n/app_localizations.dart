@@ -3271,6 +3271,48 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Create'**
   String get breakdownTabCreate;
+
+  /// No description provided for @promoCodeLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Promotion Code'**
+  String get promoCodeLabel;
+
+  /// No description provided for @promoCodeHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Enter code (e.g. MEAL15)'**
+  String get promoCodeHint;
+
+  /// No description provided for @validateAction.
+  ///
+  /// In en, this message translates to:
+  /// **'Validate'**
+  String get validateAction;
+
+  /// No description provided for @invalidPromoCode.
+  ///
+  /// In en, this message translates to:
+  /// **'Invalid or expired promotion code.'**
+  String get invalidPromoCode;
+
+  /// No description provided for @promoCodeApplied.
+  ///
+  /// In en, this message translates to:
+  /// **'Promotion code applied!'**
+  String get promoCodeApplied;
+
+  /// No description provided for @havePromoCode.
+  ///
+  /// In en, this message translates to:
+  /// **'Do you have a promotion code?'**
+  String get havePromoCode;
+
+  /// No description provided for @enterPromoCode.
+  ///
+  /// In en, this message translates to:
+  /// **'Enter Promotion Code'**
+  String get enterPromoCode;
 }
 
 class _AppLocalizationsDelegate

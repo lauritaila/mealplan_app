@@ -1,9 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
+import 'package:intl/intl.dart';
 import 'package:meal_plan_app/config/theme/app_theme.dart';
 import 'package:meal_plan_app/features/auth/presentation/provider/provider.dart';
+import 'package:meal_plan_app/features/shared/domain/entities/subscription_plan.dart';
 import 'package:meal_plan_app/features/shared/providers/subscription_plans_provider.dart';
+import 'package:meal_plan_app/features/shared/providers/subscription_promo_code_provider.dart';
+import 'package:meal_plan_app/features/shared/presentation/widgets/promo_code_bottom_sheet.dart';
 import 'package:meal_plan_app/l10n/app_localizations.dart';
 
 class PremiumScreen extends ConsumerWidget {
@@ -22,6 +26,7 @@ class PremiumScreen extends ConsumerWidget {
     final plansAsync = ref.watch(subscriptionPlansProvider);
     final authState = ref.watch(authProvider);
 
+    final promoState = ref.watch(subscriptionPromoCodeProvider);
     final currentPlanName = authState is AuthenticatedAuthState
         ? (authState.user.planName?.toLowerCase() ?? 'free')
         : 'free';
@@ -55,6 +60,7 @@ class PremiumScreen extends ConsumerWidget {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
                           IconButton(
                             onPressed: () => context.canPop()
@@ -66,6 +72,20 @@ class PremiumScreen extends ConsumerWidget {
                               backgroundColor: Colors.white.withValues(alpha: 0.2),
                             ),
                           ),
+                          if (currentPlanName == 'free')
+                            TextButton.icon(
+                              onPressed: () => PromoCodeBottomSheet.show(context, planId: ''),
+                              icon: const Icon(Icons.confirmation_number_outlined, color: Colors.white, size: 18),
+                              label: Text(
+                                l10n.enterPromoCode,
+                                style: const TextStyle(color: Colors.white, fontWeight: FontWeight.w700),
+                              ),
+                              style: TextButton.styleFrom(
+                                backgroundColor: Colors.white.withValues(alpha: 0.1),
+                                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
+                                padding: const EdgeInsets.symmetric(horizontal: 16),
+                              ),
+                            ),
                         ],
                       ),
                       const SizedBox(height: 24),
@@ -97,9 +117,39 @@ class PremiumScreen extends ConsumerWidget {
                             : l10n.freePlanLimitedGenerations,
                         style: textTheme.bodyLarge?.copyWith(
                           color: Colors.white.withValues(alpha: 0.9),
-                          height: 1.5,
+                          fontWeight: FontWeight.w600,
                         ),
                       ),
+                      if (promoState.code != null) ...[
+                        const SizedBox(height: 16),
+                        Container(
+                          padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+                          decoration: BoxDecoration(
+                            color: Colors.white.withValues(alpha: 0.2),
+                            borderRadius: BorderRadius.circular(8),
+                            border: Border.all(color: Colors.white.withValues(alpha: 0.3)),
+                          ),
+                          child: Row(
+                            mainAxisSize: MainAxisSize.min,
+                            children: [
+                              const Icon(Icons.sell_outlined, color: Colors.white, size: 14),
+                              const SizedBox(width: 8),
+                              Text(
+                                '${l10n.promoCodeLabel}: ${promoState.code}',
+                                style: textTheme.labelMedium?.copyWith(
+                                  color: Colors.white,
+                                  fontWeight: FontWeight.w900,
+                                ),
+                              ),
+                              const SizedBox(width: 8),
+                              GestureDetector(
+                                onTap: () => ref.read(subscriptionPromoCodeProvider.notifier).clearCode(),
+                                child: const Icon(Icons.close, color: Colors.white, size: 14),
+                              ),
+                            ],
+                          ),
+                        ),
+                      ],
                     ],
                   ),
                 ),
@@ -179,7 +229,7 @@ class PremiumScreen extends ConsumerWidget {
   }
 }
 
-class _PlanCard extends StatelessWidget {
+class _PlanCard extends ConsumerWidget {
   final SubscriptionPlan plan;
   final String locale;
   final bool isCurrent;
@@ -197,9 +247,16 @@ class _PlanCard extends StatelessWidget {
   });
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
     final l10n = AppLocalizations.of(context);
-    final features = plan.descriptionList(locale);
+    final promoState = ref.watch(subscriptionPromoCodeProvider);
+    
+    final features = plan.description;
+    
+    // Apply promo pricing if valid for this plan
+    final pricing = (promoState.planId == plan.id && promoState.monthlyPricing != null)
+        ? promoState.monthlyPricing!
+        : plan.monthly;
 
     return Container(
       decoration: BoxDecoration(
@@ -286,9 +343,12 @@ class _PlanCard extends StatelessWidget {
                         crossAxisAlignment: CrossAxisAlignment.end,
                         children: [
                           Text(
-                            plan.price == 0
+                            pricing.discountedPrice == 0
                                 ? l10n.freePriceLabel
-                                : '\$${plan.price.toStringAsFixed(2)}',
+                                : NumberFormat.simpleCurrency(
+                                    name: pricing.currency,
+                                    decimalDigits: pricing.discountedPrice % 1 == 0 ? 0 : 2,
+                                  ).format(pricing.discountedPrice),
                             style: textTheme.headlineSmall?.copyWith(
                               fontWeight: FontWeight.w900,
                               color: isFeatured
@@ -296,7 +356,7 @@ class _PlanCard extends StatelessWidget {
                                   : customColors.textDarkBlue,
                             ),
                           ),
-                          if (plan.price > 0) ...[
+                          if (pricing.discountedPrice > 0) ...[
                             const SizedBox(width: 4),
                             Padding(
                               padding: const EdgeInsets.only(bottom: 4),
@@ -379,7 +439,7 @@ class _PlanCard extends StatelessWidget {
                     elevation: 0,
                   ),
                   child: Text(
-                    plan.price == 0
+                    pricing.discountedPrice == 0
                         ? l10n.stayFreeLabel
                         : l10n.upgradeToLabel(plan.name),
                     style: textTheme.labelLarge?.copyWith(

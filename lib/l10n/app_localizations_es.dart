@@ -189,12 +189,12 @@ class AppLocalizationsEs extends AppLocalizations {
 
   @override
   String cookMinutesLabel(Object minutes) {
-    return 'Cocción: $minutes min';
+    return 'CocciÃ³n: $minutes min';
   }
 
   @override
   String proteinLabel(Object grams) {
-    return 'Proteína: $grams g';
+    return 'ProteÃ­na: $grams g';
   }
 
   @override
@@ -217,7 +217,7 @@ class AppLocalizationsEs extends AppLocalizations {
   String get loadingMessageRecipes => 'Quitando el polvo a las recetas...';
 
   @override
-  String get loadingMessageAunts => 'Preguntando a las tías sus secretos...';
+  String get loadingMessageAunts => 'Preguntando a las tÃ­as sus secretos...';
 
   @override
   String get loadingMessageFridge => 'Mirando en la nevera...';
@@ -236,14 +236,14 @@ class AppLocalizationsEs extends AppLocalizations {
   String get cancelAndGoBack => 'Cancelar y volver';
 
   @override
-  String get planLimitReachedTitle => 'Límite de planes alcanzado';
+  String get planLimitReachedTitle => 'LÃ­mite de planes alcanzado';
 
   @override
   String get planLimitReachedMessage =>
-      'Has agotado tus intentos de generación esta semana.';
+      'Has agotado tus intentos de generaciÃ³n esta semana.';
 
   @override
-  String get generationLimitReached => 'Límite de generación alcanzado';
+  String get generationLimitReached => 'LÃ­mite de generaciÃ³n alcanzado';
 
   @override
   String generationsRemainingWarning(Object remaining, Object limit) {
@@ -251,11 +251,11 @@ class AppLocalizationsEs extends AppLocalizations {
   }
 
   @override
-  String get premiumFeatureTitle => 'Característica Premium';
+  String get premiumFeatureTitle => 'CaracterÃ­stica Premium';
 
   @override
   String get pantryGenerationPremiumMessage =>
-      'Generar planes de comidas con tu despensa es una característica premium. ¡Pásate a Pro para desbloquearlo!';
+      'Generar planes de comidas con tu despensa es una caracterÃ­stica premium. Â¡PÃ¡sate a Pro para desbloquearlo!';
 
   @override
   String get choosePlanLabel => 'Elige tu plan';
@@ -271,7 +271,7 @@ class AppLocalizationsEs extends AppLocalizations {
 
   @override
   String get contactSalesMessage =>
-      'Contáctenos para soluciones empresariales personalizadas.';
+      'ContÃ¡ctenos para soluciones empresariales personalizadas.';
 
   @override
   String get stayFreeLabel => 'Continuar con Plan Gratis';
@@ -286,7 +286,7 @@ class AppLocalizationsEs extends AppLocalizations {
 
   @override
   String get cookingAssistantPremiumMessage =>
-      'El Asistente de Cocina es una función pro que te ayuda con guía paso a paso y sustituciones. ¡Pásate a Pro para desbloquearlo!';
+      'El Asistente de Cocina es una funciÃ³n pro que te ayuda con guÃ­a paso a paso y sustituciones. Â¡PÃ¡sate a Pro para desbloquearlo!';
 
   @override
   String get mealPlansLabel => 'Planes de Comidas';
@@ -302,7 +302,7 @@ class AppLocalizationsEs extends AppLocalizations {
 
   @override
   String get substituteLimitReachedMessage =>
-      'Has alcanzado tu límite de sustituciones de ingredientes. ¡Pásate a un plan premium para obtener ayuda ilimitada con tus recetas!';
+      'Has alcanzado tu lÃ­mite de sustituciones de ingredientes. Â¡PÃ¡sate a un plan premium para obtener ayuda ilimitada con tus recetas!';
 
   @override
   String get cookingToolsLabel => 'Utensilios';
@@ -327,14 +327,14 @@ class AppLocalizationsEs extends AppLocalizations {
 
   @override
   String get configurePlanSubtitle =>
-      'Define duración, personas y comidas base.';
+      'Define duraciÃ³n, personas y comidas base.';
 
   @override
-  String get durationTitle => 'Duración';
+  String get durationTitle => 'DuraciÃ³n';
 
   @override
   String daysLabel(Object days) {
-    return '$days días';
+    return '$days dÃ­as';
   }
 
   @override
@@ -361,7 +361,7 @@ class AppLocalizationsEs extends AppLocalizations {
   String get mealTypeDinner => 'Cena';
 
   @override
-  String get mealTypeBreakfastSubtitle => 'Energía para el día';
+  String get mealTypeBreakfastSubtitle => 'EnergÃ­a para el dÃ­a';
 
   @override
   String get mealTypeLunchSubtitle => 'Comida principal';
@@ -376,10 +376,10 @@ class AppLocalizationsEs extends AppLocalizations {
   String get notesOptionalTitle => 'Notas (opcional)';
 
   @override
-  String get notesHint => 'Ej.: Sin lactosa, más proteínas...';
+  String get notesHint => 'Ej.: Sin lactosa, mÃ¡s proteÃ­nas...';
 
   @override
-  String get mealsOfDayTitle => 'Comidas del día';
+  String get mealsOfDayTitle => 'Comidas del dÃ­a';
 
   @override
   String get skipMealAction => 'Saltar comida';
@@ -401,7 +401,7 @@ class AppLocalizationsEs extends AppLocalizations {
   String get viewRecipeDetails => 'Ver receta';
 
   @override
-  String get categoriesTitle => 'Categorías';
+  String get categoriesTitle => 'CategorÃ­as';
 
   @override
   String get metricCalories => 'Cal';
@@ -416,13 +416,13 @@ class AppLocalizationsEs extends AppLocalizations {
   String get metricCarbs => 'Carbs';
 
   @override
-  String get metricProtein => 'Proteína';
+  String get metricProtein => 'ProteÃ­na';
 
   @override
   String get metricKcal => 'Kcal';
 
   @override
-  String get descriptionTitle => 'Descripción';
+  String get descriptionTitle => 'DescripciÃ³n';
 
   @override
   String get instructionsTitle => 'Instrucciones';
@@ -449,7 +449,7 @@ class AppLocalizationsEs extends AppLocalizations {
   String get weekdayTueShort => 'Mar';
 
   @override
-  String get weekdayWedShort => 'Mié';
+  String get weekdayWedShort => 'MiÃ©';
 
   @override
   String get weekdayThuShort => 'Jue';
@@ -458,7 +458,7 @@ class AppLocalizationsEs extends AppLocalizations {
   String get weekdayFriShort => 'Vie';
 
   @override
-  String get weekdaySatShort => 'Sáb';
+  String get weekdaySatShort => 'SÃ¡b';
 
   @override
   String get weekdaySunShort => 'Dom';
@@ -470,7 +470,7 @@ class AppLocalizationsEs extends AppLocalizations {
   String get generateNewPlan => 'Generar nuevo plan';
 
   @override
-  String get logout => 'Cerrar sesión';
+  String get logout => 'Cerrar sesiÃ³n';
 
   @override
   String get deleteAccount => 'Eliminar cuenta';
@@ -479,13 +479,13 @@ class AppLocalizationsEs extends AppLocalizations {
   String get profileNotificationsTitle => 'Notificaciones';
 
   @override
-  String get profileTermsTitle => 'Términos y condiciones';
+  String get profileTermsTitle => 'TÃ©rminos y condiciones';
 
   @override
-  String get profilePrivacyTitle => 'Política de privacidad';
+  String get profilePrivacyTitle => 'PolÃ­tica de privacidad';
 
   @override
-  String get lastUpdatedLabel => 'Última actualización';
+  String get lastUpdatedLabel => 'Ãšltima actualizaciÃ³n';
 
   @override
   String unableToLoadPlanStatus(Object error) {
@@ -499,7 +499,7 @@ class AppLocalizationsEs extends AppLocalizations {
 
   @override
   String get goPremiumUnlockMorePlans =>
-      'Pásate a premium para desbloquear más planes.';
+      'PÃ¡sate a premium para desbloquear mÃ¡s planes.';
 
   @override
   String get goPremiumTitle => 'Hazte Premium';
@@ -523,7 +523,7 @@ class AppLocalizationsEs extends AppLocalizations {
 
   @override
   String get favoriteUpdateFailed =>
-      'No se pudo actualizar favoritos. Inténtalo de nuevo.';
+      'No se pudo actualizar favoritos. IntÃ©ntalo de nuevo.';
 
   @override
   String get favoritesTooltip => 'Favoritas';
@@ -532,7 +532,7 @@ class AppLocalizationsEs extends AppLocalizations {
   String get noRecipesAvailable => 'No hay recetas disponibles';
 
   @override
-  String get noDescriptionProvided => 'No se proporcionó descripción';
+  String get noDescriptionProvided => 'No se proporcionÃ³ descripciÃ³n';
 
   @override
   String get noFavoriteRecipes => 'No tienes recetas favoritas';
@@ -545,11 +545,11 @@ class AppLocalizationsEs extends AppLocalizations {
 
   @override
   String errorOccurred(Object error) {
-    return 'Ocurrió un error: $error';
+    return 'OcurriÃ³ un error: $error';
   }
 
   @override
-  String get login => 'Iniciar sesión';
+  String get login => 'Iniciar sesiÃ³n';
 
   @override
   String get register => 'Registrarse';
@@ -558,7 +558,7 @@ class AppLocalizationsEs extends AppLocalizations {
   String get signUp => 'Registrarse';
 
   @override
-  String get email => 'Correo electrónico';
+  String get email => 'Correo electrÃ³nico';
 
   @override
   String get name => 'Nombre';
@@ -567,50 +567,50 @@ class AppLocalizationsEs extends AppLocalizations {
   String get sendOtp => 'Enviar OTP';
 
   @override
-  String get sendVerificationCodeOtp => 'Enviar código de verificación OTP';
+  String get sendVerificationCodeOtp => 'Enviar cÃ³digo de verificaciÃ³n OTP';
 
   @override
   String get signInWithGoogle => 'Continuar con Google';
 
   @override
-  String get dontHaveAccount => '¿No tienes una cuenta?';
+  String get dontHaveAccount => 'Â¿No tienes una cuenta?';
 
   @override
-  String get doYouHaveAccount => '¿Ya tienes una cuenta?';
+  String get doYouHaveAccount => 'Â¿Ya tienes una cuenta?';
 
   @override
   String get verificationCodeSentEmail =>
-      'Se ha enviado un código de verificación a tu correo.';
+      'Se ha enviado un cÃ³digo de verificaciÃ³n a tu correo.';
 
   @override
-  String get otpEnterTitle => 'Ingresa el código de verificación';
+  String get otpEnterTitle => 'Ingresa el cÃ³digo de verificaciÃ³n';
 
   @override
   String otpEnterSubtitle(Object email) {
-    return 'Ingresa el código de 6 dígitos enviado a: $email';
+    return 'Ingresa el cÃ³digo de 6 dÃ­gitos enviado a: $email';
   }
 
   @override
-  String get otpVerificationCodeLabel => 'Código de verificación';
+  String get otpVerificationCodeLabel => 'CÃ³digo de verificaciÃ³n';
 
   @override
-  String get otpResend => '¿No recibiste un código? Enviar de nuevo';
+  String get otpResend => 'Â¿No recibiste un cÃ³digo? Enviar de nuevo';
 
   @override
-  String get otpVerifySignIn => 'Verificar e iniciar sesión';
+  String get otpVerifySignIn => 'Verificar e iniciar sesiÃ³n';
 
   @override
-  String get otpSentSnack => '¡Código de verificación enviado!';
+  String get otpSentSnack => 'Â¡CÃ³digo de verificaciÃ³n enviado!';
 
   @override
   String get preferencesSaved => 'Preferencias guardadas correctamente';
 
   @override
   String get errorSavePreferencesRollbackFailed =>
-      'No se pudieron guardar las preferencias y también falló la reversión. La app puede quedar en un estado inconsistente.';
+      'No se pudieron guardar las preferencias y tambiÃ©n fallÃ³ la reversiÃ³n. La app puede quedar en un estado inconsistente.';
 
   @override
-  String get unknownError => 'Ocurrió un error desconocido';
+  String get unknownError => 'OcurriÃ³ un error desconocido';
 
   @override
   String get wizardPrevious => 'Anterior';
@@ -645,13 +645,13 @@ class AppLocalizationsEs extends AppLocalizations {
   String get dislikedFoodsTitle => 'Alimentos que no te gustan';
 
   @override
-  String get dislikedFoodsHint => 'Aceitunas, cilantro, champiñones...';
+  String get dislikedFoodsHint => 'Aceitunas, cilantro, champiÃ±ones...';
 
   @override
   String get likedFoodsTitle => 'Alimentos que te gustan';
 
   @override
-  String get likedFoodsHint => 'Aguacate, salmón, col rizada...';
+  String get likedFoodsHint => 'Aguacate, salmÃ³n, col rizada...';
 
   @override
   String get goalsTitle => 'Objetivos y elecciones alimentarias';
@@ -666,7 +666,7 @@ class AppLocalizationsEs extends AppLocalizations {
   String get timeAvailabilityTitle => 'Disponibilidad de tiempo';
 
   @override
-  String get householdSizeTitle => 'Tamaño del hogar';
+  String get householdSizeTitle => 'TamaÃ±o del hogar';
 
   @override
   String get dietVegetarian => 'Vegetariano';
@@ -684,7 +684,7 @@ class AppLocalizationsEs extends AppLocalizations {
   String get dietPaleo => 'Paleo';
 
   @override
-  String get dietMediterranean => 'Mediterránea';
+  String get dietMediterranean => 'MediterrÃ¡nea';
 
   @override
   String get dietLowCarb => 'Baja en carbohidratos';
@@ -696,7 +696,7 @@ class AppLocalizationsEs extends AppLocalizations {
   String get dietGlutenFree => 'Sin gluten';
 
   @override
-  String get dietDairyFree => 'Sin lácteos';
+  String get dietDairyFree => 'Sin lÃ¡cteos';
 
   @override
   String get dietNutFree => 'Sin frutos secos';
@@ -711,7 +711,7 @@ class AppLocalizationsEs extends AppLocalizations {
   String get allergyNuts => 'Frutos secos';
 
   @override
-  String get allergyDairy => 'Lácteos';
+  String get allergyDairy => 'LÃ¡cteos';
 
   @override
   String get allergyEggs => 'Huevos';
@@ -729,16 +729,16 @@ class AppLocalizationsEs extends AppLocalizations {
   String get allergyShellfish => 'Mariscos';
 
   @override
-  String get allergySesame => 'Sésamo';
+  String get allergySesame => 'SÃ©samo';
 
   @override
-  String get goalWeightLoss => 'Pérdida de peso';
+  String get goalWeightLoss => 'PÃ©rdida de peso';
 
   @override
   String get goalWeightGain => 'Aumento de peso';
 
   @override
-  String get goalMuscleBuilding => 'Ganar músculo';
+  String get goalMuscleBuilding => 'Ganar mÃºsculo';
 
   @override
   String get goalHeartHealth => 'Salud cardiovascular';
@@ -747,7 +747,7 @@ class AppLocalizationsEs extends AppLocalizations {
   String get goalDiabetesManagement => 'Control de diabetes';
 
   @override
-  String get goalHighProtein => 'Alta en proteína';
+  String get goalHighProtein => 'Alta en proteÃ­na';
 
   @override
   String get goalLowSodium => 'Baja en sodio';
@@ -777,7 +777,7 @@ class AppLocalizationsEs extends AppLocalizations {
   String get profileTitle => 'Perfil';
 
   @override
-  String get settingsTitle => 'Configuración';
+  String get settingsTitle => 'ConfiguraciÃ³n';
 
   @override
   String get profileGuestName => 'Invitado';
@@ -786,7 +786,7 @@ class AppLocalizationsEs extends AppLocalizations {
   String get profilePreferencesTitle => 'Preferencias';
 
   @override
-  String get profileDietarySpecsLabel => 'Especificaciones dietéticas';
+  String get profileDietarySpecsLabel => 'Especificaciones dietÃ©ticas';
 
   @override
   String get profileHideNutritionLabel => 'Ocultar valores nutricionales';
@@ -805,22 +805,22 @@ class AppLocalizationsEs extends AppLocalizations {
 
   @override
   String get profileLanguageDescription =>
-      'Selecciona tu idioma de preferencia para la interfaz de la aplicación.';
+      'Selecciona tu idioma de preferencia para la interfaz de la aplicaciÃ³n.';
 
   @override
-  String get profileLanguageEnglish => 'Inglés';
+  String get profileLanguageEnglish => 'InglÃ©s';
 
   @override
-  String get profileLanguageSpanish => 'Español';
+  String get profileLanguageSpanish => 'EspaÃ±ol';
 
   @override
   String get profilePaymentsTitle => 'Pagos';
 
   @override
-  String get profilePaymentsEmpty => 'Todavía no hay pagos para mostrar.';
+  String get profilePaymentsEmpty => 'TodavÃ­a no hay pagos para mostrar.';
 
   @override
-  String get profileSubscriptionTitle => 'Suscripción';
+  String get profileSubscriptionTitle => 'SuscripciÃ³n';
 
   @override
   String get profileSubscriptionCurrentLabel => 'Plan actual';
@@ -832,7 +832,7 @@ class AppLocalizationsEs extends AppLocalizations {
   String get profileSubscriptionFree => 'Gratis';
 
   @override
-  String get profileNoIncludes => 'Aún no hay beneficios listados.';
+  String get profileNoIncludes => 'AÃºn no hay beneficios listados.';
 
   @override
   String get profileSavePreferences => 'Guardar preferencias';
@@ -844,15 +844,15 @@ class AppLocalizationsEs extends AppLocalizations {
   String get groceryTitle => 'Compras';
 
   @override
-  String get nutritionTitle => 'Nutrición';
+  String get nutritionTitle => 'NutriciÃ³n';
 
   @override
   String get profileFarewell =>
-      'Lamentamos tu partida.\nGuardaremos tu cocina y tus playlists por 30 días por si decides volver. Después de eso, limpiaremos la mesa para siempre.';
+      'Lamentamos tu partida.\nGuardaremos tu cocina y tus playlists por 30 dÃ­as por si decides volver. DespuÃ©s de eso, limpiaremos la mesa para siempre.';
 
   @override
   String confirmDeleteWithEmail(Object email) {
-    return '¿Estás seguro? Escribe tu correo para confirmar: $email';
+    return 'Â¿EstÃ¡s seguro? Escribe tu correo para confirmar: $email';
   }
 
   @override
@@ -862,11 +862,11 @@ class AppLocalizationsEs extends AppLocalizations {
   String get deletePlanTooltip => 'Eliminar plan';
 
   @override
-  String get deleteMealDialogTitle => '¿Eliminar esta comida?';
+  String get deleteMealDialogTitle => 'Â¿Eliminar esta comida?';
 
   @override
   String get deleteMealDialogMessage =>
-      'Esta receta se eliminará del plan. Esta acción no se puede deshacer.';
+      'Esta receta se eliminarÃ¡ del plan. Esta acciÃ³n no se puede deshacer.';
 
   @override
   String get deleteAction => 'Eliminar';
@@ -882,25 +882,25 @@ class AppLocalizationsEs extends AppLocalizations {
 
   @override
   String get genericMoveError =>
-      'No se pudo mover la comida. Inténtalo de nuevo.';
+      'No se pudo mover la comida. IntÃ©ntalo de nuevo.';
 
   @override
-  String get genericDeleteError => 'No se pudo eliminar. Inténtalo de nuevo.';
+  String get genericDeleteError => 'No se pudo eliminar. IntÃ©ntalo de nuevo.';
 
   @override
   String get genericRegenerateError =>
-      'No se pudo regenerar la receta. Inténtalo de nuevo.';
+      'No se pudo regenerar la receta. IntÃ©ntalo de nuevo.';
 
   @override
   String get dragDropHint =>
-      'Mantén presionada una receta para arrastrarla a otro día o usa el menú para cambiar fecha.';
+      'MantÃ©n presionada una receta para arrastrarla a otro dÃ­a o usa el menÃº para cambiar fecha.';
 
   @override
   String get dragDropTooltip =>
-      'Tip: puedes mover comidas arrastrando entre días o desde el menú “Cambiar fecha de comida”.';
+      'Tip: puedes mover comidas arrastrando entre dÃ­as o desde el menÃº â€œCambiar fecha de comidaâ€.';
 
   @override
-  String get emptyDayDropText => 'Suelta una comida aquí';
+  String get emptyDayDropText => 'Suelta una comida aquÃ­';
 
   @override
   String get viewDetailsLabel => 'Ver detalle';
@@ -910,16 +910,17 @@ class AppLocalizationsEs extends AppLocalizations {
 
   @override
   String get regenerateSheetSubtitle =>
-      'Cuéntanos qué cambiar o déjalo en blanco para que la IA elija.';
+      'CuÃ©ntanos quÃ© cambiar o dÃ©jalo en blanco para que la IA elija.';
 
   @override
-  String get regenerateSheetNotesLabel => 'Descripción (opcional)';
+  String get regenerateSheetNotesLabel => 'DescripciÃ³n (opcional)';
 
   @override
-  String get regenerateSheetNotesHint => 'Ej: Algo más ligero, sin gluten...';
+  String get regenerateSheetNotesHint => 'Ej: Algo mÃ¡s ligero, sin gluten...';
 
   @override
-  String get regenerateSheetMaxPrepTimeLabel => 'Tiempo máximo de preparación';
+  String get regenerateSheetMaxPrepTimeLabel =>
+      'Tiempo mÃ¡ximo de preparaciÃ³n';
 
   @override
   String get regenerateSheetButton => 'Regenerar';
@@ -929,17 +930,17 @@ class AppLocalizationsEs extends AppLocalizations {
 
   @override
   String get deletePlanSheetWarning =>
-      'Eliminar este plan igual se cuenta en tu límite de generación de planes. Esta acción no se puede deshacer.';
+      'Eliminar este plan igual se cuenta en tu lÃ­mite de generaciÃ³n de planes. Esta acciÃ³n no se puede deshacer.';
 
   @override
   String get deletePlanSheetReasonLabel =>
-      '¿Por qué eliminás el plan? (opcional)';
+      'Â¿Por quÃ© eliminÃ¡s el plan? (opcional)';
 
   @override
   String get deletePlanSheetReasonHint => 'Ej: No me gustaron las recetas...';
 
   @override
-  String get deletePlanSheetConfirmAction => 'Sí, eliminar plan';
+  String get deletePlanSheetConfirmAction => 'SÃ­, eliminar plan';
 
   @override
   String minutesShortWithPlaceholder(Object minutes) {
@@ -962,7 +963,7 @@ class AppLocalizationsEs extends AppLocalizations {
 
   @override
   String substituteDetails(Object ratio, Object reason, Object category) {
-    return 'Proporción: $ratio | $reason | $category';
+    return 'ProporciÃ³n: $ratio | $reason | $category';
   }
 
   @override
@@ -974,7 +975,7 @@ class AppLocalizationsEs extends AppLocalizations {
 
   @override
   String get substituteConfirmNutritionWarning =>
-      'Este cambio también puede afectar los valores nutricionales de la receta.';
+      'Este cambio tambiÃ©n puede afectar los valores nutricionales de la receta.';
 
   @override
   String get applySubstituteAction => 'Aplicar sustituto';
@@ -1035,7 +1036,7 @@ class AppLocalizationsEs extends AppLocalizations {
 
   @override
   String get errorLoadingConfiguration =>
-      'Error al cargar la configuración. Inténtalo de nuevo.';
+      'Error al cargar la configuraciÃ³n. IntÃ©ntalo de nuevo.';
 
   @override
   String get errorEmailConfirmationMismatch =>
@@ -1046,10 +1047,10 @@ class AppLocalizationsEs extends AppLocalizations {
 
   @override
   String get saveIngredientsDialogContent =>
-      '¿Quieres guardar los ingredientes de este plan en una lista de compras?';
+      'Â¿Quieres guardar los ingredientes de este plan en una lista de compras?';
 
   @override
-  String get yesSaveAction => 'Sí, Guardar';
+  String get yesSaveAction => 'SÃ­, Guardar';
 
   @override
   String get notNowAction => 'Ahora No';
@@ -1058,7 +1059,7 @@ class AppLocalizationsEs extends AppLocalizations {
   String get selectListTitle => 'Seleccionar Lista';
 
   @override
-  String get selectListSubtitle => 'Elige dónde guardar tus artículos';
+  String get selectListSubtitle => 'Elige dÃ³nde guardar tus artÃ­culos';
 
   @override
   String savedIngredientsSuccess(Object listName) {
@@ -1070,7 +1071,7 @@ class AppLocalizationsEs extends AppLocalizations {
 
   @override
   String get deletePlanAlsoRemoveGrocery =>
-      'También eliminar ingredientes de la lista de compras';
+      'TambiÃ©n eliminar ingredientes de la lista de compras';
 
   @override
   String get copySuffix => 'Copia';
@@ -1099,7 +1100,7 @@ class AppLocalizationsEs extends AppLocalizations {
   String get reusePlanNameLabel => 'Nombre (Opcional)';
 
   @override
-  String get reusePlanNameHint => 'Ej. Plan de la próxima semana';
+  String get reusePlanNameHint => 'Ej. Plan de la prÃ³xima semana';
 
   @override
   String get menuReusePlan => 'Reutilizar plan';
@@ -1135,19 +1136,19 @@ class AppLocalizationsEs extends AppLocalizations {
 
   @override
   String markCompleteQuestion(Object mealName) {
-    return '¿Has completado $mealName?';
+    return 'Â¿Has completado $mealName?';
   }
 
   @override
   String get markCompleteDeductInfo =>
-      'Los ingredientes se descontarán de tu despensa si están disponibles.';
+      'Los ingredientes se descontarÃ¡n de tu despensa si estÃ¡n disponibles.';
 
   @override
   String get completeAction => 'Completar';
 
   @override
   String mealCompletedSuccess(Object count) {
-    return '¡Comida completada! Se descontaron $count ingredientes de la despensa.';
+    return 'Â¡Comida completada! Se descontaron $count ingredientes de la despensa.';
   }
 
   @override
@@ -1159,7 +1160,7 @@ class AppLocalizationsEs extends AppLocalizations {
   String get mealCompletedError => 'Error al completar la comida.';
 
   @override
-  String get alsoRemoveFromGrocery => 'También retirar de la lista de compras';
+  String get alsoRemoveFromGrocery => 'TambiÃ©n retirar de la lista de compras';
 
   @override
   String get menuAddToGrocery => 'Agregar a lista de compras';
@@ -1215,31 +1216,31 @@ class AppLocalizationsEs extends AppLocalizations {
 
   @override
   String get listNameEmptyError =>
-      'El nombre de la lista no puede estar vacío.';
+      'El nombre de la lista no puede estar vacÃ­o.';
 
   @override
   String get create => 'Crear';
 
   @override
-  String get deletePlanSheetQuotaNote => 'Esta acción no se puede deshacer.';
+  String get deletePlanSheetQuotaNote => 'Esta acciÃ³n no se puede deshacer.';
 
   @override
   String get regenerateRecipePromptTitle => 'Regenerar Receta';
 
   @override
   String get regenerateRecipePromptSubtitle =>
-      '¿Estás seguro de que deseas regenerar esta receta?';
+      'Â¿EstÃ¡s seguro de que deseas regenerar esta receta?';
 
   @override
   String get regenerateRecipeNotePrefix => 'Nota: ';
 
   @override
   String get regenerateRecipeNoteText =>
-      'Esto consumirá tu cuota de generación.';
+      'Esto consumirÃ¡ tu cuota de generaciÃ³n.';
 
   @override
   String get regenerateNotesHint =>
-      '¿Algún requerimiento especial? (ej. mas proteína)';
+      'Â¿AlgÃºn requerimiento especial? (ej. mas proteÃ­na)';
 
   @override
   String get regenerateRecipeButtonTitle => 'Regenerar';
@@ -1251,7 +1252,7 @@ class AppLocalizationsEs extends AppLocalizations {
   String get selectDatesSubtitle => 'Elige las fechas para tu plan de comidas.';
 
   @override
-  String get confirmSelectionAction => 'Confirmar Selección';
+  String get confirmSelectionAction => 'Confirmar SelecciÃ³n';
 
   @override
   String get pantryOtherCategory => 'Otros';
@@ -1260,13 +1261,13 @@ class AppLocalizationsEs extends AppLocalizations {
   String get pantryAddTooltip => 'Agregar a Despensa';
 
   @override
-  String get pantryEmptyTitle => 'Tu despensa está vacía.';
+  String get pantryEmptyTitle => 'Tu despensa estÃ¡ vacÃ­a.';
 
   @override
-  String get pantryEmptySubtitle => 'Agrega artículos para llevar registro.';
+  String get pantryEmptySubtitle => 'Agrega artÃ­culos para llevar registro.';
 
   @override
-  String get addItemQuantityInvalid => 'Cantidad ingresada inválida.';
+  String get addItemQuantityInvalid => 'Cantidad ingresada invÃ¡lida.';
 
   @override
   String get pantryNoDate => 'Sin fecha de caducidad';
@@ -1289,24 +1290,24 @@ class AppLocalizationsEs extends AppLocalizations {
   String get pantryItemExpired => 'Caducado';
 
   @override
-  String get pantryExpiringSoon => 'Próximo a vencer';
+  String get pantryExpiringSoon => 'PrÃ³ximo a vencer';
 
   @override
   String get pantryStatusValid => 'Vigente';
 
   @override
-  String get pantryDeleteDialogTitle => 'Eliminar Artículo';
+  String get pantryDeleteDialogTitle => 'Eliminar ArtÃ­culo';
 
   @override
   String pantryDeleteDialogMessage(Object ingredientName) {
-    return '¿Estás seguro de que deseas eliminar $ingredientName de tu despensa?';
+    return 'Â¿EstÃ¡s seguro de que deseas eliminar $ingredientName de tu despensa?';
   }
 
   @override
   String get addItemDefaultUnit => 'piezas';
 
   @override
-  String get addItemErrorAdding => 'Error al agregar el artículo.';
+  String get addItemErrorAdding => 'Error al agregar el artÃ­culo.';
 
   @override
   String get addItemTitlePantry => 'Agregar a Despensa';
@@ -1315,7 +1316,7 @@ class AppLocalizationsEs extends AppLocalizations {
   String get addItemTitleGrocery => 'Agregar a Lista de Compras';
 
   @override
-  String get addItemIngredientNameLabel => 'Nombre del Artículo';
+  String get addItemIngredientNameLabel => 'Nombre del ArtÃ­culo';
 
   @override
   String get addItemIngredientNamePantryHint => 'Ej. Leche';
@@ -1325,7 +1326,7 @@ class AppLocalizationsEs extends AppLocalizations {
 
   @override
   String get addItemIngredientNameRequired =>
-      'El nombre del artículo es requerido.';
+      'El nombre del artÃ­culo es requerido.';
 
   @override
   String get addItemQuantityLabel => 'Cantidad';
@@ -1340,10 +1341,10 @@ class AppLocalizationsEs extends AppLocalizations {
   String get addItemUnitHint => 'Ej. kg, litros';
 
   @override
-  String get addItemCategoryLabel => 'Categoría';
+  String get addItemCategoryLabel => 'CategorÃ­a';
 
   @override
-  String get addItemCategoryHint => 'Seleccionar categoría';
+  String get addItemCategoryHint => 'Seleccionar categorÃ­a';
 
   @override
   String get addItemExpiryLabel => 'Fecha de Caducidad';
@@ -1356,27 +1357,27 @@ class AppLocalizationsEs extends AppLocalizations {
 
   @override
   String pantryCountLabel(Object count) {
-    return '$count artículos en despensa';
+    return '$count artÃ­culos en despensa';
   }
 
   @override
-  String get groceryListDetailPendingHeader => 'Artículos Pendientes';
+  String get groceryListDetailPendingHeader => 'ArtÃ­culos Pendientes';
 
   @override
-  String get groceryListDetailCompletedHeader => 'Artículos Completados';
+  String get groceryListDetailCompletedHeader => 'ArtÃ­culos Completados';
 
   @override
-  String get groceryListDetailEmptyTitle => 'Esta lista está vacía.';
+  String get groceryListDetailEmptyTitle => 'Esta lista estÃ¡ vacÃ­a.';
 
   @override
   String get groceryListDetailEmptySubtitle =>
-      'Agrega artículos con el botón +.';
+      'Agrega artÃ­culos con el botÃ³n +.';
 
   @override
   String get groceryItemInPantry => 'En Despensa';
 
   @override
-  String get groceryItemEditTooltip => 'Editar Artículo';
+  String get groceryItemEditTooltip => 'Editar ArtÃ­culo';
 
   @override
   String get editQuantityDialogTitle => 'Editar Cantidad';
@@ -1404,7 +1405,7 @@ class AppLocalizationsEs extends AppLocalizations {
 
   @override
   String deleteGroceryListDialogMessage(Object listName) {
-    return '¿Estás seguro de que deseas eliminar $listName?';
+    return 'Â¿EstÃ¡s seguro de que deseas eliminar $listName?';
   }
 
   @override
@@ -1415,11 +1416,11 @@ class AppLocalizationsEs extends AppLocalizations {
 
   @override
   String greeting(Object name) {
-    return '¡Hola, $name!';
+    return 'Â¡Hola, $name!';
   }
 
   @override
-  String get homeTodayPlanReady => 'Tu plan del día está listo.';
+  String get homeTodayPlanReady => 'Tu plan del dÃ­a estÃ¡ listo.';
 
   @override
   String get homeViewRecipeShort => 'Ver';
@@ -1428,11 +1429,11 @@ class AppLocalizationsEs extends AppLocalizations {
   String get homeEatOutAction => 'Comer Fuera';
 
   @override
-  String get homeSkipMealQuestion => '¿Saltar Comida?';
+  String get homeSkipMealQuestion => 'Â¿Saltar Comida?';
 
   @override
   String get homeSkipMealDescription =>
-      '¿Estás seguro de que deseas saltar esta comida?';
+      'Â¿EstÃ¡s seguro de que deseas saltar esta comida?';
 
   @override
   String get homeConfirmAction => 'Confirmar';
@@ -1448,7 +1449,7 @@ class AppLocalizationsEs extends AppLocalizations {
 
   @override
   String get homeEmptyPlanMessage =>
-      '¡Crea un nuevo plan o disfruta tu día libre!';
+      'Â¡Crea un nuevo plan o disfruta tu dÃ­a libre!';
 
   @override
   String get averageAbbr => 'prom';
@@ -1476,7 +1477,7 @@ class AppLocalizationsEs extends AppLocalizations {
   String get createNewPlanTooltip => 'Crear nuevo plan';
 
   @override
-  String get noPlansAddedTitle => 'Aún no hay planes.';
+  String get noPlansAddedTitle => 'AÃºn no hay planes.';
 
   @override
   String get noPlansAddedMessage =>
@@ -1487,7 +1488,7 @@ class AppLocalizationsEs extends AppLocalizations {
 
   @override
   String days(Object count) {
-    return '$count días';
+    return '$count dÃ­as';
   }
 
   @override
@@ -1559,7 +1560,7 @@ class AppLocalizationsEs extends AppLocalizations {
 
   @override
   String get recipeCompletedSnack =>
-      '¡Receta completada y descontada de la despensa!';
+      'Â¡Receta completada y descontada de la despensa!';
 
   @override
   String recipeCompletedMissingSnack(Object count) {
@@ -1574,11 +1575,11 @@ class AppLocalizationsEs extends AppLocalizations {
 
   @override
   String get otpVerificationMessage =>
-      'Hemos enviado un código de verificación de 6 dígitos a tu nueva dirección de correo electrónico. Por favor, ingrésalo a continuación para completar el cambio.';
+      'Hemos enviado un cÃ³digo de verificaciÃ³n de 6 dÃ­gitos a tu nueva direcciÃ³n de correo electrÃ³nico. Por favor, ingrÃ©salo a continuaciÃ³n para completar el cambio.';
 
   @override
   String get otpRequestMessage =>
-      'Ingresa tu nueva dirección de correo electrónico. Te enviaremos un código de verificación para asegurarnos de que eres tú.';
+      'Ingresa tu nueva direcciÃ³n de correo electrÃ³nico. Te enviaremos un cÃ³digo de verificaciÃ³n para asegurarnos de que eres tÃº.';
 
   @override
   String get newEmailAddressLabel => 'Nueva cuenta de correo';
@@ -1587,19 +1588,19 @@ class AppLocalizationsEs extends AppLocalizations {
   String get newEmailPlaceholder => 'nombre@ejemplo.com';
 
   @override
-  String get didntReceiveCode => '¿No recibiste el código?';
+  String get didntReceiveCode => 'Â¿No recibiste el cÃ³digo?';
 
   @override
   String get resendAction => 'Reenviar';
 
   @override
-  String get secureVerificationNote => 'Verificación segura mediante SageAuth';
+  String get secureVerificationNote => 'VerificaciÃ³n segura mediante SageAuth';
 
   @override
-  String get saveSelectionAction => 'Guardar selección';
+  String get saveSelectionAction => 'Guardar selecciÃ³n';
 
   @override
-  String get premiumLearnMore => 'Saber más';
+  String get premiumLearnMore => 'Saber mÃ¡s';
 
   @override
   String get swapFavoriteTitle => 'Cambiar por Favorita';
@@ -1620,7 +1621,7 @@ class AppLocalizationsEs extends AppLocalizations {
   String get dislikedFoodsLabel => 'Comidas que no te gustan';
 
   @override
-  String get addLabel => 'Añadir';
+  String get addLabel => 'AÃ±adir';
 
   @override
   String get kcalLabel => 'Kcal';
@@ -1635,10 +1636,10 @@ class AppLocalizationsEs extends AppLocalizations {
   String get servingsLabelUpper => 'PORCIONES';
 
   @override
-  String get caloriesLabelUpper => 'CALORÍAS';
+  String get caloriesLabelUpper => 'CALORÃAS';
 
   @override
-  String get nutritionPerServing => 'Nutrición por porción';
+  String get nutritionPerServing => 'NutriciÃ³n por porciÃ³n';
 
   @override
   String itemsCount(Object count) {
@@ -1646,7 +1647,7 @@ class AppLocalizationsEs extends AppLocalizations {
   }
 
   @override
-  String get servingShort => 'porción';
+  String get servingShort => 'porciÃ³n';
 
   @override
   String get organizeFavoritesSubtitle =>
@@ -1654,18 +1655,18 @@ class AppLocalizationsEs extends AppLocalizations {
 
   @override
   String get medicalDisclaimer =>
-      'Esta aplicación no constituye un consejo médico profesional. La IA puede cometer errores en las recetas y el usuario es responsable de verificar los ingredientes frente a sus alergias.';
+      'Esta aplicaciÃ³n no constituye un consejo mÃ©dico profesional. La IA puede cometer errores en las recetas y el usuario es responsable de verificar los ingredientes frente a sus alergias.';
 
   @override
-  String get authWelcomeTitle => 'Bienvenido a tu nueva alimentación';
+  String get authWelcomeTitle => 'Bienvenido a tu nueva alimentaciÃ³n';
 
   @override
   String get authWelcomeSubtitle =>
-      'Nutrición personalizada y planificación de comidas simple para un estilo de vida saludable.';
+      'NutriciÃ³n personalizada y planificaciÃ³n de comidas simple para un estilo de vida saludable.';
 
   @override
   String get authLegalConsent =>
-      'Al continuar, aceptas nuestros Términos de Servicio y Política de Privacidad.';
+      'Al continuar, aceptas nuestros TÃ©rminos de Servicio y PolÃ­tica de Privacidad.';
 
   @override
   String get authSignUpSubtitle =>
@@ -1673,7 +1674,7 @@ class AppLocalizationsEs extends AppLocalizations {
 
   @override
   String get authLoginSubtitle =>
-      'Tu camino hacia una mejor nutrición comienza aquí';
+      'Tu camino hacia una mejor nutriciÃ³n comienza aquÃ­';
 
   @override
   String get authLoginDivider => 'O USA TU CORREO';
@@ -1691,19 +1692,19 @@ class AppLocalizationsEs extends AppLocalizations {
   String get authResendCode => 'Enviar de nuevo';
 
   @override
-  String get otpVerifyNotReceived => '¿No recibiste el código?';
+  String get otpVerifyNotReceived => 'Â¿No recibiste el cÃ³digo?';
 
   @override
   String get dietarySubtitle =>
-      'Selecciona tu estilo de alimentación principal para que podamos adaptar tus recetas.';
+      'Selecciona tu estilo de alimentaciÃ³n principal para que podamos adaptar tus recetas.';
 
   @override
   String get allergiesSubtitle =>
-      'Cuéntanos sobre cualquier alergia o intolerancia que debamos evitar.';
+      'CuÃ©ntanos sobre cualquier alergia o intolerancia que debamos evitar.';
 
   @override
   String get foodPreferencesSubtitle =>
-      'Cuéntanos sobre tus gustos para que podamos personalizar tu experiencia culinaria.';
+      'CuÃ©ntanos sobre tus gustos para que podamos personalizar tu experiencia culinaria.';
 
   @override
   String get goalsSubtitle =>
@@ -1711,7 +1712,7 @@ class AppLocalizationsEs extends AppLocalizations {
 
   @override
   String get cookingDetailsSubtitle =>
-      'Cuéntanos sobre tu estilo de cocina y el tamaño de tu hogar.';
+      'CuÃ©ntanos sobre tu estilo de cocina y el tamaÃ±o de tu hogar.';
 
   @override
   String get namePlaceholder => 'Tu nombre completo';
@@ -1754,4 +1755,25 @@ class AppLocalizationsEs extends AppLocalizations {
 
   @override
   String get breakdownTabCreate => 'Crear';
+
+  @override
+  String get promoCodeLabel => 'Código de promoción';
+
+  @override
+  String get promoCodeHint => 'Ingresa el código (ej. MEAL15)';
+
+  @override
+  String get validateAction => 'Validar';
+
+  @override
+  String get invalidPromoCode => 'Código de promoción inválido o expirado.';
+
+  @override
+  String get promoCodeApplied => '¡Código de promoción aplicado!';
+
+  @override
+  String get havePromoCode => '¿Tienes un código de promoción?';
+
+  @override
+  String get enterPromoCode => 'Ingresar código de promoción';
 }

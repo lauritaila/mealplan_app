@@ -1748,4 +1748,25 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get breakdownTabCreate => 'Create';
+
+  @override
+  String get promoCodeLabel => 'Promotion Code';
+
+  @override
+  String get promoCodeHint => 'Enter code (e.g. MEAL15)';
+
+  @override
+  String get validateAction => 'Validate';
+
+  @override
+  String get invalidPromoCode => 'Invalid or expired promotion code.';
+
+  @override
+  String get promoCodeApplied => 'Promotion code applied!';
+
+  @override
+  String get havePromoCode => 'Do you have a promotion code?';
+
+  @override
+  String get enterPromoCode => 'Enter Promotion Code';
 }

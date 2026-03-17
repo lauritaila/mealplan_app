@@ -7,6 +7,7 @@ import 'package:meal_plan_app/features/meal_plan/domain/entities/entities.dart';
 import 'package:meal_plan_app/l10n/app_localizations.dart';
 import 'package:go_router/go_router.dart';
 import 'package:meal_plan_app/config/theme/app_theme.dart';
+import 'package:meal_plan_app/features/shared/presentation/widgets/promo_code_bottom_sheet.dart';
 
 class SubscriptionScreen extends ConsumerWidget {
   const SubscriptionScreen({super.key});
@@ -212,6 +213,22 @@ class _SubscriptionUsageSection extends ConsumerWidget {
         if (isFreePlan) ...[
           const SizedBox(height: 32),
           _UpgradeUpsellCard(),
+          const SizedBox(height: 16),
+          Center(
+            child: TextButton(
+              onPressed: () {
+                PromoCodeBottomSheet.show(context, planId: 'pro'); // Default to pro for now
+              },
+              child: Text(
+                l10n.havePromoCode,
+                style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                  color: Theme.of(context).extension<AppCustomColors>()?.darkSage,
+                  fontWeight: FontWeight.w700,
+                  decoration: TextDecoration.underline,
+                ),
+              ),
+            ),
+          ),
         ],
       ],
     );
